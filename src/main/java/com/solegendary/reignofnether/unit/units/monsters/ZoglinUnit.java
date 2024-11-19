@@ -100,7 +100,8 @@ public class ZoglinUnit extends Zoglin implements Unit, AttackerUnit {
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.HOGLIN.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -127,7 +128,6 @@ public class ZoglinUnit extends Zoglin implements Unit, AttackerUnit {
     final static public float maxHealth = 60.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.30f;
-    final static public int popCost = ResourceCosts.HOGLIN.population;
     public int maxResources = 100;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
