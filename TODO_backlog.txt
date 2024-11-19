@@ -39,32 +39,14 @@ Bugfixes
 Quality of Life Features
 ------------------------
 
-[❌] Limit ghast heights?
-
-[❌] Shift queueing movements and buildings (not just placement)
-    - Add index to sendCommand packets
-    - Add recursive field to UnitActionItem: nextActionItem
-    - Add end detections in goals for when to move to nextActionItem
-    - Add clientside checkpoints
-
 [❌] Flatten terrain ability
     - Require that villagers work on it like a building
     - Will need a new flatten zone object (no need to save it)
-
-[❌] Amethyst is now mineable, and regenerates automatically after 1min
-
-[❌] Getters and Setters for unit stats
 
 
 
 Balancing
 ---------
-
-[❌] Solution to discourage rushing
-    - villagers are most vulnerable due to their lategame nature
-    - copy the wc3 ability of turning villagers into temporary militia?
-        - give them a helmet and stone sword upgrade for +2 damage
-        - turn back on isPushable
 
 [❌] Implement damage dropoffs to buildings for charged creepers
     - and provide a radius indicator for them when hovering over explode

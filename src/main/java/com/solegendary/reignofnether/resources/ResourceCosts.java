@@ -66,7 +66,7 @@ public class ResourceCosts {
     public static ResourceCost HOGLIN = ResourceCost.Unit(150,0,75,35,3);
     public static ResourceCost BLAZE = ResourceCost.Unit(50,50,100,30,2);
     public static ResourceCost WITHER_SKELETON = ResourceCost.Unit(200,0,150,40,4);
-    public static ResourceCost GHAST = ResourceCost.Unit(100,150,250,50,5);
+    public static ResourceCost GHAST = ResourceCost.Unit(100,150,250,70,6);
 
     // ******************* BUILDINGS ******************* //
     public static ResourceCost STOCKPILE = ResourceCost.Building(0,75,0, 0);

@@ -18,6 +18,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.util.Faction;
+import net.minecraft.client.model.VillagerModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.entity.npc.*;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -45,7 +47,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, AttackerUnit, ArmSwingingUnit {
+public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, AttackerUnit, ArmSwingingUnit, VillagerDataHolder {
     // region
     private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
     private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
@@ -105,6 +107,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ownerDataAccessor, "");
+        this.entityData.define(DATA_VILLAGER_DATA, new VillagerData(VillagerType.PLAINS, VillagerProfession.NONE, 1));
     }
 
     // combat stats
@@ -131,6 +134,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public BlockState getReplantBlockState() {
         return Blocks.WHEAT.defaultBlockState();
     }
+
 
     final static public float attackDamage = 1.0f;
     final static public float attacksPerSecond = 0.5f;
@@ -266,5 +270,23 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
         if (this.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof BannerItem)
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.AIR));
+    }
+
+
+    private static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA;
+
+    @Override
+    public VillagerData getVillagerData() {
+        return this.entityData.get(DATA_VILLAGER_DATA);
+    }
+
+    @Override
+    public void setVillagerData(VillagerData p_35437_) {
+        VillagerData villagerdata = this.getVillagerData();
+        this.entityData.set(DATA_VILLAGER_DATA, p_35437_);
+    }
+
+    static {
+        DATA_VILLAGER_DATA = SynchedEntityData.defineId(Villager.class, EntityDataSerializers.VILLAGER_DATA);
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.client.renderer.entity.layers.VillagerProfessionLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -26,6 +27,7 @@ public class VillagerUnitRenderer extends AbstractVillagerUnitRenderer<VillagerU
                 }
             }
         });
+        this.addLayer(new VillagerUnitProfessionLayer(this, p_174439_.getResourceManager(), "villager"));
     }
 
     public ResourceLocation getTextureLocation(VillagerUnit p_116324_) {
