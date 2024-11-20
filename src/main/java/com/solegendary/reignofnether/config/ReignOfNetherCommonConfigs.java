@@ -7,17 +7,16 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 
 public class ReignOfNetherCommonConfigs {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec SPEC;
 
-
     static {
         BUILDER.push("Configuration File");
         BUILDER.pop();
         BUILDER.comment("Unit cost configurations");
-        //TODO: Attempt to replace manual definitions with iteration through UnitCosts#getDeclaredFields
         //*Units*
         //Monsters
         BUILDER.comment("Monsters");
@@ -93,6 +92,41 @@ public class ReignOfNetherCommonConfigs {
         BuildingCosts.WITHER_SHRINE.define(BUILDER);
         BuildingCosts.FORTRESS.define(BUILDER);
 
+        //*Research*
+        BUILDER.comment("Research Cost Configurations");
+        ResearchCosts.RESEARCH_GOLEM_SMITHING.define(BUILDER);
+        ResearchCosts.RESEARCH_LAB_LIGHTNING_ROD.define(BUILDER);
+        ResearchCosts.RESEARCH_RESOURCE_CAPACITY.define(BUILDER);
+        ResearchCosts.RESEARCH_SPIDER_JOCKEYS.define(BUILDER);
+        ResearchCosts.RESEARCH_POISON_SPIDERS.define(BUILDER);
+        ResearchCosts.RESEARCH_HUSKS.define(BUILDER);
+        ResearchCosts.RESEARCH_DROWNED.define(BUILDER);
+        ResearchCosts.RESEARCH_STRAYS.define(BUILDER);
+        ResearchCosts.RESEARCH_LINGERING_POTIONS.define(BUILDER);
+        ResearchCosts.RESEARCH_EVOKER_VEXES.define(BUILDER);
+        ResearchCosts.RESEARCH_CASTLE_FLAG.define(BUILDER);
+        ResearchCosts.RESEARCH_GRAND_LIBRARY.define(BUILDER);
+        ResearchCosts.RESEARCH_SILVERFISH.define(BUILDER);
+        ResearchCosts.RESEARCH_SCULK_AMPLIFIERS.define(BUILDER);
+        ResearchCosts.RESEARCH_RAVAGER_ARTILLERY.define(BUILDER);
+        ResearchCosts.RESEARCH_BRUTE_SHIELDS.define(BUILDER);
+        ResearchCosts.RESEARCH_HOGLIN_CAVALRY.define(BUILDER);
+        ResearchCosts.RESEARCH_HEAVY_TRIDENTS.define(BUILDER);
+        ResearchCosts.RESEARCH_BLAZE_FIRE_WALL.define(BUILDER);
+        ResearchCosts.RESEARCH_FIRE_RESISTANCE.define(BUILDER);
+        ResearchCosts.RESEARCH_WITHER_CLOUDS.define(BUILDER);
+        ResearchCosts.RESEARCH_ADVANCED_PORTALS.define(BUILDER);
+        ResearchCosts.RESEARCH_CIVILIAN_PORTAL.define(BUILDER);
+        ResearchCosts.RESEARCH_MILITARY_PORTAL.define(BUILDER);
+        ResearchCosts.RESEARCH_TRANSPORT_PORTAL.define(BUILDER);
+
+        //*Enchantments*
+        BUILDER.comment("Enchantment Cost Configurations");
+        EnchantmentCosts.ENCHANT_MAIMING.define(BUILDER);
+        EnchantmentCosts.ENCHANT_QUICK_CHARGE.define(BUILDER);
+        EnchantmentCosts.ENCHANT_SHARPNESS.define(BUILDER);
+        EnchantmentCosts.ENCHANT_MULTISHOT.define(BUILDER);
+        EnchantmentCosts.ENCHANT_VIGOR.define(BUILDER);
         SPEC = BUILDER.build();
     }
 
@@ -169,5 +203,40 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry FLAME_SANCTUARY = ResourceCostConfigEntry.Building(0, 300, 150, 0, "Flame Sanctuary Config");
         public static final ResourceCostConfigEntry WITHER_SHRINE = ResourceCostConfigEntry.Building(0, 350, 200, 0, "Wither Shrine Config");
         public static final ResourceCostConfigEntry FORTRESS = ResourceCostConfigEntry.Building(0, 400, 300, 0, "Fortress Config");
+    }
+    public static class ResearchCosts {
+        public static final ResourceCostConfigEntry RESEARCH_GOLEM_SMITHING = ResourceCostConfigEntry.Research(0, 150,200, 90, "Golem Smithing Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_LAB_LIGHTNING_ROD = ResourceCostConfigEntry.Research(0,0,400, 120, "Lightning Lab Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_RESOURCE_CAPACITY = ResourceCostConfigEntry.Research(200,200,0, 90, "Stockpile Resource Capacity Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_SPIDER_JOCKEYS = ResourceCostConfigEntry.Research(300,250,0, 100, "Spider Jockey Research Config");
+        //public static final ResourceCostConfigEntry RESEARCH_SPIDER_WEBS = ResourceCostConfigEntry.Research(0, 300, 300, 140, "Spider Web Research Config (UNUSED)");
+        public static final ResourceCostConfigEntry RESEARCH_POISON_SPIDERS = ResourceCostConfigEntry.Research(400,0,250, 150, "Poison Spider Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_HUSKS = ResourceCostConfigEntry.Research(500,0,500, 200, "Husk Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_DROWNED = ResourceCostConfigEntry.Research(500,0,500, 200, "Drowned Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_STRAYS = ResourceCostConfigEntry.Research(500,500,0, 200, "Stray Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_LINGERING_POTIONS = ResourceCostConfigEntry.Research(250,250,250, 140, "Lingering Potion Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_EVOKER_VEXES = ResourceCostConfigEntry.Research(500,0,300, 120, "Evoker Vex Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_CASTLE_FLAG = ResourceCostConfigEntry.Research(200,150,150, 90, "Captain Banner Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_GRAND_LIBRARY = ResourceCostConfigEntry.Research(0,200,100, 140, "Grand Library Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_SILVERFISH = ResourceCostConfigEntry.Research(0,300,300, 120, "Silverfish Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_SCULK_AMPLIFIERS = ResourceCostConfigEntry.Research(0,200,400, 150, "Sculk Amplifier Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_RAVAGER_ARTILLERY = ResourceCostConfigEntry.Research(400,0,350, 140, "Ravager Artillery Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_BRUTE_SHIELDS = ResourceCostConfigEntry.Research(0,300,300, 150, "Brute Shields Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_HOGLIN_CAVALRY = ResourceCostConfigEntry.Research(300,250,0, 100, "Hoglin Cavalry Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_HEAVY_TRIDENTS = ResourceCostConfigEntry.Research(0, 250, 250, 120, "Heavy Tridents Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_BLAZE_FIRE_WALL = ResourceCostConfigEntry.Research(400, 0, 300, 150, "Blaze Fire Wall Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_FIRE_RESISTANCE = ResourceCostConfigEntry.Research(0, 200, 200, 100, "Fire Resistance Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_WITHER_CLOUDS = ResourceCostConfigEntry.Research(250, 0, 350, 150, "Wither Clouds Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_ADVANCED_PORTALS = ResourceCostConfigEntry.Research(0, 300, 300, 150, "Advanced Portals Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_CIVILIAN_PORTAL = ResourceCostConfigEntry.Research(0, 75, 0, 20, "Civilian Portal Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_MILITARY_PORTAL = ResourceCostConfigEntry.Research(0, 125, 0, 30, "Military Portal Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_TRANSPORT_PORTAL = ResourceCostConfigEntry.Research(0, 175, 0, 40, "Transport Portal Research Config");
+    }
+    public static class EnchantmentCosts {
+        public static final ResourceCostConfigEntry ENCHANT_MAIMING = ResourceCostConfigEntry.Enchantment(0,20, 30, "Maiming Enchantment Config");
+        public static final ResourceCostConfigEntry ENCHANT_QUICK_CHARGE = ResourceCostConfigEntry.Enchantment(0,30, 15, "Quick Charge Enchantment Config");
+        public static final ResourceCostConfigEntry ENCHANT_SHARPNESS = ResourceCostConfigEntry.Enchantment(0,40, 60, "Sharpness Enchantment Config");
+        public static final ResourceCostConfigEntry ENCHANT_MULTISHOT = ResourceCostConfigEntry.Enchantment(0,70, 35, "Multishot Enchantment Config");
+        public static final ResourceCostConfigEntry ENCHANT_VIGOR = ResourceCostConfigEntry.Enchantment(0,60, 60, "Vigor Enchantment Config");
     }
 }

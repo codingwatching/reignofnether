@@ -26,16 +26,16 @@ public class ResourceCostConfigEntry {
         this.DEFAULT_POPULATION = population;
         this.COMMENT = comment;
     }
-    public static ResourceCostConfigEntry Unit(int food, int wood, int ore, int seconds, int population, String comment) { // buildings
+    public static ResourceCostConfigEntry Unit(int food, int wood, int ore, int seconds, int population, String comment) { // units
         return new ResourceCostConfigEntry(food, wood, ore, seconds, population, comment);
     }
-    public static ResourceCostConfigEntry Research(int food, int wood, int ore, int seconds, String comment) { // buildings
+    public static ResourceCostConfigEntry Research(int food, int wood, int ore, int seconds, String comment) { // research
         return new ResourceCostConfigEntry(food, wood, ore, seconds, 0, comment);
     }
     public static ResourceCostConfigEntry Building(int food, int wood, int ore, int supply, String comment) { // buildings
         return new ResourceCostConfigEntry(food, wood, ore, 0, supply, comment);
     }
-    public static ResourceCostConfigEntry Enchantment(int food, int wood, int ore, String comment) { // buildings
+    public static ResourceCostConfigEntry Enchantment(int food, int wood, int ore, String comment) { // enchantments
         return new ResourceCostConfigEntry(food, wood, ore, 0, 0, comment);
     }
 

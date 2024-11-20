@@ -74,6 +74,50 @@ public class ResourceCosts {
     public static ResourceCost WITHER_SHRINE;
     public static ResourceCost FORTRESS;
 
+    // RESEARCH
+
+    public static ResourceCost RESEARCH_GOLEM_SMITHING;
+    public static ResourceCost RESEARCH_LAB_LIGHTNING_ROD;
+    public static ResourceCost RESEARCH_RESOURCE_CAPACITY;
+    public static ResourceCost RESEARCH_SPIDER_JOCKEYS;
+    public static ResourceCost RESEARCH_SPIDER_WEBS = ResourceCost.Research(0, 300, 300, 140);
+    public static ResourceCost RESEARCH_POISON_SPIDERS;
+    public static ResourceCost RESEARCH_HUSKS;
+    public static ResourceCost RESEARCH_DROWNED;
+    public static ResourceCost RESEARCH_STRAYS;
+    public static ResourceCost RESEARCH_LINGERING_POTIONS;
+    public static ResourceCost RESEARCH_EVOKER_VEXES;
+    public static ResourceCost RESEARCH_CASTLE_FLAG;
+    public static ResourceCost RESEARCH_GRAND_LIBRARY;
+    public static ResourceCost RESEARCH_SILVERFISH;
+    public static ResourceCost RESEARCH_SCULK_AMPLIFIERS;
+    public static ResourceCost RESEARCH_RAVAGER_ARTILLERY;
+    public static ResourceCost RESEARCH_BRUTE_SHIELDS;
+    public static ResourceCost RESEARCH_HOGLIN_CAVALRY;
+    public static ResourceCost RESEARCH_HEAVY_TRIDENTS;
+    public static ResourceCost RESEARCH_BLAZE_FIRE_WALL;
+    public static ResourceCost RESEARCH_FIRE_RESISTANCE;
+    public static ResourceCost RESEARCH_WITHER_CLOUDS;
+    public static ResourceCost RESEARCH_ADVANCED_PORTALS;
+    public static ResourceCost RESEARCH_CIVILIAN_PORTAL;
+    public static ResourceCost RESEARCH_MILITARY_PORTAL;
+    public static ResourceCost RESEARCH_TRANSPORT_PORTAL;
+
+    // ENCHANTMENTS
+
+    public static ResourceCost ENCHANT_MAIMING;
+    public static ResourceCost ENCHANT_QUICK_CHARGE;
+    public static ResourceCost ENCHANT_SHARPNESS;
+    public static ResourceCost ENCHANT_MULTISHOT;
+    public static ResourceCost ENCHANT_VIGOR;
+
+    // UNUSED
+
+    public static ResourceCost RESEARCH_VINDICATOR_AXES = ResourceCost.Research(0,200,400, 150);
+    public static ResourceCost RESEARCH_PILLAGER_CROSSBOWS = ResourceCost.Research(0,600,300, 180);
+    public static ResourceCost ENDERMAN = ResourceCost.Unit(100,100,100,30,3);
+
+
     public static FormattedCharSequence getFormattedCost(ResourceCost resCost) {
         String str = "";
         if (resCost.food > 0)
@@ -103,7 +147,6 @@ public class ResourceCosts {
         Do not read values and initialize from config earlier, else will result in IllegalStateException !!!
      */
     public static void deferredLoadResourceCosts() {
-        //TODO: Attempt to replace manual definitions with iteration through UnitCosts#getDeclaredFields
 
         // ******************* UNITS ******************* //
         // Monsters
@@ -171,47 +214,38 @@ public class ResourceCosts {
         FLAME_SANCTUARY = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.BuildingCosts.FLAME_SANCTUARY);
         WITHER_SHRINE = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.BuildingCosts.WITHER_SHRINE);
         FORTRESS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.BuildingCosts.FORTRESS);
+        // ******************* RESEARCH ******************* //
+        RESEARCH_GOLEM_SMITHING = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_GOLEM_SMITHING);
+        RESEARCH_LAB_LIGHTNING_ROD = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_LAB_LIGHTNING_ROD);
+        RESEARCH_RESOURCE_CAPACITY = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_RESOURCE_CAPACITY);
+        RESEARCH_SPIDER_JOCKEYS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_SPIDER_JOCKEYS);
+        RESEARCH_POISON_SPIDERS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_POISON_SPIDERS);
+        RESEARCH_HUSKS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_HUSKS);
+        RESEARCH_DROWNED = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_DROWNED);
+        RESEARCH_STRAYS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_STRAYS);
+        RESEARCH_LINGERING_POTIONS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_LINGERING_POTIONS);
+        RESEARCH_EVOKER_VEXES = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_EVOKER_VEXES);
+        RESEARCH_CASTLE_FLAG = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_CASTLE_FLAG);
+        RESEARCH_GRAND_LIBRARY = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_GRAND_LIBRARY);
+        RESEARCH_SILVERFISH = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_SILVERFISH);
+        RESEARCH_SCULK_AMPLIFIERS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_SCULK_AMPLIFIERS);
+        RESEARCH_RAVAGER_ARTILLERY = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_RAVAGER_ARTILLERY);
+        RESEARCH_BRUTE_SHIELDS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_BRUTE_SHIELDS);
+        RESEARCH_HOGLIN_CAVALRY = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_HOGLIN_CAVALRY);
+        RESEARCH_HEAVY_TRIDENTS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_HEAVY_TRIDENTS);
+        RESEARCH_BLAZE_FIRE_WALL = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_BLAZE_FIRE_WALL);
+        RESEARCH_FIRE_RESISTANCE = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_FIRE_RESISTANCE);
+        RESEARCH_WITHER_CLOUDS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_WITHER_CLOUDS);
+        RESEARCH_ADVANCED_PORTALS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_ADVANCED_PORTALS);
+        RESEARCH_CIVILIAN_PORTAL = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_CIVILIAN_PORTAL);
+        RESEARCH_MILITARY_PORTAL = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_MILITARY_PORTAL);
+        RESEARCH_TRANSPORT_PORTAL = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_TRANSPORT_PORTAL);
+        // ******************* ENCHANTMENTS ******************* //
+        ENCHANT_MAIMING = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_MAIMING);
+        ENCHANT_QUICK_CHARGE = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_QUICK_CHARGE);
+        ENCHANT_SHARPNESS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_SHARPNESS);
+        ENCHANT_MULTISHOT = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_MULTISHOT);
+        ENCHANT_VIGOR = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_VIGOR);
 
     }
-
-    // ******************* RESEARCH ******************* //
-    public static ResourceCost RESEARCH_GOLEM_SMITHING = ResourceCost.Research(0, 150,200, 90);
-    public static ResourceCost RESEARCH_LAB_LIGHTNING_ROD = ResourceCost.Research(0,0,400, 120);
-    public static ResourceCost RESEARCH_RESOURCE_CAPACITY = ResourceCost.Research(200,200,0, 90);
-    public static ResourceCost RESEARCH_SPIDER_JOCKEYS = ResourceCost.Research(300,250,0, 100);
-    public static ResourceCost RESEARCH_SPIDER_WEBS = ResourceCost.Research(0, 300, 300, 140);
-    public static ResourceCost RESEARCH_POISON_SPIDERS = ResourceCost.Research(400,0,250, 150);
-    public static ResourceCost RESEARCH_HUSKS = ResourceCost.Research(500,0,500, 200);
-    public static ResourceCost RESEARCH_DROWNED = ResourceCost.Research(500,0,500, 200);
-    public static ResourceCost RESEARCH_STRAYS = ResourceCost.Research(500,500,0, 200);
-    public static ResourceCost RESEARCH_LINGERING_POTIONS = ResourceCost.Research(250,250,250, 140);
-    public static ResourceCost RESEARCH_EVOKER_VEXES = ResourceCost.Research(500,0,300, 120);
-    public static ResourceCost RESEARCH_CASTLE_FLAG = ResourceCost.Research(200,150,150, 90);
-    public static ResourceCost RESEARCH_GRAND_LIBRARY = ResourceCost.Research(0,200,100, 140);
-    public static ResourceCost RESEARCH_SILVERFISH = ResourceCost.Research(0,300,300, 120);
-    public static ResourceCost RESEARCH_SCULK_AMPLIFIERS = ResourceCost.Research(0,200,400, 150);
-    public static ResourceCost RESEARCH_RAVAGER_ARTILLERY = ResourceCost.Research(400,0,350, 140);
-    public static ResourceCost RESEARCH_BRUTE_SHIELDS = ResourceCost.Research(0,300,300, 150);
-    public static ResourceCost RESEARCH_HOGLIN_CAVALRY = ResourceCost.Research(300,250,0, 100);
-    public static ResourceCost RESEARCH_HEAVY_TRIDENTS = ResourceCost.Research(0, 250, 250, 120);
-    public static ResourceCost RESEARCH_BLAZE_FIRE_WALL = ResourceCost.Research(400, 0, 300, 150);
-    public static ResourceCost RESEARCH_FIRE_RESISTANCE = ResourceCost.Research(0, 200, 200, 100);
-    public static ResourceCost RESEARCH_WITHER_CLOUDS = ResourceCost.Research(250, 0, 350, 150);
-    public static ResourceCost RESEARCH_ADVANCED_PORTALS = ResourceCost.Research(0, 300, 300, 150);
-    public static ResourceCost RESEARCH_CIVILIAN_PORTAL = ResourceCost.Research(0, 75, 0, 20);
-    public static ResourceCost RESEARCH_MILITARY_PORTAL = ResourceCost.Research(0, 125, 0, 30);
-    public static ResourceCost RESEARCH_TRANSPORT_PORTAL = ResourceCost.Research(0, 175, 0, 40);
-
-    // ******************* ENCHANTMENTS ******************* //
-    public static ResourceCost ENCHANT_MAIMING = ResourceCost.Enchantment(0,20, 30);
-    public static ResourceCost ENCHANT_QUICK_CHARGE = ResourceCost.Enchantment(0,30, 15);
-    public static ResourceCost ENCHANT_SHARPNESS = ResourceCost.Enchantment(0,40, 60);
-    public static ResourceCost ENCHANT_MULTISHOT = ResourceCost.Enchantment(0,70, 35);
-    public static ResourceCost ENCHANT_VIGOR = ResourceCost.Enchantment(0,60, 60);
-
-    // ******************* Unused ******************* //
-
-    public static ResourceCost RESEARCH_VINDICATOR_AXES = ResourceCost.Research(0,200,400, 150);
-    public static ResourceCost RESEARCH_PILLAGER_CROSSBOWS = ResourceCost.Research(0,600,300, 180);
-    public static ResourceCost ENDERMAN = ResourceCost.Unit(100,100,100,30,3);
 }
