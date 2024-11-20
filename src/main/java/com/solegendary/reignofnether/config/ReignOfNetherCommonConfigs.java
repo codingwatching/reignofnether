@@ -115,6 +115,7 @@ public class ReignOfNetherCommonConfigs {
         ResearchCosts.RESEARCH_BLAZE_FIRE_WALL.define(BUILDER);
         ResearchCosts.RESEARCH_FIRE_RESISTANCE.define(BUILDER);
         ResearchCosts.RESEARCH_WITHER_CLOUDS.define(BUILDER);
+        ResearchCosts.RESEARCH_BLOODLUST.define(BUILDER);
         ResearchCosts.RESEARCH_ADVANCED_PORTALS.define(BUILDER);
         ResearchCosts.RESEARCH_CIVILIAN_PORTAL.define(BUILDER);
         ResearchCosts.RESEARCH_MILITARY_PORTAL.define(BUILDER);
@@ -227,6 +228,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry RESEARCH_BLAZE_FIRE_WALL = ResourceCostConfigEntry.Research(400, 0, 300, 150, "Blaze Fire Wall Research Config");
         public static final ResourceCostConfigEntry RESEARCH_FIRE_RESISTANCE = ResourceCostConfigEntry.Research(0, 200, 200, 100, "Fire Resistance Research Config");
         public static final ResourceCostConfigEntry RESEARCH_WITHER_CLOUDS = ResourceCostConfigEntry.Research(250, 0, 350, 150, "Wither Clouds Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_BLOODLUST = ResourceCostConfigEntry.Research(250, 250, 250, 150, "Bloodlust Research Config");
         public static final ResourceCostConfigEntry RESEARCH_ADVANCED_PORTALS = ResourceCostConfigEntry.Research(0, 300, 300, 150, "Advanced Portals Research Config");
         public static final ResourceCostConfigEntry RESEARCH_CIVILIAN_PORTAL = ResourceCostConfigEntry.Research(0, 75, 0, 20, "Civilian Portal Research Config");
         public static final ResourceCostConfigEntry RESEARCH_MILITARY_PORTAL = ResourceCostConfigEntry.Research(0, 125, 0, 30, "Military Portal Research Config");

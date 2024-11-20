@@ -98,6 +98,7 @@ public class ResourceCosts {
     public static ResourceCost RESEARCH_BLAZE_FIRE_WALL;
     public static ResourceCost RESEARCH_FIRE_RESISTANCE;
     public static ResourceCost RESEARCH_WITHER_CLOUDS;
+    public static ResourceCost RESEARCH_BLOODLUST;
     public static ResourceCost RESEARCH_ADVANCED_PORTALS;
     public static ResourceCost RESEARCH_CIVILIAN_PORTAL;
     public static ResourceCost RESEARCH_MILITARY_PORTAL;
@@ -236,6 +237,7 @@ public class ResourceCosts {
         RESEARCH_BLAZE_FIRE_WALL = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_BLAZE_FIRE_WALL);
         RESEARCH_FIRE_RESISTANCE = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_FIRE_RESISTANCE);
         RESEARCH_WITHER_CLOUDS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_WITHER_CLOUDS);
+        RESEARCH_BLOODLUST = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_BLOODLUST);
         RESEARCH_ADVANCED_PORTALS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_ADVANCED_PORTALS);
         RESEARCH_CIVILIAN_PORTAL = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_CIVILIAN_PORTAL);
         RESEARCH_MILITARY_PORTAL = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_MILITARY_PORTAL);
