@@ -210,7 +210,6 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry RESEARCH_LAB_LIGHTNING_ROD = ResourceCostConfigEntry.Research(0,0,400, 120, "Lightning Lab Research Config");
         public static final ResourceCostConfigEntry RESEARCH_RESOURCE_CAPACITY = ResourceCostConfigEntry.Research(200,200,0, 90, "Stockpile Resource Capacity Research Config");
         public static final ResourceCostConfigEntry RESEARCH_SPIDER_JOCKEYS = ResourceCostConfigEntry.Research(300,250,0, 100, "Spider Jockey Research Config");
-        //public static final ResourceCostConfigEntry RESEARCH_SPIDER_WEBS = ResourceCostConfigEntry.Research(0, 300, 300, 140, "Spider Web Research Config (UNUSED)");
         public static final ResourceCostConfigEntry RESEARCH_POISON_SPIDERS = ResourceCostConfigEntry.Research(400,0,250, 150, "Poison Spider Research Config");
         public static final ResourceCostConfigEntry RESEARCH_HUSKS = ResourceCostConfigEntry.Research(500,0,500, 200, "Husk Research Config");
         public static final ResourceCostConfigEntry RESEARCH_DROWNED = ResourceCostConfigEntry.Research(500,0,500, 200, "Drowned Research Config");
