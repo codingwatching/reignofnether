@@ -171,8 +171,8 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
         AttackerUnit.tick(this);
 
         // apply slowness level 2 during daytime for a short time repeatedly
-        if (tickCount % 4 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
-            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 1));
+        if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
+            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, 1));
 
         for (Ability ability : abilities)
             if (ability instanceof SpinWebs spinWebs)
@@ -192,7 +192,7 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
         this.usePortalGoal = new UsePortalGoal(this);
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
     }
 
@@ -217,6 +217,9 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
         if (super.doHurtTarget(pEntity)) {
             if (pEntity instanceof LivingEntity)
                 ((LivingEntity)pEntity).addEffect(new MobEffectInstance(MobEffects.POISON, POISON_SECONDS * 20, 0), this);
+            for (Ability ability : abilities)
+                if (ability instanceof SpinWebs spinWebs && spinWebs.autocast && spinWebs.isOffCooldown())
+                    spinWebs.use(this.level, this, pEntity.getOnPos());
             return true;
         } else {
             return false;

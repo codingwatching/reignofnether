@@ -246,6 +246,5 @@ public class ResourceCosts {
         ENCHANT_SHARPNESS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_SHARPNESS);
         ENCHANT_MULTISHOT = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_MULTISHOT);
         ENCHANT_VIGOR = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_VIGOR);
-
     }
 }
