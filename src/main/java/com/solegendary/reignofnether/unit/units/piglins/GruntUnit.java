@@ -168,7 +168,6 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
 
         if (level.isClientSide()) {
             AbilityButton centralPortalButton = CentralPortal.getBuildButton(Keybindings.keyQ);
-            centralPortalButton.isEnabled = () -> !BuildingUtils.doesPlayerOwnCapitol(level.isClientSide(), getOwnerName());
             this.abilityButtons.add(centralPortalButton);
             this.abilityButtons.add(Portal.getBuildButton(Keybindings.keyW));
             this.abilityButtons.add(NetherwartFarm.getBuildButton(Keybindings.keyE));

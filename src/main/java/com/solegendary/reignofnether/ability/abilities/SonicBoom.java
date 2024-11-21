@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.unit.UnitAction;
+import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
 import com.solegendary.reignofnether.util.MyRenderer;
@@ -36,6 +37,7 @@ public class SonicBoom extends Ability {
             true,
             true
         );
+        this.canChangeOneClickOneUse = false;
         this.wardenUnit = wardenUnit;
     }
 
@@ -44,11 +46,21 @@ public class SonicBoom extends Ability {
         return new AbilityButton("Sonic Boom",
             new ResourceLocation("minecraft", "textures/block/note_block.png"),
             hotkey,
-            () -> CursorClientEvents.getLeftClickAction() == UnitAction.CAST_SONIC_BOOM,
+            () -> CursorClientEvents.getLeftClickAction() == UnitAction.CAST_SONIC_BOOM ||
+                    !oneClickOneUse,
             () -> false,
             () -> true,
             () -> CursorClientEvents.setLeftClickAction(UnitAction.CAST_SONIC_BOOM),
-            null,
+            () -> {
+                if (oneClickOneUse) {
+                    oneClickOneUse = false;
+                    UnitClientEvents.sendUnitCommand(UnitAction.DISABLE_SIMULTANEOUS_CAST);
+                }
+                else {
+                    oneClickOneUse = true;
+                    UnitClientEvents.sendUnitCommand(UnitAction.ENABLE_SIMULTANEOUS_CAST);
+                }
+            },
             List.of(FormattedCharSequence.forward(I18n.get("abilities.reignofnether.sonic_boom"),
                     Style.EMPTY.withBold(true)
                 ),
@@ -59,7 +71,9 @@ public class SonicBoom extends Ability {
                     MyRenderer.iconStyle
                 ),
                 FormattedCharSequence.forward(I18n.get("abilities.reignofnether.sonic_boom.tooltip2"), Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.sonic_boom.tooltip3"), Style.EMPTY)
+                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.sonic_boom.tooltip3"), Style.EMPTY),
+                FormattedCharSequence.forward("", Style.EMPTY),
+                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.sonic_boom.tooltip4"), Style.EMPTY)
             ),
             this
         );

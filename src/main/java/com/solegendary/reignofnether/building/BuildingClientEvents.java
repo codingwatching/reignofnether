@@ -387,8 +387,8 @@ public class BuildingClientEvents {
 
         BlockPos origin = getOriginPos();
         Vec3i originOffset = new Vec3i(origin.getX(), origin.getY(), origin.getZ());
-        BlockPos minPos = BuildingUtils.getMinCorner(blocksToDraw).offset(originOffset).offset(-1, -1, -1);
-        BlockPos maxPos = BuildingUtils.getMaxCorner(blocksToDraw).offset(originOffset).offset(1, 1, 1);
+        BlockPos minPos = BuildingUtils.getMinCorner(blocksToDraw).offset(originOffset);//.offset(-1, -1, -1);
+        BlockPos maxPos = BuildingUtils.getMaxCorner(blocksToDraw).offset(originOffset);//.offset(1, 1, 1);
 
         for (Building building : buildings) {
             for (BuildingBlock block : building.blocks) {

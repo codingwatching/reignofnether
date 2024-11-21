@@ -41,6 +41,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -379,7 +380,7 @@ public class HudClientEvents {
             // ---------------------------------------------------------------
             // Building production queue (show only if 1 building is selected)
             // ---------------------------------------------------------------
-            else if (hudSelBuildingOwned && hudSelectedBuilding instanceof ProductionBuilding selProdBuilding) {
+            else if ((hudSelBuildingOwned || !PlayerClientEvents.isRTSPlayer) && hudSelectedBuilding instanceof ProductionBuilding selProdBuilding) {
                 blitY = screenHeight - iconFrameSize * 2 - 5;
 
                 for (int i = 0; i < selProdBuilding.productionQueue.size(); i++)
@@ -460,7 +461,7 @@ public class HudClientEvents {
             blitX = 0;
             blitY = screenHeight - iconFrameSize;
 
-            if (hudSelectedBuilding != null && hudSelBuildingOwned && !hudSelectedBuilding.isBuilt) {
+            if (hudSelectedBuilding != null && (hudSelBuildingOwned) && !hudSelectedBuilding.isBuilt) {
                 if (!buildingCancelButton.isHidden.get()) {
                     buildingCancelButton.render(evt.getPoseStack(), 0, screenHeight - iconFrameSize, mouseX, mouseY);
                     renderedButtons.add(buildingCancelButton);
@@ -1229,7 +1230,6 @@ public class HudClientEvents {
         if (evt.phase != TickEvent.Phase.END) {
             return;
         }
-
         if (OrthoviewClientEvents.isEnabled()) {
             portraitRendererUnit.tickAnimation();
         }

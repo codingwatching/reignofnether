@@ -536,8 +536,6 @@ public abstract class Building {
                             this.ownerName,
                             PlayerServerEvents.TICKS_TO_REVEAL / ResourceCost.TICKS_PER_SECOND
                     );
-                } else if (SurvivalServerEvents.isEnabled()) {
-                    PlayerServerEvents.defeat(this.ownerName, Component.translatable("server.reignofnether.lost_capitol_defeat").getString());
                 }
             }
         }
@@ -836,7 +834,7 @@ public abstract class Building {
                 if (retries < MAX_RETRIES) {
                     spawnAttempts = 0;
                     retries += 1;
-                    range -= 25;
+                    range -= (range * 0.35f);
                 } else {
                     ReignOfNether.LOGGER.warn("Gave up trying to find a suitable animal spawn!");
                     return;
@@ -846,6 +844,7 @@ public abstract class Building {
             || spawnBs.getMaterial() == Material.WOOD
             || spawnBp.distSqr(centrePos) < ANIMAL_SPAWN_RANGE_MIN * ANIMAL_SPAWN_RANGE_MIN
             || spawnBp.distSqr(centrePos) > range * range
+            || Math.abs(spawnBp.getY() - minCorner.getY()) >= 4
             || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp)
             || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp.above()));
 

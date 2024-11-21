@@ -20,15 +20,15 @@ import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.model.VillagerModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -40,6 +40,7 @@ import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -179,7 +180,6 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
         if (level.isClientSide()) {
             AbilityButton townCentreButton = TownCentre.getBuildButton(Keybindings.keyQ);
-            townCentreButton.isEnabled = () -> !BuildingUtils.doesPlayerOwnCapitol(level.isClientSide(), getOwnerName());
             this.abilityButtons.add(townCentreButton);
             this.abilityButtons.add(OakStockpile.getBuildButton(Keybindings.keyW));
             this.abilityButtons.add(VillagerHouse.getBuildButton(Keybindings.keyE));
@@ -272,6 +272,11 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.AIR));
     }
 
+    @Override
+    @Nullable
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        return pSpawnData;
+    }
 
     private static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA;
 

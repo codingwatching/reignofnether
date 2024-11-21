@@ -347,7 +347,8 @@ public class BuildingServerEvents {
 
 
     public static void cancelBuilding(Building building) {
-        if (building == null || building.isCapitol) {
+        if (building == null ||
+            (building.isCapitol && BuildingUtils.capitolsOwned(false, building.ownerName) == 1)) {
             return;
         }
 

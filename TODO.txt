@@ -7,22 +7,52 @@
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
+
+
 Wave Survival
---------
+-------------
+
 [❌] Improve spawn logic again for any number of buildings
+
 [❌] Default the gamemode selector to survival
-[❌] Don't make the capitol destroyed be a game loss
-    - allow multiple capitols to be built, but only one allowed to build units at a time
+
+[🟡] You no longer lose when your capitol is destroyed
+
 
 Bugfixes
 --------
-[❌] Remove tutorial popup
-[❌] Ranged units stagger their attack speeds by a few ticks randomly
+
+[🟡] Portals can sometimes stack the same upgrade if they're upgraded with multiple selected
+
+[🟡] Illagers can no longer spawn with random enchantments on their equipment
+
+[🟡] Remove tutorial popup
+    - How to actually enable it again?
+
+[🟡] Ranged units now stagger their attack speeds by a few ticks randomly
     - This is to work around Minecraft's built-in 1-tick invincibility frames
+
+[❌] Teams sometimes switch for some reason
+    - only happens in wave survival?
+
+[❌] Can't control units when they're on slabs?
+
+[🟡] Animals cannot spawn on Y levels too different to your capitol
+    - can't deal with Berlingrad AND also have it work on hill maps ?
+
+[🟡] Queued units no longer progress if you're at the population cap (instead of being stuck at 99%)
+    - This is to fix an issue of being able to go over the max cap when the server is lagging
 
 
 Quality of Life Features
 ------------------------
+
+[✔] All buildings can now be built directly adjacent to each other
+    - This means you can use houses as walls (but you won't be able to shoot past them)
+
+[🟡] Right click to toggle whether sonic booms are one-click-one-cast or not
+
+[✔] Spectators can see what's being produced on anyone's buildings
 
 [❌] Shift queueing movements and buildings (not just placement)
     - Add index to sendCommand packets
@@ -31,18 +61,35 @@ Quality of Life Features
     - Add end detections in goals for when to move to nextActionItem
     - Add clientside checkpoints
 
+[❌] Cast spells with the closest unit first
+
 
 Balancing
 ---------
-[✔] Ghasts: -1 damage to buildings, +20s build time, +1 pop
+
+[❌] Remove creeper friendly fire again, but this time reduce damage dropoff
+
+[✔] All factions may build additional capitols, but only one can produce workers at any given time
+    - you can also now delete capitols if you have more than one
+
+[✔] Ghasts: +20s build time, +1 pop
 
 [❌] Solution to discourage rushing
     - villagers are most vulnerable due to their lategame nature
     - copy the wc3 ability of turning villagers into temporary militia?
         - give them a helmet and stone sword upgrade for +2 damage
         - turn back on isPushable
-    OR just allow all workers to shoot out of garrisons
-    what could piglins have?
+        - damage to animals should still be 1
 
 [❌] Add wither upgrade that lets them stack wither on a single enemy
     - Remove +% damage passive to damaged targets
+
+
+Languages
+---------
+
+Updated:
+"buildings.monsters.reignofnether.mausoleum.tooltip3": "Only one capitol can produce workers at any given time.",
+"buildings.piglins.reignofnether.central_portal.tooltip2": "Only one capitol can produce workers any given time.",
+"buildings.villagers.reignofnether.town_centre.tooltip2": "Only one capitol can produce workers any given time.",
+"abilities.reignofnether.sonic_boom.tooltip4": "Right-click to toggle simultaneous casting.",
