@@ -116,3 +116,6 @@ Updated:
 "buildings.piglins.reignofnether.central_portal.tooltip2": "Only one capitol can produce workers any given time.",
 "buildings.villagers.reignofnether.town_centre.tooltip2": "Only one capitol can produce workers any given time.",
 "abilities.reignofnether.sonic_boom.tooltip4": "Right-click to toggle simultaneous casting.",
+
+New:
+"item.reignofnether.militia_unit_spawn_egg": "Spawn Militia Unit",

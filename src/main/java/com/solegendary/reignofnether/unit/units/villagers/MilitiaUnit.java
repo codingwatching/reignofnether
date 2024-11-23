@@ -5,13 +5,13 @@ import com.solegendary.reignofnether.building.buildings.villagers.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
-import com.solegendary.reignofnether.research.ResearchClient;
-import com.solegendary.reignofnether.research.ResearchServerEvents;
-import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
-import com.solegendary.reignofnether.unit.interfaces.*;
+import com.solegendary.reignofnether.unit.interfaces.ArmSwingingUnit;
+import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
+import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
+import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.packets.UnitConvertClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
@@ -24,7 +24,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -33,20 +32,16 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.npc.*;
-import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, ArmSwingingUnit, VillagerDataHolder, ConvertableUnit {
+public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, VillagerDataHolder, ConvertableUnit {
     // region
     private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
     private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
@@ -83,6 +78,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, ArmSw
     private SelectedTargetGoal<? extends LivingEntity> targetGoal;
     private ReturnResourcesGoal returnResourcesGoal;
     private MeleeAttackUnitGoal attackGoal;
+    private MeleeAttackBuildingGoal attackBuildingGoal;
 
     public LivingEntity getFollowTarget() { return followTarget; }
     public boolean getHoldPosition() { return holdPosition; }
@@ -115,7 +111,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, ArmSw
     public BlockPos getAttackMoveTarget() { return attackMoveTarget; }
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
     public Goal getAttackGoal() { return attackGoal; }
-    public Goal getAttackBuildingGoal() { return null; }
+    public Goal getAttackBuildingGoal() { return attackBuildingGoal; }
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
 
@@ -147,27 +143,6 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, ArmSw
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
     private final List<Ability> abilities = new ArrayList<>();
     private final List<ItemStack> items = new ArrayList<>();
-
-    private boolean isSwingingArmOnce = false;
-    private int swingTime = 0;
-
-    public int getSwingTime() {
-        return swingTime;
-    }
-
-    public void setSwingTime(int time) {
-        this.swingTime = time;
-    }
-
-    public boolean isSwingingArmOnce() { return isSwingingArmOnce; }
-
-    public void setSwingingArmOnce(boolean swing) {
-        isSwingingArmOnce = swing;
-    }
-
-    public boolean isSwingingArmRepeatedly() {
-        return (this.getGatherResourceGoal().isGathering() || this.getBuildRepairGoal().isBuilding());
-    }
 
     public MilitiaUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
@@ -237,6 +212,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, ArmSw
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
         this.attackGoal = new MeleeAttackUnitGoal(this, true);
+        this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }
 
@@ -247,6 +223,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, ArmSw
 
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, attackGoal);
+        this.goalSelector.addGoal(2, attackBuildingGoal);
         this.goalSelector.addGoal(2, returnResourcesGoal);
         this.goalSelector.addGoal(2, garrisonGoal);
         this.targetSelector.addGoal(2, targetGoal);
