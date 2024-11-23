@@ -51,6 +51,7 @@ public class ResourceCosts {
     public static ResourceCost ZOGLIN = ResourceCost.Unit(0,0,0,10,2);
 
     // Villagers
+    public static ResourceCost MILITIA = ResourceCost.Unit(50,0,0,15,1);
     public static ResourceCost VILLAGER = ResourceCost.Unit(50,0,0,15,1);
     public static ResourceCost IRON_GOLEM = ResourceCost.Unit(0,50,250,45,4);
     public static ResourceCost PILLAGER = ResourceCost.Unit(120,80,0,32,3);

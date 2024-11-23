@@ -1,24 +1,19 @@
 package com.solegendary.reignofnether.unit.units.villagers;
 
-import com.solegendary.reignofnether.building.BuildingUtils;
-import com.solegendary.reignofnether.building.buildings.villagers.OakBridge;
-import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
+import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
-import com.solegendary.reignofnether.unit.interfaces.ArmSwingingUnit;
-import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
-import com.solegendary.reignofnether.unit.interfaces.Unit;
-import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
-import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.unit.interfaces.*;
+import com.solegendary.reignofnether.unit.packets.UnitConvertClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
-import net.minecraft.client.model.VillagerModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -29,9 +24,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Vindicator;
@@ -47,8 +44,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, AttackerUnit, ArmSwingingUnit, VillagerDataHolder {
+public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, ArmSwingingUnit, VillagerDataHolder, ConvertableUnit {
     // region
     private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
     private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
@@ -76,15 +74,13 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public List<ItemStack> getItems() {return items;};
     public MoveToTargetBlockGoal getMoveGoal() {return moveGoal;}
     public SelectedTargetGoal<? extends LivingEntity> getTargetGoal() {return targetGoal;}
-    public BuildRepairGoal getBuildRepairGoal() {return buildRepairGoal;}
-    public GatherResourcesGoal getGatherResourceGoal() {return gatherResourcesGoal;}
+    public BuildRepairGoal getBuildRepairGoal() {return null;}
+    public GatherResourcesGoal getGatherResourceGoal() {return null;}
     public ReturnResourcesGoal getReturnResourcesGoal() {return returnResourcesGoal;}
     public int getMaxResources() {return maxResources;}
 
     private MoveToTargetBlockGoal moveGoal;
     private SelectedTargetGoal<? extends LivingEntity> targetGoal;
-    public BuildRepairGoal buildRepairGoal;
-    public GatherResourcesGoal gatherResourcesGoal;
     private ReturnResourcesGoal returnResourcesGoal;
     private MeleeAttackUnitGoal attackGoal;
 
@@ -102,7 +98,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public String getOwnerName() { return this.entityData.get(ownerDataAccessor); }
     public void setOwnerName(String name) { this.entityData.set(ownerDataAccessor, name); }
     public static final EntityDataAccessor<String> ownerDataAccessor =
-            SynchedEntityData.defineId(VillagerUnit.class, EntityDataSerializers.STRING);
+            SynchedEntityData.defineId(MilitiaUnit.class, EntityDataSerializers.STRING);
 
     // combat stats
     public float getMovementSpeed() {return movementSpeed;}
@@ -123,24 +119,29 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
 
+    // ConvertableUnit
+    private boolean shouldDiscard = false;
+    public boolean shouldDiscard() { return shouldDiscard; }
+    public void setShouldDiscard(boolean discard) { this.shouldDiscard = discard; }
+
     // endregion
 
-    public BlockState getReplantBlockState() {
-        return Blocks.WHEAT.defaultBlockState();
-    }
+    // ticks before turning back into a villager
+    final static public float DURATION_TICKS_MAX = 1200;
+    public float durationTicksLeft = DURATION_TICKS_MAX;
+    public boolean converted = false;
 
-
-    final static public float attackDamage = 1.0f;
+    final static public float attackDamage = 3.0f;
     final static public float attacksPerSecond = 0.5f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
     final static public float aggroRange = 0;
     final static public boolean willRetaliate = false; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = false;
 
-    final static public float maxHealth = 25.0f;
+    final static public float maxHealth = 30.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
-    final static public int popCost = ResourceCosts.VILLAGER.population;
+    final static public int popCost = ResourceCosts.MILITIA.population;
     public int maxResources = 100;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
@@ -168,7 +169,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         return (this.getGatherResourceGoal().isGathering() || this.getBuildRepairGoal().isBuilding());
     }
 
-    public VillagerUnit(EntityType<? extends Vindicator> entityType, Level level) {
+    public MilitiaUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
         if (level.isClientSide()) {
@@ -198,10 +199,10 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.ATTACK_DAMAGE, VillagerUnit.attackDamage)
-                .add(Attributes.MOVEMENT_SPEED, VillagerUnit.movementSpeed)
-                .add(Attributes.MAX_HEALTH, VillagerUnit.maxHealth)
-                .add(Attributes.ARMOR, VillagerUnit.armorValue);
+                .add(Attributes.ATTACK_DAMAGE, MilitiaUnit.attackDamage)
+                .add(Attributes.MOVEMENT_SPEED, MilitiaUnit.movementSpeed)
+                .add(Attributes.MAX_HEALTH, MilitiaUnit.maxHealth)
+                .add(Attributes.ARMOR, MilitiaUnit.armorValue);
     }
 
     @Override
@@ -220,7 +221,14 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         super.tick();
         Unit.tick(this);
         AttackerUnit.tick(this);
-        WorkerUnit.tick(this);
+
+        if (durationTicksLeft <= 0 && !converted && !level.isClientSide()) {
+            int newId = this.convertToUnit(EntityRegistrar.VILLAGER_UNIT.get());
+            UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newId));
+            converted = true;
+        } else {
+            durationTicksLeft -= 1;
+        }
     }
 
     public void initialiseGoals() {
@@ -229,8 +237,6 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
         this.attackGoal = new MeleeAttackUnitGoal(this, true);
-        this.buildRepairGoal = new BuildRepairGoal(this);
-        this.gatherResourcesGoal = new GatherResourcesGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }
 
@@ -241,8 +247,6 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, attackGoal);
-        this.goalSelector.addGoal(2, buildRepairGoal);
-        this.goalSelector.addGoal(2, gatherResourcesGoal);
         this.goalSelector.addGoal(2, returnResourcesGoal);
         this.goalSelector.addGoal(2, garrisonGoal);
         this.targetSelector.addGoal(2, targetGoal);
@@ -252,17 +256,14 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
     @Override
     public void setupEquipmentAndUpgradesClient() {
-        if (ResearchClient.hasResearch(ResearchResourceCapacity.itemName))
-            this.maxResources = 200;
+        ItemStack axeStack = new ItemStack(Items.STONE_SWORD);
+        this.setItemSlot(EquipmentSlot.MAINHAND, axeStack);
     }
 
     @Override
     public void setupEquipmentAndUpgradesServer() {
-        if (ResearchServerEvents.playerHasResearch(this.getOwnerName(), ResearchResourceCapacity.itemName))
-            this.maxResources = 200;
-
-        if (this.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof BannerItem)
-            this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.AIR));
+        ItemStack axeStack = new ItemStack(Items.STONE_SWORD);
+        this.setItemSlot(EquipmentSlot.MAINHAND, axeStack);
     }
 
     @Override
@@ -277,7 +278,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ownerDataAccessor, "");
-        this.entityData.define(VILLAGER_DATA, new VillagerData(VillagerType.PLAINS, VillagerProfession.NONE, 1));
+        this.entityData.define(VILLAGER_DATA, new VillagerData(VillagerType.PLAINS, VillagerProfession.ARMORER, 1));
     }
 
     @Override

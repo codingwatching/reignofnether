@@ -48,9 +48,6 @@ Bugfixes
 
 [🟡] Illagers can no longer spawn with random enchantments on their equipment
 
-[🟡] Remove tutorial popup
-    - How to actually enable it again?
-
 [🟡] Ranged units now stagger their attack speeds by a few ticks randomly
     - This is to work around Minecraft's built-in 1-tick invincibility frames
 
