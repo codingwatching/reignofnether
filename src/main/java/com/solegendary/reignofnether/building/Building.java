@@ -249,6 +249,10 @@ public abstract class Building {
     }
 
     public boolean canAfford(String ownerName) {
+        if (SurvivalServerEvents.isEnabled() &&
+            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(ownerName))
+            return true;
+
         for (Resources resources : ResourcesServerEvents.resourcesList)
             if (resources.ownerName.equals(ownerName)) {
                 return (
@@ -353,7 +357,7 @@ public abstract class Building {
     // place blocks according to the following rules:
     // - block must be connected to something else (not air)
     // - block must be the lowest Y value possible
-    private void buildNextBlock(ServerLevel level, String builderName) {
+    public void buildNextBlock(ServerLevel level, String builderName) {
 
         // if the building is already constructed then start subtracting resources for repairs
         if (isBuilt) {

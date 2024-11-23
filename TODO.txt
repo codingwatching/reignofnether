@@ -12,11 +12,26 @@
 Wave Survival
 -------------
 
-[❌] Improve spawn logic again for any number of buildings
-
 [❌] Default the gamemode selector to survival
 
-[🟡] You no longer lose when your capitol is destroyed
+[🟡] You now lose when all buildings are destroyed instead of just your capitol, just like in multiplayer
+
+[🟡] Raised quantity of spawns for waves 3+
+
+[🟡] Improved spawn location logic again
+    - This time, enemies only try to spawn near your outermost buildings to avoid a chance of a wave failing to spawn
+    - If none or less than the required enemies spawned, a warning is sent to all players
+        - If you see this warning, please tell me and show me a screenshot of your base and map
+
+[✔] Skeletons can now spawn on the first wave
+
+[🟡] Mob frostwalker now works on lava by turning the lava into magma
+
+[🟡] Added Illager waves
+    - Illagers spawn in large groups
+
+[🟡] Added Piglin waves
+    - Illagers spawn in large groups
 
 
 Bugfixes
@@ -80,6 +95,8 @@ Balancing
         - give them a helmet and stone sword upgrade for +2 damage
         - turn back on isPushable
         - damage to animals should still be 1
+
+    - Piglin mines?
 
 [❌] Add wither upgrade that lets them stack wither on a single enemy
     - Remove +% damage passive to damaged targets
