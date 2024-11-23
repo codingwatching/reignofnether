@@ -123,7 +123,7 @@ public class SurvivalServerEvents {
             setToStartingDayTime();
         }
 
-        int enemyCount = getCurrentEnemies().size();
+        int enemyCount = getCurrentEnemies().size() + portals.size();
         if (enemyCount < lastEnemyCount && enemyCount <= 3) {
             if (enemyCount == 0)
                 waveCleared((ServerLevel) evt.level);

@@ -1,27 +1,17 @@
 package com.solegendary.reignofnether.survival;
 
-import com.solegendary.reignofnether.building.Building;
-import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
-import com.solegendary.reignofnether.unit.UnitAction;
-import com.solegendary.reignofnether.unit.UnitServerEvents;
-import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
-import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 
-import java.util.*;
+import java.util.Random;
 
 import static com.solegendary.reignofnether.survival.SurvivalServerEvents.PIGLIN_OWNER_NAME;
-import static com.solegendary.reignofnether.survival.SurvivalServerEvents.VILLAGER_OWNER_NAME;
 import static com.solegendary.reignofnether.survival.SurvivalSpawner.getModifiedPopCost;
-import static com.solegendary.reignofnether.survival.SurvivalSpawner.placeIceOrMagma;
 
 public class WavePortal {
 
@@ -36,6 +26,7 @@ public class WavePortal {
 
     public WavePortal(Portal portal, Wave wave) {
         this.portal = portal;
+        this.portal.selfBuilding = true;
         this.wave = wave;
         this.initialSpawnPop = wave.population / Math.max(1, wave.number / 2);
     }
@@ -46,12 +37,14 @@ public class WavePortal {
 
     public void tick(long ticksToAdd) {
         if (!portal.isBuilt)
-            portal.buildNextBlock((ServerLevel) portal.getLevel(), portal.ownerName);
-        else if (initialSpawnPop > 0) {
+            return;
+
+        if (initialSpawnPop > 0) {
             doSpawn();
         } else if (spawnTicks >= SPAWN_TICKS_MAX) {
             spawnTicks = 0;
             doSpawn();
+        } else {
             spawnTicks += ticksToAdd;
         }
     }
@@ -64,7 +57,7 @@ public class WavePortal {
         ServerLevel level = (ServerLevel) portal.getLevel();
         Entity entity = portal.produceUnit(level, mobType, PIGLIN_OWNER_NAME, true);
 
-        if (entity instanceof Unit unit)
+        if (entity instanceof Unit unit && initialSpawnPop > 0)
             initialSpawnPop -= getModifiedPopCost(unit);
     }
 }

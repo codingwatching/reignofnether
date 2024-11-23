@@ -127,6 +127,8 @@ public abstract class Building {
 
     public boolean isDiagonalBridge = false;
 
+    public boolean selfBuilding = false; // if set to true, will build itself quickly without workers (but not repair)
+
     // blocks types that are placed automatically when the building is placed
     // used to control size of initial foundations while keeping it symmetrical
     public final ArrayList<Block> startingBlockTypes = new ArrayList<>();
@@ -711,48 +713,54 @@ public abstract class Building {
     private void handleServerTick(ServerLevel serverLevel, float blocksPlaced, float blocksTotal) {
         ArrayList<WorkerUnit> workerUnits = getBuilders(serverLevel);
         int builderCount = workerUnits.size();
+        boolean hasFastBuildCheat = ResearchServerEvents.playerHasCheat(this.ownerName, "warpten");
 
         // place a block if the tick has run down
-        if (blocksPlaced < blocksTotal && builderCount > 0) {
-            this.ticksToExtinguish += 1;
-            if (ticksToExtinguish >= TICKS_TO_EXTINGUISH) {
-                if (!(this instanceof FlameSanctuary) && !(this instanceof Fortress)) {
-                    extinguishFires(serverLevel);
+        if (blocksPlaced < blocksTotal) {
+
+            if (builderCount > 0) {
+                this.ticksToExtinguish += 1;
+                if (ticksToExtinguish >= TICKS_TO_EXTINGUISH) {
+                    if (!(this instanceof FlameSanctuary) && !(this instanceof Fortress)) {
+                        extinguishFires(serverLevel);
+                    }
+                    ticksToExtinguish = 0;
                 }
-                ticksToExtinguish = 0;
-            }
-            // AoE 2 speed:
-            // 1 builder  - 3/3 (100%)
-            // 2 builders - 3/4 (75%)
-            // 3 builders - 3/5 (60%)
-            // 4 builders - 3/6 (50%)
-            // 5 builders - 3/7 (43%)
-            int msPerBuild = (3 * BASE_MS_PER_BUILD) / (builderCount + 2);
-            if (!isBuilt) {
-                msPerBuild *= buildTimeModifier;
-            } else {
-                msPerBuild *= repairTimeModifier;
-            }
+                // AoE 2 speed:
+                // 1 builder  - 3/3 (100%)
+                // 2 builders - 3/4 (75%)
+                // 3 builders - 3/5 (60%)
+                // 4 builders - 3/6 (50%)
+                // 5 builders - 3/7 (43%)
+                int msPerBuild = (3 * BASE_MS_PER_BUILD) / (builderCount + 2);
+                if (!isBuilt) {
+                    msPerBuild *= buildTimeModifier;
+                } else {
+                    msPerBuild *= repairTimeModifier;
+                }
 
-            if (this instanceof Portal && !BuildingServerEvents.isOnNetherBlocks(blocks, originPos, serverLevel)
-                && !ResearchServerEvents.playerHasResearch(ownerName, ResearchAdvancedPortals.itemName)) {
-                msPerBuild *= Portal.NON_NETHER_BUILD_TIME_MODIFIER;
-            }
+                if (this instanceof Portal && !BuildingServerEvents.isOnNetherBlocks(blocks, originPos, serverLevel)
+                        && !ResearchServerEvents.playerHasResearch(ownerName, ResearchAdvancedPortals.itemName)) {
+                    msPerBuild *= Portal.NON_NETHER_BUILD_TIME_MODIFIER;
+                }
 
-            if (msToNextBuild > msPerBuild) {
-                msToNextBuild = msPerBuild;
-            }
+                if (msToNextBuild > msPerBuild) {
+                    msToNextBuild = msPerBuild;
+                }
 
-            if (ResearchServerEvents.playerHasCheat(this.ownerName, "warpten")) {
-                msToNextBuild -= 500;
-            } else {
-                msToNextBuild -= 50;
-            }
+                if (hasFastBuildCheat) {
+                    msToNextBuild -= 500;
+                } else {
+                    msToNextBuild -= 50;
+                }
 
-            if (msToNextBuild <= 0) {
-                msToNextBuild = msPerBuild;
-                String builderName = ((Unit) workerUnits.get(new Random().nextInt(builderCount))).getOwnerName();
-                buildNextBlock(serverLevel, builderName);
+                if (msToNextBuild <= 0) {
+                    msToNextBuild = msPerBuild;
+                    String builderName = ((Unit) workerUnits.get(new Random().nextInt(builderCount))).getOwnerName();
+                    buildNextBlock(serverLevel, builderName);
+                }
+            } else if ((selfBuilding || hasFastBuildCheat) && !isBuilt) {
+                buildNextBlock(serverLevel, ownerName);
             }
         } else {
             this.ticksToExtinguish = 0;

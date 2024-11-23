@@ -147,7 +147,7 @@ public class Wave {
         new Wave(7, 35, 4),
         new Wave(8, 40, 4),
         new Wave(9, 45, 5),
-        new Wave(10, 50, 5),
+        new Wave(10, 50, 5), // after this, increase pop geometrically every 2nd wave
         new Wave(11, 60, 5),
         new Wave(12, 70, 5),
         new Wave(13, 85, 5),
@@ -157,6 +157,16 @@ public class Wave {
         new Wave(17, 165, 5),
         new Wave(18, 190, 5),
         new Wave(19, 220, 5),
-        new Wave(20, 250, 5)
+        new Wave(20, 250, 5),
+        new Wave(21, 285, 5),
+        new Wave(22, 320, 5),
+        new Wave(23, 360, 5),
+        new Wave(24, 400, 5),
+        new Wave(25, 445, 5),
+        new Wave(26, 490, 5),
+        new Wave(27, 540, 5),
+        new Wave(28, 590, 5),
+        new Wave(29, 645, 5),
+        new Wave(30, 700, 5)
     );
 }

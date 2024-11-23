@@ -83,7 +83,7 @@ public class SurvivalSpawner {
 
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
 
-        for (BlockPos bp : SurvivalSpawner.getValidSpawnPoints(remainingPop, level)) {
+        for (BlockPos bp : SurvivalSpawner.getValidSpawnPoints(remainingPop, level, true)) {
             BlockState bs = level.getBlockState(bp);
 
             int tier = random.nextInt(wave.highestUnitTier) + 1;
@@ -111,7 +111,7 @@ public class SurvivalSpawner {
         System.out.println("Illagers");
 
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
-        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level);
+        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level, true);
 
         if (!spawnBps.isEmpty()) {
             BlockPos bp = spawnBps.get(0);
@@ -137,7 +137,7 @@ public class SurvivalSpawner {
         System.out.println("Piglins");
 
         int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
-        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(pop, level);
+        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(pop, level, false);
         int numPortals = Math.max(1, wave.number / 2);
         int failedPortalPlacements = 0;
 
@@ -158,7 +158,7 @@ public class SurvivalSpawner {
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + failedPortalPlacements + " portals!");
     }
 
-    public static List<BlockPos> getValidSpawnPoints(int amount, Level level) {
+    public static List<BlockPos> getValidSpawnPoints(int amount, Level level, boolean includeLiquids) {
         List<Building> buildings = BuildingServerEvents.getBuildings();
 
         Random random = new Random();
@@ -220,6 +220,7 @@ public class SurvivalSpawner {
 
             } while (spawnBs.getMaterial() == Material.LEAVES
                     || spawnBs.getMaterial() == Material.WOOD
+                    || (spawnBs.getMaterial().isLiquid() && !includeLiquids)
                     || distSqrToNearestBuilding < (MIN_SPAWN_RANGE * MIN_SPAWN_RANGE)
                     || distSqrToNearestPortal < (10 * 10)
                     || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp)

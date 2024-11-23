@@ -18,20 +18,27 @@ Wave Survival
 
 [🟡] Raised quantity of spawns for waves 3+
 
+[✔] Skeletons can now spawn on the first wave
+
 [🟡] Improved spawn location logic again
     - This time, enemies only try to spawn near your outermost buildings to avoid a chance of a wave failing to spawn
     - If none or less than the required enemies spawned, a warning is sent to all players
         - If you see this warning, please tell me and show me a screenshot of your base and map
 
-[✔] Skeletons can now spawn on the first wave
+[✔] Waves now go up to 30, maxing out at 700 total population worth of enemies
+    - The spawn logic is likely going to bug out by this point and not actually spawn that many units
+    - (I wasn't able to test this properly because I was afraid of melting my PC)
 
 [🟡] Mob frostwalker now works on lava by turning the lava into magma
 
 [🟡] Added Illager waves
-    - Illagers spawn in large groups
+    - Illagers spawn in one large group
 
 [🟡] Added Piglin waves
-    - Illagers spawn in large groups
+    - Piglins spawn from portals which pop up at the start of the night
+    - Half of the wave's population is spawned immediately
+    - Portals will trickle enemies in forever until destroyed
+    - Currently cannot spawn on water or lava
 
 
 Bugfixes
@@ -61,6 +68,8 @@ Bugfixes
 
 Quality of Life Features
 ------------------------
+
+[🟡] The warpten cheatcode now also makes buildings build themselves without workers
 
 [✔] All buildings can now be built directly adjacent to each other
     - This means you can use houses as walls (but you won't be able to shoot past them)
