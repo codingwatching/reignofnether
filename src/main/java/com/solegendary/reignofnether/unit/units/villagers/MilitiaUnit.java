@@ -10,6 +10,8 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.resources.ResourceName;
+import com.solegendary.reignofnether.resources.ResourceSource;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.ArmSwingingUnit;
@@ -134,6 +136,9 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     // distance you can move away from a town centre before being turned back into a villager
     public static final int RANGE = 50;
 
+    // for going back to work as a villager
+    public GatherResourcesGoal.GatherResourcesSaveData resourcesSaveData = null;
+
     final static public float attackDamage = 3.0f;
     final static public float attacksPerSecond = 0.5f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
@@ -207,9 +212,13 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     public void convertToVillager() {
         if (!converted) {
-            int newId = this.convertToUnit(EntityRegistrar.VILLAGER_UNIT.get());
-            if (newId >= 0) {
-                UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newId));
+            LivingEntity newEntity = this.convertToUnit(EntityRegistrar.VILLAGER_UNIT.get());
+            if (newEntity instanceof VillagerUnit vUnit) {
+                if (resourcesSaveData != null) {
+                    vUnit.getGatherResourceGoal().saveData = resourcesSaveData;
+                    vUnit.getGatherResourceGoal().loadState();
+                }
+                UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newEntity.getId()));
                 converted = true;
             }
         }

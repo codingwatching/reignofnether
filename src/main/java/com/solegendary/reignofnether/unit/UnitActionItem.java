@@ -253,7 +253,7 @@ public class UnitActionItem {
                         // to gather
                         GatherResourcesGoal goal = workerUnit.getGatherResourceGoal();
                         if (goal != null) {
-                            goal.deleteSavedState();
+                            goal.saveData.delete();
                         }
                     }
                     ReturnResourcesGoal returnResourcesGoal = unit.getReturnResourcesGoal();
@@ -267,7 +267,7 @@ public class UnitActionItem {
                         // to gather
                         GatherResourcesGoal goal = workerUnit.getGatherResourceGoal();
                         if (goal != null) {
-                            goal.deleteSavedState();
+                            goal.saveData.delete();
                         }
                     }
                     ReturnResourcesGoal returnResourcesGoal = unit.getReturnResourcesGoal();

@@ -37,6 +37,8 @@ public class CallToArmsGoal extends MoveToTargetBlockGoal {
         if (buildingTarget == null)
             return;
         calcMoveTarget();
+        if (this.mob.tickCount % 20 == 0)
+            start();
 
         if (isInRange() && buildingTarget != null && !this.mob.getLevel().isClientSide())
             if (this.mob instanceof VillagerUnit villagerUnit)

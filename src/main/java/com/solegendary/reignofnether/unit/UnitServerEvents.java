@@ -172,8 +172,9 @@ public class UnitServerEvents {
         for (LivingEntity unit : unitsToConvert) {
             if (unit instanceof ConvertableUnit cUnit) {
                 oldIds.add(unit.getId());
-                int newId = cUnit.convertToUnit(entityType);
-                newIds.add(newId);
+                LivingEntity newEntity = cUnit.convertToUnit(entityType);
+                if (newEntity != null)
+                    newIds.add(newEntity.getId());
             }
         }
         if (oldIds.size() == newIds.size() && oldIds.size() > 0) {

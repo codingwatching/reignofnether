@@ -14,6 +14,8 @@ Wave Survival
 
 [❌] Skeletons don't attack but instead flicker their bows up and down
 
+[❌] Piglins don't attack move for some reason?
+
 [❌] Default the gamemode selector to survival
 
 [🟡] You now lose when all buildings are destroyed instead of just your capitol, just like in multiplayer
@@ -52,10 +54,9 @@ Villager Militia
     - Militia have 35 HP and 3 damage but cannot do regular worker activities
     - Militia transform back into villagers automatically after 60 seconds
     - Added a bell to the town centre
-    [❌] Militia HP and attack stats are wrong for some reason
     [❌] Return to work button to automatically return to last known gathering source/position
         - save last known position on the ability
-
+    [❌] Town bell stops moving halfway
 
 Bugfixes
 --------

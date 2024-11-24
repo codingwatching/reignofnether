@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.*;
@@ -241,9 +242,17 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
     public void convertToMilitia() {
         if (!converted) {
-            int newId = this.convertToUnit(EntityRegistrar.MILITIA_UNIT.get());
-            if (newId >= 0) {
-                UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newId));
+            LivingEntity newEntity = this.convertToUnit(EntityRegistrar.MILITIA_UNIT.get());
+            if (newEntity instanceof MilitiaUnit mUnit) {
+                mUnit.resourcesSaveData = this.gatherResourcesGoal.permSaveData;
+
+                System.out.println("sending data to militia");
+                System.out.println(this.gatherResourcesGoal.permSaveData.todoGatherTargets);
+                System.out.println(this.gatherResourcesGoal.permSaveData.gatherTarget);
+                System.out.println(this.gatherResourcesGoal.permSaveData.targetResourceName);
+                System.out.println(this.gatherResourcesGoal.permSaveData.targetResourceSource);
+
+                UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newEntity.getId()));
                 converted = true;
             }
         }
