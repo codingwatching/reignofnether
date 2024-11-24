@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.building.buildings.villagers;
 
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.BackToWorkBuilding;
 import com.solegendary.reignofnether.ability.abilities.CallLightning;
 import com.solegendary.reignofnether.ability.abilities.CallToArmsBuilding;
 import com.solegendary.reignofnether.building.*;
@@ -58,12 +59,15 @@ public class TownCentre extends ProductionBuilding {
 
         Ability callToArms = new CallToArmsBuilding();
         this.abilities.add(callToArms);
+        BackToWorkBuilding backToWork = new BackToWorkBuilding();
+        this.abilities.add(backToWork);
 
         if (level.isClientSide()) {
             this.productionButtons = List.of(
                     VillagerProd.getStartButton(this, Keybindings.keyQ)
             );
             this.abilityButtons.add(callToArms.getButton(Keybindings.keyV));
+            this.abilityButtons.add(backToWork.getButton(Keybindings.build));
         }
     }
 

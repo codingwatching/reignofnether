@@ -54,9 +54,6 @@ Villager Militia
     - Militia have 35 HP and 3 damage but cannot do regular worker activities
     - Militia transform back into villagers automatically after 60 seconds
     - Added a bell to the town centre
-    [❌] Return to work button to automatically return to last known gathering source/position
-        - save last known position on the ability
-    [❌] Town bell stops moving halfway
 
 Bugfixes
 --------
@@ -68,16 +65,16 @@ Bugfixes
 [🟡] Ranged units now stagger their attack speeds by a few ticks randomly
     - This is to work around Minecraft's built-in 1-tick invincibility frames
 
-[❌] Teams sometimes switch for some reason
-    - only happens in wave survival?
-
-[❌] Can't control units when they're on slabs?
-
 [🟡] Animals cannot spawn on Y levels too different to your capitol
     - can't deal with Berlingrad AND also have it work on hill maps ?
 
 [🟡] Queued units no longer progress if you're at the population cap (instead of being stuck at 99%)
     - This is to fix an issue of being able to go over the max cap when the server is lagging
+
+[❌] In wave survival, teams randomly switch
+
+[❌] Fixed losing control of units on slabs
+
 
 
 Quality of Life Features
@@ -92,12 +89,6 @@ Quality of Life Features
 
 [✔] Spectators can see what's being produced on anyone's buildings
 
-[❌] Shift queueing movements and buildings (not just placement)
-    - Add index to sendCommand packets
-    - Add recursive field to UnitActionItem: nextActionItem
-        - OR just add a list queue to each unit
-    - Add end detections in goals for when to move to nextActionItem
-    - Add clientside checkpoints
 
 
 
@@ -105,14 +96,12 @@ Quality of Life Features
 Balancing
 ---------
 
-[❌] Remove creeper friendly fire again, but this time reduce damage dropoff
-
 [✔] All factions may build additional capitols, but only one can produce workers at any given time
     - you can also now delete capitols if you have more than one
 
 [✔] Ghasts: +20s build time, +1 pop
 
-
+[❌] Remove creeper friendly fire again, but this time reduce damage dropoff
 
 [❌] Add wither upgrade that lets them stack wither on a single enemy
     - Remove +% damage passive to damaged targets
