@@ -66,7 +66,7 @@ public class BackToWorkUnit extends Ability {
 
     @Override
     public void use(Level level, Unit unitUsing, BlockPos targetBp) {
-        if (unitUsing instanceof MilitiaUnit mUnit)
+        if (unitUsing instanceof MilitiaUnit mUnit && !level.isClientSide())
             mUnit.convertToVillager();
     }
 }

@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.unit.units.villagers;
 
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.BackToWorkUnit;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
@@ -123,6 +124,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
 
     // ConvertableUnit
+    public boolean converted = false;
     private boolean shouldDiscard = false;
     public boolean shouldDiscard() { return shouldDiscard; }
     public void setShouldDiscard(boolean discard) { this.shouldDiscard = discard; }
@@ -131,7 +133,6 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     // distance you can move away from a town centre before being turned back into a villager
     public static final int RANGE = 50;
-    public boolean converted = false;
 
     final static public float attackDamage = 3.0f;
     final static public float attacksPerSecond = 0.5f;
@@ -153,26 +154,12 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     public MilitiaUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
-        if (level.isClientSide()) {
-            AbilityButton townCentreButton = TownCentre.getBuildButton(Keybindings.keyQ);
-            this.abilityButtons.add(townCentreButton);
-            this.abilityButtons.add(OakStockpile.getBuildButton(Keybindings.keyW));
-            this.abilityButtons.add(VillagerHouse.getBuildButton(Keybindings.keyE));
-            this.abilityButtons.add(WheatFarm.getBuildButton(Keybindings.keyR));
-            this.abilityButtons.add(Watchtower.getBuildButton(Keybindings.keyT));
-            this.abilityButtons.add(Barracks.getBuildButton(Keybindings.keyY));
-            this.abilityButtons.add(Blacksmith.getBuildButton(Keybindings.keyU));
-            this.abilityButtons.add(ArcaneTower.getBuildButton(Keybindings.keyI));
-            this.abilityButtons.add(Library.getBuildButton(Keybindings.keyO));
-            this.abilityButtons.add(Castle.getBuildButton(Keybindings.keyP));
-            this.abilityButtons.add(IronGolemBuilding.getBuildButton(Keybindings.keyL));
-            this.abilityButtons.add(OakBridge.getBuildButton(Keybindings.keyC));
-        }
-    }
+        Ability backToWork = new BackToWorkUnit();
+        this.abilities.add(backToWork);
 
-    @Override
-    public boolean isPushable() {
-        return false;
+        if (level.isClientSide()) {
+            this.abilityButtons.add(backToWork.getButton(Keybindings.build));
+        }
     }
 
     @Override
@@ -206,7 +193,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
             Unit.tick(this);
             AttackerUnit.tick(this);
 
-            if (this.tickCount % 10 == 0 && !converted && !level.isClientSide()) {
+            if (this.tickCount > 100 && this.tickCount % 10 == 0 && !converted && !level.isClientSide()) {
                 Building building = BuildingUtils.findClosestBuilding(level.isClientSide(), this.getEyePosition(),
                         (b) -> b.isBuilt && b.ownerName.equals(getOwnerName()) && b instanceof TownCentre);
 
@@ -219,10 +206,12 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     }
 
     public void convertToVillager() {
-        int newId = this.convertToUnit(EntityRegistrar.VILLAGER_UNIT.get());
-        if (newId >= 0) {
-            UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newId));
-            converted = true;
+        if (!converted) {
+            int newId = this.convertToUnit(EntityRegistrar.VILLAGER_UNIT.get());
+            if (newId >= 0) {
+                UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newId));
+                converted = true;
+            }
         }
     }
 

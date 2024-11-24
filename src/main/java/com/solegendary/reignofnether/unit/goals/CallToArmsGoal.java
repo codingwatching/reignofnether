@@ -38,13 +38,9 @@ public class CallToArmsGoal extends MoveToTargetBlockGoal {
             return;
         calcMoveTarget();
 
-        if (isInRange() && buildingTarget != null) {
-            if (this.mob instanceof ConvertableUnit cUnit) {
-                int newId = cUnit.convertToUnit(EntityRegistrar.MILITIA_UNIT.get());
-                if (newId >= 0)
-                    UnitConvertClientboundPacket.syncConvertedUnits(((Unit) mob).getOwnerName(), List.of(mob.getId()), List.of(newId));
-            }
-        }
+        if (isInRange() && buildingTarget != null && !this.mob.getLevel().isClientSide())
+            if (this.mob instanceof VillagerUnit villagerUnit)
+                villagerUnit.convertToMilitia();
     }
 
     private void calcMoveTarget() {
@@ -81,4 +77,10 @@ public class CallToArmsGoal extends MoveToTargetBlockGoal {
     }
 
     public Building getBuildingTarget() { return buildingTarget; }
+
+    @Override
+    public void stop() {
+        buildingTarget = null;
+        super.stop();
+    }
 }

@@ -8,17 +8,16 @@ import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
-import com.solegendary.reignofnether.unit.interfaces.ArmSwingingUnit;
-import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
-import com.solegendary.reignofnether.unit.interfaces.Unit;
-import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
+import com.solegendary.reignofnether.unit.interfaces.*;
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.unit.packets.UnitConvertClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.model.VillagerModel;
 import net.minecraft.core.BlockPos;
@@ -50,7 +49,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, AttackerUnit, ArmSwingingUnit, VillagerDataHolder {
+public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, AttackerUnit, ArmSwingingUnit, VillagerDataHolder, ConvertableUnit {
     // region
     private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
     private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
@@ -125,6 +124,12 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public Goal getAttackBuildingGoal() { return null; }
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
+
+    // ConvertableUnit
+    public boolean converted = false;
+    private boolean shouldDiscard = false;
+    public boolean shouldDiscard() { return shouldDiscard; }
+    public void setShouldDiscard(boolean discard) { this.shouldDiscard = discard; }
 
     // endregion
 
@@ -222,11 +227,31 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     protected void pickUpItem(ItemEntity pItemEntity) { }
 
     public void tick() {
-        this.setCanPickUpLoot(true);
-        super.tick();
-        Unit.tick(this);
-        AttackerUnit.tick(this);
-        WorkerUnit.tick(this);
+        if (shouldDiscard)
+            this.discard();
+        else {
+            this.setCanPickUpLoot(true);
+            super.tick();
+            Unit.tick(this);
+            AttackerUnit.tick(this);
+            WorkerUnit.tick(this);
+            this.callToArmsGoal.tick();
+        }
+    }
+
+    public void convertToMilitia() {
+        if (!converted) {
+            int newId = this.convertToUnit(EntityRegistrar.MILITIA_UNIT.get());
+            if (newId >= 0) {
+                UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newId));
+                converted = true;
+            }
+        }
+    }
+
+    @Override
+    public void resetBehaviours() {
+        this.callToArmsGoal.stop();
     }
 
     public void initialiseGoals() {

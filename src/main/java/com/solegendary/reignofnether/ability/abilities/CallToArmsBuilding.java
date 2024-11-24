@@ -19,8 +19,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.solegendary.reignofnether.unit.UnitClientEvents.sendUnitCommand;
 
@@ -73,7 +76,11 @@ public class CallToArmsBuilding extends Ability {
         for (VillagerUnit vUnit : nearbyUnits)
             vUnit.callToArmsGoal.setNearestTownCentreAsTarget();
 
-        if (!level.isClientSide())
+        if (!level.isClientSide()) {
             SoundClientboundPacket.playSoundForAllPlayers(SoundAction.BELL, buildingUsing.centrePos);
+            CompletableFuture.delayedExecutor(300, TimeUnit.MILLISECONDS).execute(() -> {
+                SoundClientboundPacket.playSoundForAllPlayers(SoundAction.BELL, buildingUsing.centrePos);
+            });
+        }
     }
 }

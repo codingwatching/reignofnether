@@ -5,6 +5,8 @@ import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
+import com.solegendary.reignofnether.sounds.SoundAction;
+import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.goals.CallToArmsGoal;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
@@ -15,9 +17,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.solegendary.reignofnether.unit.UnitClientEvents.sendUnitCommand;
 
@@ -60,5 +65,12 @@ public class CallToArmsUnit extends Ability {
     public void use(Level level, Unit unitUsing, BlockPos targetBp) {
         if (unitUsing instanceof VillagerUnit vUnit)
             vUnit.callToArmsGoal.setNearestTownCentreAsTarget();
+
+        if (!level.isClientSide()) {
+            SoundClientboundPacket.playSoundForAllPlayers(SoundAction.BELL, ((Entity) unitUsing).getOnPos());
+            CompletableFuture.delayedExecutor(300, TimeUnit.MILLISECONDS).execute(() -> {
+                SoundClientboundPacket.playSoundForAllPlayers(SoundAction.BELL, ((Entity) unitUsing).getOnPos());
+            });
+        }
     }
 }
