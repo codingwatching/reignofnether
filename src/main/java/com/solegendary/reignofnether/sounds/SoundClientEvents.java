@@ -56,7 +56,6 @@ public class SoundClientEvents {
         SOUND_MAP.put(SoundAction.ALLY, SoundRegistrar.ALLY.get());
         SOUND_MAP.put(SoundAction.CHAT, SoundRegistrar.CHAT.get());
         SOUND_MAP.put(SoundAction.ENEMY, SoundRegistrar.ENEMY.get());
+        SOUND_MAP.put(SoundAction.ENEMY, SoundRegistrar.ENEMY.get());
     }
-
-
 }

@@ -1,5 +1,7 @@
 package com.solegendary.reignofnether.unit.units.villagers;
 
+import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
+import com.solegendary.reignofnether.ability.abilities.Explode;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.villagers.OakBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
@@ -87,6 +89,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public GatherResourcesGoal gatherResourcesGoal;
     private ReturnResourcesGoal returnResourcesGoal;
     private MeleeAttackUnitGoal attackGoal;
+    public CallToArmsGoal callToArmsGoal;
 
     public LivingEntity getFollowTarget() { return followTarget; }
     public boolean getHoldPosition() { return holdPosition; }
@@ -129,7 +132,6 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         return Blocks.WHEAT.defaultBlockState();
     }
 
-
     final static public float attackDamage = 1.0f;
     final static public float attacksPerSecond = 0.5f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
@@ -171,6 +173,9 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public VillagerUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
+        CallToArmsUnit callToArms = new CallToArmsUnit();
+        this.abilities.add(callToArms);
+
         if (level.isClientSide()) {
             AbilityButton townCentreButton = TownCentre.getBuildButton(Keybindings.keyQ);
             this.abilityButtons.add(townCentreButton);
@@ -185,6 +190,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
             this.abilityButtons.add(Castle.getBuildButton(Keybindings.keyP));
             this.abilityButtons.add(IronGolemBuilding.getBuildButton(Keybindings.keyL));
             this.abilityButtons.add(OakBridge.getBuildButton(Keybindings.keyC));
+            this.abilityButtons.add(callToArms.getButton(Keybindings.keyV));
         }
     }
 
@@ -232,6 +238,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         this.buildRepairGoal = new BuildRepairGoal(this);
         this.gatherResourcesGoal = new GatherResourcesGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
+        this.callToArmsGoal = new CallToArmsGoal(this);
     }
 
     @Override

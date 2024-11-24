@@ -16,7 +16,7 @@ Wave Survival
 
 [🟡] You now lose when all buildings are destroyed instead of just your capitol, just like in multiplayer
 
-[🟡] Raised quantity of spawns for waves 3+
+[✔] Raised quantity of spawns for waves 3+
 
 [✔] Skeletons can now spawn on the first wave
 
@@ -40,6 +40,20 @@ Wave Survival
     - Portals will trickle enemies in forever until destroyed
     - Currently cannot spawn on water or lava
 
+
+Features
+--------
+
+Villager Militia
+    - Town Centres and villagers now have a 'Call to Arms' button
+    - When used, they run to the nearest Town Centre to be turned into a Militia unit
+    - Militia have 35 HP and 3 damage but cannot do regular worker activities
+    - Militia transform back into villagers automatically after 60 seconds
+    - Added a bell to the town centre
+    [❌] Play bell sound when activated
+    [❌] Have miltia also have call to arms to refresh their duration
+    [❌] Return to work button to automatically return to last known gathering source/position
+        - save last known position on the ability
 
 Bugfixes
 --------
@@ -82,7 +96,7 @@ Quality of Life Features
     - Add end detections in goals for when to move to nextActionItem
     - Add clientside checkpoints
 
-[❌] Cast spells with the closest unit first
+
 
 
 Balancing
@@ -95,14 +109,7 @@ Balancing
 
 [✔] Ghasts: +20s build time, +1 pop
 
-[❌] Solution to discourage rushing
-    - villagers are most vulnerable due to their lategame nature
-    - copy the wc3 ability of turning villagers into temporary militia?
-        - give them a helmet and stone sword upgrade for +2 damage
-        - turn back on isPushable
-        - damage to animals should still be 1
 
-    - Piglin mines?
 
 [❌] Add wither upgrade that lets them stack wither on a single enemy
     - Remove +% damage passive to damaged targets
@@ -119,3 +126,15 @@ Updated:
 
 New:
 "item.reignofnether.militia_unit_spawn_egg": "Spawn Militia Unit",
+"abilities.reignofnether.call_to_arms_building": "Call to Arms",
+"abilities.reignofnether.call_to_arms_building.tooltip1": "Calls all nearby villagers to be converted ",
+"abilities.reignofnether.call_to_arms_building.tooltip2": "into temporary militia to defend your base.",
+"abilities.reignofnether.call_to_arms_unit": "Call to Arms",
+"abilities.reignofnether.call_to_arms_unit.tooltip1": "Run to the nearest Town Centre to be converted ",
+"abilities.reignofnether.call_to_arms_unit.tooltip2": "into a temporary militia to defend your base.",
+"abilities.reignofnether.back_to_work_building": "Back to Work",
+"abilities.reignofnether.back_to_work_building.tooltip1": "Converts all nearby militia back into villagers ",
+"abilities.reignofnether.back_to_work_building.tooltip2": "and have them go back to their last work position.",
+"abilities.reignofnether.back_to_work_unit": "Back to Work",
+"abilities.reignofnether.back_to_work_unit.tooltip1": "Convert this Militia back into a Villager ",
+"abilities.reignofnether.back_to_work_unit.tooltip2": "and go back to its last work position.",

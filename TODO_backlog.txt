@@ -22,11 +22,20 @@ Features
         - Healing fountain
         - Mini beacon
 
+[❌] Solution to discourage rushing
+    - villagers are most vulnerable due to their lategame nature
+    - copy the wc3 ability of turning villagers into temporary militia?
+        - give them a helmet and stone sword upgrade for +2 damage
+        - turn back on isPushable
+        - damage to animals should still be 1
+
+[❌] Piglin mines
+    - Static defense for piglins, but can also be used to siege
+    - When built, can be exploded manaully (or set to autoexplode on nearby enemies approaching)
+    - Explodes into combination of soulsand and magma
+
 Bugfixes
 --------
-
-[❌] With high lag, units waiting to be queued at 99% become uncancellable
-    - https://discord.com/channels/1294953087567663135/1306165740730322986
 
 [❌] Central portals sometimes do not ignite (and this somehow makes grunts spawn underground)
 
@@ -43,6 +52,7 @@ Quality of Life Features
     - Require that villagers work on it like a building
     - Will need a new flatten zone object (no need to save it)
 
+[❌] Cast spells with the closest unit first
 
 
 Balancing

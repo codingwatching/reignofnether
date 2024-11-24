@@ -5,5 +5,6 @@ public enum SoundAction {
     RANDOM_CAVE_AMBIENCE,
     ALLY,
     CHAT,
-    ENEMY
+    ENEMY,
+    BELL
 }

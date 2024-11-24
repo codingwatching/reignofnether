@@ -1,10 +1,13 @@
 package com.solegendary.reignofnether.unit.units.villagers;
 
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.building.Building;
+import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
+import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
@@ -14,6 +17,7 @@ import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.packets.UnitConvertClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
+import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -24,6 +28,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -32,6 +37,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.npc.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -40,6 +46,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, VillagerDataHolder, ConvertableUnit {
     // region
@@ -122,9 +129,8 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     // endregion
 
-    // ticks before turning back into a villager
-    final static public float DURATION_TICKS_MAX = 1200;
-    public float durationTicksLeft = DURATION_TICKS_MAX;
+    // distance you can move away from a town centre before being turned back into a villager
+    public static final int RANGE = 50;
     public boolean converted = false;
 
     final static public float attackDamage = 3.0f;
@@ -134,7 +140,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     final static public boolean willRetaliate = false; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = false;
 
-    final static public float maxHealth = 30.0f;
+    final static public float maxHealth = 35.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
     final static public int popCost = ResourceCosts.MILITIA.population;
@@ -192,17 +198,31 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     protected void pickUpItem(ItemEntity pItemEntity) { }
 
     public void tick() {
-        this.setCanPickUpLoot(true);
-        super.tick();
-        Unit.tick(this);
-        AttackerUnit.tick(this);
+        if (shouldDiscard)
+            this.discard();
+        else {
+            this.setCanPickUpLoot(true);
+            super.tick();
+            Unit.tick(this);
+            AttackerUnit.tick(this);
 
-        if (durationTicksLeft <= 0 && !converted && !level.isClientSide()) {
-            int newId = this.convertToUnit(EntityRegistrar.VILLAGER_UNIT.get());
+            if (this.tickCount % 10 == 0 && !converted && !level.isClientSide()) {
+                Building building = BuildingUtils.findClosestBuilding(level.isClientSide(), this.getEyePosition(),
+                        (b) -> b.isBuilt && b.ownerName.equals(getOwnerName()) && b instanceof TownCentre);
+
+                if (building != null &&
+                    distanceToSqr(building.centrePos.getX(), building.centrePos.getY(), building.centrePos.getZ()) > RANGE * RANGE) {
+                    convertToVillager();
+                }
+            }
+        }
+    }
+
+    public void convertToVillager() {
+        int newId = this.convertToUnit(EntityRegistrar.VILLAGER_UNIT.get());
+        if (newId >= 0) {
             UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newId));
             converted = true;
-        } else {
-            durationTicksLeft -= 1;
         }
     }
 
@@ -233,14 +253,19 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     @Override
     public void setupEquipmentAndUpgradesClient() {
-        ItemStack axeStack = new ItemStack(Items.STONE_SWORD);
-        this.setItemSlot(EquipmentSlot.MAINHAND, axeStack);
+        ItemStack swordStack = new ItemStack(Items.STONE_SWORD);
+        this.setItemSlot(EquipmentSlot.MAINHAND, swordStack);
     }
 
     @Override
     public void setupEquipmentAndUpgradesServer() {
-        ItemStack axeStack = new ItemStack(Items.STONE_SWORD);
-        this.setItemSlot(EquipmentSlot.MAINHAND, axeStack);
+        Item sword = Items.STONE_SWORD;
+        int damageMod = 0;
+        ItemStack swordStack = new ItemStack(sword);
+        AttributeModifier mod = new AttributeModifier(UUID.randomUUID().toString(), damageMod, AttributeModifier.Operation.ADDITION);
+        swordStack.addAttributeModifier(Attributes.ATTACK_DAMAGE, mod, EquipmentSlot.MAINHAND);
+
+        this.setItemSlot(EquipmentSlot.MAINHAND, swordStack);
     }
 
     @Override

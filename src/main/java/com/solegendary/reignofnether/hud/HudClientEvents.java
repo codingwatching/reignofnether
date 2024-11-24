@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.hud;
 import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientEvents;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
@@ -34,6 +35,7 @@ import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
@@ -731,6 +733,11 @@ public class HudClientEvents {
             }
             actionButtons.add(ActionButtons.STOP);
 
+            if (hudSelectedEntity instanceof VillagerUnit vUnit)
+                for (Ability ability : vUnit.getAbilities())
+                    if (ability instanceof CallToArmsUnit callToArmsUnit)
+                        actionButtons.add(callToArmsUnit.getButton(Keybindings.keyV));
+
             for (Button actionButton : actionButtons) {
 
                 // GATHER button does not have a static icon
@@ -771,13 +778,16 @@ public class HudClientEvents {
                     if (livingEntity == hudSelectedEntity) {
                         List<AbilityButton> abilityButtons = ((Unit) livingEntity).getAbilityButtons();
 
-                        int shownAbilities = abilityButtons.stream().filter(b -> !b.isHidden.get()).toList().size();
-                        int rowsUp = (int) Math.floor((float) (shownAbilities - 1) / MAX_BUTTONS_PER_ROW);
+                        List<AbilityButton> shownAbilities = abilityButtons.stream()
+                                .filter(ab -> !ab.isHidden.get() && !(ab.ability instanceof CallToArmsUnit))
+                                .toList();
+
+                        int rowsUp = (int) Math.floor((float) (shownAbilities.size() - 1) / MAX_BUTTONS_PER_ROW);
                         rowsUp = Math.max(0, rowsUp);
                         blitY -= iconFrameSize * rowsUp;
 
                         int i = 0;
-                        for (AbilityButton abilityButton : abilityButtons) {
+                        for (AbilityButton abilityButton : shownAbilities) {
                             if (!abilityButton.isHidden.get()) {
                                 i += 1;
                                 abilityButton.render(evt.getPoseStack(), blitX, blitY, mouseX, mouseY);
