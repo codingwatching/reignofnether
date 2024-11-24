@@ -246,13 +246,6 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
             LivingEntity newEntity = this.convertToUnit(EntityRegistrar.MILITIA_UNIT.get());
             if (newEntity instanceof MilitiaUnit mUnit) {
                 mUnit.resourcesSaveData = this.gatherResourcesGoal.permSaveData;
-
-                System.out.println("sending data to militia");
-                System.out.println(this.gatherResourcesGoal.permSaveData.todoGatherTargets);
-                System.out.println(this.gatherResourcesGoal.permSaveData.gatherTarget);
-                System.out.println(this.gatherResourcesGoal.permSaveData.targetResourceName);
-                System.out.println(this.gatherResourcesGoal.permSaveData.targetResourceSource);
-
                 UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newEntity.getId()));
                 converted = true;
             }

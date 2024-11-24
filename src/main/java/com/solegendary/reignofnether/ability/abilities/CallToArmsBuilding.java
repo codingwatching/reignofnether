@@ -9,6 +9,8 @@ import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.unit.UnitAction;
+import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.MilitiaUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
@@ -73,8 +75,11 @@ public class CallToArmsBuilding extends Ability {
                 .filter(u -> u.getOwnerName().equals(buildingUsing.ownerName))
                 .toList();
 
-        for (VillagerUnit vUnit : nearbyUnits)
+        for (VillagerUnit vUnit : nearbyUnits) {
+            Unit.resetBehaviours(vUnit);
+            WorkerUnit.resetBehaviours(vUnit);
             vUnit.callToArmsGoal.setNearestTownCentreAsTarget();
+        }
 
         if (!level.isClientSide()) {
             SoundClientboundPacket.playSoundForAllPlayers(SoundAction.BELL, buildingUsing.centrePos);
