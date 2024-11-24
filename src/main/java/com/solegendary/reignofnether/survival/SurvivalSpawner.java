@@ -79,8 +79,6 @@ public class SurvivalSpawner {
 
     // spawn monsters evenly spread out across from all directions
     public static void spawnMonsterWave(ServerLevel level, Wave wave) {
-        System.out.println("Monsters");
-
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
 
         for (BlockPos bp : SurvivalSpawner.getValidSpawnPoints(remainingPop, level, true)) {
@@ -108,8 +106,6 @@ public class SurvivalSpawner {
 
     // spawn illagers from one direction
     public static void spawnIllagerWave(ServerLevel level, Wave wave) {
-        System.out.println("Illagers");
-
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
         List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level, true);
 
@@ -134,8 +130,6 @@ public class SurvivalSpawner {
 
     // spawn portals which spawn half of the wave immediately, and trickle in constantly
     public static void spawnPiglinWave(ServerLevel level, Wave wave) {
-        System.out.println("Piglins");
-
         int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
         List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(pop, level, false);
         int numPortals = Math.max(1, wave.number / 2);

@@ -585,7 +585,13 @@ public class UnitServerEvents {
             knockbackIgnoreIds.add(evt.getEntity().getId());
         }
 
-        // wither skeletons deal up to double damage to enemies with less health left
+        if (ResourceSources.isHuntableAnimal(evt.getEntity()) && (
+            evt.getSource().getEntity() instanceof MilitiaUnit
+        )) {
+            evt.setAmount(1);
+            return;
+        }
+
         if (evt.getEntity() instanceof Unit && (
             evt.getSource() == DamageSource.SWEET_BERRY_BUSH || evt.getSource() == DamageSource.CACTUS
         )) {

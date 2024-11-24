@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.survival;
 
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
+import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
@@ -8,9 +9,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static com.solegendary.reignofnether.survival.SurvivalServerEvents.PIGLIN_OWNER_NAME;
+import static com.solegendary.reignofnether.survival.SurvivalServerEvents.VILLAGER_OWNER_NAME;
 import static com.solegendary.reignofnether.survival.SurvivalSpawner.getModifiedPopCost;
 
 public class WavePortal {
@@ -28,7 +32,7 @@ public class WavePortal {
         this.portal = portal;
         this.portal.selfBuilding = true;
         this.wave = wave;
-        this.initialSpawnPop = wave.population / Math.max(1, wave.number / 2);
+        this.initialSpawnPop = wave.population / Math.max(2, wave.number / 2);
     }
 
     public Portal getPortal() {
@@ -55,9 +59,17 @@ public class WavePortal {
         EntityType<? extends Unit> mobType = (EntityType<? extends Unit>) wave.getRandomUnitOfTier(Faction.PIGLINS, tier);
 
         ServerLevel level = (ServerLevel) portal.getLevel();
+
+        // produceUnit spawns them before applying the ownerName, meaning they aren't registered as WaveEnemies automatically
         Entity entity = portal.produceUnit(level, mobType, PIGLIN_OWNER_NAME, true);
 
-        if (entity instanceof Unit unit && initialSpawnPop > 0)
+        if (entity instanceof Unit unit && initialSpawnPop > 0) {
+
+            List<Unit> enemies = SurvivalServerEvents.getCurrentEnemies().stream().map(e -> e.unit).toList();
+            if (!enemies.contains(unit))
+                SurvivalServerEvents.getCurrentEnemies().add(new WaveEnemy(unit));
+
             initialSpawnPop -= getModifiedPopCost(unit);
+        }
     }
 }

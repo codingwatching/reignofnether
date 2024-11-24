@@ -89,6 +89,7 @@ public class WaveEnemy {
 
         Entity entity = (Entity) unit;
         List<Building> buildings = BuildingServerEvents.getBuildings().stream()
+                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName))
                 .sorted(Comparator.comparing(b -> b.centrePos.distToCenterSqr(entity.getEyePosition())))
                 .toList();
 
@@ -104,12 +105,16 @@ public class WaveEnemy {
     private void attackMoveRandomBuilding() {
         unit.resetBehaviours();
 
-        ArrayList<Building> buildings = BuildingServerEvents.getBuildings();
+        ArrayList<Building> buildings = BuildingServerEvents.getBuildings()
         Collections.shuffle(buildings);
 
+        List<Building> playerBuildings = buildings.stream()
+                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName))
+                .toList();
+
         BlockPos targetBp = null;
-        if (!buildings.isEmpty())
-            targetBp = buildings.get(0).centrePos;
+        if (!playerBuildings.isEmpty())
+            targetBp = playerBuildings.get(0).centrePos;
 
         if (targetBp != null)
             UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,

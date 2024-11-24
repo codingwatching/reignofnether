@@ -14,7 +14,7 @@ Wave Survival
 
 [❌] Skeletons don't attack but instead flicker their bows up and down
 
-[❌] Piglins don't attack move for some reason?
+[❌] Empty portals spawn upon reloading into the game
 
 [❌] Default the gamemode selector to survival
 
@@ -52,7 +52,8 @@ Villager Militia
     - Town Centres and villagers now have a 'Call to Arms' button
     - When used, they run to the nearest Town Centre to be turned into a Militia unit
     - Militia have 35 HP and 3 damage but cannot do regular worker activities
-    - Militia transform back into villagers automatically after 60 seconds
+    - Militia transform back into villagers any time with a button or if they move 50 blocks away from the town centre
+    - Militia only do 1 damage to huntable animals
     - Added a bell to the town centre
 
 Bugfixes
