@@ -81,7 +81,7 @@ public class SurvivalSpawner {
     public static void spawnMonsterWave(ServerLevel level, Wave wave) {
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
 
-        for (BlockPos bp : SurvivalSpawner.getValidSpawnPoints(remainingPop, level, true)) {
+        for (BlockPos bp : SurvivalSpawner.getValidSpawnPoints(remainingPop, level)) {
             BlockState bs = level.getBlockState(bp);
 
             int tier = random.nextInt(wave.highestUnitTier) + 1;
@@ -107,7 +107,7 @@ public class SurvivalSpawner {
     // spawn illagers from one direction
     public static void spawnIllagerWave(ServerLevel level, Wave wave) {
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
-        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level, true);
+        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level);
 
         if (!spawnBps.isEmpty()) {
             BlockPos bp = spawnBps.get(0);
@@ -131,7 +131,7 @@ public class SurvivalSpawner {
     // spawn portals which spawn half of the wave immediately, and trickle in constantly
     public static void spawnPiglinWave(ServerLevel level, Wave wave) {
         int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
-        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(pop, level, false);
+        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(pop, level);
         int numPortals = Math.max(1, wave.number / 2);
         int failedPortalPlacements = 0;
 
@@ -152,7 +152,7 @@ public class SurvivalSpawner {
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + failedPortalPlacements + " portals!");
     }
 
-    public static List<BlockPos> getValidSpawnPoints(int amount, Level level, boolean includeLiquids) {
+    public static List<BlockPos> getValidSpawnPoints(int amount, Level level) {
         List<Building> buildings = BuildingServerEvents.getBuildings();
 
         Random random = new Random();
@@ -214,7 +214,6 @@ public class SurvivalSpawner {
 
             } while (spawnBs.getMaterial() == Material.LEAVES
                     || spawnBs.getMaterial() == Material.WOOD
-                    || (spawnBs.getMaterial().isLiquid() && !includeLiquids)
                     || distSqrToNearestBuilding < (MIN_SPAWN_RANGE * MIN_SPAWN_RANGE)
                     || distSqrToNearestPortal < (10 * 10)
                     || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp)

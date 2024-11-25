@@ -378,7 +378,11 @@ public class UnitServerEvents {
             for (ItemStack itemStack : itemStacks)
                 evt.getEntity().spawnAtLocation(itemStack);
         }
-        if (evt.getEntity() instanceof CreeperUnit creeperUnit) {
+
+        // for some reason, if we discard() creepers en masse via exploding them,
+        // /rts-reset fails to run
+        if (evt.getEntity() instanceof CreeperUnit creeperUnit &&
+            !PlayerServerEvents.rtsPlayers.isEmpty()) {
             creeperUnit.explodeCreeper();
         }
 
@@ -583,6 +587,15 @@ public class UnitServerEvents {
     public static void onEntityDamaged(LivingDamageEvent evt) {
         if (shouldIgnoreKnockback(evt)) {
             knockbackIgnoreIds.add(evt.getEntity().getId());
+        }
+
+        // halve friendly fire from your own/friendly creepers (but still cause knockback)
+        if (evt.getSource().getEntity() instanceof CreeperUnit creeperUnit &&
+                getUnitToEntityRelationship(creeperUnit, evt.getEntity()) == Relationship.FRIENDLY) {
+            evt.setAmount(evt.getAmount() / 2);
+
+            if (evt.getEntity() instanceof CreeperUnit)
+                evt.setAmount(evt.getAmount() / 2);
         }
 
         if (ResourceSources.isHuntableAnimal(evt.getEntity()) && (

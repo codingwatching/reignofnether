@@ -19,7 +19,7 @@ import static com.solegendary.reignofnether.survival.SurvivalSpawner.getModified
 
 public class WavePortal {
 
-    private static final int SPAWN_TICKS_MAX = 200;
+    private static final int SPAWN_TICKS_MAX = 600;
     private static int spawnTicks = 0;
 
     public final Portal portal;
@@ -63,13 +63,13 @@ public class WavePortal {
         // produceUnit spawns them before applying the ownerName, meaning they aren't registered as WaveEnemies automatically
         Entity entity = portal.produceUnit(level, mobType, PIGLIN_OWNER_NAME, true);
 
-        if (entity instanceof Unit unit && initialSpawnPop > 0) {
-
+        if (entity instanceof Unit unit) {
             List<Unit> enemies = SurvivalServerEvents.getCurrentEnemies().stream().map(e -> e.unit).toList();
             if (!enemies.contains(unit))
                 SurvivalServerEvents.getCurrentEnemies().add(new WaveEnemy(unit));
 
-            initialSpawnPop -= getModifiedPopCost(unit);
+            if (initialSpawnPop > 0)
+                initialSpawnPop -= getModifiedPopCost(unit);
         }
     }
 }

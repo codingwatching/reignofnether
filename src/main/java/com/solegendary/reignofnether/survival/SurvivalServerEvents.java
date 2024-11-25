@@ -105,22 +105,24 @@ public class SurvivalServerEvents {
             return;
         }
 
-        if (lastTime <= TimeUtils.DUSK - 600 && normTime > TimeUtils.DUSK - 600) {
-            PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dusksoon", true);
-            SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
-        }
-        if (lastTime <= TimeUtils.DUSK && normTime > TimeUtils.DUSK) {
-            PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dusk", true);
-            SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
-            setToStartingNightTime();
-        }
-        if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 100 &&
-            normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 100) {
-            startNextWave((ServerLevel) evt.level);
-        }
-        if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
-            PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dawn", true);
-            setToStartingDayTime();
+        if (lastTime >= 0) {
+            if (lastTime <= TimeUtils.DUSK - 600 && normTime > TimeUtils.DUSK - 600) {
+                PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dusksoon", true);
+                SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
+            }
+            if (lastTime <= TimeUtils.DUSK && normTime > TimeUtils.DUSK) {
+                PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dusk", true);
+                SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
+                setToStartingNightTime();
+            }
+            if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 100 &&
+                    normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 100) {
+                startNextWave((ServerLevel) evt.level);
+            }
+            if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
+                PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dawn", true);
+                setToStartingDayTime();
+            }
         }
 
         int enemyCount = getCurrentEnemies().size() + portals.size();
@@ -173,6 +175,7 @@ public class SurvivalServerEvents {
     public static void enable(WaveDifficulty diff) {
         if (!isEnabled()) {
             reset();
+            lastEnemyCount = 0;
             difficulty = diff;
             isEnabled = true;
             SurvivalClientboundPacket.enableAndSetDifficulty(difficulty);
@@ -268,14 +271,11 @@ public class SurvivalServerEvents {
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
-        spawnPiglinWave(level, nextWave);
-        /*
         switch (random.nextInt(3)) {
             case 0 -> spawnMonsterWave(level, nextWave);
             case 1 -> spawnIllagerWave(level, nextWave);
             case 2 -> spawnPiglinWave(level, nextWave);
         }
-         */
     }
 
     // triggered when last enemy is killed

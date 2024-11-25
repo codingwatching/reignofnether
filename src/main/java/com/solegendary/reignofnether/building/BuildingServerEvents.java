@@ -578,7 +578,7 @@ public class BuildingServerEvents {
                 } else if (creeperUnit != null) {
                     atkDmg = (int) creeperUnit.getUnitAttackDamage();
                     if (creeperUnit.isPowered()) {
-                        atkDmg *= 2;
+                        atkDmg *= CreeperUnit.CHARGED_DAMAGE_MULT;
                     }
                 } else if (pillagerUnit != null) {
                     atkDmg = (int) pillagerUnit.getUnitAttackDamage() / 2;

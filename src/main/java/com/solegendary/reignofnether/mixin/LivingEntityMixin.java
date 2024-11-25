@@ -33,14 +33,18 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(
             method = "onChangedBlock",
-            at = @At("TAIL")
+            at = @At("TAIL"),
+            cancellable = true
     )
     protected void onChangedBlock(BlockPos pPos, CallbackInfo ci) {
+        ci.cancel();
+
         Entity entity = this.getLevel().getEntity(this.getId());
 
         if (!this.getLevel().isClientSide() && entity instanceof Unit unit)
-            if (SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(unit.getOwnerName()))
-                FrostWalkerOnEntityMoved((LivingEntity) entity, this.level, pPos, 1);
+            FrostWalkerOnEntityMoved((LivingEntity) entity, this.level, pPos, 1);
+            //if (SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(unit.getOwnerName()))
+
     }
 
     // copied from FrostWalkerEnchantment.onEntityMoved
@@ -78,13 +82,14 @@ public abstract class LivingEntityMixin extends Entity {
                     pLevel.scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(pLiving.getRandom(), 60, 120));
                 }
 
-                BlockState magmaState = Blocks.MAGMA_BLOCK.defaultBlockState();
+                isFull = blockstate2.getBlock() == Blocks.LAVA && blockstate2.getValue(LiquidBlock.LEVEL) == 0;
+                BlockState magmaState = Blocks.NETHERRACK.defaultBlockState();
                 if (blockstate2.getMaterial() == Material.LAVA && isFull && magmaState.canSurvive(pLevel, blockpos) &&
                         pLevel.isUnobstructed(magmaState, blockpos, CollisionContext.empty()) &&
                         !ForgeEventFactory.onBlockPlace(pLiving, BlockSnapshot.create(pLevel.dimension(), pLevel, blockpos), Direction.UP)) {
 
                     pLevel.setBlockAndUpdate(blockpos, magmaState);
-                    pLevel.scheduleTick(blockpos, Blocks.MAGMA_BLOCK, Mth.nextInt(pLiving.getRandom(), 60, 120));
+                    pLevel.scheduleTick(blockpos, Blocks.NETHERRACK, Mth.nextInt(pLiving.getRandom(), 60, 120));
                 }
             }
         }

@@ -37,6 +37,10 @@ Features
 Bugfixes
 --------
 
+[❌] Fix weird pathing over magma
+
+[❌] In wave survival, teams randomly switch
+
 [❌] Central portals sometimes do not ignite (and this somehow makes grunts spawn underground)
 
 [❌] Must restart client when switching languages for it to take effect

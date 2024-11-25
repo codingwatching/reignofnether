@@ -1,5 +1,5 @@
 
-1.19.2-1.0.9
+1.19.2-1.0.10
 -------------
 
 - Done and tested
@@ -12,15 +12,13 @@
 Wave Survival
 -------------
 
-[❌] Skeletons don't attack but instead flicker their bows up and down
-
-[❌] Empty portals spawn upon reloading into the game
-
 [❌] Default the gamemode selector to survival
+
+[🟡] Fixed enemies being stuck while trying to attack
 
 [🟡] You now lose when all buildings are destroyed instead of just your capitol, just like in multiplayer
 
-[✔] Raised quantity of spawns for waves 3+
+[✔] Raised quantity of spawns for all waves
 
 [✔] Skeletons can now spawn on the first wave
 
@@ -33,7 +31,7 @@ Wave Survival
     - The spawn logic is likely going to bug out by this point and not actually spawn that many units
     - (I wasn't able to test this properly because I was afraid of melting my PC)
 
-[🟡] Mob frostwalker now works on lava by turning the lava into magma
+[🟡] Mob frostwalker now works on lava by turning the lava into netherrack
 
 [🟡] Added Illager waves
     - Illagers spawn in one large group
@@ -41,8 +39,8 @@ Wave Survival
 [🟡] Added Piglin waves
     - Piglins spawn from portals which pop up at the start of the night
     - Half of the wave's population is spawned immediately
-    - Portals will trickle enemies in forever until destroyed
-    - Currently cannot spawn on water or lava
+    - Portals will spawn a random enemy every 30 seconds until destroyed
+    - Can spawn over water or lava
 
 
 Features
@@ -67,14 +65,14 @@ Bugfixes
     - This is to work around Minecraft's built-in 1-tick invincibility frames
 
 [🟡] Animals cannot spawn on Y levels too different to your capitol
-    - can't deal with Berlingrad AND also have it work on hill maps ?
 
-[🟡] Queued units no longer progress if you're at the population cap (instead of being stuck at 99%)
+[🟡] Queued units no longer progress if you're at the population cap instead of being stuck at 99%
     - This is to fix an issue of being able to go over the max cap when the server is lagging
 
-[❌] In wave survival, teams randomly switch
+[🟡] Creepers no longer explode when using /rts-reset
+    - This was to fix a bug where the reset failed if a creeper exploded from it
 
-[❌] Fixed losing control of units on slabs
+[🟡] Fixed not being able to upgrade two labs at the same time
 
 
 
@@ -92,17 +90,19 @@ Quality of Life Features
 
 
 
-
-
 Balancing
 ---------
 
 [✔] All factions may build additional capitols, but only one can produce workers at any given time
     - you can also now delete capitols if you have more than one
 
-[✔] Ghasts: +20s build time, +1 pop
+[✔] Ghasts: +10s build time, +1 pop
 
-[❌] Remove creeper friendly fire again, but this time reduce damage dropoff
+[✔] Creeper friendly fire is halved and friendly fire to other creepers is quartered
+
+[✔] Reduced charged creeper explosion power to 5
+    - For reference, standard creeper power is 3 and charged is 6
+    - Also reduced charged creeper damage to buildings from 40 to 34
 
 [❌] Add wither upgrade that lets them stack wither on a single enemy
     - Remove +% damage passive to damaged targets

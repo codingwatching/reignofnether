@@ -54,13 +54,13 @@ public class WaveEnemy {
 
         lastOnPos = onPos;
 
-        if (ticks == ticksToAdd * 10)
+        if (ticks > 0 && ticks == ticksToAdd * 10)
             startingCommand();
 
-        if (ticks % PERIODIC_COMMAND_INTERVAL == 0)
+        if (ticks > 0 && ticks % PERIODIC_COMMAND_INTERVAL == 0)
             periodicCommand();
 
-        if (idleTicks % IDLE_COMMAND_INTERVAL == 0)
+        if (idleTicks > 0 && idleTicks % IDLE_COMMAND_INTERVAL == 0)
             idleCommand();
     }
 
@@ -105,7 +105,7 @@ public class WaveEnemy {
     private void attackMoveRandomBuilding() {
         unit.resetBehaviours();
 
-        ArrayList<Building> buildings = BuildingServerEvents.getBuildings()
+        ArrayList<Building> buildings = BuildingServerEvents.getBuildings();
         Collections.shuffle(buildings);
 
         List<Building> playerBuildings = buildings.stream()
