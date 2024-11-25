@@ -12,7 +12,7 @@
 Wave Survival
 -------------
 
-[❌] Default the gamemode selector to survival
+[✔] Default the gamemode selector to survival
 
 [🟡] Fixed enemies being stuck while trying to attack
 

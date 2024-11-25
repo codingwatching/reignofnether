@@ -22,8 +22,6 @@ public enum UnitAction {
     DELETE, // instantly kills this unit
     DISCARD, // instantly removes this unit from the level without any death animation/event
     AUTOCAST, // toggle autocast for a unit's ability
-    ENABLE_SIMULTANEOUS_CAST,
-    DISABLE_SIMULTANEOUS_CAST,
 
     ATTACK_GROUND,
     // special abilities - these can also be assigned to cursor actions

@@ -92,7 +92,6 @@
     "abilities.reignofnether.sonic_boom.tooltip1": "\uE006  %d  \uE004  %ds  \uE005  ",
     "abilities.reignofnether.sonic_boom.tooltip2": "After a short delay, fire a targeted wave of sound at the",
     "abilities.reignofnether.sonic_boom.tooltip3": "target, dealing heavy damage and knocking it far away.",
-    "abilities.reignofnether.sonic_boom.tooltip4": "Right-click to toggle simultaneous casting.",
     "abilities.reignofnether.teleport": "Teleport",
     "abilities.reignofnether.teleport.tooltip1": "\uE004  %ds  \uE005  ",
     "abilities.reignofnether.teleport.tooltip2": "Immediately teleport towards a location",

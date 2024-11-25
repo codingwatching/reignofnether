@@ -288,17 +288,6 @@ public class UnitActionItem {
                         if (ability.canAutocast)
                             ability.autocast = !ability.autocast;
                 }
-                case ENABLE_SIMULTANEOUS_CAST -> {
-                    for (Ability ability : unit.getAbilities())
-                        if (ability.canChangeOneClickOneUse)
-                            ability.oneClickOneUse = true;
-                }
-                case DISABLE_SIMULTANEOUS_CAST -> {
-                    for (Ability ability : unit.getAbilities())
-                        if (ability.canChangeOneClickOneUse)
-                            ability.oneClickOneUse = false;
-                }
-
                 // any other Ability not explicitly defined here
                 default -> {
                     for (Ability ability : unit.getAbilities()) {
