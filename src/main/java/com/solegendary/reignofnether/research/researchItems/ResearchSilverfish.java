@@ -64,7 +64,7 @@ public class ResearchSilverfish extends ProductionItem {
                 ResourceCosts.getFormattedTime(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("research.reignofnether.silverfish.tooltip1",
-                    (int) (SILVERFISH_SPAWN_CHANCE * 100)
+                        SILVERFISH_SPAWN_CHANCE * 100 + "%"
                 ), Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("research.reignofnether.silverfish.tooltip2"), Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("research.reignofnether.silverfish.tooltip3"), Style.EMPTY),

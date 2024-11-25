@@ -473,7 +473,7 @@
     "research.reignofnether.resource_capacity.tooltip1": "Zwiększa pojemność zasobów pracowników ze 100 do 200.",
     "research.reignofnether.resource_capacity.tooltip2": "Pracownicy teraz zwracają zasoby, gdy mają ich powyżej 100.",
     "research.reignofnether.silverfish": "Rybik cukrowy",
-    "research.reignofnether.silverfish.tooltip1": "Daje twoim budynkom %d% szansę na pojawienie się rybika cukrowego",
+    "research.reignofnether.silverfish.tooltip1": "Daje twoim budynkom %s szansę na pojawienie się rybika cukrowego",
     "research.reignofnether.silverfish.tooltip2": "za każdym razem, gdy blok zostanie zniszczony.",
     "research.reignofnether.silverfish.tooltip3": "Rybiki cukrowe mają ograniczoną żywotność.",
     "research.reignofnether.silverfish.tooltip4": "Wymaga twierdzy.",
