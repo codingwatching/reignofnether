@@ -74,6 +74,9 @@ Bugfixes
 
 [🟡] Fixed not being able to upgrade two labs at the same time
 
+[🟡] Fixed crash related to transport portals
+
+[🟡] Fixed sonic booms cancelling the first warden's charge up instead of cycling to the next one
 
 
 Quality of Life Features
@@ -83,8 +86,6 @@ Quality of Life Features
 
 [✔] All buildings can now be built directly adjacent to each other
     - This means you can use houses as walls (but you won't be able to shoot past them)
-
-[🟡] Right click to toggle whether sonic booms are one-click-one-cast or not
 
 [✔] Spectators can see what's being produced on anyone's buildings
 

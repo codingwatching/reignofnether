@@ -292,6 +292,7 @@ public class UnitActionItem {
                 default -> {
                     for (Ability ability : unit.getAbilities()) {
                         if (ability.action == action && (ability.isOffCooldown() || ability.canBypassCooldown())) {
+
                             if (ability.canTargetEntities && this.unitId > 0) {
                                 ability.use(level, unit, (LivingEntity) level.getEntity(unitId));
                                 usedAbility = ability;

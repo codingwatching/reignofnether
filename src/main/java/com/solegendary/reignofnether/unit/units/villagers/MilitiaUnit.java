@@ -142,9 +142,9 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     final static public float attackDamage = 3.0f;
     final static public float attacksPerSecond = 0.5f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
-    final static public float aggroRange = 0;
-    final static public boolean willRetaliate = false; // will attack when hurt by an enemy
-    final static public boolean aggressiveWhenIdle = false;
+    final static public float aggroRange = 10;
+    final static public boolean willRetaliate = true; // will attack when hurt by an enemy
+    final static public boolean aggressiveWhenIdle = true;
 
     final static public float maxHealth = 35.0f;
     final static public float armorValue = 0.0f;

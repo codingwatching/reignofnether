@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
+import com.solegendary.reignofnether.ability.abilities.SonicBoom;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientEvents;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
@@ -27,10 +28,7 @@ import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
-import com.solegendary.reignofnether.unit.units.monsters.PoisonSpiderUnit;
-import com.solegendary.reignofnether.unit.units.monsters.SkeletonUnit;
-import com.solegendary.reignofnether.unit.units.monsters.SpiderUnit;
-import com.solegendary.reignofnether.unit.units.monsters.StrayUnit;
+import com.solegendary.reignofnether.unit.units.monsters.*;
 import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
@@ -108,7 +106,6 @@ public class HudClientEvents {
 
     private static final ArrayList<RectZone> hudZones = new ArrayList<>();
 
-    // sets the
     public static void setLowestCdHudEntity() {
         if (UnitClientEvents.getSelectedUnits().isEmpty() || hudSelectedEntity == null) {
             return;
@@ -117,8 +114,11 @@ public class HudClientEvents {
         List<Pair<LivingEntity, Integer>> pairs = UnitClientEvents.getSelectedUnits().stream().map((le) -> {
             int totalCd = 0;
             if (le instanceof Unit unit) {
-                for (Ability ability : unit.getAbilities())
+                for (Ability ability : unit.getAbilities()) {
                     totalCd += ability.getCooldown();
+                    if (ability.isChanneling())
+                        totalCd += 10;
+                }
             }
             return new Pair<>(le, totalCd);
         }).filter(p -> {
@@ -127,9 +127,8 @@ public class HudClientEvents {
             return str1.equals(str2);
         }).sorted(Comparator.comparing(Pair::getSecond)).toList();
 
-        if (!pairs.isEmpty()) {
+        if (!pairs.isEmpty())
             setHudSelectedEntity(pairs.get(0).getFirst());
-        }
     }
 
     public static void setHudSelectedEntity(LivingEntity entity) {
@@ -1096,6 +1095,7 @@ public class HudClientEvents {
         // Start buttons (spectator only)
         // ------------------------------
         if (!PlayerClientEvents.isRTSPlayer && !PlayerClientEvents.rtsLocked) {
+
             Button gamemodeButton = ClientGameModeHelper.getButton();
             if (gamemodeButton != null && !gamemodeButton.isHidden.get() && !TutorialClientEvents.isEnabled()) {
                 gamemodeButton.render(evt.getPoseStack(),
@@ -1106,6 +1106,7 @@ public class HudClientEvents {
                 );
                 renderedButtons.add(gamemodeButton);
             }
+
             if (!StartButtons.villagerStartButton.isHidden.get()) {
                 StartButtons.villagerStartButton.render(evt.getPoseStack(),
                     screenWidth - (StartButtons.ICON_SIZE * 6),

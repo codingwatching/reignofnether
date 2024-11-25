@@ -43,6 +43,8 @@ public class Ability {
             this.cooldown -= 1;
     }
 
+    public boolean isChanneling() { return false; }
+
     public int getCooldown() { return this.cooldown; }
 
     public boolean isOffCooldown() { return this.cooldown <= 0; }
