@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -108,12 +109,49 @@ public class SurvivalSpawner {
     public static void spawnIllagerWave(ServerLevel level, Wave wave) {
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
         List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level);
+        int spawnsThisDir = 0;
+        int spawnUntilNextTurn = -2;
 
         if (!spawnBps.isEmpty()) {
-            BlockPos bp = spawnBps.get(0);
-            BlockState bs = level.getBlockState(bp);
+            BlockPos bp = spawnBps.get(0).above();
+            Direction dir = Direction.EAST;
 
             while (remainingPop > 0) {
+                switch (dir) {
+                    case NORTH -> {
+                        bp = bp.north();
+                        if (spawnsThisDir >= spawnUntilNextTurn) {
+                            spawnsThisDir = 0;
+                            spawnUntilNextTurn += 2;
+                            dir = Direction.EAST;
+                        }
+                    }
+                    case EAST -> {
+                        bp = bp.east();
+                        if (spawnsThisDir >= spawnUntilNextTurn) {
+                            spawnsThisDir = 0;
+                            spawnUntilNextTurn += 2;
+                            dir = Direction.SOUTH;
+                        }
+                    }
+                    case SOUTH -> {
+                        bp = bp.south();
+                        if (spawnsThisDir >= spawnUntilNextTurn) {
+                            spawnsThisDir = 0;
+                            spawnUntilNextTurn += 2;
+                            dir = Direction.WEST;
+                        }
+                    }
+                    case WEST -> {
+                        bp = bp.west();
+                        if (spawnsThisDir >= spawnUntilNextTurn) {
+                            spawnsThisDir = 0;
+                            spawnUntilNextTurn += 2;
+                            dir = Direction.NORTH;
+                        }
+                    }
+                }
+
                 int tier = random.nextInt(wave.highestUnitTier) + 1;
                 EntityType<? extends Mob> mobType = wave.getRandomUnitOfTier(Faction.VILLAGERS, tier);
 
@@ -121,8 +159,10 @@ public class SurvivalSpawner {
 
                 for (Entity entity : entities) {
                     placeIceOrMagma(bp, level);
-                    if (entity instanceof Unit unit)
+                    if (entity instanceof Unit unit) {
                         remainingPop -= getModifiedPopCost(unit);
+                        spawnsThisDir += 1;
+                    }
                 }
             }
         }
