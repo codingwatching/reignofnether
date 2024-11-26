@@ -750,8 +750,8 @@
   "units.piglins.reignofnether.hoglin.tooltip2": "在升级后能够让猎头者骑乘。",
   "units.piglins.reignofnether.hoglin.tooltip3": "需要疣猪兽厩以生产。",
   "units.piglins.reignofnether.wither_skeleton": "凋灵骷髅",
-  "units.piglins.reignofnether.wither_skeleton.tooltip1": "凋灵骷髅是碳化的骷髅。在攻击时",
-  "units.piglins.reignofnether.wither_skeleton.tooltip2": "会为敌方单位施加可叠加的凋零伤害。",
+  "units.piglins.reignofnether.wither_skeleton.tooltip1": "凋灵骷髅是碳化的骷髅。在攻击时会为敌方单位施加",
+  "units.piglins.reignofnether.wither_skeleton.tooltip2": "随攻击次数而提升伤害效果的凋零伤害。",
   "units.piglins.reignofnether.wither_skeleton.tooltip3": "需要凋灵神祠以生产。",
 
   "units.villagers.reignofnether.evoker": "唤魔者",
