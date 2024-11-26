@@ -750,10 +750,9 @@
   "units.piglins.reignofnether.hoglin.tooltip2": "在升级后能够让猎头者骑乘。",
   "units.piglins.reignofnether.hoglin.tooltip3": "需要疣猪兽厩以生产。",
   "units.piglins.reignofnether.wither_skeleton": "凋灵骷髅",
-  "units.piglins.reignofnether.wither_skeleton.tooltip1": "凋零骷髅是碳化的骷髅。",
-  "units.piglins.reignofnether.wither_skeleton.tooltip2": "在攻击时会为敌方单位施加凋零效果，造成额外伤害。",
-  "units.piglins.reignofnether.wither_skeleton.tooltip3": "最高可造成原先两倍的伤害，致敌于死地。",
-  "units.piglins.reignofnether.wither_skeleton.tooltip4": "需要凋灵神祠以生产。",
+  "units.piglins.reignofnether.wither_skeleton.tooltip1": "凋灵骷髅是碳化的骷髅。在攻击时",
+  "units.piglins.reignofnether.wither_skeleton.tooltip2": "会为敌方单位施加可叠加的凋零伤害。",
+  "units.piglins.reignofnether.wither_skeleton.tooltip3": "需要凋灵神祠以生产。",
 
   "units.villagers.reignofnether.evoker": "唤魔者",
   "units.villagers.reignofnether.evoker.tooltip1": "唤魔者是学识丰厚的巫师，施放咒语参与战斗。",
