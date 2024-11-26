@@ -750,9 +750,8 @@
     "units.piglins.reignofnether.hoglin.tooltip3": "Requires Hoglin Stables.",
     "units.piglins.reignofnether.wither_skeleton": "Wither Skeleton",
     "units.piglins.reignofnether.wither_skeleton.tooltip1": "A charcoal black skeleton that afflicts",
-    "units.piglins.reignofnether.wither_skeleton.tooltip2": "wither on enemies and deals bonus damage",
-    "units.piglins.reignofnether.wither_skeleton.tooltip3": "(up to double) to enemies near death.",
-    "units.piglins.reignofnether.wither_skeleton.tooltip4": "Requires a Wither Shrine.",
+    "units.piglins.reignofnether.wither_skeleton.tooltip2": "stackable wither damage on enemies.",
+    "units.piglins.reignofnether.wither_skeleton.tooltip3": "Requires a Wither Shrine.",
 
     "units.villagers.reignofnether.evoker": "Evoker",
     "units.villagers.reignofnether.evoker.tooltip1": "A learned wizard that can cast combat spells.",

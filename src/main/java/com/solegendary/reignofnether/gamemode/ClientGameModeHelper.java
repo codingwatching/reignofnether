@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ClientGameModeHelper {
 
-    public static GameMode gameMode = GameMode.SURVIVAL;
+    public static GameMode gameMode = GameMode.STANDARD;
     public static boolean gameModeLocked = false; // locked with startRTS() in any gamemode, unlocked with /rts-reset
     public static boolean disallowSurvival = false;
 

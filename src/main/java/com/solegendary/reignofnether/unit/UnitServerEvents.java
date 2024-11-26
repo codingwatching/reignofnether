@@ -612,18 +612,6 @@ public class UnitServerEvents {
             return;
         }
 
-        // wither skeletons deal up to double damage to enemies with less health left
-        if (evt.getSource().getEntity() instanceof WitherSkeletonUnit) {
-            float maxHp = evt.getEntity().getMaxHealth();
-            float hp = evt.getEntity().getHealth();
-            float damageMult = 2.0f - (hp / maxHp);
-            evt.setAmount(evt.getAmount() * damageMult);
-        }
-        // increase wither damage since we are playing with (average) doubled mob health
-        if (evt.getSource() == DamageSource.WITHER) {
-            evt.setAmount(evt.getAmount() * 2);
-        }
-
         // halve direct ghast damage since they get bonus damage from launching units into the air
         if (evt.getSource().getEntity() instanceof GhastUnit) {
             // (unless its to a garrisoned unit)
