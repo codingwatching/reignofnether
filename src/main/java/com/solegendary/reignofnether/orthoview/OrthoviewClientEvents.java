@@ -19,6 +19,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
@@ -277,6 +278,8 @@ public class OrthoviewClientEvents {
         enabled = !enabled;
 
         if (enabled) {
+            MC.options.tutorialStep = TutorialSteps.NONE;
+            MC.getTutorial().stop();
             enabledCount += 1;
             PlayerServerboundPacket.enableOrthoview();
             MinimapClientEvents.setMapCentre(MC.player.getX(), MC.player.getZ());
@@ -287,6 +290,7 @@ public class OrthoviewClientEvents {
             MC.options.setCameraType(CameraType.FIRST_PERSON);
             switchToEasyIfPeaceful();
         } else {
+
             PlayerServerboundPacket.disableOrthoview();
             TopdownGuiServerboundPacket.closeTopdownGui(MC.player.getId());
         }

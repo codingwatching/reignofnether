@@ -14,19 +14,21 @@ public interface ConvertableUnit {
     public void setShouldDiscard(boolean shouldDiscard);
 
     // returns the new unit's id
-    public default int convertToUnit(EntityType<? extends Unit> entityType) {
+    public default LivingEntity convertToUnit(EntityType<? extends Unit> entityType) {
         Unit oldUnit = (Unit) this;
         LivingEntity oldEntity = (LivingEntity) this;
         if (oldEntity.getLevel().isClientSide())
-            return -1;
+            return null;
 
         ServerLevel level = (ServerLevel) oldEntity.getLevel();
         LivingEntity newEntity = (LivingEntity) entityType.create(level);
 
         if (newEntity == null)
-            return -1;
+            return null;
 
-        newEntity.setHealth(oldEntity.getHealth());
+        float maxHealthDiff = newEntity.getMaxHealth() - oldEntity.getMaxHealth();
+
+        newEntity.setHealth(Math.max(1, oldEntity.getHealth() + maxHealthDiff));
         for (MobEffectInstance effect : oldEntity.getActiveEffects())
             newEntity.addEffect(effect);
 
@@ -55,6 +57,6 @@ public interface ConvertableUnit {
 
         // discard with a reflected packet so the client has a chance to sync goals, command groups and selections
         //oldEntity.discard();
-        return newEntity.getId();
+        return newEntity;
     }
 }

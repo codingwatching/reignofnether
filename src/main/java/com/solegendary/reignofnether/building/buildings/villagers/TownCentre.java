@@ -1,14 +1,22 @@
 package com.solegendary.reignofnether.building.buildings.villagers;
 
+import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.BackToWorkBuilding;
+import com.solegendary.reignofnether.ability.abilities.CallLightning;
+import com.solegendary.reignofnether.ability.abilities.CallToArmsBuilding;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.research.researchItems.*;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerProd;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
+import net.minecraft.client.gui.screens.PopupScreen;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.tutorial.Tutorial;
+import net.minecraft.client.tutorial.TutorialStepInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +25,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
+
+import javax.swing.event.PopupMenuEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
@@ -46,10 +57,18 @@ public class TownCentre extends ProductionBuilding {
         this.startingBlockTypes.add(Blocks.GRASS_BLOCK);
         this.startingBlockTypes.add(Blocks.POLISHED_ANDESITE_STAIRS);
 
-        if (level.isClientSide())
+        Ability callToArms = new CallToArmsBuilding();
+        this.abilities.add(callToArms);
+        BackToWorkBuilding backToWork = new BackToWorkBuilding();
+        this.abilities.add(backToWork);
+
+        if (level.isClientSide()) {
             this.productionButtons = List.of(
-                VillagerProd.getStartButton(this, Keybindings.keyQ)
+                    VillagerProd.getStartButton(this, Keybindings.keyQ)
             );
+            this.abilityButtons.add(callToArms.getButton(Keybindings.keyV));
+            this.abilityButtons.add(backToWork.getButton(Keybindings.build));
+        }
     }
 
     public Faction getFaction() {return Faction.VILLAGERS;}

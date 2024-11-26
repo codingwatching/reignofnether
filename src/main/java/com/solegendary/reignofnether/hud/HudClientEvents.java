@@ -3,6 +3,8 @@ package com.solegendary.reignofnether.hud;
 import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
+import com.solegendary.reignofnether.ability.abilities.SonicBoom;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientEvents;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
@@ -26,14 +28,12 @@ import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
-import com.solegendary.reignofnether.unit.units.monsters.PoisonSpiderUnit;
-import com.solegendary.reignofnether.unit.units.monsters.SkeletonUnit;
-import com.solegendary.reignofnether.unit.units.monsters.SpiderUnit;
-import com.solegendary.reignofnether.unit.units.monsters.StrayUnit;
+import com.solegendary.reignofnether.unit.units.monsters.*;
 import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
@@ -41,6 +41,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -105,7 +106,6 @@ public class HudClientEvents {
 
     private static final ArrayList<RectZone> hudZones = new ArrayList<>();
 
-    // sets the
     public static void setLowestCdHudEntity() {
         if (UnitClientEvents.getSelectedUnits().isEmpty() || hudSelectedEntity == null) {
             return;
@@ -114,8 +114,11 @@ public class HudClientEvents {
         List<Pair<LivingEntity, Integer>> pairs = UnitClientEvents.getSelectedUnits().stream().map((le) -> {
             int totalCd = 0;
             if (le instanceof Unit unit) {
-                for (Ability ability : unit.getAbilities())
+                for (Ability ability : unit.getAbilities()) {
                     totalCd += ability.getCooldown();
+                    if (ability.isChanneling())
+                        totalCd += 10;
+                }
             }
             return new Pair<>(le, totalCd);
         }).filter(p -> {
@@ -124,9 +127,8 @@ public class HudClientEvents {
             return str1.equals(str2);
         }).sorted(Comparator.comparing(Pair::getSecond)).toList();
 
-        if (!pairs.isEmpty()) {
+        if (!pairs.isEmpty())
             setHudSelectedEntity(pairs.get(0).getFirst());
-        }
     }
 
     public static void setHudSelectedEntity(LivingEntity entity) {
@@ -379,7 +381,7 @@ public class HudClientEvents {
             // ---------------------------------------------------------------
             // Building production queue (show only if 1 building is selected)
             // ---------------------------------------------------------------
-            else if (hudSelBuildingOwned && hudSelectedBuilding instanceof ProductionBuilding selProdBuilding) {
+            else if ((hudSelBuildingOwned || !PlayerClientEvents.isRTSPlayer) && hudSelectedBuilding instanceof ProductionBuilding selProdBuilding) {
                 blitY = screenHeight - iconFrameSize * 2 - 5;
 
                 for (int i = 0; i < selProdBuilding.productionQueue.size(); i++)
@@ -460,7 +462,7 @@ public class HudClientEvents {
             blitX = 0;
             blitY = screenHeight - iconFrameSize;
 
-            if (hudSelectedBuilding != null && hudSelBuildingOwned && !hudSelectedBuilding.isBuilt) {
+            if (hudSelectedBuilding != null && (hudSelBuildingOwned) && !hudSelectedBuilding.isBuilt) {
                 if (!buildingCancelButton.isHidden.get()) {
                     buildingCancelButton.render(evt.getPoseStack(), 0, screenHeight - iconFrameSize, mouseX, mouseY);
                     renderedButtons.add(buildingCancelButton);
@@ -730,6 +732,11 @@ public class HudClientEvents {
             }
             actionButtons.add(ActionButtons.STOP);
 
+            if (hudSelectedEntity instanceof VillagerUnit vUnit)
+                for (Ability ability : vUnit.getAbilities())
+                    if (ability instanceof CallToArmsUnit callToArmsUnit)
+                        actionButtons.add(callToArmsUnit.getButton(Keybindings.keyV));
+
             for (Button actionButton : actionButtons) {
 
                 // GATHER button does not have a static icon
@@ -770,13 +777,16 @@ public class HudClientEvents {
                     if (livingEntity == hudSelectedEntity) {
                         List<AbilityButton> abilityButtons = ((Unit) livingEntity).getAbilityButtons();
 
-                        int shownAbilities = abilityButtons.stream().filter(b -> !b.isHidden.get()).toList().size();
-                        int rowsUp = (int) Math.floor((float) (shownAbilities - 1) / MAX_BUTTONS_PER_ROW);
+                        List<AbilityButton> shownAbilities = abilityButtons.stream()
+                                .filter(ab -> !ab.isHidden.get() && !(ab.ability instanceof CallToArmsUnit))
+                                .toList();
+
+                        int rowsUp = (int) Math.floor((float) (shownAbilities.size() - 1) / MAX_BUTTONS_PER_ROW);
                         rowsUp = Math.max(0, rowsUp);
                         blitY -= iconFrameSize * rowsUp;
 
                         int i = 0;
-                        for (AbilityButton abilityButton : abilityButtons) {
+                        for (AbilityButton abilityButton : shownAbilities) {
                             if (!abilityButton.isHidden.get()) {
                                 i += 1;
                                 abilityButton.render(evt.getPoseStack(), blitX, blitY, mouseX, mouseY);
@@ -1085,6 +1095,8 @@ public class HudClientEvents {
         // Start buttons (spectator only)
         // ------------------------------
         if (!PlayerClientEvents.isRTSPlayer && !PlayerClientEvents.rtsLocked) {
+
+            /*
             Button gamemodeButton = ClientGameModeHelper.getButton();
             if (gamemodeButton != null && !gamemodeButton.isHidden.get() && !TutorialClientEvents.isEnabled()) {
                 gamemodeButton.render(evt.getPoseStack(),
@@ -1095,6 +1107,8 @@ public class HudClientEvents {
                 );
                 renderedButtons.add(gamemodeButton);
             }
+             */
+
             if (!StartButtons.villagerStartButton.isHidden.get()) {
                 StartButtons.villagerStartButton.render(evt.getPoseStack(),
                     screenWidth - (StartButtons.ICON_SIZE * 6),
@@ -1229,7 +1243,6 @@ public class HudClientEvents {
         if (evt.phase != TickEvent.Phase.END) {
             return;
         }
-
         if (OrthoviewClientEvents.isEnabled()) {
             portraitRendererUnit.tickAnimation();
         }

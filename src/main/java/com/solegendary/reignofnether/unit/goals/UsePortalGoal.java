@@ -22,7 +22,7 @@ public class UsePortalGoal extends MoveToTargetBlockGoal {
     }
 
     public void tick() {
-        if (buildingTarget instanceof Portal portal) {
+        if (buildingTarget instanceof Portal portal && moveTarget != null) {
             calcMoveTarget();
             if (buildingTarget.getBlocksPlaced() <= 0) {
                 stopUsingPortal();

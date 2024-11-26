@@ -457,7 +457,7 @@
     "research.reignofnether.resource_capacity.tooltip1": "Aumenta a capacidade de recursos dos trabalhadores de 100 para 200",
     "research.reignofnether.resource_capacity.tooltip2": "Agora os trabalhadores retornam automaticamente os recursos quando possuem mais de 100.",
     "research.reignofnether.silverfish": "Peixinhos de Prata",
-    "research.reignofnether.silverfish.tooltip1": "Dá aos seus edifícios uma chance de %d de gerar",
+    "research.reignofnether.silverfish.tooltip1": "Dá aos seus edifícios uma chance de %s de gerar",
     "research.reignofnether.silverfish.tooltip2": "um peixinho de prata sempre que um bloco for destruído.",
     "research.reignofnether.silverfish.tooltip3": "Os peixinhos de prata têm uma vida útil limitada.",
     "research.reignofnether.silverfish.tooltip4": "Requer um Castelo.",

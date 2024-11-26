@@ -6,6 +6,7 @@ import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.util.MyMath;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 
@@ -51,6 +52,10 @@ public abstract class AbstractCastTargetedSpellGoal extends MoveToTargetBlockGoa
     public void setTarget(Building building) {
         this.setMoveTarget(building.centrePos);
         this.setTarget((LivingEntity) null);
+    }
+
+    public LivingEntity getTargetEntity() {
+        return targetEntity;
     }
 
     public void setAbility(Ability ability) {

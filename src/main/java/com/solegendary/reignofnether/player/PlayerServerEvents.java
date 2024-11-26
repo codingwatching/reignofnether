@@ -23,6 +23,7 @@ import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
+import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.commands.CommandSourceStack;
@@ -647,6 +648,7 @@ public class PlayerServerEvents {
 
             for (LivingEntity entity : UnitServerEvents.getAllUnits())
                 entity.kill();
+
             UnitServerEvents.getAllUnits().clear();
 
             for (Building building : BuildingServerEvents.getBuildings()) {

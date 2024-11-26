@@ -287,12 +287,10 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
                     .stream().filter(mob -> mob instanceof Unit unit &&
                             UnitServerEvents.getUnitToEntityRelationship(this, mob) == Relationship.HOSTILE)
                     .toList();
-            if (nearbyEnemies.size() > 0)
-                doEntitySonicBoom(nearbyEnemies.get(0), Vec3.atCenterOf(targetBuilding.centrePos));
-            if (nearbyEnemies.size() > 1)
-                doEntitySonicBoom(nearbyEnemies.get(1), Vec3.atCenterOf(targetBuilding.centrePos));
-            if (nearbyEnemies.size() > 2)
-                doEntitySonicBoom(nearbyEnemies.get(2), Vec3.atCenterOf(targetBuilding.centrePos));
+
+            for (int i = 0; i < ResearchSculkAmplifiers.SPLIT_BOOM_AMOUNT; i++)
+                if (nearbyEnemies.size() > i)
+                    doEntitySonicBoom(nearbyEnemies.get(i), Vec3.atCenterOf(targetBuilding.centrePos));
         }
         else
             targetBuilding.destroyRandomBlocks((int) SONIC_BOOM_DAMAGE / 2);
