@@ -48,6 +48,8 @@ Bugfixes
 Quality of Life Features
 ------------------------
 
+[✔] /gamerule doMobSpawning is now turned off by default
+
 [🟡] The warpten cheatcode now also makes buildings build themselves without workers
 
 [✔] All buildings can now be built directly adjacent to each other
