@@ -109,8 +109,7 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.GHAST.population;}
+    public int getPopCost() {return popCost;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -139,6 +138,7 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     final static public float maxHealth = 50.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.22f;
+    final static public int popCost = ResourceCosts.GHAST.population;
     public int maxResources = 100;
 
     public int fogRevealDuration = 0; // set > 0 for the client who is attacked by this unit

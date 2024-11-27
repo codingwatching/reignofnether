@@ -108,8 +108,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.SPIDER.population;}
+    public int getPopCost() {return popCost;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -131,6 +130,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+    final static public int popCost = ResourceCosts.SPIDER.population;
 
     public int maxResources = 100;
 

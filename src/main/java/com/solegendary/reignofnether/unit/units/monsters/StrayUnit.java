@@ -116,8 +116,7 @@ public class StrayUnit extends Stray implements Unit, AttackerUnit, RangedAttack
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.STRAY.population;}
+    public int getPopCost() {return popCost;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -134,6 +133,7 @@ public class StrayUnit extends Stray implements Unit, AttackerUnit, RangedAttack
     final static public float aggroRange = 12;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+    final static public int popCost = ResourceCosts.STRAY.population;
     public int maxResources = 100;
 
     public int fogRevealDuration = 0; // set > 0 for the client who is attacked by this unit
