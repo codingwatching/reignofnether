@@ -89,7 +89,7 @@ public class WaveEnemy {
 
         Entity entity = (Entity) unit;
         List<Building> buildings = BuildingServerEvents.getBuildings().stream()
-                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName))
+                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank())
                 .sorted(Comparator.comparing(b -> b.centrePos.distToCenterSqr(entity.getEyePosition())))
                 .toList();
 
@@ -109,7 +109,7 @@ public class WaveEnemy {
         Collections.shuffle(buildings);
 
         List<Building> playerBuildings = buildings.stream()
-                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName))
+                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank())
                 .toList();
 
         BlockPos targetBp = null;

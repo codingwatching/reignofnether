@@ -7,6 +7,9 @@
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
+Wave Survival 0.3b
+[🟡] Player units have frost and lava walker by default
+[🟡] Enemy units no longer try to attack bridges
 
 
 Features
