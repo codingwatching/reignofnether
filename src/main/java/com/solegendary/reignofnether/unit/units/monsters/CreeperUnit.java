@@ -19,6 +19,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -108,7 +110,8 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable //Defined after CommonSetup, as this value is loaded from configuration
+    public int getPopCost() {return ResourceCosts.CREEPER.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -125,7 +128,6 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = false;
-    final static public int popCost = ResourceCosts.CREEPER.population;
 
     final static public float EXPLOSION_RADIUS = 3;
     final static public float CHARGED_EXPLOSION_RADIUS = 5;
@@ -143,6 +145,8 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
 
     public CreeperUnit(EntityType<? extends Creeper> entityType, Level level) {
         super(entityType, level);
+        //revisit and implement configurable attribute modifiers here
+        //this.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(new AttributeModifier());
 
         Explode explodeAbility = new Explode(this);
         this.abilities.add(explodeAbility);

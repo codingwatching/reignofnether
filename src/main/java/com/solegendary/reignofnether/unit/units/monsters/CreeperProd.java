@@ -19,7 +19,7 @@ import java.util.List;
 public class CreeperProd extends ProductionItem {
 
     public final static String itemName = "Creeper";
-    public final static ResourceCost cost = ResourceCosts.CREEPER;
+    public static ResourceCost cost = ResourceCosts.CREEPER;
 
     public CreeperProd(ProductionBuilding building) {
         super(building, cost.ticks);
