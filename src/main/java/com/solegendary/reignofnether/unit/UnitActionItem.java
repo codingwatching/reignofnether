@@ -253,7 +253,7 @@ public class UnitActionItem {
                         // to gather
                         GatherResourcesGoal goal = workerUnit.getGatherResourceGoal();
                         if (goal != null) {
-                            goal.deleteSavedState();
+                            goal.saveData.delete();
                         }
                     }
                     ReturnResourcesGoal returnResourcesGoal = unit.getReturnResourcesGoal();
@@ -267,7 +267,7 @@ public class UnitActionItem {
                         // to gather
                         GatherResourcesGoal goal = workerUnit.getGatherResourceGoal();
                         if (goal != null) {
-                            goal.deleteSavedState();
+                            goal.saveData.delete();
                         }
                     }
                     ReturnResourcesGoal returnResourcesGoal = unit.getReturnResourcesGoal();
@@ -288,11 +288,11 @@ public class UnitActionItem {
                         if (ability.canAutocast)
                             ability.autocast = !ability.autocast;
                 }
-
                 // any other Ability not explicitly defined here
                 default -> {
                     for (Ability ability : unit.getAbilities()) {
                         if (ability.action == action && (ability.isOffCooldown() || ability.canBypassCooldown())) {
+
                             if (ability.canTargetEntities && this.unitId > 0) {
                                 ability.use(level, unit, (LivingEntity) level.getEntity(unitId));
                                 usedAbility = ability;

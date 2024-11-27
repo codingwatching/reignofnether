@@ -180,7 +180,6 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
 
         if (level.isClientSide()) {
             AbilityButton mausoleumButton = Mausoleum.getBuildButton(Keybindings.keyQ);
-            mausoleumButton.isEnabled = () -> !BuildingUtils.doesPlayerOwnCapitol(level.isClientSide(), getOwnerName());
             this.abilityButtons.add(mausoleumButton);
             this.abilityButtons.add(SpruceStockpile.getBuildButton(Keybindings.keyW));
             this.abilityButtons.add(HauntedHouse.getBuildButton(Keybindings.keyE));

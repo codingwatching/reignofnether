@@ -172,8 +172,9 @@ public class UnitServerEvents {
         for (LivingEntity unit : unitsToConvert) {
             if (unit instanceof ConvertableUnit cUnit) {
                 oldIds.add(unit.getId());
-                int newId = cUnit.convertToUnit(entityType);
-                newIds.add(newId);
+                LivingEntity newEntity = cUnit.convertToUnit(entityType);
+                if (newEntity != null)
+                    newIds.add(newEntity.getId());
             }
         }
         if (oldIds.size() == newIds.size() && oldIds.size() > 0) {
@@ -377,7 +378,11 @@ public class UnitServerEvents {
             for (ItemStack itemStack : itemStacks)
                 evt.getEntity().spawnAtLocation(itemStack);
         }
-        if (evt.getEntity() instanceof CreeperUnit creeperUnit) {
+
+        // for some reason, if we discard() creepers en masse via exploding them,
+        // /rts-reset fails to run
+        if (evt.getEntity() instanceof CreeperUnit creeperUnit &&
+            !PlayerServerEvents.rtsPlayers.isEmpty()) {
             creeperUnit.explodeCreeper();
         }
 
@@ -584,24 +589,27 @@ public class UnitServerEvents {
             knockbackIgnoreIds.add(evt.getEntity().getId());
         }
 
-        // wither skeletons deal up to double damage to enemies with less health left
+        // halve friendly fire from your own/friendly creepers (but still cause knockback)
+        if (evt.getSource().getEntity() instanceof CreeperUnit creeperUnit &&
+                getUnitToEntityRelationship(creeperUnit, evt.getEntity()) == Relationship.FRIENDLY) {
+            evt.setAmount(evt.getAmount() / 2);
+
+            if (evt.getEntity() instanceof CreeperUnit)
+                evt.setAmount(evt.getAmount() / 2);
+        }
+
+        if (ResourceSources.isHuntableAnimal(evt.getEntity()) && (
+            evt.getSource().getEntity() instanceof MilitiaUnit
+        )) {
+            evt.setAmount(1);
+            return;
+        }
+
         if (evt.getEntity() instanceof Unit && (
             evt.getSource() == DamageSource.SWEET_BERRY_BUSH || evt.getSource() == DamageSource.CACTUS
         )) {
             evt.setCanceled(true);
             return;
-        }
-
-        // wither skeletons deal up to double damage to enemies with less health left
-        if (evt.getSource().getEntity() instanceof WitherSkeletonUnit) {
-            float maxHp = evt.getEntity().getMaxHealth();
-            float hp = evt.getEntity().getHealth();
-            float damageMult = 2.0f - (hp / maxHp);
-            evt.setAmount(evt.getAmount() * damageMult);
-        }
-        // increase wither damage since we are playing with (average) doubled mob health
-        if (evt.getSource() == DamageSource.WITHER) {
-            evt.setAmount(evt.getAmount() * 2);
         }
 
         // halve direct ghast damage since they get bonus damage from launching units into the air

@@ -457,7 +457,7 @@
   "research.reignofnether.resource_capacity.tooltip1": "Hæver ressourcekapaciteten for arbejdere fra 100 til 200",
   "research.reignofnether.resource_capacity.tooltip2": "Arbejderne returnerer nu automatisk ressourcer, når de holder over 100",
   "research.reignofnether.silverfish": "Silverfish",
-  "research.reignofnether.silverfish.tooltip1": "Giver dine bygninger en %d chance for at spawne",
+  "research.reignofnether.silverfish.tooltip1": "Giver dine bygninger en %s chance for at spawne",
   "research.reignofnether.silverfish.tooltip2": "en silverfish, når en blok ødelægges.",
   "research.reignofnether.silverfish.tooltip3": "Silverfish har begrænsede levetider.",
   "research.reignofnether.silverfish.tooltip4": "Kræver en Stronghold.",

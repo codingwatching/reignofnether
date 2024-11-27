@@ -57,6 +57,10 @@ public class ItemRegistrar {
             ITEMS.register("villager_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.VILLAGER_UNIT,
                     0x523632, 0x946F66, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
+    public static final RegistryObject<ForgeSpawnEggItem> MILITIA_UNIT_SPAWN_EGG =
+            ITEMS.register("militia_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.MILITIA_UNIT,
+                    0x523632, 0x946F66, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
     public static final RegistryObject<ForgeSpawnEggItem> ZOMBIE_VILLAGER_UNIT_SPAWN_EGG =
             ITEMS.register("zombie_villager_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.ZOMBIE_VILLAGER_UNIT,
                     0x523632, 0x647E51, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));

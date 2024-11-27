@@ -24,7 +24,7 @@ import java.util.List;
 public class WitherCloud extends Ability {
 
     private static final int CD_MAX_SECONDS = 50;
-    private static final int DURATION_SECONDS = 10;
+    private static final int DURATION_SECONDS = 15;
 
     private final WitherSkeletonUnit witherSkeletonUnit;
 

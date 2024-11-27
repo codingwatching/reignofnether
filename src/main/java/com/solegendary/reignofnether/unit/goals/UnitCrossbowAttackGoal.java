@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.unit.goals;
 
 import java.util.EnumSet;
+import java.util.Random;
 
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.GarrisonableBuilding;
@@ -23,11 +24,14 @@ import net.minecraft.world.item.ItemStack;
 // - stops when the target is dead
 
 public class UnitCrossbowAttackGoal<T extends Monster & RangedAttackMob & CrossbowAttackMob> extends Goal {
+    private final Random random = new Random();
+
     private final T mob;
     private UnitCrossbowAttackGoal.CrossbowState crossbowState = UnitCrossbowAttackGoal.CrossbowState.UNCHARGED;
     private int seeTime;
     private int attackCooldown;
     private int attackCooldownMax;
+    private int windupTime = random.nextInt(-4,5);
 
     private static final int GARRISON_BONUS_RANGE_TO_GHASTS = 10;
 
@@ -171,11 +175,12 @@ public class UnitCrossbowAttackGoal<T extends Monster & RangedAttackMob & Crossb
 
                 int i = this.mob.getTicksUsingItem();
                 ItemStack itemstack = this.mob.getUseItem();
-                if (i >= CrossbowItem.getChargeDuration(itemstack)) {
+                if (i >= CrossbowItem.getChargeDuration(itemstack) + windupTime) {
                     this.mob.releaseUsingItem();
                     this.crossbowState = UnitCrossbowAttackGoal.CrossbowState.CHARGED;
                     this.attackCooldown = attackCooldownMax;
                     this.mob.setChargingCrossbow(false);
+                    windupTime = random.nextInt(-4,5);
                 }
             } else if (this.crossbowState == UnitCrossbowAttackGoal.CrossbowState.CHARGED) {
                 --this.attackCooldown;

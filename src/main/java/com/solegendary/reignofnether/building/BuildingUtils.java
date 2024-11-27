@@ -46,10 +46,19 @@ public class BuildingUtils {
                     building.getBlocksPlaced() < building.getBlocksTotal();
     }
 
-    public static boolean doesPlayerOwnCapitol(boolean isClientSide, String playerName) {
+    public static int capitolsOwned(boolean isClientSide, String playerName) {
         List<Building> buildings = isClientSide ? BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
-        for (Building building : buildings)
-            if (building.isCapitol && building.ownerName.equals(playerName))
+        return buildings.stream().filter(b -> b.isCapitol && b.ownerName.equals(playerName)).toList().size();
+    }
+
+    public static boolean anyOtherCapitolProducingWorkers(boolean isClientSide, Building building) {
+        List<Building> buildings = isClientSide ? BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
+        List<Building> capitols = buildings.stream().filter(
+                b -> b.isCapitol && b.ownerName.equals(building.ownerName) &&
+                        !b.originPos.equals(building.originPos)).toList();
+        for (Building capitol : capitols)
+            if (capitol instanceof ProductionBuilding pb &&
+                !pb.productionQueue.isEmpty())
                 return true;
         return false;
     }

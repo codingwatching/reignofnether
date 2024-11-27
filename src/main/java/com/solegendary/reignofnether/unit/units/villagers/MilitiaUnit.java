@@ -1,25 +1,35 @@
-package com.solegendary.reignofnether.unit.units.piglins;
+package com.solegendary.reignofnether.unit.units.villagers;
 
 import com.solegendary.reignofnether.ability.Ability;
-import com.solegendary.reignofnether.ability.abilities.SpinWebs;
-import com.solegendary.reignofnether.ability.abilities.WitherCloud;
+import com.solegendary.reignofnether.ability.abilities.BackToWorkUnit;
+import com.solegendary.reignofnether.building.Building;
+import com.solegendary.reignofnether.building.BuildingUtils;
+import com.solegendary.reignofnether.building.buildings.villagers.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.registrars.EntityRegistrar;
+import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.resources.ResourceName;
+import com.solegendary.reignofnether.resources.ResourceSource;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
+import com.solegendary.reignofnether.unit.interfaces.ArmSwingingUnit;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
+import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.packets.UnitConvertClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
+import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -28,19 +38,20 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.entity.npc.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class WitherSkeletonUnit extends WitherSkeleton implements Unit, AttackerUnit {
+public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, VillagerDataHolder, ConvertableUnit {
     // region
     private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
     private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
@@ -62,12 +73,14 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     public UsePortalGoal getUsePortalGoal() { return usePortalGoal; }
     public boolean canUsePortal() { return getUsePortalGoal() != null; }
 
-    public Faction getFaction() {return Faction.PIGLINS;}
+    public Faction getFaction() {return Faction.VILLAGERS;}
     public List<AbilityButton> getAbilityButtons() {return abilityButtons;};
     public List<Ability> getAbilities() {return abilities;}
     public List<ItemStack> getItems() {return items;};
     public MoveToTargetBlockGoal getMoveGoal() {return moveGoal;}
     public SelectedTargetGoal<? extends LivingEntity> getTargetGoal() {return targetGoal;}
+    public BuildRepairGoal getBuildRepairGoal() {return null;}
+    public GatherResourcesGoal getGatherResourceGoal() {return null;}
     public ReturnResourcesGoal getReturnResourcesGoal() {return returnResourcesGoal;}
     public int getMaxResources() {return maxResources;}
 
@@ -91,20 +104,13 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     public String getOwnerName() { return this.entityData.get(ownerDataAccessor); }
     public void setOwnerName(String name) { this.entityData.set(ownerDataAccessor, name); }
     public static final EntityDataAccessor<String> ownerDataAccessor =
-            SynchedEntityData.defineId(WitherSkeletonUnit.class, EntityDataSerializers.STRING);
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ownerDataAccessor, "");
-    }
+            SynchedEntityData.defineId(MilitiaUnit.class, EntityDataSerializers.STRING);
 
     // combat stats
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.WITHER_SKELETON.population;}
+    public int getPopCost() {return popCost;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -119,41 +125,46 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
 
+    // ConvertableUnit
+    public boolean converted = false;
+    private boolean shouldDiscard = false;
+    public boolean shouldDiscard() { return shouldDiscard; }
+    public void setShouldDiscard(boolean discard) { this.shouldDiscard = discard; }
+
     // endregion
 
+    // distance you can move away from a town centre before being turned back into a villager
+    public static final int RANGE = 50;
+
+    // for going back to work as a villager
+    public GatherResourcesGoal.GatherResourcesSaveData resourcesSaveData = null;
+
     final static public float attackDamage = 3.0f;
-    final static public float attacksPerSecond = 0.3f;
+    final static public float attacksPerSecond = 0.5f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
 
-    final static public float maxHealth = 90.0f;
+    final static public float maxHealth = 35.0f;
     final static public float armorValue = 0.0f;
-    final static public float movementSpeed = 0.28f;
+    final static public float movementSpeed = 0.25f;
+    final static public int popCost = ResourceCosts.MILITIA.population;
     public int maxResources = 100;
-
-    public int deathCloudTicks = 0;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
     private final List<Ability> abilities = new ArrayList<>();
     private final List<ItemStack> items = new ArrayList<>();
 
-    public WitherSkeletonUnit(EntityType<? extends WitherSkeleton> entityType, Level level) {
+    public MilitiaUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
-        WitherCloud ab1 = new WitherCloud(this);
-        this.abilities.add(ab1);
-        if (level.isClientSide()) {
-            this.abilityButtons.add(ab1.getButton(Keybindings.keyQ));
-        }
-    }
+        Ability backToWork = new BackToWorkUnit();
+        this.abilities.add(backToWork);
 
-    @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-        SpawnGroupData spawnGroupData = super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
-        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
-        return spawnGroupData;
+        if (level.isClientSide()) {
+            this.abilityButtons.add(backToWork.getButton(Keybindings.build));
+        }
     }
 
     @Override
@@ -161,46 +172,56 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.ATTACK_DAMAGE, WitherSkeletonUnit.attackDamage)
-                .add(Attributes.MOVEMENT_SPEED, WitherSkeletonUnit.movementSpeed)
-                .add(Attributes.MAX_HEALTH, WitherSkeletonUnit.maxHealth)
-                .add(Attributes.ARMOR, WitherSkeletonUnit.armorValue);
+                .add(Attributes.ATTACK_DAMAGE, MilitiaUnit.attackDamage)
+                .add(Attributes.MOVEMENT_SPEED, MilitiaUnit.movementSpeed)
+                .add(Attributes.MAX_HEALTH, MilitiaUnit.maxHealth)
+                .add(Attributes.ARMOR, MilitiaUnit.armorValue);
     }
 
     @Override
-    public void reassessWeaponGoal() { }
+    protected SoundEvent getAmbientSound() { return SoundEvents.VILLAGER_AMBIENT;}
     @Override
-    public boolean isSunBurnTick() { return false; }
+    protected SoundEvent getDeathSound() { return SoundEvents.VILLAGER_DEATH; }
+    @Override
+    protected SoundEvent getHurtSound(DamageSource p_34103_) { return SoundEvents.VILLAGER_HURT; }
     @Override
     public boolean isLeftHanded() { return false; }
     @Override // prevent vanilla logic for picking up items
     protected void pickUpItem(ItemEntity pItemEntity) { }
-    @Override
-    protected void customServerAiStep() { }
-    @Override
-    public LivingEntity getTarget() {
-        return this.targetGoal.getTarget();
-    }
 
     public void tick() {
-        this.setCanPickUpLoot(true);
-        super.tick();
-        Unit.tick(this);
-        AttackerUnit.tick(this);
+        if (shouldDiscard)
+            this.discard();
+        else {
+            this.setCanPickUpLoot(true);
+            super.tick();
+            Unit.tick(this);
+            AttackerUnit.tick(this);
 
-        if (!level.isClientSide() && deathCloudTicks > 0 && deathCloudTicks % 20 == 0) {
-            AreaEffectCloud aec = new AreaEffectCloud(level, getX(), getY(), getZ());
-            aec.setOwner(this);
-            aec.setRadius(4.0F);
-            aec.setRadiusOnUse(0);
-            aec.setDurationOnUse(0);
-            aec.setDuration(2 * 20); // cloud duration
-            aec.setRadiusPerTick(-aec.getRadius() / (float)aec.getDuration());
-            aec.addEffect(new MobEffectInstance(MobEffects.WITHER, 2 * 20, 1));
-            level.addFreshEntity(aec);
+            if (this.tickCount > 100 && this.tickCount % 10 == 0 && !converted && !level.isClientSide()) {
+                Building building = BuildingUtils.findClosestBuilding(level.isClientSide(), this.getEyePosition(),
+                        (b) -> b.isBuilt && b.ownerName.equals(getOwnerName()) && b instanceof TownCentre);
+
+                if (building != null &&
+                    distanceToSqr(building.centrePos.getX(), building.centrePos.getY(), building.centrePos.getZ()) > RANGE * RANGE) {
+                    convertToVillager();
+                }
+            }
         }
-        if (deathCloudTicks > 0)
-            deathCloudTicks -= 1;
+    }
+
+    public void convertToVillager() {
+        if (!converted) {
+            LivingEntity newEntity = this.convertToUnit(EntityRegistrar.VILLAGER_UNIT.get());
+            if (newEntity instanceof VillagerUnit vUnit) {
+                if (resourcesSaveData != null) {
+                    vUnit.getGatherResourceGoal().saveData = resourcesSaveData;
+                    vUnit.getGatherResourceGoal().loadState();
+                }
+                UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newEntity.getId()));
+                converted = true;
+            }
+        }
     }
 
     public void initialiseGoals() {
@@ -208,9 +229,9 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, false);
-        this.returnResourcesGoal = new ReturnResourcesGoal(this);
+        this.attackGoal = new MeleeAttackUnitGoal(this, true);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
+        this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }
 
     @Override
@@ -230,42 +251,48 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
 
     @Override
     public void setupEquipmentAndUpgradesClient() {
-
+        ItemStack swordStack = new ItemStack(Items.STONE_SWORD);
+        this.setItemSlot(EquipmentSlot.MAINHAND, swordStack);
     }
 
     @Override
     public void setupEquipmentAndUpgradesServer() {
-        ItemStack swordStack = new ItemStack(Items.NETHERITE_SWORD);
-        AttributeModifier mod = new AttributeModifier(UUID.randomUUID().toString(), 0, AttributeModifier.Operation.ADDITION);
+        Item sword = Items.STONE_SWORD;
+        int damageMod = 0;
+        ItemStack swordStack = new ItemStack(sword);
+        AttributeModifier mod = new AttributeModifier(UUID.randomUUID().toString(), damageMod, AttributeModifier.Operation.ADDITION);
         swordStack.addAttributeModifier(Attributes.ATTACK_DAMAGE, mod, EquipmentSlot.MAINHAND);
+
         this.setItemSlot(EquipmentSlot.MAINHAND, swordStack);
     }
 
-    public static final int WITHER_SECONDS = 6;
-    public static final int WITHER_MAX_AMPLIFIER = 4; // amplifier starts at 0
+    @Override
+    @Nullable
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        return pSpawnData;
+    }
 
-    public static void applyStackingWither(LivingEntity le) {
-        int amplifier = 0;
-        MobEffectInstance witherEffect = null;
-        for (MobEffectInstance effect : (le).getActiveEffects())
-            if (effect.getEffect() == MobEffects.WITHER)
-                witherEffect = effect;
+    private static final EntityDataAccessor<VillagerData> VILLAGER_DATA;
 
-        if (witherEffect != null) {
-            amplifier = Math.min(WITHER_MAX_AMPLIFIER, witherEffect.getAmplifier() + 1);
-            le.removeEffect(MobEffects.WITHER);
-        }
-        le.addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_SECONDS * 20, amplifier), null);
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(ownerDataAccessor, "");
+        this.entityData.define(VILLAGER_DATA, new VillagerData(VillagerType.PLAINS, VillagerProfession.ARMORER, 1));
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity pEntity) {
-        if (!super.doHurtTarget(pEntity)) {
-            return false;
-        } else {
-            if (pEntity instanceof LivingEntity le)
-                applyStackingWither(le);
-            return true;
-        }
+    public VillagerData getVillagerData() {
+        return this.entityData.get(VILLAGER_DATA);
+    }
+
+    @Override
+    public void setVillagerData(VillagerData p_35437_) {
+        VillagerData villagerdata = this.getVillagerData();
+        this.entityData.set(VILLAGER_DATA, p_35437_);
+    }
+
+    static {
+        VILLAGER_DATA = SynchedEntityData.defineId(Villager.class, EntityDataSerializers.VILLAGER_DATA);
     }
 }

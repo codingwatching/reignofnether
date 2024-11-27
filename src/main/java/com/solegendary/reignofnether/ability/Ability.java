@@ -16,7 +16,7 @@ public class Ability {
     public final float range; // if <= 0, is melee
     public final float radius; // if <= 0, is single target
     public final boolean canTargetEntities;
-    public final boolean oneClickOneUse; // if true, a group of units/buildings will use their abilities one by one
+    public boolean oneClickOneUse; // if true, a group of units/buildings will use their abilities one by one
     public boolean canAutocast = false;
     public boolean autocast = false;
 
@@ -42,6 +42,8 @@ public class Ability {
         if (this.cooldown > 0)
             this.cooldown -= 1;
     }
+
+    public boolean isChanneling() { return false; }
 
     public int getCooldown() { return this.cooldown; }
 
