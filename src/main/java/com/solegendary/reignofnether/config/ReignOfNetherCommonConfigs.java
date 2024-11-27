@@ -1,17 +1,14 @@
 package com.solegendary.reignofnether.config;
-
-import com.solegendary.reignofnether.resources.ResourceCost;
-import com.solegendary.reignofnether.resources.ResourceCosts;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraftforge.common.ForgeConfigSpec;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-
+/*
+    Class responsible for defining all configurable ResourceCosts; this occurs during commonsetup
+ */
 public class ReignOfNetherCommonConfigs {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec SPEC;
+
+    //TODO: Implement each static class as a Hashmap<String, ResourceCostConfigEntry>
 
     static {
         BUILDER.push("Configuration File");
@@ -131,7 +128,7 @@ public class ReignOfNetherCommonConfigs {
         SPEC = BUILDER.build();
     }
 
-    public static class UnitCosts {
+    public static class UnitCosts implements Costs {
         //Monsters
         public static final ResourceCostConfigEntry CREEPER = ResourceCostConfigEntry.Unit(50, 0, 100, 35, 2, "Creeper Config");
         public static final ResourceCostConfigEntry ZOMBIE = ResourceCostConfigEntry.Unit(75, 0, 0, 10, 1, "Zombie Config");
@@ -165,7 +162,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry WITHER_SKELETON = ResourceCostConfigEntry.Unit(200,0,150,40,4, "Wither Skeleton Config");
         public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,150,250,50,5, "Ghast Config");
     }
-    public static class BuildingCosts {
+    public static class BuildingCosts implements Costs {
         public static final ResourceCostConfigEntry STOCKPILE = ResourceCostConfigEntry.Building(0,75,0, 0, "Stockpile Config");
         public static final ResourceCostConfigEntry OAK_BRIDGE = ResourceCostConfigEntry.Building(0,50,0, 0, "Oak Bridge Config");
         public static final ResourceCostConfigEntry SPRUCE_BRIDGE = ResourceCostConfigEntry.Building(0,50,0, 0, "Spruce Bridge Config");
@@ -205,7 +202,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry WITHER_SHRINE = ResourceCostConfigEntry.Building(0, 350, 200, 0, "Wither Shrine Config");
         public static final ResourceCostConfigEntry FORTRESS = ResourceCostConfigEntry.Building(0, 400, 300, 0, "Fortress Config");
     }
-    public static class ResearchCosts {
+    public static class ResearchCosts implements Costs {
         public static final ResourceCostConfigEntry RESEARCH_GOLEM_SMITHING = ResourceCostConfigEntry.Research(0, 150,200, 90, "Golem Smithing Research Config");
         public static final ResourceCostConfigEntry RESEARCH_LAB_LIGHTNING_ROD = ResourceCostConfigEntry.Research(0,0,400, 120, "Lightning Lab Research Config");
         public static final ResourceCostConfigEntry RESEARCH_RESOURCE_CAPACITY = ResourceCostConfigEntry.Research(200,200,0, 90, "Stockpile Resource Capacity Research Config");
@@ -233,11 +230,12 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry RESEARCH_MILITARY_PORTAL = ResourceCostConfigEntry.Research(0, 125, 0, 30, "Military Portal Research Config");
         public static final ResourceCostConfigEntry RESEARCH_TRANSPORT_PORTAL = ResourceCostConfigEntry.Research(0, 175, 0, 40, "Transport Portal Research Config");
     }
-    public static class EnchantmentCosts {
+    public static class EnchantmentCosts implements Costs {
         public static final ResourceCostConfigEntry ENCHANT_MAIMING = ResourceCostConfigEntry.Enchantment(0,20, 30, "Maiming Enchantment Config");
         public static final ResourceCostConfigEntry ENCHANT_QUICK_CHARGE = ResourceCostConfigEntry.Enchantment(0,30, 15, "Quick Charge Enchantment Config");
         public static final ResourceCostConfigEntry ENCHANT_SHARPNESS = ResourceCostConfigEntry.Enchantment(0,40, 60, "Sharpness Enchantment Config");
         public static final ResourceCostConfigEntry ENCHANT_MULTISHOT = ResourceCostConfigEntry.Enchantment(0,70, 35, "Multishot Enchantment Config");
         public static final ResourceCostConfigEntry ENCHANT_VIGOR = ResourceCostConfigEntry.Enchantment(0,60, 60, "Vigor Enchantment Config");
     }
+    public interface Costs {}
 }

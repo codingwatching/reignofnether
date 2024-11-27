@@ -118,7 +118,6 @@ public class ResourceCosts {
     public static ResourceCost RESEARCH_PILLAGER_CROSSBOWS = ResourceCost.Research(0,600,300, 180);
     public static ResourceCost ENDERMAN = ResourceCost.Unit(100,100,100,30,3);
 
-
     public static FormattedCharSequence getFormattedCost(ResourceCost resCost) {
         String str = "";
         if (resCost.food > 0)
@@ -146,6 +145,7 @@ public class ResourceCosts {
     /*
         Unit costs are defined here during CommonSetup
         Do not read values and initialize from config earlier, else will result in IllegalStateException !!!
+        TODO: Call with event listeners (ModConfigEvent$Loading, ModConfigEvent$Reloading)
      */
     public static void deferredLoadResourceCosts() {
 
@@ -248,5 +248,6 @@ public class ResourceCosts {
         ENCHANT_SHARPNESS = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_SHARPNESS);
         ENCHANT_MULTISHOT = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_MULTISHOT);
         ENCHANT_VIGOR = ResourceCost.fromConfigEntry(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_VIGOR);
+
     }
 }
