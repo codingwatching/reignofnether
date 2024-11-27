@@ -13,35 +13,27 @@ Features
 --------
 
 Villager Militia
-    - Town Centres and villagers now have a 'Call to Arms' button
-    - When used, they run to the nearest Town Centre to be turned into a Militia unit
-    - Militia have 35 HP and 3 damage but cannot do regular worker activities
-    - Militia transform back into villagers any time with a button or if they move 50 blocks away from the town centre
-    - Militia only do 1 damage to huntable animals
-    - Added a bell to the town centre
+    [🟡] Town Centres and villagers now have a 'Call to Arms' button
+    [🟡] When used, they run to the nearest Town Centre to be turned into a Militia unit
+    [🟡] Militia have 35 HP and 3 damage but cannot do regular worker activities
+    [🟡] Militia transform back into villagers any time with a button or if they move 50 blocks away from the town centre
+    [🟡] Militia only do 1 damage to huntable animals
+    [🟡] Added a bell to the town centre
 
 Bugfixes
 --------
 
 [🟡] Portals can sometimes stack the same upgrade if they're upgraded with multiple selected
-
 [🟡] Vindicators can no longer spawn with random enchantments on their equipment
-
 [🟡] Ranged units now stagger their attack speeds by a few ticks randomly
     - This is to work around Minecraft's built-in 1-tick invincibility frames
-
 [🟡] Animals cannot spawn on Y levels too different to your capitol
-
 [🟡] Queued units no longer progress if you're at the population cap instead of being stuck at 99%
     - This is to fix an issue of being able to go over the max cap when the server is lagging
-
 [🟡] Creepers no longer explode when using /rts-reset
     - This was to fix a bug where the reset failed if a creeper exploded from it
-
 [🟡] Fixed not being able to upgrade two labs at the same time
-
 [🟡] Fixed crash related to transport portals
-
 [🟡] Fixed sonic booms cancelling the first warden's charge up instead of cycling to the next one
 
 
@@ -49,12 +41,9 @@ Quality of Life Features
 ------------------------
 
 [✔] /gamerule doMobSpawning is now turned off by default
-
 [🟡] The warpten cheatcode now also makes buildings build themselves without workers
-
 [✔] All buildings can now be built directly adjacent to each other
     - This means you can use houses as walls (but you won't be able to shoot past them)
-
 [✔] Spectators can see what's being produced on anyone's buildings
 
 
@@ -64,15 +53,11 @@ Balancing
 
 [✔] All factions may build additional capitols, but only one can produce workers at any given time
     - you can also now delete capitols if you have more than one
-
 [✔] Ghasts: +10s build time, +1 pop
-
 [✔] Creeper friendly fire is halved and friendly fire to other creepers is quartered
-
 [✔] Reduced charged creeper explosion power to 5
     - For reference, standard creeper power is 3 and charged is 6
     - Also reduced charged creeper damage to buildings from 40 to 34
-
 [🟡] Reworked Wither Skeletons:
     - Wither Skeleton: -4 dmg, -0.1as
     - Wither on hit is now stackable up to 5 times
@@ -83,27 +68,3 @@ Balancing
     - Removed withering melee enemies that attack a wither skeleton
     - Removed passive bonus damage to damaged targets
 
-
-Languages
----------
-
-Updated:
-"buildings.monsters.reignofnether.mausoleum.tooltip3": "Only one capitol can produce workers at any given time.",
-"buildings.piglins.reignofnether.central_portal.tooltip2": "Only one capitol can produce workers any given time.",
-"buildings.villagers.reignofnether.town_centre.tooltip2": "Only one capitol can produce workers any given time.",
-"abilities.reignofnether.sonic_boom.tooltip4": "Right-click to toggle simultaneous casting.",
-
-New:
-"item.reignofnether.militia_unit_spawn_egg": "Spawn Militia Unit",
-"abilities.reignofnether.call_to_arms_building": "Call to Arms",
-"abilities.reignofnether.call_to_arms_building.tooltip1": "Calls all nearby villagers to be converted ",
-"abilities.reignofnether.call_to_arms_building.tooltip2": "into temporary militia to defend your base.",
-"abilities.reignofnether.call_to_arms_unit": "Call to Arms",
-"abilities.reignofnether.call_to_arms_unit.tooltip1": "Run to the nearest Town Centre to be converted ",
-"abilities.reignofnether.call_to_arms_unit.tooltip2": "into a temporary militia to defend your base.",
-"abilities.reignofnether.back_to_work_building": "Back to Work",
-"abilities.reignofnether.back_to_work_building.tooltip1": "Converts all nearby militia back into villagers ",
-"abilities.reignofnether.back_to_work_building.tooltip2": "and have them go back to their last work position.",
-"abilities.reignofnether.back_to_work_unit": "Back to Work",
-"abilities.reignofnether.back_to_work_unit.tooltip1": "Convert this Militia back into a Villager ",
-"abilities.reignofnether.back_to_work_unit.tooltip2": "and go back to its last work position.",

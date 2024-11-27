@@ -22,17 +22,13 @@ Features
         - Healing fountain
         - Mini beacon
 
-[❌] Solution to discourage rushing
-    - villagers are most vulnerable due to their lategame nature
-    - copy the wc3 ability of turning villagers into temporary militia?
-        - give them a helmet and stone sword upgrade for +2 damage
-        - turn back on isPushable
-        - damage to animals should still be 1
-
 [❌] Piglin mines
     - Static defense for piglins, but can also be used to siege
     - When built, can be exploded manaully (or set to autoexplode on nearby enemies approaching)
     - Explodes into combination of soulsand and magma
+
+[❌] Boobcat's pathfinding fixes
+
 
 Bugfixes
 --------
@@ -47,10 +43,14 @@ Bugfixes
 
 [❌] Tall grass and barrier blocks are now ignored by the cursor
 
+[❌] (wave survival) Player portals are being excluded from spawn proximity exclusions
+
 
 
 Quality of Life Features
 ------------------------
+
+[❌] Save transport portal links between server restarts
 
 [❌] Shift queueing movements and buildings (not just placement)
     - Add index to sendCommand packets
@@ -68,7 +68,4 @@ Quality of Life Features
 
 Balancing
 ---------
-
-[❌] Implement damage dropoffs to buildings for charged creepers
-    - and provide a radius indicator for them when hovering over explode
 
