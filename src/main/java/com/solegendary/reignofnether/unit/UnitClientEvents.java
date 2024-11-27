@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.unit;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
+import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.ThrowLingeringHarmingPotion;
 import com.solegendary.reignofnether.ability.abilities.ThrowLingeringRegenPotion;
 import com.solegendary.reignofnether.alliance.AllianceSystem;
@@ -217,11 +218,21 @@ public class UnitClientEvents {
         }
 
         if (MC.player != null) {
+            int[] selUnits = selectedUnits.stream()
+                    .filter(u -> {
+                        if (u instanceof Unit unit)
+                            for (Ability ability : unit.getAbilities())
+                                if (ability.isChanneling() && ability.oneClickOneUse && ability.action == action)
+                                    return false;
+                        return true;
+                    })
+                    .mapToInt(Entity::getId).toArray();
+
             UnitActionItem actionItem = new UnitActionItem(
                 MC.player.getName().getString(),
                 action,
                 preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
-                selectedUnits.stream().mapToInt(Entity::getId).toArray(),
+                selUnits,
                 bp,
                 HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
             );
@@ -231,7 +242,7 @@ public class UnitClientEvents {
                 MC.player.getName().getString(),
                 action,
                 preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
-                selectedUnits.stream().mapToInt(Entity::getId).toArray(),
+                selUnits,
                 bp,
                 HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
             ));
@@ -476,8 +487,10 @@ public class UnitClientEvents {
             else if (CursorClientEvents.getLeftClickAction() == UnitAction.MOVE)
                 resolveMoveAction();
             // resolve any other abilities not explicitly covered here
-            else if (CursorClientEvents.getLeftClickAction() != null)
+            else if (CursorClientEvents.getLeftClickAction() != null && MC.player != null) {
                 sendUnitCommand(CursorClientEvents.getLeftClickAction());
+            }
+
 
             // left click -> select a single unit
             // if shift is held, deselect a unit or add it to the selected group

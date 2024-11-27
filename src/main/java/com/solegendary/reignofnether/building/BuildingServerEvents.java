@@ -14,6 +14,8 @@ import com.solegendary.reignofnether.nether.NetherBlocks;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.*;
+import com.solegendary.reignofnether.survival.SurvivalServerEvents;
+import com.solegendary.reignofnether.survival.WavePortal;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
@@ -46,6 +48,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class BuildingServerEvents {
@@ -192,7 +195,8 @@ public class BuildingServerEvents {
         }
     }
 
-    public static void placeBuilding(
+    @Nullable
+    public static Building placeBuilding(
         String buildingName,
         BlockPos pos,
         Rotation rotation,
@@ -222,7 +226,7 @@ public class BuildingServerEvents {
 
                 if (!canAffordPop) {
                     ResourcesClientboundPacket.warnInsufficientPopulation(ownerName);
-                    return;
+                    return null;
                 }
             }
 
@@ -231,12 +235,10 @@ public class BuildingServerEvents {
                 newBuilding.forceChunk(true);
                 int minY = BuildingUtils.getMinCorner(newBuilding.blocks).getY();
 
-                if (!(newBuilding instanceof AbstractBridge)) {
+                if (!(newBuilding instanceof AbstractBridge))
                     for (BuildingBlock block : newBuilding.blocks)
-                        if (block.getBlockPos().getY() == minY && !block.getBlockState().isAir()) {
+                        if (block.getBlockPos().getY() == minY && !block.getBlockState().isAir())
                             placeScaffoldingUnder(block, newBuilding);
-                        }
-                }
 
                 newBuilding.blocks.stream()
                     .filter(block -> block.getBlockPos().getY() == minY
@@ -262,16 +264,19 @@ public class BuildingServerEvents {
                 ));
 
                 assignBuilderUnits(builderUnitIds, queue, newBuilding);
+
+                UnitServerEvents.getAllUnits()
+                        .stream()
+                        .filter(entity -> entity instanceof Unit unit && unit.getOwnerName().equals(ownerName)
+                                && newBuilding.isPosInsideBuilding(entity.getOnPos().above().above()))
+                        .forEach(entity -> moveNonBuildersAwayFromBuildingFoundations(entity, builderUnitIds, newBuilding));
+
             } else if (!PlayerServerEvents.isBot(ownerName)) {
                 warnInsufficientResources(newBuilding);
             }
-
-            UnitServerEvents.getAllUnits()
-                .stream()
-                .filter(entity -> entity instanceof Unit unit && unit.getOwnerName().equals(ownerName)
-                    && newBuilding.isPosInsideBuilding(entity.getOnPos().above().above()))
-                .forEach(entity -> moveNonBuildersAwayFromBuildingFoundations(entity, builderUnitIds, newBuilding));
+            return newBuilding;
         }
+        return null;
     }
 
     private static void placeScaffoldingUnder(BuildingBlock block, Building newBuilding) {
@@ -347,7 +352,8 @@ public class BuildingServerEvents {
 
 
     public static void cancelBuilding(Building building) {
-        if (building == null || building.isCapitol) {
+        if (building == null ||
+            (building.isCapitol && BuildingUtils.capitolsOwned(false, building.ownerName) == 1)) {
             return;
         }
 
@@ -572,7 +578,7 @@ public class BuildingServerEvents {
                 } else if (creeperUnit != null) {
                     atkDmg = (int) creeperUnit.getUnitAttackDamage();
                     if (creeperUnit.isPowered()) {
-                        atkDmg *= 2;
+                        atkDmg *= CreeperUnit.CHARGED_DAMAGE_MULT;
                     }
                 } else if (pillagerUnit != null) {
                     atkDmg = (int) pillagerUnit.getUnitAttackDamage() / 2;

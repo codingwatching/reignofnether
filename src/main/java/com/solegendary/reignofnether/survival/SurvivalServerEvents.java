@@ -4,24 +4,17 @@ import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.BuildingUtils;
+import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.player.RTSPlayer;
 import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.time.TimeUtils;
-import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
-import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -34,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.solegendary.reignofnether.survival.SurvivalSpawner.*;
+
 public class SurvivalServerEvents {
 
     private static boolean isEnabled = false;
@@ -44,11 +39,16 @@ public class SurvivalServerEvents {
     public static final String PIGLIN_OWNER_NAME = "Piglins";
     public static final String VILLAGER_OWNER_NAME = "Illagers";
     public static final List<String> ENEMY_OWNER_NAMES = List.of(MONSTER_OWNER_NAME, PIGLIN_OWNER_NAME, VILLAGER_OWNER_NAME);
+    private static final Random random = new Random();
 
-    public static final long TICK_INTERVAL = 4;
+    public static final ArrayList<WavePortal> portals = new ArrayList<>();
+
+    public static final long TICK_INTERVAL = 10;
     private static long lastTime = -1;
     private static long lastEnemyCount = 0;
     private static long ticks = 0;
+
+    private static ArrayList<Building> lastPortals = new ArrayList<>();
 
     private static ServerLevel serverLevel = null;
 
@@ -103,25 +103,27 @@ public class SurvivalServerEvents {
             return;
         }
 
-        if (lastTime <= TimeUtils.DUSK - 600 && normTime > TimeUtils.DUSK - 600) {
-            PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dusksoon", true);
-            SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
-        }
-        if (lastTime <= TimeUtils.DUSK && normTime > TimeUtils.DUSK) {
-            PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dusk", true);
-            SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
-            setToStartingNightTime();
-        }
-        if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 100 &&
-            normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 100) {
-            startNextWave((ServerLevel) evt.level);
-        }
-        if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
-            PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dawn", true);
-            setToStartingDayTime();
+        if (lastTime >= 0) {
+            if (lastTime <= TimeUtils.DUSK - 600 && normTime > TimeUtils.DUSK - 600) {
+                PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dusksoon", true);
+                SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
+            }
+            if (lastTime <= TimeUtils.DUSK && normTime > TimeUtils.DUSK) {
+                PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dusk", true);
+                SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
+                setToStartingNightTime();
+            }
+            if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 100 &&
+                    normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 100) {
+                startNextWave((ServerLevel) evt.level);
+            }
+            if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
+                PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dawn", true);
+                setToStartingDayTime();
+            }
         }
 
-        int enemyCount = getCurrentEnemies().size();
+        int enemyCount = getCurrentEnemies().size() + portals.size();
         if (enemyCount < lastEnemyCount && enemyCount <= 3) {
             if (enemyCount == 0)
                 waveCleared((ServerLevel) evt.level);
@@ -134,28 +136,36 @@ public class SurvivalServerEvents {
         for (WaveEnemy enemy : enemies)
             enemy.tick(TICK_INTERVAL);
 
+        // detect new portals and update portals list accordingly
+        List<Building> currentPortals = BuildingServerEvents.getBuildings().stream().filter(b ->
+                ENEMY_OWNER_NAMES.contains(b.ownerName) && b instanceof Portal)
+                .toList();
+
+        for (Building portal : currentPortals)
+            if (!lastPortals.contains(portal))
+                SurvivalServerEvents.portals.add(new WavePortal((Portal) portal, nextWave));
+        SurvivalServerEvents.portals.removeIf(p -> !currentPortals.contains(p.getPortal()));
+
+        lastPortals.clear();
+        lastPortals.addAll(currentPortals);
+
+        for (WavePortal portal : portals)
+            portal.tick(TICK_INTERVAL);
+
         lastTime = normTime;
         lastEnemyCount = enemyCount;
     }
 
     @SubscribeEvent
     public static void onRegisterCommand(RegisterCommandsEvent evt) {
-        evt.getDispatcher().register(Commands.literal("debug-spawn")
-                .executes((command) -> {
-                    spawnMonsterWave(command.getSource().getLevel());
-                    return 1;
-                }));
         evt.getDispatcher().register(Commands.literal("debug-end-wave")
                 .executes((command) -> {
                     PlayerServerEvents.sendMessageToAllPlayers("Ending current wave");
                     for (WaveEnemy enemy : enemies)
                         enemy.getEntity().kill();
-                    return 1;
-                }));
-        evt.getDispatcher().register(Commands.literal("debug-reset")
-                .executes((command) -> {
-                    PlayerServerEvents.sendMessageToAllPlayers("Resetting back to wave 1");
-                    reset();
+                    ArrayList<WavePortal> portalsCopy = new ArrayList<>(portals);
+                    for (WavePortal portal : portalsCopy)
+                        portal.portal.destroy(serverLevel);
                     return 1;
                 }));
     }
@@ -163,6 +173,7 @@ public class SurvivalServerEvents {
     public static void enable(WaveDifficulty diff) {
         if (!isEnabled()) {
             reset();
+            lastEnemyCount = 0;
             difficulty = diff;
             isEnabled = true;
             SurvivalClientboundPacket.enableAndSetDifficulty(difficulty);
@@ -174,9 +185,14 @@ public class SurvivalServerEvents {
     public static void reset() {
         for (WaveEnemy enemy : enemies)
             enemy.getEntity().kill();
+        ArrayList<WavePortal> portalsCopy = new ArrayList<>(portals);
+        for (WavePortal portal : portalsCopy)
+            portal.portal.destroy(serverLevel);
         nextWave = Wave.getWave(0);
         difficulty = WaveDifficulty.EASY;
         isEnabled = false;
+        portals.clear();
+        enemies.clear();
         if (serverLevel != null)
             saveStage(serverLevel);
     }
@@ -197,7 +213,6 @@ public class SurvivalServerEvents {
                 ENEMY_OWNER_NAMES.contains(unit.getOwnerName())) {
 
             enemies.add(new WaveEnemy(unit));
-            // TODO: sync with SurvivalClientEvents
         }
     }
 
@@ -209,7 +224,6 @@ public class SurvivalServerEvents {
                 ENEMY_OWNER_NAMES.contains(unit.getOwnerName())) {
 
             enemies.removeIf(e -> e.getEntity().getId() == entity.getId());
-            // TODO: sync with SurvivalClientEvents
         }
     }
 
@@ -255,7 +269,11 @@ public class SurvivalServerEvents {
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
-        spawnMonsterWave(level);
+        switch (random.nextInt(3)) {
+            case 0 -> spawnMonsterWave(level, nextWave);
+            case 1 -> spawnIllagerWave(level, nextWave);
+            case 2 -> spawnPiglinWave(level, nextWave);
+        }
     }
 
     // triggered when last enemy is killed
@@ -265,91 +283,5 @@ public class SurvivalServerEvents {
         PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.wave_cleared", true);
         SoundClientboundPacket.playSoundForAllPlayers(SoundAction.ALLY);
         saveStage(level);
-    }
-
-    private static final int MONSTER_MAX_SPAWN_RANGE = 80;
-    private static final int MONSTER_MIN_SPAWN_RANGE = 60;
-
-    public static void spawnMonsterWave(ServerLevel level) {
-        Random random = new Random();
-        List<Building> buildings = BuildingServerEvents.getBuildings();
-        int remainingPop = nextWave.population * PlayerServerEvents.rtsPlayers.size();
-        if (buildings.isEmpty())
-            return;
-
-        do {
-            int spawnAttempts = 0;
-            BlockState spawnBs;
-            BlockPos spawnBp;
-            double distSqrToNearestBuilding = 0;
-
-            do {
-                Building building = buildings.get(random.nextInt(0, buildings.size()));
-                BlockPos centrePos = building.centrePos;
-
-                int x = centrePos.getX() + random.nextInt(-MONSTER_MAX_SPAWN_RANGE, MONSTER_MAX_SPAWN_RANGE);
-                int z = centrePos.getZ() + random.nextInt(-MONSTER_MAX_SPAWN_RANGE, MONSTER_MAX_SPAWN_RANGE);
-                int y = level.getChunkAt(new BlockPos(x, 0, z)).getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
-
-                spawnBp = MiscUtil.getHighestNonAirBlock(level, new BlockPos(x, y, z), true);
-                spawnBs = level.getBlockState(spawnBp);
-                spawnAttempts += 1;
-                if (spawnAttempts > 30) {
-                    ReignOfNether.LOGGER.warn("Gave up trying to find a suitable monster spawn!");
-                    return;
-                }
-                Vec3 vec3 = new Vec3(x,y,z);
-                Building b = BuildingUtils.findClosestBuilding(false, vec3, (b1) -> true);
-                if (b != null)
-                    distSqrToNearestBuilding = b.centrePos.distToCenterSqr(vec3);
-
-            } while (spawnBs.getMaterial() == Material.LEAVES
-                    || spawnBs.getMaterial() == Material.WOOD
-                    || distSqrToNearestBuilding < (MONSTER_MIN_SPAWN_RANGE) * (MONSTER_MIN_SPAWN_RANGE)
-                    || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp)
-                    || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp.above()));
-
-            EntityType<? extends Mob> monsterType = nextWave.getRandomUnitOfTier();
-
-            if (spawnBs.getMaterial().isLiquid())
-                spawnBp = spawnBp.above();
-
-            ArrayList<Entity> entities = UnitServerEvents.spawnMobs(monsterType, level,
-                    monsterType.getDescription().getString().contains("spider") ? spawnBp.above().above(): spawnBp.above(),
-                    1, MONSTER_OWNER_NAME);
-
-            for (Entity entity : entities) {
-                if (spawnBs.getMaterial().isLiquid()) {
-
-                    level.setBlockAndUpdate(spawnBp, Blocks.FROSTED_ICE.defaultBlockState());
-
-                    List<BlockPos> bps = List.of(spawnBp.north(), spawnBp.east(), spawnBp.south(), spawnBp.west(),
-                            spawnBp.north().east(),
-                            spawnBp.south().west(),
-                            spawnBp.north().east(),
-                            spawnBp.south().west());
-
-                    // Frostwalker effect provided in LivingEntityMixin, but it only happens on changing block positions on the ground
-                    for (BlockPos bp : bps) {
-                        BlockState bs = level.getBlockState(bp);
-                        if (bs.getMaterial().isLiquid() ||
-                            bs.getMaterial() == Material.WATER_PLANT ||
-                            bs.getMaterial() == Material.REPLACEABLE_WATER_PLANT)
-                            level.setBlockAndUpdate(bp, Blocks.FROSTED_ICE.defaultBlockState());
-                    }
-                }
-                if (entity instanceof Unit unit)
-                    remainingPop -= unit.getPopCost();
-            }
-
-        } while (remainingPop > 0);
-    }
-
-    public static void spawnIllagerWave() {
-
-    }
-
-    public static void spawnPiglinWave() {
-
     }
 }

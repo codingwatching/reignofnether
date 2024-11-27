@@ -50,9 +50,8 @@ public class WitherSkeletonProd extends ProductionItem {
                 FormattedCharSequence.forward("", Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("units.piglins.reignofnether.wither_skeleton.tooltip1"), Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("units.piglins.reignofnether.wither_skeleton.tooltip2"), Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.piglins.reignofnether.wither_skeleton.tooltip3"), Style.EMPTY),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.piglins.reignofnether.wither_skeleton.tooltip4"), Style.EMPTY)
+                FormattedCharSequence.forward(I18n.get("units.piglins.reignofnether.wither_skeleton.tooltip3"), Style.EMPTY)
         ));
 
         return new Button(

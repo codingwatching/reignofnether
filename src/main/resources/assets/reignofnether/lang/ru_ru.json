@@ -457,7 +457,7 @@
     "research.reignofnether.resource_capacity.tooltip1": "Увеличивает ёмкость ресурсов для рабочих с 100 до 200",
     "research.reignofnether.resource_capacity.tooltip2": "Рабочие теперь автоматически возвращают ресурсы, если они держат больше 100.",
     "research.reignofnether.silverfish": "Чешуйница",
-    "research.reignofnether.silverfish.tooltip1": "Дает вашим зданиям шанс %d на появление",
+    "research.reignofnether.silverfish.tooltip1": "Дает вашим зданиям шанс %s на появление",
     "research.reignofnether.silverfish.tooltip2": "серебряных рыб при разрушении блока.",
     "research.reignofnether.silverfish.tooltip3": "Серебряные рыбы имеют ограниченное время жизни.",
     "research.reignofnether.silverfish.tooltip4": "Требуется крепость.",

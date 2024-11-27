@@ -476,7 +476,7 @@
   "research.reignofnether.resource_capacity.tooltip2": "工人仍會在攜帶的資源超過 100 時返回存放資源。",
   "research.reignofnether.silverfish": "蠹魚",
   "research.reignofnether.silverfish.tooltip1": "使建築物被摧毀時",
-  "research.reignofnether.silverfish.tooltip2": "有 %d 機率生成蠹魚。",
+  "research.reignofnether.silverfish.tooltip2": "有 %s 機率生成蠹魚。",
   "research.reignofnether.silverfish.tooltip3": "蠹魚會在一段時間後消失。",
   "research.reignofnether.silverfish.tooltip4": "需要指揮部。",
   "research.reignofnether.spider_jockeys": "蜘蛛騎士",

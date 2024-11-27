@@ -6,6 +6,7 @@ import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.*;
+import com.solegendary.reignofnether.unit.TargetResourcesSave;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
@@ -32,6 +33,13 @@ import static com.solegendary.reignofnether.resources.BlockUtils.isLogBlock;
 
 public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
+    // resource targets that we are actively targeting
+    public TargetResourcesSave data = new TargetResourcesSave();
+    // copy of activeData that is saved temporarily, reset on resetBeheaviours, used for returning resources
+    public TargetResourcesSave saveData = new TargetResourcesSave();
+    // copy of saveData that is never erased, used for Call to Arms / Back to Work and level saving
+    public TargetResourcesSave permSaveData = new TargetResourcesSave();
+
     private static final int REACH_RANGE = 5;
     private static final int DEFAULT_MAX_GATHER_TICKS = 600; // ticks to gather blocks - actual ticks may be lower, depending on the ResourceSource targeted
     private int gatherTicksLeft = DEFAULT_MAX_GATHER_TICKS;
@@ -47,20 +55,6 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     private int ticksIdle = 0; // ticksWithoutTarget but never reset unless we've reacquired a target - used for idle checks
     private BlockPos altSearchPos = null; // block search origin that may be used instead of the mob position
 
-
-    private final ArrayList<BlockPos> todoGatherTargets = new ArrayList<>();
-    private BlockPos gatherTarget = null;
-    private ResourceName targetResourceName = ResourceName.NONE; // if !None, will passively target blocks around it
-    private ResourceSource targetResourceSource = null;
-    private Building targetFarm = null;
-
-    // saved copies of the above so we can later return to
-    private final ArrayList<BlockPos> todoGatherTargetsSaved = new ArrayList<>();
-    private BlockPos gatherTargetSaved = null;
-    private ResourceName targetResourceNameSaved = ResourceName.NONE;
-    private ResourceSource targetResourceSourceSaved = null;
-    private Building targetFarmSaved = null;
-
     // whenever we attempt to assign a block as a target it must pass this test
     private final Predicate<BlockPos> BLOCK_CONDITION = bp -> {
         BlockState bs = mob.level.getBlockState(bp);
@@ -71,13 +65,13 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
             return false;
 
         // is a valid resource block and meets the target ResourceSource's blockstate condition
-        if (resBlock == null || resBlock.resourceName != targetResourceName) // || resBlock.name.equals("Leaves")
+        if (resBlock == null || resBlock.resourceName != data.targetResourceName) // || resBlock.name.equals("Leaves")
             return false;
         if (!resBlock.blockStateTest.test(bs))
             return false;
 
         // if the worker is farming, stick to only the assigned farm
-        if (targetFarm != null && !targetFarm.isPosInsideBuilding(bp))
+        if (data.targetFarm != null && !data.targetFarm.isPosInsideBuilding(bp))
             return false;
 
         if (bs.getBlock() == Blocks.FARMLAND || bs.getBlock() == Blocks.SOUL_SAND) {
@@ -85,7 +79,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                 return false;
         }
         // is not part of a building (unless farming)
-        else if (targetFarm == null && BuildingUtils.isPosInsideAnyBuilding(mob.level.isClientSide(), bp))
+        else if (data.targetFarm == null && BuildingUtils.isPosInsideAnyBuilding(mob.level.isClientSide(), bp))
             return false;
 
         // not covered by solid blocks
@@ -121,20 +115,20 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     }
 
     public void syncFromServer(ResourceName gatherName, BlockPos gatherPos, int gatherTicks) {
-        this.targetResourceName = gatherName;
-        this.gatherTarget = gatherPos;
+        this.data.targetResourceName = gatherName;
+        this.data.gatherTarget = gatherPos;
         this.gatherTicksLeft = gatherTicks;
-        this.targetResourceSource = ResourceSources.getFromBlockPos(gatherTarget, mob.level);
+        this.data.targetResourceSource = ResourceSources.getFromBlockPos(data.gatherTarget, mob.level);
     }
 
     public void tickClient() {
-        if (targetResourceSource != null && this.gatherTarget != null && isGathering() && FogOfWarClientEvents.isInBrightChunk(this.gatherTarget)) {
-            gatherTicksLeft = Math.min(gatherTicksLeft, targetResourceSource.ticksToGather);
+        if (data.targetResourceSource != null && this.data.gatherTarget != null && isGathering() && FogOfWarClientEvents.isInBrightChunk(this.data.gatherTarget)) {
+            gatherTicksLeft = Math.min(gatherTicksLeft, data.targetResourceSource.ticksToGather);
             gatherTicksLeft -= 1;
             if (gatherTicksLeft <= 0)
-                gatherTicksLeft = targetResourceSource.ticksToGather;
-            int gatherProgress = Math.round((targetResourceSource.ticksToGather - gatherTicksLeft) / (float) targetResourceSource.ticksToGather * 10);
-            this.mob.level.destroyBlockProgress(this.mob.getId(), this.gatherTarget, gatherProgress);
+                gatherTicksLeft = data.targetResourceSource.ticksToGather;
+            int gatherProgress = Math.round((data.targetResourceSource.ticksToGather - gatherTicksLeft) / (float) data.targetResourceSource.ticksToGather * 10);
+            this.mob.level.destroyBlockProgress(this.mob.getId(), data.gatherTarget, gatherProgress);
         }
     }
 
@@ -151,24 +145,24 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
         else
             return;
 
-        if (gatherTarget == null && targetResourceName != ResourceName.NONE) {
+        if (data.gatherTarget == null && data.targetResourceName != ResourceName.NONE) {
             searchCdTicksLeft -= (TICK_CD / 2); // for some this is run twice as fast as we expect
 
             // prioritise gathering adjacent targets first
-            for (BlockPos todoBp : todoGatherTargets)
+            for (BlockPos todoBp : data.todoGatherTargets)
                 if (BLOCK_CONDITION.test(todoBp)) {
-                    gatherTarget = todoBp;
+                    data.gatherTarget = todoBp;
                     break;
                 }
 
-            if (gatherTarget != null)
-                todoGatherTargets.remove(gatherTarget);
+            if (data.gatherTarget != null)
+                data.todoGatherTargets.remove(data.gatherTarget);
 
-            if (gatherTarget == null && searchCdTicksLeft <= 0) {
-                if (targetFarm != null) {
-                    for (BuildingBlock block : targetFarm.getBlocks()) {
+            if (data.gatherTarget == null && searchCdTicksLeft <= 0) {
+                if (data.targetFarm != null) {
+                    for (BuildingBlock block : data.targetFarm.getBlocks()) {
                         if (BLOCK_CONDITION.test(block.getBlockPos())) {
-                            gatherTarget = block.getBlockPos();
+                            data.gatherTarget = block.getBlockPos();
                             break;
                         }
                     }
@@ -198,7 +192,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
                     bpOpt.ifPresentOrElse(
                         blockPos -> {
-                            gatherTarget = blockPos;
+                            data.gatherTarget = blockPos;
                             failedSearches = 0;
                         },
                         () -> {
@@ -209,27 +203,27 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                 }
                 searchCdTicksLeft = MAX_SEARCH_CD_TICKS * (failedSearches + 1);
             }
-            if (gatherTarget != null)
-                targetResourceSource = ResourceSources.getFromBlockPos(gatherTarget, mob.level);
+            if (data.gatherTarget != null)
+                data.targetResourceSource = ResourceSources.getFromBlockPos(data.gatherTarget, mob.level);
         }
 
-        if (gatherTarget != null) {
+        if (data.gatherTarget != null) {
 
             // if the block is no longer valid (destroyed or somehow badly targeted)
-            if (!BLOCK_CONDITION.test(this.gatherTarget))
+            if (!BLOCK_CONDITION.test(this.data.gatherTarget))
                 removeGatherTarget();
             else // keep persistently moving towards the target
-                this.setMoveTarget(gatherTarget);
+                this.setMoveTarget(data.gatherTarget);
 
             if (isGathering()) {
                 ticksIdle = 0;
 
                 // need to manually set cooldown higher (default is 2) or else we don't have enough time
                 // for the mob to turn before behaviour is reset
-                mob.getLookControl().setLookAt(gatherTarget.getX(), gatherTarget.getY(), gatherTarget.getZ());
+                mob.getLookControl().setLookAt(data.gatherTarget.getX(), data.gatherTarget.getY(), data.gatherTarget.getZ());
                 mob.getLookControl().lookAtCooldown = 20;
 
-                BlockState bsTarget = mob.level.getBlockState(gatherTarget);
+                BlockState bsTarget = mob.level.getBlockState(data.gatherTarget);
 
                 // replant crops on empty farmland
                 if (bsTarget.getBlock() == Blocks.FARMLAND || bsTarget.getBlock() == Blocks.SOUL_SAND) {
@@ -240,7 +234,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
                         if (canAffordReplant()) {
                             ResourcesServerEvents.addSubtractResources(new Resources(((Unit) mob).getOwnerName(), 0, -ResourceCosts.REPLANT_WOOD_COST, 0));
-                            mob.level.setBlockAndUpdate(gatherTarget.above(), ((WorkerUnit) mob).getReplantBlockState());
+                            mob.level.setBlockAndUpdate(data.gatherTarget.above(), ((WorkerUnit) mob).getReplantBlockState());
                             removeGatherTarget();
                         }
                     }
@@ -251,35 +245,35 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                     else
                         this.gatherTicksLeft -= (TICK_CD / 2);
 
-                    gatherTicksLeft = Math.min(gatherTicksLeft, targetResourceSource.ticksToGather);
+                    gatherTicksLeft = Math.min(gatherTicksLeft, data.targetResourceSource.ticksToGather);
                     if (gatherTicksLeft <= 0) {
                         gatherTicksLeft = DEFAULT_MAX_GATHER_TICKS;
-                        ResourceName resourceName = ResourceSources.getBlockResourceName(this.gatherTarget, mob.level);
+                        ResourceName resourceName = ResourceSources.getBlockResourceName(this.data.gatherTarget, mob.level);
 
-                        if (isLogBlock(this.mob.level.getBlockState(gatherTarget)))
-                            ResourcesServerEvents.fellAdjacentLogs(gatherTarget, new ArrayList<>(), this.mob.level);
+                        if (isLogBlock(this.mob.level.getBlockState(data.gatherTarget)))
+                            ResourcesServerEvents.fellAdjacentLogs(data.gatherTarget, new ArrayList<>(), this.mob.level);
 
-                        if (mob.level.destroyBlock(gatherTarget, false)) {
+                        if (mob.level.destroyBlock(data.gatherTarget, false)) {
                             // replace workers' mine ores with cobble to prevent creating potholes
-                            if (targetResourceSource.resourceName == ResourceName.ORE) {
+                            if (data.targetResourceSource.resourceName == ResourceName.ORE) {
                                 BlockState replaceBs;
-                                if (BuildingUtils.isInNetherRange(mob.level.isClientSide(), gatherTarget))
+                                if (BuildingUtils.isInNetherRange(mob.level.isClientSide(), data.gatherTarget))
                                     replaceBs = Blocks.MAGMA_BLOCK.defaultBlockState();
                                 else if (bsTarget.getBlock().getName().getString().toLowerCase().contains("deepslate"))
                                     replaceBs = Blocks.COBBLED_DEEPSLATE.defaultBlockState();
                                 else
                                     replaceBs = Blocks.COBBLESTONE.defaultBlockState();
-                                this.mob.level.setBlockAndUpdate(gatherTarget, replaceBs);
+                                this.mob.level.setBlockAndUpdate(data.gatherTarget, replaceBs);
                             }
 
                             // prioritise gathering adjacent targets first
-                            todoGatherTargets.remove(gatherTarget);
-                            for (BlockPos pos : MiscUtil.findAdjacentBlocks(gatherTarget, BLOCK_CONDITION))
-                                if (!todoGatherTargets.contains(pos))
-                                    todoGatherTargets.add(pos);
+                            data.todoGatherTargets.remove(data.gatherTarget);
+                            for (BlockPos pos : MiscUtil.findAdjacentBlocks(data.gatherTarget, BLOCK_CONDITION))
+                                if (!data.todoGatherTargets.contains(pos))
+                                    data.todoGatherTargets.add(pos);
 
                             Unit unit = (Unit) mob;
-                            unit.getItems().add(new ItemStack(targetResourceSource.items.get(0)));
+                            unit.getItems().add(new ItemStack(data.targetResourceSource.items.get(0)));
                             UnitSyncClientboundPacket.sendSyncResourcesPacket(unit);
 
                             // if at max resources, go to drop off automatically, then return to this gather goal
@@ -315,35 +309,35 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     }
 
     private void saveState() {
-        todoGatherTargetsSaved.clear();
-        todoGatherTargetsSaved.addAll(todoGatherTargets);
-        gatherTargetSaved = gatherTarget;
-        targetResourceNameSaved = targetResourceName;
-        targetResourceSourceSaved = targetResourceSource;
-        targetFarmSaved = targetFarm;
+        saveData.todoGatherTargets.clear();
+        saveData.todoGatherTargets.addAll(data.todoGatherTargets);
+        saveData.gatherTarget = data.gatherTarget;
+        saveData.targetResourceName = data.targetResourceName;
+        saveData.targetResourceSource = data.targetResourceSource;
+        saveData.targetFarm = data.targetFarm;
+        savePermState();
     }
+
+    public void savePermState() {
+        if (data.hasData()) {
+            permSaveData.todoGatherTargets.clear();
+            permSaveData.todoGatherTargets.addAll(data.todoGatherTargets);
+            permSaveData.gatherTarget = data.gatherTarget;
+            permSaveData.targetResourceName = data.targetResourceName;
+            permSaveData.targetResourceSource = data.targetResourceSource;
+            permSaveData.targetFarm = data.targetFarm;
+        }
+    }
+
     public void loadState() {
-        todoGatherTargets.clear();
-        todoGatherTargets.addAll(todoGatherTargetsSaved);
-        gatherTarget = gatherTargetSaved;
-        targetResourceName = targetResourceNameSaved;
-        targetResourceSource = targetResourceSourceSaved;
-        targetFarm = targetFarmSaved;
+        data.todoGatherTargets.clear();
+        data.todoGatherTargets.addAll(saveData.todoGatherTargets);
+        data.gatherTarget = saveData.gatherTarget;
+        data.targetResourceName = saveData.targetResourceName;
+        data.targetResourceSource = saveData.targetResourceSource;
+        data.targetFarm = saveData.targetFarm;
     }
-    public boolean hasSavedData() {
-        return todoGatherTargetsSaved.size() > 0 ||
-                gatherTargetSaved != null ||
-                targetResourceNameSaved != ResourceName.NONE ||
-                targetResourceSourceSaved != null ||
-                targetFarmSaved != null;
-    }
-    public void deleteSavedState() {
-        todoGatherTargetsSaved.clear();
-        gatherTargetSaved = null;
-        targetResourceNameSaved = ResourceName.NONE;
-        targetResourceSourceSaved = null;
-        targetFarmSaved = null;
-    }
+
 
     private boolean isBlockInRange(BlockPos target) {
         int reachRangeBonus = Math.min(5, ticksWithoutTarget / TICK_CD);
@@ -352,12 +346,12 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
     // only count as gathering if in range of the target
     public boolean isGathering() {
-        if (!Unit.atMaxResources((Unit) mob) && gatherTarget != null && this.mob.level.isClientSide())
-            return isBlockInRange(gatherTarget);
+        if (!Unit.atMaxResources((Unit) mob) && data.gatherTarget != null && this.mob.level.isClientSide())
+            return isBlockInRange(data.gatherTarget);
 
-        if (!Unit.atMaxResources((Unit) mob) && this.gatherTarget != null && this.targetResourceSource != null &&
-            ResourceSources.getBlockResourceName(this.gatherTarget, mob.level) != ResourceName.NONE)
-            return isBlockInRange(gatherTarget);
+        if (!Unit.atMaxResources((Unit) mob) && this.data.gatherTarget != null && this.data.targetResourceSource != null &&
+            ResourceSources.getBlockResourceName(this.data.gatherTarget, mob.level) != ResourceName.NONE)
+            return isBlockInRange(data.gatherTarget);
         return false;
     }
 
@@ -366,11 +360,11 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     }
 
     public void setTargetResourceName(ResourceName resourceName) {
-        targetResourceName = resourceName;
+        data.targetResourceName = resourceName;
     }
 
     public ResourceName getTargetResourceName() {
-        return targetResourceName;
+        return data.targetResourceName;
     }
 
     @Override
@@ -381,13 +375,13 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
         }
         super.setMoveTarget(bp);
         if (BLOCK_CONDITION.test(bp)) {
-            this.gatherTarget = bp;
-            this.targetResourceSource = ResourceSources.getFromBlockPos(gatherTarget, this.mob.level);
+            this.data.gatherTarget = bp;
+            this.data.targetResourceSource = ResourceSources.getFromBlockPos(data.gatherTarget, this.mob.level);
         }
     }
 
     public boolean isFarming() {
-        return this.targetFarm != null;
+        return this.data.targetFarm != null;
     }
 
     // locks the worker to only gather from this specific building
@@ -396,13 +390,13 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
             MiscUtil.addUnitCheckpoint((Unit) mob, building.centrePos);
             ((Unit) mob).setIsCheckpointGreen(true);
         }
-        this.targetFarm = building;
+        this.data.targetFarm = building;
     }
 
     // stop attempting to gather the current target but continue searching
     public void removeGatherTarget() {
-        gatherTarget = null;
-        targetResourceSource = null;
+        data.gatherTarget = null;
+        data.targetResourceSource = null;
         gatherTicksLeft = DEFAULT_MAX_GATHER_TICKS;
         searchCdTicksLeft = 0;
         ticksWithoutTarget = 0;
@@ -410,16 +404,17 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
     // stop gathering and searching entirely, and remove saved data for
     public void stopGathering() {
+        this.savePermState();
         this.mob.level.destroyBlockProgress(this.mob.getId(), new BlockPos(0,0,0), 0);
-        todoGatherTargets.clear();
-        targetFarm = null;
+        data.todoGatherTargets.clear();
+        data.targetFarm = null;
         removeGatherTarget();
         this.setTargetResourceName(ResourceName.NONE);
         super.stopMoving();
     }
 
     public BlockPos getGatherTarget() {
-        return gatherTarget;
+        return data.gatherTarget;
     }
 
     public int getGatherTicksLeft() {

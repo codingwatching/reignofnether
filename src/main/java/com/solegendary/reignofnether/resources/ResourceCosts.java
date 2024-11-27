@@ -51,6 +51,7 @@ public class ResourceCosts {
     public static ResourceCost ZOGLIN = ResourceCost.Unit(0,0,0,10,2);
 
     // Villagers
+    public static ResourceCost MILITIA = ResourceCost.Unit(50,0,0,15,1);
     public static ResourceCost VILLAGER = ResourceCost.Unit(50,0,0,15,1);
     public static ResourceCost IRON_GOLEM = ResourceCost.Unit(0,50,250,45,4);
     public static ResourceCost PILLAGER = ResourceCost.Unit(120,80,0,32,3);
@@ -66,7 +67,7 @@ public class ResourceCosts {
     public static ResourceCost HOGLIN = ResourceCost.Unit(150,0,75,35,3);
     public static ResourceCost BLAZE = ResourceCost.Unit(50,50,100,30,2);
     public static ResourceCost WITHER_SKELETON = ResourceCost.Unit(200,0,150,40,4);
-    public static ResourceCost GHAST = ResourceCost.Unit(100,150,250,50,5);
+    public static ResourceCost GHAST = ResourceCost.Unit(100,150,250,60,6);
 
     // ******************* BUILDINGS ******************* //
     public static ResourceCost STOCKPILE = ResourceCost.Building(0,75,0, 0);

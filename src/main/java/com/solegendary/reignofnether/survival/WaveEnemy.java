@@ -5,9 +5,7 @@ import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
-import com.solegendary.reignofnether.unit.goals.MeleeAttackUnitGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
-import com.solegendary.reignofnether.unit.interfaces.RangedAttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -56,13 +54,13 @@ public class WaveEnemy {
 
         lastOnPos = onPos;
 
-        if (ticks == ticksToAdd * 10)
+        if (ticks > 0 && ticks == ticksToAdd * 10)
             startingCommand();
 
-        if (ticks % PERIODIC_COMMAND_INTERVAL == 0)
+        if (ticks > 0 && ticks % PERIODIC_COMMAND_INTERVAL == 0)
             periodicCommand();
 
-        if (idleTicks % IDLE_COMMAND_INTERVAL == 0)
+        if (idleTicks > 0 && idleTicks % IDLE_COMMAND_INTERVAL == 0)
             idleCommand();
     }
 
@@ -91,6 +89,7 @@ public class WaveEnemy {
 
         Entity entity = (Entity) unit;
         List<Building> buildings = BuildingServerEvents.getBuildings().stream()
+                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank())
                 .sorted(Comparator.comparing(b -> b.centrePos.distToCenterSqr(entity.getEyePosition())))
                 .toList();
 
@@ -109,9 +108,13 @@ public class WaveEnemy {
         ArrayList<Building> buildings = BuildingServerEvents.getBuildings();
         Collections.shuffle(buildings);
 
+        List<Building> playerBuildings = buildings.stream()
+                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank())
+                .toList();
+
         BlockPos targetBp = null;
-        if (!buildings.isEmpty())
-            targetBp = buildings.get(0).centrePos;
+        if (!playerBuildings.isEmpty())
+            targetBp = playerBuildings.get(0).centrePos;
 
         if (targetBp != null)
             UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,
