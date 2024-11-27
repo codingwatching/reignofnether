@@ -50,6 +50,8 @@ Bugfixes
 Quality of Life Features
 ------------------------
 
+[❌] Show refund resources popup when cancelling an unbuilt building
+
 [❌] Save transport portal links between server restarts
 
 [❌] Shift queueing movements and buildings (not just placement)

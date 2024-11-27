@@ -46,11 +46,6 @@ public class BuildingUtils {
                     building.getBlocksPlaced() < building.getBlocksTotal();
     }
 
-    public static int capitolsOwned(boolean isClientSide, String playerName) {
-        List<Building> buildings = isClientSide ? BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
-        return buildings.stream().filter(b -> b.isCapitol && b.ownerName.equals(playerName)).toList().size();
-    }
-
     public static boolean anyOtherCapitolProducingWorkers(boolean isClientSide, Building building) {
         List<Building> buildings = isClientSide ? BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
         List<Building> capitols = buildings.stream().filter(
