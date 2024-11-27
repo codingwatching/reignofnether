@@ -103,8 +103,7 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.WITHER_SKELETON.population;}
+    public int getPopCost() {return popCost;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -131,6 +130,7 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     final static public float maxHealth = 90.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.28f;
+    final static public int popCost = ResourceCosts.WITHER_SKELETON.population;
     public int maxResources = 100;
 
     public int deathCloudTicks = 0;

@@ -124,8 +124,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.EVOKER.population;}
+    public int getPopCost() {return popCost;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
@@ -158,6 +157,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
     final static public float maxHealth = 40.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
+    final static public int popCost = ResourceCosts.EVOKER.population;
 
     public boolean isUsingLineFangs = true; // toggle between line and circular fangs
 

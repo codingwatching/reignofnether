@@ -1,13 +1,8 @@
 package com.solegendary.reignofnether.resources;
 
-import com.solegendary.reignofnether.config.ReignOfNetherCommonConfigs;
-import com.solegendary.reignofnether.config.ResourceCostConfigEntry;
-import net.minecraftforge.fml.common.Mod;
-
 // defined here because we need to be able to access in both
 // static (for ProductionItems) and nonstatic (for getCurrentPopulation) contexts
 // and we can't declare static getters in the Unit interface
-
 public class ResourceCost {
     public static final int TICKS_PER_SECOND = 20;
 
@@ -35,8 +30,5 @@ public class ResourceCost {
     }
     public static ResourceCost Enchantment(int food, int wood, int ore) { // buildings
         return new ResourceCost(food, wood, ore, 0, 0);
-    }
-    public static ResourceCost fromConfigEntry(ResourceCostConfigEntry rcce) {
-        return new ResourceCost(rcce.getFood(), rcce.getWood(), rcce.getOre(), rcce.getSeconds(), rcce.getPopulation());
     }
 }
