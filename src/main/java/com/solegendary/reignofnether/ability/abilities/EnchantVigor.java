@@ -29,7 +29,7 @@ public class EnchantVigor extends EnchantAbility {
 
     private static final UnitAction ENCHANT_ACTION = UnitAction.ENCHANT_VIGOR;
     public static final Enchantment actualEnchantment = Enchantments.UNBREAKING;
-    public static final float cooldownMultiplier = 0.75f;
+    public static final float cooldownMultiplier = 0.70f;
 
     public EnchantVigor(Library library) {
         super(ENCHANT_ACTION, library, ResourceCosts.ENCHANT_VIGOR);

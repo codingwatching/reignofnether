@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
+import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.monsters.ZombieUnit;
 import com.solegendary.reignofnether.unit.units.villagers.MilitiaUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
@@ -66,14 +67,29 @@ public class BackToWorkBuilding extends Ability {
     @Override
     public void use(Level level, Building buildingUsing, BlockPos targetBp) {
         if (!level.isClientSide()) {
-            List<MilitiaUnit> nearbyUnits = MiscUtil.getEntitiesWithinRange(
+
+            List<VillagerUnit> nearbyVillagers = MiscUtil.getEntitiesWithinRange(
+                            new Vector3d(buildingUsing.centrePos.getX(), buildingUsing.centrePos.getY(), buildingUsing.centrePos.getZ()),
+                            range, VillagerUnit.class, buildingUsing.getLevel())
+                    .stream()
+                    .filter(u -> u.getOwnerName().equals(buildingUsing.ownerName))
+                    .toList();
+
+            for (VillagerUnit vUnit : nearbyVillagers) {
+                vUnit.callToArmsGoal.stop();
+                Unit.resetBehaviours(vUnit);
+                vUnit.getGatherResourceGoal().saveData = vUnit.getGatherResourceGoal().permSaveData;
+                vUnit.getGatherResourceGoal().loadState();
+            }
+
+            List<MilitiaUnit> nearbyMilitia = MiscUtil.getEntitiesWithinRange(
                             new Vector3d(buildingUsing.centrePos.getX(), buildingUsing.centrePos.getY(), buildingUsing.centrePos.getZ()),
                             range, MilitiaUnit.class, buildingUsing.getLevel())
                     .stream()
                     .filter(u -> u.getOwnerName().equals(buildingUsing.ownerName))
                     .toList();
 
-            for (MilitiaUnit mUnit : nearbyUnits)
+            for (MilitiaUnit mUnit : nearbyMilitia)
                 mUnit.convertToVillager();
         }
     }

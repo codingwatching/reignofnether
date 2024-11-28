@@ -536,7 +536,12 @@ public abstract class Building {
             if (BuildingUtils.getTotalCompletedBuildingsOwned(false, this.ownerName) == 0) {
                 PlayerServerEvents.defeat(this.ownerName, Component.translatable("server.reignofnether.lost_buildings").getString());
             } else if (this.isCapitol) {
-                if (FogOfWarServerEvents.isEnabled()) {
+                int numCapitolsOwned = BuildingServerEvents.getBuildings()
+                        .stream()
+                        .filter(b -> b.ownerName.equals(this.name) && b.isCapitol)
+                        .toList()
+                        .size();
+                if (FogOfWarServerEvents.isEnabled() && numCapitolsOwned == 0) {
                     sendMessageToAllPlayers("server.reignofnether.lost_capitol",
                             false,
                             this.ownerName,

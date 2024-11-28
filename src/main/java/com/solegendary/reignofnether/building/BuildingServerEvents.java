@@ -51,6 +51,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static com.solegendary.reignofnether.hud.HudClientEvents.hudSelectedBuilding;
+
 public class BuildingServerEvents {
 
     private static final int BUILDING_SYNC_TICKS_MAX = 20; // how often we send out unit syncing packets
@@ -350,12 +352,12 @@ public class BuildingServerEvents {
         }
     }
 
-
     public static void cancelBuilding(Building building) {
-        if (building == null ||
-            (building.isCapitol && BuildingUtils.capitolsOwned(false, building.ownerName) == 1)) {
+        if (building == null)
             return;
-        }
+        if (building.isBuilt &&
+            BuildingUtils.getTotalCompletedBuildingsOwned(false, building.ownerName) == 1)
+            return;
 
         // remove from tracked buildings, all of its leftover queued blocks and then blow it up
         buildings.remove(building);
