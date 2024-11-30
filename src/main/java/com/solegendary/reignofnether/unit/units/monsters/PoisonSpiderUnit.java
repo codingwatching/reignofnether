@@ -154,7 +154,8 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
                 .add(Attributes.MOVEMENT_SPEED, PoisonSpiderUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, PoisonSpiderUnit.attackDamage)
                 .add(Attributes.ARMOR, PoisonSpiderUnit.armorValue)
-                .add(Attributes.MAX_HEALTH, PoisonSpiderUnit.maxHealth);
+                .add(Attributes.MAX_HEALTH, PoisonSpiderUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     @Override

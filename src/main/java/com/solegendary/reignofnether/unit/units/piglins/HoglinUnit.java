@@ -184,6 +184,7 @@ public class HoglinUnit extends Hoglin implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, HoglinUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, HoglinUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, HoglinUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, HoglinUnit.armorValue);
     }
 

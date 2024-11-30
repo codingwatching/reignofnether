@@ -46,11 +46,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -682,6 +684,14 @@ public class UnitClientEvents {
                                 MyRenderer.drawSolidBox(evt.getPoseStack(), aabb, Direction.UP, green ? 0 : 1, green ? 1 : 0, 0, a, new ResourceLocation("forge:textures/white.png"));
                             } else {
                                 MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, green ? 0 : 1, green ? 1 : 0, 0, a);
+                            }
+                        }
+
+                        // draw path nodes
+                        if (unit instanceof Mob mob && mob.getNavigation().getPath() != null) {
+                            for (Node node : mob.getNavigation().getPath().nodes) {
+                                BlockPos bp = new BlockPos(node.x, node.y, node.z).below();
+                                MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, 0, 1, 0, a);
                             }
                         }
                     }

@@ -157,6 +157,7 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
                 .add(Attributes.ATTACK_DAMAGE, BlazeUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, BlazeUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, BlazeUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, BlazeUnit.armorValue);
     }
 

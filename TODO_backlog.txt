@@ -27,39 +27,25 @@ Features
     - When built, can be exploded manaully (or set to autoexplode on nearby enemies approaching)
     - Explodes into combination of soulsand and magma
 
-[❌] Boobcat's pathfinding fixes
+[❌] Magma cubes
+    - See discord post
 
 
 Bugfixes
 --------
 
-[❌] Fix weird pathing over magma
-
-[❌] In wave survival, teams randomly switch
-
 [❌] Central portals sometimes do not ignite (and this somehow makes grunts spawn underground)
 
-[❌] Must restart client when switching languages for it to take effect
 
-[❌] Tall grass and barrier blocks are now ignored by the cursor
 
-[❌] (wave survival) Player portals are being excluded from spawn proximity exclusions
+
 
 
 
 Quality of Life Features
 ------------------------
 
-[❌] Show refund resources popup when cancelling an unbuilt building
-
 [❌] Save transport portal links between server restarts
-
-[❌] Shift queueing movements and buildings (not just placement)
-    - Add index to sendCommand packets
-    - Add recursive field to UnitActionItem: nextActionItem
-        - OR just add a list queue to each unit
-    - Add end detections in goals for when to move to nextActionItem
-    - Add clientside checkpoints
 
 [❌] Flatten terrain ability
     - Require that villagers work on it like a building

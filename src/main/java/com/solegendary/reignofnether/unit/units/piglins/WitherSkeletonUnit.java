@@ -164,6 +164,7 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
                 .add(Attributes.ATTACK_DAMAGE, WitherSkeletonUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, WitherSkeletonUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, WitherSkeletonUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, WitherSkeletonUnit.armorValue);
     }
 

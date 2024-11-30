@@ -193,6 +193,7 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
                 .add(Attributes.ATTACK_DAMAGE, GruntUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, GruntUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, GruntUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, GruntUnit.armorValue);
     }
 

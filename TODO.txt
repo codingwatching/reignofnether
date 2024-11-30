@@ -1,5 +1,5 @@
 
-1.19.2-1.0.10
+1.19.2-1.0.11
 -------------
 
 - Done and tested
@@ -7,72 +7,58 @@
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
-Wave Survival 0.3b
+
+
+Wave Survival 0.4
+-----------------
 [🟡] Player units have frost and lava walker by default
 [🟡] Enemy units no longer try to attack bridges
 [❌] Enemy units can now spawn on or near bridges
 [❌] Piglin waves now have a population cap for portals
+[❌] Deserts added back to worldgen
+[❌] Player portals are being excluded from spawn proximity exclusions
+[❌] In wave survival, teams randomly switch
+[❌] Provide 50% refund for deleting a completed building (scaled to how damaged it is)
+[❌] Enemies should attack move to the nearest ground block of a building, or else ranged units pile up indoors
+    - Or else ranged units should just attack units only
 
 Features
 --------
+[🟡] Pathfinding fixes
+    - Test for performance
 
-Villager Militia
-    [✔] Town Centres and villagers now have a 'Call to Arms' button
-    [✔] When used, they run to the nearest Town Centre to be turned into a Militia unit
-    [✔] Militia have 35 HP and 3 damage but cannot do regular worker activities
-    [✔] Militia transform back into villagers any time with a button or if they move 50 blocks away from the town centre
-    [✔] Militia only do 1 damage to huntable animals
-    [✔] Added a bell to the town centre
-        [🟡] back to work should cancel all villagers that are currently moving towards the town centre
+
 
 Bugfixes
 --------
+[🟡] Fixed some units randomly spawning as neutral
+[❌] Can enter enemy garrisons
+[❌] Tall grass and barrier blocks are now ignored by the cursor
+[❌] Fix weird pathing over magma
+[❌] Fix #localisation channel problems
 
-[✔] Portals can no longer stack the same upgrade if they're upgraded with multiple selected
-[✔] Vindicators can no longer spawn with random enchantments on their equipment
-[✔] Ranged units now stagger their attack speeds by a few ticks randomly
-    - This is to work around Minecraft's built-in 1-tick invincibility frames
-[✔] Animals cannot spawn on Y levels too different to your capitol
-[✔] Queued units no longer progress if you're at the population cap instead of being stuck at 99%
-    - This is to fix an issue of being able to go over the max cap when the server is lagging
-[✔] Creepers no longer explode when using /rts-reset
-    - This was to fix a bug where the reset failed if a creeper exploded from it
-[✔] Fixed crash related to transport portals
-[✔] Fixed sonic booms cancelling the first warden's charge up instead of cycling to the next one
-[✔] Fixed not being able to upgrade two labs at the same time
+Quality of Life
+---------------
+[❌] Only play 1 bell sound when calling multiple villagers to arms
 
-Quality of Life Features
-------------------------
+[❌] Show refund resources popup when cancelling buildings
 
-[✔] /gamerule doMobSpawning is now turned off by default
-[✔] The warpten cheatcode now also makes buildings build themselves without workers
-[✔] All buildings can now be built directly adjacent to each other
-    - This means you can use houses as walls (but you won't be able to shoot past them)
-[✔] Spectators can see what's being produced on anyone's buildings
+[❌] Shift queueing movements and buildings (not just placement)
+    - Add index to sendCommand packets
+    - Add recursive field to UnitActionItem: nextActionItem
+        - OR just add a list queue to each unit
+    - Add end detections in goals for when to move to nextActionItem
+    - Add clientside checkpoints
 
+[❌] Must restart client when switching languages for it to take effect
+    - Should do configs first
+
+[❌] /gamerule groundYLevel for mapmakers
+    - Maybe separate for ghasts and bridges?
 
 
 Balancing
 ---------
-
-[✔] All factions may build additional capitols, but only one can produce workers at any given time
-    - you can now cancel and delete capitols if you have another completed building
-    - you can no longer delete your last building, whether it is a capitol or not
-
-[✔] Evokers: -1s fang cd, additional -5% cooldown from vigor enchantment
-
-[✔] Ghasts: +10s build time, +1 pop
-[✔] Creeper friendly fire is halved and friendly fire to other creepers is quartered
-[✔] Reduced charged creeper explosion power to 5
-    - For reference, standard creeper power is 3 and charged is 6
-    - Also reduced charged creeper damage to buildings from 40 to 34
-[✔] Reworked Wither Skeletons:
-    - Wither Skeleton: -4 dmg, -0.1as
-    - Wither on hit is now stackable up to 5 times
-        - At maximum stacks: 1 dmg every 0.2s (5 dmg per second)
-    - Wither duration reduced from 7 to 6 seconds
-    - All stacks disappear if the duration expires
-    - Wither cloud duration increased to 15 seconds
-    - Removed withering melee enemies that attack a wither skeleton
-    - Removed passive bonus damage to damaged targets
+[❌] Factions after your first take 2x as long to build
+[❌] Warden HP reduced to 120
 

@@ -178,7 +178,8 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
                 .add(Attributes.MOVEMENT_SPEED, VindicatorUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, VindicatorUnit.attackDamage)
                 .add(Attributes.ARMOR, VindicatorUnit.armorValue)
-                .add(Attributes.MAX_HEALTH, VindicatorUnit.maxHealth);
+                .add(Attributes.MAX_HEALTH, VindicatorUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     public void tick() {

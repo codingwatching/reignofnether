@@ -142,6 +142,7 @@ public class IronGolemUnit extends IronGolem implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, IronGolemUnit.attackDamage)
                 .add(Attributes.ARMOR, IronGolemUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, IronGolemUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
     }
 
