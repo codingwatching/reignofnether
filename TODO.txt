@@ -32,7 +32,6 @@ Features
     - If the first unit in a group tries to go to an impossible path (eg. an island), then just send all other units
         - in the group to the last pos in the node list of the first unit
 
-        - iv
 
 Bugfixes
 --------
@@ -51,7 +50,8 @@ Quality of Life
 
 [❌] Only play 1 bell sound when calling multiple villagers to arms
 
-[❌] Show refund resources popup when cancelling buildings
+[🟡] Show refund resources popup when cancelling buildings
+    - consider switching to SC2 system? (flat 75% refund)
 
 [❌] Shift queueing movements and buildings (not just placement)
     - Add index to sendCommand packets

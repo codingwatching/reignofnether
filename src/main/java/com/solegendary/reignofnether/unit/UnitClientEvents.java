@@ -751,12 +751,14 @@ public class UnitClientEvents {
                         }
 
                         // draw path nodes
+                        /*
                         if (unit instanceof Mob mob && mob.getNavigation().getPath() != null) {
                             for (Node node : mob.getNavigation().getPath().nodes) {
                                 BlockPos bp = new BlockPos(node.x, node.y, node.z).below();
                                 MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, 0, 1, 0, a);
                             }
                         }
+                         */
                     }
                 }
             }

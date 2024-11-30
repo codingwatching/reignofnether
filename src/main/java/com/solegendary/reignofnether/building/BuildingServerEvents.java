@@ -369,14 +369,27 @@ public class BuildingServerEvents {
 
         // AOE2-style refund: return the % of the non-built portion of the building
         // eg. cancelling a building at 70% completion will refund only 30% cost
-        if (!building.isBuilt) {
+        // in survival, refund 50% of this amount
+        if (!building.isBuilt || SurvivalServerEvents.isEnabled()) {
+
             float buildPercent = building.getBlocksPlacedPercent();
-            ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName,
-                Math.round(building.foodCost * (1 - buildPercent)),
-                Math.round(building.woodCost * (1 - buildPercent)),
-                Math.round(building.oreCost * (1 - buildPercent))
-            ));
+            int food = Math.round(building.foodCost * (1 - buildPercent));
+            int wood = Math.round(building.woodCost * (1 - buildPercent));
+            int ore = Math.round(building.oreCost * (1 - buildPercent));
+
+            if (building.isBuilt && SurvivalServerEvents.isEnabled()) {
+                food = Math.round(building.foodCost * 0.5f);
+                wood = Math.round(building.woodCost * 0.5f);
+                ore = Math.round(building.oreCost * 0.5f);
+            }
+            if (food > 0 || wood > 0 || ore > 0) {
+                ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName, food, wood, ore));
+                Resources res = new Resources(building.ownerName, food, wood, ore);
+                ResourcesServerEvents.addSubtractResources(res);
+                ResourcesClientboundPacket.showFloatingText(res, building.centrePos);
+            }
         }
+
         building.destroy((ServerLevel) building.getLevel());
     }
 
