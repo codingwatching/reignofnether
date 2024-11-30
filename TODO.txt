@@ -22,15 +22,23 @@ Wave Survival 0.4
 [❌] Enemies should attack move to the nearest ground block of a building, or else ranged units pile up indoors
     - Or else ranged units should just attack units only
 
+
+
 Features
 --------
 [🟡] Pathfinding fixes
     - Test for performance
+    - Ignore recalculations if the target pos is the same as current
+    - If the first unit in a group tries to go to an impossible path (eg. an island), then just send all other units
+        - in the group to the last pos in the node list of the first unit
 
-
+        - iv
 
 Bugfixes
 --------
+
+HOTFIX: prevent spectators from cancelling units
+
 [🟡] Fixed some units randomly spawning as neutral
 [❌] Can enter enemy garrisons
 [❌] Tall grass and barrier blocks are now ignored by the cursor
@@ -39,6 +47,8 @@ Bugfixes
 
 Quality of Life
 ---------------
+[❌] Huntable animals are shown on the minimap in yellow
+
 [❌] Only play 1 bell sound when calling multiple villagers to arms
 
 [❌] Show refund resources popup when cancelling buildings
@@ -59,6 +69,6 @@ Quality of Life
 
 Balancing
 ---------
-[❌] Factions after your first take 2x as long to build
+[❌] Capitols after your first take 2x as long to build
 [❌] Warden HP reduced to 120
 

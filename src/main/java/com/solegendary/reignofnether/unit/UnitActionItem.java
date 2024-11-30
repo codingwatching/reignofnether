@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
+import com.solegendary.reignofnether.unit.goals.MoveToTargetBlockGoal;
 import com.solegendary.reignofnether.unit.goals.ReturnResourcesGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
@@ -94,6 +95,15 @@ public class UnitActionItem {
 
         actionableUnitsLoop:
         for (Unit unit : actionableUnits) {
+
+            // recalculating pathfinding can be expensive, so check if we actually need to first
+            /*
+            if (action == UnitAction.MOVE) {
+                MoveToTargetBlockGoal goal = unit.getMoveGoal();
+                if (goal != null && goal.willReachTargetWithoutRepathing())
+                    continue;
+            }
+             */
 
             // have to do this before resetBehaviours so we can assign the correct resourceName first
             if (action == UnitAction.TOGGLE_GATHER_TARGET) {

@@ -3,8 +3,6 @@ package com.solegendary.reignofnether.unit;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ability.Ability;
-import com.solegendary.reignofnether.ability.abilities.ThrowLingeringHarmingPotion;
-import com.solegendary.reignofnether.ability.abilities.ThrowLingeringRegenPotion;
 import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
@@ -40,6 +38,7 @@ import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -178,6 +177,24 @@ public class UnitClientEvents {
     }
 
     public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
+                                             BlockPos preselectedBlockPos, boolean clientside, boolean serverside) {
+        sendUnitCommandManual(action, unitId, unitIds, preselectedBlockPos,
+                new BlockPos(0,0,0), clientside, serverside);
+    }
+
+    public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds) {
+        sendUnitCommandManual(action, unitId, unitIds,
+                new BlockPos(0,0,0),
+                new BlockPos(0,0,0));
+    }
+
+    public static void sendUnitCommandManual(UnitAction action, int[] unitIds) {
+        sendUnitCommandManual(action, -1, unitIds,
+                new BlockPos(0,0,0),
+                new BlockPos(0,0,0));
+    }
+
+    public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
                                              BlockPos preselectedBlockPos, BlockPos selectedBuildingPos) {
         if (MC.player != null) {
             UnitActionItem actionItem = new UnitActionItem(
@@ -197,16 +214,28 @@ public class UnitClientEvents {
         }
     }
 
-    public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds) {
-        sendUnitCommandManual(action, unitId, unitIds,
-                new BlockPos(0,0,0),
-                new BlockPos(0,0,0));
-    }
-
-    public static void sendUnitCommandManual(UnitAction action, int[] unitIds) {
-        sendUnitCommandManual(action, -1, unitIds,
-                new BlockPos(0,0,0),
-                new BlockPos(0,0,0));
+    public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
+                                             BlockPos preselectedBlockPos, BlockPos selectedBuildingPos,
+                                             boolean clientside, boolean serverside) {
+        if (MC.player != null) {
+            if (clientside) {
+                UnitActionItem actionItem = new UnitActionItem(
+                        MC.player.getName().getString(),
+                        action, unitId, unitIds,
+                        preselectedBlockPos,
+                        selectedBuildingPos
+                );
+                actionItem.action(MC.level);
+            }
+            if (serverside) {
+                PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
+                        MC.player.getName().getString(),
+                        action, unitId, unitIds,
+                        preselectedBlockPos,
+                        selectedBuildingPos
+                ));
+            }
+        }
     }
 
     public static void sendUnitCommand(UnitAction action) {
@@ -268,12 +297,46 @@ public class UnitClientEvents {
             if (selectedUnits.size() == 1 || isGathering)
                 sendUnitCommand(UnitAction.MOVE);
             else { // if we do not have a gathering villager as the fist
+
                 List<Pair<Integer, BlockPos>> formationPairs = UnitFormations.getMoveFormation(
                     MC.level, selectedUnits, getPreselectedBlockPos()
                 );
+
+                int skips = 0;
+
                 for (Pair<Integer, BlockPos> pair : formationPairs) {
-                    sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{pair.getFirst()}, pair.getSecond());
+                    int entityId = pair.getFirst();
+                    BlockPos targetPos = pair.getSecond();
+                    Entity entity = MC.level.getEntity(entityId);
+                    if (entity instanceof Unit unit &&
+                        unit.getMoveGoal() != null) {
+
+                        BlockPos pbp = getPreselectedBlockPos();
+
+                        if (unit.getMoveGoal().getMoveTarget() != null &&
+                            unit.getMoveGoal().lastSelectedMoveTarget != null &&
+                            unit.getMoveGoal().lastSelectedMoveTarget.distToCenterSqr(pbp.getX(), pbp.getY(), pbp.getZ()) <= 9 &&
+                            entity.getOnPos().distToCenterSqr(pbp.getX(), pbp.getY(), pbp.getZ()) >= 100)
+                            continue;
+
+                        BlockPos oldFinalPos = unit.getMoveGoal().getFinalNodePos();
+                        sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
+                        BlockPos newFinalPos = unit.getMoveGoal().getFinalNodePos();
+
+                        // if the client didn't calculate a new enough finalNodePos, then don't bother sending the server command
+                        if (oldFinalPos != null && newFinalPos != null &&
+                            oldFinalPos.distToCenterSqr(newFinalPos.getX(), newFinalPos.getY(), newFinalPos.getZ()) <= 9) {
+                            skips += 1;
+                            continue;
+                        }
+                        sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, false, true);
+                    }
                 }
+                //System.out.println(skips);
+
+                for (LivingEntity le : selectedUnits)
+                    if (le instanceof Unit unit && unit.getMoveGoal() != null)
+                        unit.getMoveGoal().lastSelectedMoveTarget = getPreselectedBlockPos();
             }
         }
     }
