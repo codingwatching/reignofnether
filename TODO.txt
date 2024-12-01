@@ -58,6 +58,10 @@ Bugfixes
 
 
 
+[❌] Logical side error in town centre?
+
+
+
 Quality of Life
 ---------------
 
@@ -89,6 +93,7 @@ Balancing
 [✔] Spiders & Poison Spiders: +1 dmg
 
 [🟡] Capitols after the one at the start of the game take twice as long to build
+[❌] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
 
 [❌] Warden HP reduced to 120
 

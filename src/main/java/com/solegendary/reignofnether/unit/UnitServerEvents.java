@@ -136,7 +136,7 @@ public class UnitServerEvents {
         data.targetData.clear();
         AtomicInteger numWorkersSaved = new AtomicInteger();
         getAllUnits().forEach(e -> { // if currently gathering, save that gather data
-            if (e instanceof WorkerUnit wUnit && ) {
+            if (e instanceof WorkerUnit wUnit) {
                 if (wUnit.getGatherResourceGoal().data.hasData()) {
                     wUnit.getGatherResourceGoal().data.unitUUID = e.getStringUUID();
                     data.targetData.add(wUnit.getGatherResourceGoal().data);
