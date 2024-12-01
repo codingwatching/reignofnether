@@ -248,6 +248,10 @@ public abstract class Building {
         return null;
     }
 
+    //Override in child classes
+    public void rebakeButtons() {
+    }
+
     public boolean canAfford(String ownerName) {
         for (Resources resources : ResourcesServerEvents.resourcesList)
             if (resources.ownerName.equals(ownerName)) {

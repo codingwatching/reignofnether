@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.building.buildings.monsters;
 
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
+import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.research.ResearchClient;
@@ -34,7 +35,7 @@ public class Dungeon extends ProductionBuilding {
 
     public final static String buildingName = "Dungeon";
     public final static String structureName = "dungeon";
-    public final static ResourceCost cost = ResourceCosts.DUNGEON;
+    public static ResourceCost cost = ResourceCosts.DUNGEON;
 
     public Dungeon(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
         super(level, originPos, rotation, ownerName, getAbsoluteBlockData(getRelativeBlockData(level), level, originPos, rotation), false);
@@ -55,6 +56,14 @@ public class Dungeon extends ProductionBuilding {
         if (level.isClientSide())
             this.productionButtons = Arrays.asList(
                 CreeperProd.getStartButton(this, Keybindings.keyQ)
+            );
+    }
+
+    @Override
+    public void rebakeButtons() {
+        if (level.isClientSide())
+            this.productionButtons = Arrays.asList(
+                    CreeperProd.getStartButton(this, Keybindings.keyQ)
             );
     }
 
