@@ -18,7 +18,7 @@ Wave Survival 0.4
 [❌] Deserts added back to worldgen
 [❌] Player portals are being excluded from spawn proximity exclusions
 [❌] In wave survival, teams randomly switch
-[❌] Provide 50% refund for deleting a completed building (scaled to how damaged it is)
+[🟡] Provide 50% refund for deleting a completed building (scaled to how damaged it is)
 [❌] Enemies should attack move to the nearest ground block of a building, or else ranged units pile up indoors
     - Or else ranged units should just attack units only
 
@@ -39,7 +39,8 @@ Bugfixes
 [❌] prevent spectators from cancelling units
 
 [🟡] Fixed some units randomly spawning as neutral
-[❌] Can enter enemy garrisons
+[🟡] Can no longer enter enemy garrisons
+    - You can still enter allied garrisons
 [🟡] Tall grass and barrier blocks are now ignored by the cursor
 [🟡] Fix weird pathing over magma
     - To fix this, there is a new block identical in texture and function to magma called "Walkable Magma"
@@ -48,7 +49,6 @@ Bugfixes
 
 Quality of Life
 ---------------
-[❌] Huntable animals are shown on the minimap in yellow
 
 [❌] Only play 1 bell sound when calling multiple villagers to arms
 
