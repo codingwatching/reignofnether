@@ -741,6 +741,8 @@ public abstract class Building {
                 int msPerBuild = (3 * BASE_MS_PER_BUILD) / (builderCount + 2);
                 if (!isBuilt) {
                     msPerBuild *= buildTimeModifier;
+                    if (isCapitol && BuildingUtils.getTotalCompletedBuildingsOwned(false, ownerName) > 0)
+                        msPerBuild *= 2;
                 } else {
                     msPerBuild *= repairTimeModifier;
                 }

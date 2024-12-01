@@ -38,7 +38,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     public TargetResourcesSave data = new TargetResourcesSave();
     // copy of activeData that is saved temporarily, reset on resetBeheaviours, used for returning resources
     public TargetResourcesSave saveData = new TargetResourcesSave();
-    // copy of saveData that is never erased, used for Call to Arms / Back to Work and level saving
+    // copy of saveData that is never erased, used for Call to Arms / Back to Work
     public TargetResourcesSave permSaveData = new TargetResourcesSave();
 
     private static final int REACH_RANGE = 5;

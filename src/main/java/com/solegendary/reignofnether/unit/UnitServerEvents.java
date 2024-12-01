@@ -136,11 +136,16 @@ public class UnitServerEvents {
         data.targetData.clear();
         AtomicInteger numWorkersSaved = new AtomicInteger();
         getAllUnits().forEach(e -> { // if currently gathering, save that gather data
-            if (e instanceof WorkerUnit wUnit && wUnit.getGatherResourceGoal().data.hasData()) {
-                wUnit.getGatherResourceGoal().savePermState();
-                wUnit.getGatherResourceGoal().permSaveData.unitUUID = e.getStringUUID();
-                data.targetData.add(wUnit.getGatherResourceGoal().permSaveData);
-                numWorkersSaved.addAndGet(1);
+            if (e instanceof WorkerUnit wUnit && ) {
+                if (wUnit.getGatherResourceGoal().data.hasData()) {
+                    wUnit.getGatherResourceGoal().data.unitUUID = e.getStringUUID();
+                    data.targetData.add(wUnit.getGatherResourceGoal().data);
+                    numWorkersSaved.addAndGet(1);
+                } else if (wUnit.getGatherResourceGoal().saveData.hasData()) {
+                    wUnit.getGatherResourceGoal().saveData.unitUUID = e.getStringUUID();
+                    data.targetData.add(wUnit.getGatherResourceGoal().saveData);
+                    numWorkersSaved.addAndGet(1);
+                }
             }
         });
         data.save();

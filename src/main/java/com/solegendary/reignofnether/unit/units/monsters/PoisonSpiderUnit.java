@@ -113,7 +113,7 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
 
     // endregion
 
-    final static public float attackDamage = 3.0f;
+    final static public float attackDamage = 4.0f;
     final static public float attacksPerSecond = 0.6f;
     final static public float maxHealth = 30.0f;
     final static public float armorValue = 0.0f;
