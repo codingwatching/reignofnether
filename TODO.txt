@@ -12,8 +12,7 @@
 Wave Survival 0.4
 -----------------
 [🟡] Player units have frost and lava walker by default
-[🟡] Enemy units no longer try to attack bridges
-[❌] Enemy units can now spawn on or near bridges
+[🟡] Enemy units no longer try to attack bridges or pile up near them
 [❌] Piglin waves now have a population cap for portals
 [❌] Deserts added back to worldgen
 [❌] Player portals are being excluded from spawn proximity exclusions
@@ -21,8 +20,10 @@ Wave Survival 0.4
 [🟡] Provide 50% refund for deleting a completed building (scaled to how damaged it is)
 [❌] Enemies should attack move to the nearest ground block of a building, or else ranged units pile up indoors
     - Or else ranged units should just attack units only
+[❌] Reduce portal count to 1/3 of wave number, prevent them spawning over water
+[❌] Only display warning message if less than the required units spawned
 
-
+[❌] Don't advance wave number on waveCleared(), just on nightfall
 
 Features
 --------
@@ -36,8 +37,9 @@ Features
 Bugfixes
 --------
 
-[❌] prevent spectators from cancelling units
-
+[🟡] Spectators can no longer cancel units from RTS players' building queues
+    - test in lilypad server?
+[❌] headhunters can't shoot enemies right below the bastion very well
 [🟡] Fixed some units randomly spawning as neutral
 [🟡] Can no longer enter enemy garrisons
     - You can still enter allied garrisons
@@ -47,10 +49,16 @@ Bugfixes
     - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
 [❌] Fix #localisation channel problems
 
+[❌] Ignore saved resource targets if the target is too far away
+[❌] Wipe all saved data on /rts-reset
+
+
+
 Quality of Life
 ---------------
 
 [❌] Only play 1 bell sound when calling multiple villagers to arms
+    - or just halve the volume when using more than one
 
 [🟡] Show refund resources popup when cancelling buildings
     - consider switching to SC2 system? (flat 75% refund)
@@ -71,6 +79,10 @@ Quality of Life
 
 Balancing
 ---------
+[❌] De-RNG farm growth, and properly measure their output for balancing
+
+[❌] Buff spiders - lower cost, higher damage
+
 [❌] Capitols after your first take 2x as long to build
 [❌] Warden HP reduced to 120
 

@@ -384,9 +384,16 @@ public class HudClientEvents {
             else if ((hudSelBuildingOwned || !PlayerClientEvents.isRTSPlayer) && hudSelectedBuilding instanceof ProductionBuilding selProdBuilding) {
                 blitY = screenHeight - iconFrameSize * 2 - 5;
 
-                for (int i = 0; i < selProdBuilding.productionQueue.size(); i++)
-                    productionButtons.add(selProdBuilding.productionQueue.get(i)
-                        .getCancelButton(selProdBuilding, i == 0));
+                for (int i = 0; i < selProdBuilding.productionQueue.size(); i++) {
+
+                    Button button = selProdBuilding.productionQueue.get(i)
+                            .getCancelButton(selProdBuilding, i == 0);
+                    if (!hudSelBuildingOwned) {
+                        button.onLeftClick = () -> { };
+                        button.onRightClick = () -> { };
+                    }
+                    productionButtons.add(button);
+                }
 
                 if (productionButtons.size() >= 1) {
                     // background frame

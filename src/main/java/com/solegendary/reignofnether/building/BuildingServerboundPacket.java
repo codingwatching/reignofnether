@@ -31,7 +31,7 @@ public class BuildingServerboundPacket {
     public Boolean isDiagonalBridge;
 
     // does auth check against ownerName or against the existing building.ownerName?
-    // if not in this list (eg. check stockpile, request replacement), no auth is needed
+    // if not in either list (eg. check stockpile, request replacement), no auth is needed
     private final static List<BuildingAction> newBuildingAuthActions = List.of(
             BuildingAction.PLACE,
             BuildingAction.PLACE_AND_QUEUE
@@ -41,7 +41,9 @@ public class BuildingServerboundPacket {
             BuildingAction.SET_RALLY_POINT,
             BuildingAction.SET_RALLY_POINT_ENTITY,
             BuildingAction.START_PRODUCTION,
-            BuildingAction.CANCEL_PRODUCTION
+            BuildingAction.CANCEL_PRODUCTION,
+            BuildingAction.CANCEL_BACK_PRODUCTION,
+            BuildingAction.CHANGE_PORTAL
     );
 
     public static void placeBuilding(String itemName, BlockPos originPos, Rotation rotation,
@@ -154,6 +156,8 @@ public class BuildingServerboundPacket {
                 success.set(false);
                 return;
             }
+
+            ReignOfNether.LOGGER.warn("Processing packet from: " + player.getName() + " for " + ownerName);
 
             switch (this.action) {
                 case PLACE -> {
