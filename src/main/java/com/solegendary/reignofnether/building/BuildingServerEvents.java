@@ -378,9 +378,9 @@ public class BuildingServerEvents {
             int ore = Math.round(building.oreCost * (1 - buildPercent));
 
             if (building.isBuilt && SurvivalServerEvents.isEnabled()) {
-                food = Math.round(building.foodCost * 0.5f);
-                wood = Math.round(building.woodCost * 0.5f);
-                ore = Math.round(building.oreCost * 0.5f);
+                food = Math.round(building.foodCost * 0.5f * buildPercent);
+                wood = Math.round(building.woodCost * 0.5f * buildPercent);
+                ore = Math.round(building.oreCost * 0.5f * buildPercent);
             }
             if (food > 0 || wood > 0 || ore > 0) {
                 ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName, food, wood, ore));

@@ -2,15 +2,16 @@ package com.solegendary.reignofnether.registrars;
 
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.blocks.FallingRotatedPillarBlock;
+import com.solegendary.reignofnether.blocks.WalkableMagmaBlock;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -91,7 +92,19 @@ public class BlockRegistrar {
             () -> fallingNetherStem(MaterialColor.CRIMSON_STEM),
             CreativeModeTab.TAB_BUILDING_BLOCKS
     );
+    public static final RegistryObject<Block> WALKABLE_MAGMA_BLOCK = registerBlock("walkable_magma_block", () ->
+            new WalkableMagmaBlock(BlockBehaviour
+            .Properties.of(Material.STONE, MaterialColor.NETHER)
+            .requiresCorrectToolForDrops()
+            .lightLevel((p_50828_) -> 3)
+            .randomTicks().strength(0.5F)
+            .isValidSpawn((p_187421_, p_187422_, p_187423_, p_187424_) -> p_187424_.fireImmune())
+            .hasPostProcess(BlockRegistrar::always).emissiveRendering(BlockRegistrar::always)),
+            CreativeModeTab.TAB_BUILDING_BLOCKS);
 
+    private static boolean always(BlockState p_50775_, BlockGetter p_50776_, BlockPos p_50777_) {
+        return true;
+    }
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

@@ -122,16 +122,6 @@ public class UnitServerEvents {
         data.units.clear();
         getAllUnits().forEach(e -> {
             if (e instanceof Unit unit) {
-                try {
-                    GameProfile profile = level.getServer().getProfileCache().get(unit.getOwnerName()).orElse(null);
-                    if (profile != null) {
-                        e.getPersistentData().putUUID("OwnerUUID",  profile.getId());
-                    } else {
-                        ReignOfNether.LOGGER.warn("Could not find UUID for owner name: " + unit.getOwnerName());
-                    }
-                } catch (IllegalArgumentException ex) {
-                    ReignOfNether.LOGGER.warn("Failed to add UUID to unit data: " + ex.getMessage());
-                }
                 // Save unit data as usual
                 data.units.add(new UnitSave(e.getName().getString(), unit.getOwnerName(), e.getStringUUID()));
             }
@@ -291,7 +281,6 @@ public class UnitServerEvents {
 
         if (evt.getEntity() instanceof Unit && evt.getEntity() instanceof Mob mob) {
             mob.setBaby(false);
-            mob.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0);
             mob.setPathfindingMalus(BlockPathTypes.WATER, -1.0f);
             mob.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
             mob.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);

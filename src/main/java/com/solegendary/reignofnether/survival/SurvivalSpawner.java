@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.monsters.PumpkinFarm;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
+import com.solegendary.reignofnether.registrars.BlockRegistrar;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
@@ -54,7 +55,7 @@ public class SurvivalSpawner {
         BlockState bsToPlace;
 
         if (bs.getMaterial() == Material.LAVA)
-            bsToPlace = Blocks.MAGMA_BLOCK.defaultBlockState();
+            bsToPlace = BlockRegistrar.WALKABLE_MAGMA_BLOCK.get().defaultBlockState();
         else if (bs.getMaterial() == Material.WATER)
             bsToPlace = Blocks.FROSTED_ICE.defaultBlockState();
         else

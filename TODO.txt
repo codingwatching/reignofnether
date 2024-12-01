@@ -36,12 +36,14 @@ Features
 Bugfixes
 --------
 
-HOTFIX: prevent spectators from cancelling units
+[❌] prevent spectators from cancelling units
 
 [🟡] Fixed some units randomly spawning as neutral
 [❌] Can enter enemy garrisons
-[❌] Tall grass and barrier blocks are now ignored by the cursor
-[❌] Fix weird pathing over magma
+[🟡] Tall grass and barrier blocks are now ignored by the cursor
+[🟡] Fix weird pathing over magma
+    - To fix this, there is a new block identical in texture and function to magma called "Walkable Magma"
+    - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
 [❌] Fix #localisation channel problems
 
 Quality of Life
@@ -72,3 +74,8 @@ Balancing
 [❌] Capitols after your first take 2x as long to build
 [❌] Warden HP reduced to 120
 
+
+Languages
+---------
+NEW:
+"block.reignofnether.walkable_magma_block": "Walkable Magma",
