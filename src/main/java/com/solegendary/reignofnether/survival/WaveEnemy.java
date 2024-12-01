@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.survival;
 
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
+import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
@@ -18,8 +19,8 @@ import java.util.List;
 
 public class WaveEnemy {
 
-    private static final int PERIODIC_COMMAND_INTERVAL = 100;
-    private static final int IDLE_COMMAND_INTERVAL = 100;
+    private static final int PERIODIC_COMMAND_INTERVAL = 200;
+    private static final int IDLE_COMMAND_INTERVAL = 200;
 
     public final Unit unit;
     private long idleTicks = 0;
@@ -95,7 +96,7 @@ public class WaveEnemy {
 
         BlockPos targetBp = null;
         if (!buildings.isEmpty())
-            targetBp = buildings.get(0).centrePos;
+            targetBp = buildings.get(0).getClosestGroundPos(((Entity) unit).getOnPos(), 1);
 
         if (targetBp != null)
             UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,
@@ -114,7 +115,7 @@ public class WaveEnemy {
 
         BlockPos targetBp = null;
         if (!playerBuildings.isEmpty())
-            targetBp = playerBuildings.get(0).centrePos;
+            targetBp = buildings.get(0).getClosestGroundPos(((Entity) unit).getOnPos(), 1);
 
         if (targetBp != null)
             UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,

@@ -2,7 +2,7 @@
 1.19.2-1.0.11
 -------------
 
-- Done and tested
+- Done and testedZ
 [✔] Done and tested
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
@@ -11,20 +11,24 @@
 
 Wave Survival 0.4
 -----------------
-[🟡] Player units have frost and lava walker by default
 [🟡] Enemy units no longer try to attack bridges or pile up near them
 [🟡] Provide 50% refund for deleting a completed building (scaled to how damaged it is)
 
-[❌] Piglin waves now have a population cap for portals
 [❌] Deserts added back to worldgen
-[❌] Player portals are being excluded from spawn proximity exclusions
 [❌] In wave survival, teams randomly switch
-[❌] Enemies should attack move to the nearest ground block of a building, or else ranged units pile up indoors
-    - Or else ranged units should just attack units only
-[❌] Reduce portal count to 1/3 of wave number, prevent them spawning over water
-[❌] Only display warning message if less than the required units spawned
+[🟡] Ranged units no longer pile up inside buildings
 
-[❌] Don't advance wave number on waveCleared(), just on nightfall
+[🟡] Wave difficulty is advanced on each night regardless of if you cleared the previous wave or not
+[🟡] The spawn warning is now only shown if less than the expected number of units spawned
+    - If you see one of these warnings, please open a bug report and show a screenshot of your world
+
+Portal fixes
+------------
+[🟡] Reduced portal count from 1/2 to 1/3 of wave number but with the same total population each wave
+[🟡] Portals can no longer spawn over water (but they can still spawn on land across water)
+[🟡] Portals can no longer spawn too close to another portal
+[🟡] Piglin waves now have a population cap for units spawned from portals (2x of other waves)
+
 
 Features
 --------
@@ -56,6 +60,8 @@ Bugfixes
 
 Quality of Life
 ---------------
+
+[❌] If neutralAggro is on, don't aggro allied survival players
 
 [🟡] Reduced volume of the Call To Arms bell when used by villagers
 

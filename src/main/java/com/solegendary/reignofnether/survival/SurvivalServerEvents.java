@@ -138,7 +138,7 @@ public class SurvivalServerEvents {
 
         // detect new portals and update portals list accordingly
         List<Building> currentPortals = BuildingServerEvents.getBuildings().stream().filter(b ->
-                ENEMY_OWNER_NAMES.contains(b.ownerName) && b instanceof Portal)
+                ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank() && b instanceof Portal)
                 .toList();
 
         for (Building portal : currentPortals)
@@ -263,12 +263,22 @@ public class SurvivalServerEvents {
         return enemies;
     }
 
+    public static int getTotalEnemyPopulation() {
+        int pop = 0;
+        for (WaveEnemy waveEnemy : getCurrentEnemies())
+            pop += waveEnemy.unit.getPopCost();
+        return pop;
+    }
+
     public static boolean isWaveInProgress() {
         return !getCurrentEnemies().isEmpty();
     }
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
+        nextWave = Wave.getWave(nextWave.number + 1);
+        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
+        saveStage(level);
         switch (random.nextInt(3)) {
             case 0 -> spawnMonsterWave(level, nextWave);
             case 1 -> spawnIllagerWave(level, nextWave);
@@ -278,10 +288,7 @@ public class SurvivalServerEvents {
 
     // triggered when last enemy is killed
     public static void waveCleared(ServerLevel level) {
-        nextWave = Wave.getWave(nextWave.number + 1);
-        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
         PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.wave_cleared", true);
         SoundClientboundPacket.playSoundForAllPlayers(SoundAction.ALLY);
-        saveStage(level);
     }
 }

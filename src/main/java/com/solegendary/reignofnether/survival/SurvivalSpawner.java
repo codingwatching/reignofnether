@@ -81,16 +81,18 @@ public class SurvivalSpawner {
 
     // spawn monsters evenly spread out across from all directions
     public static void spawnMonsterWave(ServerLevel level, Wave wave) {
+        final int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
 
-        for (BlockPos bp : SurvivalSpawner.getValidSpawnPoints(remainingPop, level)) {
+        List<BlockPos> bps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level, true);
+
+        for (BlockPos bp : bps) {
             BlockState bs = level.getBlockState(bp);
 
             int tier = random.nextInt(wave.highestUnitTier) + 1;
             EntityType<? extends Mob> mobType = wave.getRandomUnitOfTier(Faction.MONSTERS, tier);
 
-            if (bs.getMaterial().isLiquid())
-                bp = bp.above();
+            bp = bp.above();
 
             ArrayList<Entity> entities = UnitServerEvents.spawnMobs(mobType, level,
                     mobType.getDescription().getString().contains("spider") ? bp.above().above(): bp.above(),
@@ -104,12 +106,16 @@ public class SurvivalSpawner {
             if (remainingPop <= 0)
                 break;
         }
+        if (remainingPop > 0) {
+            PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of monster units");
+        }
     }
 
     // spawn illagers from one direction
     public static void spawnIllagerWave(ServerLevel level, Wave wave) {
+        final int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
-        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level);
+        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(remainingPop, level, true);
         int spawnsThisDir = 0;
         int spawnUntilNextTurn = -2;
 
@@ -167,19 +173,43 @@ public class SurvivalSpawner {
                 }
             }
         }
+        if (remainingPop > 0) {
+            PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of monster units");
+        }
     }
 
     // spawn portals which spawn half of the wave immediately, and trickle in constantly
     public static void spawnPiglinWave(ServerLevel level, Wave wave) {
-        int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
-        List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(pop, level);
-        int numPortals = Math.max(1, wave.number / 2);
+        int numPortals = wave.getNumPortals();
         int failedPortalPlacements = 0;
+        ArrayList<BlockPos> portalBps = new ArrayList<>();
 
         for (int i = 0; i < numPortals; i++) {
-            if (i < spawnBps.size()) {
+
+            BlockPos spawnBp = null;
+            int attempts = 0;
+            boolean tooCloseToAnotherPortal;
+
+            do {
+                tooCloseToAnotherPortal = false;
+                List<BlockPos> spawnBps = SurvivalSpawner.getValidSpawnPoints(1, level, false);
+                if (!spawnBps.isEmpty())
+                    spawnBp = spawnBps.get(0);
+                attempts += 1;
+
+                for (BlockPos bp : portalBps)
+                    if (spawnBp != null && bp.distSqr(spawnBp) < 25)
+                        tooCloseToAnotherPortal = true;
+                for (BlockPos bp : portals.stream().map(p -> p.portal.originPos).toList())
+                    if (spawnBp != null && bp.distSqr(spawnBp) < 25)
+                        tooCloseToAnotherPortal = true;
+
+            } while((spawnBp == null || tooCloseToAnotherPortal) && attempts < 100);
+
+            if (spawnBp != null) {
+                portalBps.add(spawnBp);
                 Building building = BuildingServerEvents.placeBuilding(Portal.buildingName,
-                        new BlockPos(spawnBps.get(i)).above(),
+                        new BlockPos(spawnBp).above(),
                         Rotation.NONE,
                         PIGLIN_OWNER_NAME,
                         new int[] {},
@@ -193,8 +223,10 @@ public class SurvivalSpawner {
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + failedPortalPlacements + " portals!");
     }
 
-    public static List<BlockPos> getValidSpawnPoints(int amount, Level level) {
-        List<Building> buildings = BuildingServerEvents.getBuildings();
+    public static List<BlockPos> getValidSpawnPoints(int amount, Level level, boolean allowLiquid) {
+        List<Building> buildings = BuildingServerEvents.getBuildings()
+                .stream().filter(b -> !ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank())
+                .toList();
 
         Random random = new Random();
         if (buildings.isEmpty())
@@ -257,6 +289,7 @@ public class SurvivalSpawner {
                     || spawnBs.getMaterial() == Material.WOOD
                     || distSqrToNearestBuilding < (MIN_SPAWN_RANGE * MIN_SPAWN_RANGE)
                     || distSqrToNearestPortal < (10 * 10)
+                    || (spawnBs.getMaterial().isLiquid() && !allowLiquid)
                     || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp)
                     || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp.above()));
 
@@ -269,8 +302,6 @@ public class SurvivalSpawner {
 
         if (validSpawns.isEmpty())
             PlayerServerEvents.sendMessageToAllPlayers("WARNING: could not find any valid spawn locations!");
-        else if (validSpawns.size() < amount)
-            PlayerServerEvents.sendMessageToAllPlayers("WARNING: only found " + validSpawns.size() + "/"  + amount + " valid spawn locations!");
 
         return validSpawns;
     }
