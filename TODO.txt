@@ -35,7 +35,16 @@ Portal fixes
 
 Features
 --------
-[🟡] Pathfinding fixes
+[🟡] Improved pathfinding accuracy for all units
+    - Increasing the accuracy also increased server CPU usage, so several optimisations have also been included:
+        - If the last move command is identical to the current one (same units, same location, etc.) the command is ignored
+        - When moving far distances (>50 blocks), some commands are ignored if the last move command was to a similar location
+        - Move commands across water/lava are ignored if the unit would not move as a result (eg. they're stuck at the coast)
+
+[🟡] Configurable Unit Costs (Thanks to @DoodleNoodles)
+    - Includes all costs, population values and build times
+    - Modify the files generated at configs/reignofnether-config.toml to adjust them
+    - If the server config is adjusted, this will be enforced for all players joining the match
 
 Bugfixes
 --------
@@ -50,29 +59,20 @@ Bugfixes
 [🟡] Fix weird pathing over magma
     - To fix this, there is now a new block identical in texture and function to magma called "Walkable Magma"
     - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
+
 [❌] Fix #localisation channel problems
 [❌] Wipe all saved data on /rts-reset
-
+[❌] You no longer have to restart your client to change button languages
 
 Quality of Life
 ---------------
 
-[❌] If neutralAggro is on, don't aggro allied survival players
+[❌] Aggro enemy survival players except for allies
 
 [🟡] Reduced volume of the Call To Arms bell when used by villagers
 
 [🟡] Show refund resources popup when cancelling buildings
     - consider switching to SC2 system? (flat 75% refund)
-
-[❌] Shift queueing movements and buildings (not just placement)
-    - Add index to sendCommand packets
-    - Add recursive field to UnitActionItem: nextActionItem
-        - OR just add a list queue to each unit
-    - Add end detections in goals for when to move to nextActionItem
-    - Add clientside checkpoints
-
-[❌] Must restart client when switching languages for it to take effect
-    - Should do configs first
 
 [❌] /gamerule groundYLevel for mapmakers
     - Maybe separate for ghasts and bridges?
