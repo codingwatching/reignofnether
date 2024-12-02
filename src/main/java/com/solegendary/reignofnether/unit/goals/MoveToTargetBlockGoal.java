@@ -37,6 +37,7 @@ public class MoveToTargetBlockGoal extends Goal {
 
     public boolean canContinueToUse() {
         // PathNavigation seems to have a max length so restart it if we haven't actually reached the target yet
+        // TODO: this repeats every tick if the mob is stuck, eg. targeting over water
         if (this.mob.getNavigation().isDone() && moveTarget != null &&
             this.mob.getOnPos().distSqr(moveTarget) > 1) {
             this.start();
@@ -63,12 +64,17 @@ public class MoveToTargetBlockGoal extends Goal {
     }
 
     public void setMoveTarget(@Nullable BlockPos bp) {
+
+
+
         if (bp != null) {
             MiscUtil.addUnitCheckpoint((Unit) mob, bp);
             ((Unit) mob).setIsCheckpointGreen(true);
         }
         this.moveTarget = bp;
-        this.start();
+
+        if (!this.mob.level.isClientSide())
+            this.start();
     }
 
     public BlockPos getMoveTarget() {
@@ -85,7 +91,6 @@ public class MoveToTargetBlockGoal extends Goal {
     public void stopMoving() {
         this.moveTarget = null;
         this.mob.getNavigation().stop();
-
         if (this.mob.isVehicle() && this.mob.getPassengers().get(0) instanceof Unit unit)
             unit.getMoveGoal().stopMoving();
     }

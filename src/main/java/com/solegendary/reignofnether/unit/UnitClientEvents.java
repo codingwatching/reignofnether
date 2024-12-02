@@ -302,38 +302,27 @@ public class UnitClientEvents {
                     MC.level, selectedUnits, getPreselectedBlockPos()
                 );
 
-                int skips = 0;
-
                 for (Pair<Integer, BlockPos> pair : formationPairs) {
                     int entityId = pair.getFirst();
                     BlockPos targetPos = pair.getSecond();
                     Entity entity = MC.level.getEntity(entityId);
                     if (entity instanceof Unit unit &&
                         unit.getMoveGoal() != null) {
-
-                        BlockPos pbp = getPreselectedBlockPos();
-
-                        if (unit.getMoveGoal().getMoveTarget() != null &&
-                            unit.getMoveGoal().lastSelectedMoveTarget != null &&
-                            unit.getMoveGoal().lastSelectedMoveTarget.distToCenterSqr(pbp.getX(), pbp.getY(), pbp.getZ()) <= 9 &&
-                            entity.getOnPos().distToCenterSqr(pbp.getX(), pbp.getY(), pbp.getZ()) >= 100)
-                            continue;
-
-                        BlockPos oldFinalPos = unit.getMoveGoal().getFinalNodePos();
-                        sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
-                        BlockPos newFinalPos = unit.getMoveGoal().getFinalNodePos();
-
-                        // if the client didn't calculate a new enough finalNodePos, then don't bother sending the server command
-                        if (oldFinalPos != null && newFinalPos != null &&
-                            oldFinalPos.distToCenterSqr(newFinalPos.getX(), newFinalPos.getY(), newFinalPos.getZ()) <= 9) {
-                            skips += 1;
-                            continue;
-                        }
-                        sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, false, true);
+                        /**
+                         *   BlockPos oldFinalPos = unit.getMoveGoal().getFinalNodePos();
+                         *   sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
+                         *   BlockPos newFinalPos = unit.getMoveGoal().getFinalNodePos();
+                         *
+                         *   // if the client didn't calculate a new enough finalNodePos, then don't bother sending the server command
+                         *   if (oldFinalPos != null && newFinalPos != null &&
+                         *       oldFinalPos.distToCenterSqr(newFinalPos.getX(), newFinalPos.getY(), newFinalPos.getZ()) <= 9) {
+                         *       skips += 1;
+                         *       continue;
+                         *   }
+                         */
+                        sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos);
                     }
                 }
-                //System.out.println(skips);
-
                 for (LivingEntity le : selectedUnits)
                     if (le instanceof Unit unit && unit.getMoveGoal() != null)
                         unit.getMoveGoal().lastSelectedMoveTarget = getPreselectedBlockPos();

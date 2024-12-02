@@ -190,9 +190,9 @@ public abstract class Building {
 
         // re-hide players if they were revealed
         if (this.isCapitol && !this.level.isClientSide()) {
-            if (BuildingUtils.getTotalCompletedBuildingsOwned(false, this.ownerName) == 1
-                && !TutorialServerEvents.isEnabled()) {
-                sendMessageToAllPlayers(I18n.get("hud.reignofnether.placed_capitol", this.ownerName));
+            if (BuildingUtils.getTotalCompletedBuildingsOwned(false, this.ownerName) == 1 &&
+                !TutorialServerEvents.isEnabled() && FogOfWarServerEvents.isEnabled()) {
+                sendMessageToAllPlayers("hud.reignofnether.placed_capitol", false, this.ownerName);
             }
             FogOfWarClientboundPacket.revealOrHidePlayer(false, this.ownerName);
         }

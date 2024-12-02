@@ -156,9 +156,6 @@ public class BuildingServerboundPacket {
                 success.set(false);
                 return;
             }
-
-            ReignOfNether.LOGGER.warn("Processing packet from: " + player.getName() + " for " + ownerName);
-
             switch (this.action) {
                 case PLACE -> {
                     BuildingServerEvents.placeBuilding(this.itemName, this.buildingPos, this.rotation, this.ownerName, this.builderUnitIds, false, isDiagonalBridge);

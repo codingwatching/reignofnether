@@ -20,6 +20,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -97,13 +98,21 @@ public class UnitActionItem {
         for (Unit unit : actionableUnits) {
 
             // recalculating pathfinding can be expensive, so check if we actually need to first
-            /*
             if (action == UnitAction.MOVE) {
                 MoveToTargetBlockGoal goal = unit.getMoveGoal();
-                if (goal != null && goal.willReachTargetWithoutRepathing())
-                    continue;
+
+                if (goal != null) {
+                    BlockPos bp = goal.getMoveTarget();
+                    if (bp != null) {
+                        double distToTarget = bp.distSqr(((Mob) unit).getOnPos());
+                        if (distToTarget > 400) {
+                            double ignoreDist = Math.min(5, Math.sqrt(distToTarget) / 10);
+                            if (bp.distSqr(preselectedBlockPos) < ignoreDist * ignoreDist)
+                                return;
+                        }
+                    }
+                }
             }
-             */
 
             // have to do this before resetBehaviours so we can assign the correct resourceName first
             if (action == UnitAction.TOGGLE_GATHER_TARGET) {

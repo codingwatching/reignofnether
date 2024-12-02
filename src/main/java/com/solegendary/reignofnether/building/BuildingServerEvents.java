@@ -582,8 +582,13 @@ public class BuildingServerEvents {
             Set<Building> affectedBuildings = new HashSet<>();
             for (BlockPos bp : evt.getAffectedBlocks()) {
                 Building building = BuildingUtils.findBuilding(false, bp);
+
                 if (building != null) {
-                    affectedBuildings.add(building);
+                    // prevent enemy ghasts friendly firing their own buildings
+                    if (!(SurvivalServerEvents.isEnabled() && ghastUnit != null &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(ghastUnit.getOwnerName()) &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(building.ownerName)))
+                        affectedBuildings.add(building);
                 }
             }
             for (Building building : affectedBuildings) {

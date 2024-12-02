@@ -14,7 +14,6 @@ Wave Survival 0.4
 [🟡] Enemy units no longer try to attack bridges or pile up near them
 [🟡] Provide 50% refund for deleting a completed building (scaled to how damaged it is)
 
-[❌] Deserts added back to worldgen
 [❌] In wave survival, teams randomly switch
 [🟡] Ranged units no longer pile up inside buildings
 
@@ -28,7 +27,7 @@ Portal fixes
 [🟡] Portals can no longer spawn over water (but they can still spawn on land across water)
 [🟡] Portals can no longer spawn too close to another portal
 [🟡] Piglin waves now have a population cap for units spawned from portals (2x of other waves)
-
+[🟡] Enemy ghasts no longer friendly fire their own portals
 
 Features
 --------
@@ -48,18 +47,12 @@ Bugfixes
 [🟡] Can no longer enter enemy garrisons
     - You can still enter allied garrisons
 [🟡] Tall grass and barrier blocks are now ignored by the cursor
+[🟡] Only save resource data if the unit was actively gathering
 [🟡] Fix weird pathing over magma
-    - To fix this, there is a new block identical in texture and function to magma called "Walkable Magma"
+    - To fix this, there is now a new block identical in texture and function to magma called "Walkable Magma"
     - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
 [❌] Fix #localisation channel problems
-
-[🟡] Only save resource data if the unit was actively gathering
 [❌] Wipe all saved data on /rts-reset
-
-
-
-[❌] Logical side error in town centre?
-
 
 
 Quality of Life
@@ -85,6 +78,7 @@ Quality of Life
 [❌] /gamerule groundYLevel for mapmakers
     - Maybe separate for ghasts and bridges?
 
+[❌] Right click to autocast repair on workers
 
 Balancing
 ---------
@@ -92,10 +86,8 @@ Balancing
 
 [✔] Spiders & Poison Spiders: +1 dmg
 
-[🟡] Capitols after the one at the start of the game take twice as long to build
-[❌] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
-
-[❌] Warden HP reduced to 120
+[🟡] Capitols after the first take twice as long to build
+[🟡] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
 
 
 Languages
