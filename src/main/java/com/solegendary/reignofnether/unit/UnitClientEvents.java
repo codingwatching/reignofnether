@@ -63,6 +63,7 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static com.solegendary.reignofnether.cursor.CursorClientEvents.getPreselectedBlockPos;
@@ -92,6 +93,8 @@ public class UnitClientEvents {
     private static final ArrayList<LivingEntity> selectedUnits = new ArrayList<>();
     // tracking of all existing units
     private static final ArrayList<LivingEntity> allUnits = new ArrayList<>();
+
+    @Nullable private static UnitActionItem lastClientUAIActioned = null;
 
     public static ArrayList<LivingEntity> getPreselectedUnits() { return preselectedUnits; }
     public static ArrayList<LivingEntity> getSelectedUnits() {
@@ -203,7 +206,11 @@ public class UnitClientEvents {
                 preselectedBlockPos,
                 selectedBuildingPos
             );
-            actionItem.action(MC.level);
+            // prevent spam clicking the same action repeatedly
+            if (!actionItem.equals(lastClientUAIActioned)) {
+                actionItem.action(MC.level);
+                lastClientUAIActioned = actionItem;
+            }
 
             PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
                 MC.player.getName().getString(),

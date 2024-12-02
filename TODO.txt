@@ -21,9 +21,8 @@ Wave Survival 0.4
 [🟡] The spawn warning is now only shown if less than the expected number of units spawned
     - If you see one of these warnings, please open a bug report and show a screenshot of your world
 
-[❌] Added more debug options:
+[🟡] Added another debug option:
     - /debug-next-night - advances to the next night and wave
-    - /debug-set-wave - sets the next wave number
 
 
 Portal fixes
@@ -37,11 +36,6 @@ Portal fixes
 Features
 --------
 [🟡] Pathfinding fixes
-    - Test for performance
-    - Ignore recalculations if the target pos is the same as current
-    - If the first unit in a group tries to go to an impossible path (eg. an island), then just send all other units
-        - in the group to the last pos in the node list of the first unit
-
 
 Bugfixes
 --------
@@ -84,6 +78,7 @@ Quality of Life
     - Maybe separate for ghasts and bridges?
 
 [❌] Right click to autocast repair on workers
+
 
 Balancing
 ---------

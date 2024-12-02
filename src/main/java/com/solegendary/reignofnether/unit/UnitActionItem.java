@@ -24,6 +24,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UnitActionItem {
@@ -33,6 +34,19 @@ public class UnitActionItem {
     private final int[] unitIds; // selected unit(s)
     private final BlockPos preselectedBlockPos;
     private final BlockPos selectedBuildingPos;
+
+    public boolean equals(UnitActionItem unitActionItem) {
+        if (unitActionItem == null)
+            return false;
+        return (
+            ownerName == null && unitActionItem.ownerName == null || (ownerName != null && ownerName.equals(unitActionItem.ownerName)) &&
+            action == null && unitActionItem.action == null || (action != null && action.equals(unitActionItem.action)) &&
+            preselectedBlockPos == null && unitActionItem.preselectedBlockPos == null || (preselectedBlockPos != null && preselectedBlockPos.equals(unitActionItem.preselectedBlockPos)) &&
+            selectedBuildingPos == null && unitActionItem.selectedBuildingPos == null || (selectedBuildingPos != null && selectedBuildingPos.equals(unitActionItem.selectedBuildingPos)) &&
+            unitId == unitActionItem.unitId &&
+            Arrays.equals(unitIds, unitActionItem.unitIds)
+        );
+    }
 
     private final List<UnitAction> nonAbilityActions = List.of(UnitAction.STOP,
         UnitAction.HOLD,
@@ -101,7 +115,7 @@ public class UnitActionItem {
             if (action == UnitAction.MOVE) {
                 MoveToTargetBlockGoal goal = unit.getMoveGoal();
 
-                if (goal != null) {
+                if (goal != null && !level.isClientSide()) {
                     BlockPos bp = goal.getMoveTarget();
                     if (bp != null) {
                         double distToTarget = bp.distSqr(((Mob) unit).getOnPos());

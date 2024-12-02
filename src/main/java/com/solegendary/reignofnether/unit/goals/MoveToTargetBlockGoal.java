@@ -37,10 +37,14 @@ public class MoveToTargetBlockGoal extends Goal {
 
     public boolean canContinueToUse() {
         // PathNavigation seems to have a max length so restart it if we haven't actually reached the target yet
-        // TODO: this repeats every tick if the mob is stuck, eg. targeting over water
         if (this.mob.getNavigation().isDone() && moveTarget != null &&
             this.mob.getOnPos().distSqr(moveTarget) > 1) {
+            BlockPos oldFinalNode = getFinalNodePos();
             this.start();
+            BlockPos newFinalNode = getFinalNodePos();
+            // start() is very expensive, and it repeats every tick if the mob is stuck, eg. targeting over water
+            if (oldFinalNode != null && oldFinalNode.equals(newFinalNode))
+                stopMoving();
             return true;
         }
         else if (moveTarget == null)
@@ -64,9 +68,6 @@ public class MoveToTargetBlockGoal extends Goal {
     }
 
     public void setMoveTarget(@Nullable BlockPos bp) {
-
-
-
         if (bp != null) {
             MiscUtil.addUnitCheckpoint((Unit) mob, bp);
             ((Unit) mob).setIsCheckpointGreen(true);

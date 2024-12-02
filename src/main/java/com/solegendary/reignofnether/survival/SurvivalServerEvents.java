@@ -168,6 +168,12 @@ public class SurvivalServerEvents {
                         portal.portal.destroy(serverLevel);
                     return 1;
                 }));
+        evt.getDispatcher().register(Commands.literal("debug-next-night")
+                .executes((command) -> {
+                    PlayerServerEvents.sendMessageToAllPlayers("Advancing to next night and wave");
+                    serverLevel.setDayTime(12450);
+                    return 1;
+                }));
     }
 
     public static void enable(WaveDifficulty diff) {

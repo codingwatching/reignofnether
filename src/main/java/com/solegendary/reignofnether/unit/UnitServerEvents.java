@@ -232,13 +232,15 @@ public class UnitServerEvents {
         BlockPos selectedBuildingPos
     ) {
         synchronized (unitActionQueue) {
-            unitActionQueue.add(new UnitActionItem(ownerName,
-                action,
-                unitId,
-                unitIds,
-                preselectedBlockPos,
-                selectedBuildingPos
-            ));
+            UnitActionItem uai = new UnitActionItem(ownerName,
+                    action,
+                    unitId,
+                    unitIds,
+                    preselectedBlockPos,
+                    selectedBuildingPos
+            );
+            if (!(!unitActionQueue.isEmpty() && unitActionQueue.get(0).equals(uai) && action == UnitAction.MOVE))
+                unitActionQueue.add(uai);
         }
     }
     public static Relationship getUnitToEntityRelationship(Unit unit, Entity entity) {
