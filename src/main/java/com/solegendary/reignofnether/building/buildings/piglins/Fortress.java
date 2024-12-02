@@ -52,6 +52,8 @@ public class Fortress extends ProductionBuilding implements GarrisonableBuilding
         this.popSupply = cost.population;
         this.buildTimeModifier = 0.5f;
 
+        this.canSetRallyPoint = false;
+
         this.startingBlockTypes.add(Blocks.NETHERRACK);
         this.startingBlockTypes.add(Blocks.NETHER_BRICKS);
         this.startingBlockTypes.add(Blocks.POLISHED_BASALT);

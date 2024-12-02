@@ -84,7 +84,9 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
 
     // which player owns this unit? this format ensures its synched to client without having to use packets
     public String getOwnerName() { return this.entityData.get(ownerDataAccessor); }
-    public void setOwnerName(String name) { this.entityData.set(ownerDataAccessor, name); }
+    public void setOwnerName(String name) {
+        this.entityData.set(ownerDataAccessor, name);
+    }
     public static final EntityDataAccessor<String> ownerDataAccessor =
             SynchedEntityData.defineId(HuskUnit.class, EntityDataSerializers.STRING);
 
@@ -146,6 +148,7 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, HuskUnit.attackDamage)
                 .add(Attributes.ARMOR, HuskUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, HuskUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 

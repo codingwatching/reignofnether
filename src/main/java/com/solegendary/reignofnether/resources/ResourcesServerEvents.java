@@ -33,11 +33,11 @@ public class ResourcesServerEvents {
     public static ArrayList<Resources> resourcesList = new ArrayList<>();
 
     public static final int STARTING_FOOD_TUTORIAL = 750;
-    public static final int STARTING_WOOD_TUTORIAL = 750;
-    public static final int STARTING_ORE_TUTORIAL = 150;
+    public static final int STARTING_WOOD_TUTORIAL = 850;
+    public static final int STARTING_ORE_TUTORIAL = 250;
     public static final int STARTING_FOOD = 100;
-    public static final int STARTING_WOOD = 400;
-    public static final int STARTING_ORE = 150;
+    public static final int STARTING_WOOD = 450;
+    public static final int STARTING_ORE = 250;
 
     // to avoid having to save units too often add on all unit resources here too and just add directly on load
     public static void saveResources(ServerLevel serverLevel) {

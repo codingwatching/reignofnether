@@ -369,14 +369,27 @@ public class BuildingServerEvents {
 
         // AOE2-style refund: return the % of the non-built portion of the building
         // eg. cancelling a building at 70% completion will refund only 30% cost
-        if (!building.isBuilt) {
+        // in survival, refund 50% of this amount
+        if (!building.isBuilt || SurvivalServerEvents.isEnabled()) {
+
             float buildPercent = building.getBlocksPlacedPercent();
-            ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName,
-                Math.round(building.foodCost * (1 - buildPercent)),
-                Math.round(building.woodCost * (1 - buildPercent)),
-                Math.round(building.oreCost * (1 - buildPercent))
-            ));
+            int food = Math.round(building.foodCost * (1 - buildPercent));
+            int wood = Math.round(building.woodCost * (1 - buildPercent));
+            int ore = Math.round(building.oreCost * (1 - buildPercent));
+
+            if (building.isBuilt && SurvivalServerEvents.isEnabled()) {
+                food = Math.round(building.foodCost * 0.5f * buildPercent);
+                wood = Math.round(building.woodCost * 0.5f * buildPercent);
+                ore = Math.round(building.oreCost * 0.5f * buildPercent);
+            }
+            if (food > 0 || wood > 0 || ore > 0) {
+                ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName, food, wood, ore));
+                Resources res = new Resources(building.ownerName, food, wood, ore);
+                ResourcesServerEvents.addSubtractResources(res);
+                ResourcesClientboundPacket.showFloatingText(res, building.centrePos);
+            }
         }
+
         building.destroy((ServerLevel) building.getLevel());
     }
 
@@ -569,8 +582,13 @@ public class BuildingServerEvents {
             Set<Building> affectedBuildings = new HashSet<>();
             for (BlockPos bp : evt.getAffectedBlocks()) {
                 Building building = BuildingUtils.findBuilding(false, bp);
+
                 if (building != null) {
-                    affectedBuildings.add(building);
+                    // prevent enemy ghasts friendly firing their own buildings
+                    if (!(SurvivalServerEvents.isEnabled() && ghastUnit != null &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(ghastUnit.getOwnerName()) &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(building.ownerName)))
+                        affectedBuildings.add(building);
                 }
             }
             for (Building building : affectedBuildings) {

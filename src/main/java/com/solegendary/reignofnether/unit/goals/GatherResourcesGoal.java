@@ -4,6 +4,7 @@ import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingBlock;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
+import com.solegendary.reignofnether.registrars.BlockRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.unit.TargetResourcesSave;
@@ -37,7 +38,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     public TargetResourcesSave data = new TargetResourcesSave();
     // copy of activeData that is saved temporarily, reset on resetBeheaviours, used for returning resources
     public TargetResourcesSave saveData = new TargetResourcesSave();
-    // copy of saveData that is never erased, used for Call to Arms / Back to Work and level saving
+    // copy of saveData that is never erased, used for Call to Arms / Back to Work
     public TargetResourcesSave permSaveData = new TargetResourcesSave();
 
     private static final int REACH_RANGE = 5;
@@ -258,7 +259,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                             if (data.targetResourceSource.resourceName == ResourceName.ORE) {
                                 BlockState replaceBs;
                                 if (BuildingUtils.isInNetherRange(mob.level.isClientSide(), data.gatherTarget))
-                                    replaceBs = Blocks.MAGMA_BLOCK.defaultBlockState();
+                                    replaceBs = BlockRegistrar.WALKABLE_MAGMA_BLOCK.get().defaultBlockState();
                                 else if (bsTarget.getBlock().getName().getString().toLowerCase().contains("deepslate"))
                                     replaceBs = Blocks.COBBLED_DEEPSLATE.defaultBlockState();
                                 else

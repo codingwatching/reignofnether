@@ -121,7 +121,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
 
     // endregion
 
-    final static public float attackDamage = 3.0f;
+    final static public float attackDamage = 4.0f;
     final static public float attacksPerSecond = 0.6f;
     final static public float maxHealth = 30.0f;
     final static public float armorValue = 0.0f;
@@ -162,6 +162,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
                 .add(Attributes.MOVEMENT_SPEED, SpiderUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, SpiderUnit.attackDamage)
                 .add(Attributes.ARMOR, SpiderUnit.armorValue)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.MAX_HEALTH, SpiderUnit.maxHealth);
     }
 
