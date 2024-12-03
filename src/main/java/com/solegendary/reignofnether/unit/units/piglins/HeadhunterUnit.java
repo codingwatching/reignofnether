@@ -181,6 +181,7 @@ public class HeadhunterUnit extends PiglinBrute implements Unit, AttackerUnit, R
                 .add(Attributes.ATTACK_DAMAGE, HeadhunterUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, HeadhunterUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, HeadhunterUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, HeadhunterUnit.armorValue);
     }
 

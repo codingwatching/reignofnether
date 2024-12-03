@@ -122,16 +122,6 @@ public class UnitServerEvents {
         data.units.clear();
         getAllUnits().forEach(e -> {
             if (e instanceof Unit unit) {
-                try {
-                    GameProfile profile = level.getServer().getProfileCache().get(unit.getOwnerName()).orElse(null);
-                    if (profile != null) {
-                        e.getPersistentData().putUUID("OwnerUUID",  profile.getId());
-                    } else {
-                        ReignOfNether.LOGGER.warn("Could not find UUID for owner name: " + unit.getOwnerName());
-                    }
-                } catch (IllegalArgumentException ex) {
-                    ReignOfNether.LOGGER.warn("Failed to add UUID to unit data: " + ex.getMessage());
-                }
                 // Save unit data as usual
                 data.units.add(new UnitSave(e.getName().getString(), unit.getOwnerName(), e.getStringUUID()));
             }
@@ -145,12 +135,17 @@ public class UnitServerEvents {
         TargetResourcesSaveData data = TargetResourcesSaveData.getInstance(level);
         data.targetData.clear();
         AtomicInteger numWorkersSaved = new AtomicInteger();
-        getAllUnits().forEach(e -> {
+        getAllUnits().forEach(e -> { // if currently gathering, save that gather data
             if (e instanceof WorkerUnit wUnit) {
-                wUnit.getGatherResourceGoal().savePermState();
-                wUnit.getGatherResourceGoal().permSaveData.unitUUID = e.getStringUUID();
-                data.targetData.add(wUnit.getGatherResourceGoal().permSaveData);
-                numWorkersSaved.addAndGet(1);
+                if (wUnit.getGatherResourceGoal().data.hasData()) {
+                    wUnit.getGatherResourceGoal().data.unitUUID = e.getStringUUID();
+                    data.targetData.add(wUnit.getGatherResourceGoal().data);
+                    numWorkersSaved.addAndGet(1);
+                } else if (wUnit.getGatherResourceGoal().saveData.hasData()) {
+                    wUnit.getGatherResourceGoal().saveData.unitUUID = e.getStringUUID();
+                    data.targetData.add(wUnit.getGatherResourceGoal().saveData);
+                    numWorkersSaved.addAndGet(1);
+                }
             }
         });
         data.save();
@@ -237,13 +232,15 @@ public class UnitServerEvents {
         BlockPos selectedBuildingPos
     ) {
         synchronized (unitActionQueue) {
-            unitActionQueue.add(new UnitActionItem(ownerName,
-                action,
-                unitId,
-                unitIds,
-                preselectedBlockPos,
-                selectedBuildingPos
-            ));
+            UnitActionItem uai = new UnitActionItem(ownerName,
+                    action,
+                    unitId,
+                    unitIds,
+                    preselectedBlockPos,
+                    selectedBuildingPos
+            );
+            if (!(!unitActionQueue.isEmpty() && unitActionQueue.get(0).equals(uai) && action == UnitAction.MOVE))
+                unitActionQueue.add(uai);
         }
     }
     public static Relationship getUnitToEntityRelationship(Unit unit, Entity entity) {
@@ -291,7 +288,6 @@ public class UnitServerEvents {
 
         if (evt.getEntity() instanceof Unit && evt.getEntity() instanceof Mob mob) {
             mob.setBaby(false);
-            mob.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0);
             mob.setPathfindingMalus(BlockPathTypes.WATER, -1.0f);
             mob.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
             mob.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);

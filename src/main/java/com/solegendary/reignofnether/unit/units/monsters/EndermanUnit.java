@@ -150,7 +150,8 @@ public class EndermanUnit extends EnderMan implements Unit, AttackerUnit {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, EndermanUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, EndermanUnit.attackDamage)
-                .add(Attributes.MAX_HEALTH, EndermanUnit.maxHealth);
+                .add(Attributes.MAX_HEALTH, EndermanUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     public void tick() {

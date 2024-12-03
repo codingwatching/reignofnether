@@ -113,7 +113,7 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
 
     // endregion
 
-    final static public float attackDamage = 3.0f;
+    final static public float attackDamage = 4.0f;
     final static public float attacksPerSecond = 0.6f;
     final static public float maxHealth = 30.0f;
     final static public float armorValue = 0.0f;
@@ -154,7 +154,8 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
                 .add(Attributes.MOVEMENT_SPEED, PoisonSpiderUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, PoisonSpiderUnit.attackDamage)
                 .add(Attributes.ARMOR, PoisonSpiderUnit.armorValue)
-                .add(Attributes.MAX_HEALTH, PoisonSpiderUnit.maxHealth);
+                .add(Attributes.MAX_HEALTH, PoisonSpiderUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     @Override

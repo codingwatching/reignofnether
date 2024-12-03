@@ -178,6 +178,7 @@ public class ZoglinUnit extends Zoglin implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, ZoglinUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, ZoglinUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, ZoglinUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, ZoglinUnit.armorValue);
     }
 

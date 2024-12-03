@@ -1,5 +1,6 @@
 package com.solegendary.reignofnether.mixin.firedamage;
 
+import com.solegendary.reignofnether.blocks.WalkableMagmaBlock;
 import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchFireResistance;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MagmaBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,9 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MagmaBlock.class)
 public abstract class MagmaBlockMixin {
 
-    private static final int DAMAGE_DELAY = 20; // higher == damage less often
-    private static final int DAMAGE = 3;
-
     @Inject(
             method = "stepOn",
             at = @At("HEAD"),
@@ -34,14 +33,14 @@ public abstract class MagmaBlockMixin {
         ci.cancel();
 
         boolean isPiglinFaction = pEntity instanceof Unit unit && unit.getFaction() == Faction.PIGLINS;
-        boolean isDamageTick = pEntity.tickCount % DAMAGE_DELAY == 0;
+        boolean isDamageTick = pEntity.tickCount % WalkableMagmaBlock.DAMAGE_DELAY == 0;
 
         if (!pEntity.isSteppingCarefully() &&
             pEntity instanceof LivingEntity &&
             !(pEntity instanceof GruntUnit) &&
             !EnchantmentHelper.hasFrostWalker((LivingEntity)pEntity) &&
             !isPiglinFaction && isDamageTick) {
-            pEntity.hurt(DamageSource.HOT_FLOOR, DAMAGE);
+            pEntity.hurt(DamageSource.HOT_FLOOR, WalkableMagmaBlock.DAMAGE);
         }
     }
 }

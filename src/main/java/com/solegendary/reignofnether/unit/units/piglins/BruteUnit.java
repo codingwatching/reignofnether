@@ -178,6 +178,7 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, BruteUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, BruteUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, BruteUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, BruteUnit.armorValue);
     }
 

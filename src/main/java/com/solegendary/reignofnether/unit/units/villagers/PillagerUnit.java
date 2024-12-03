@@ -190,6 +190,7 @@ public class PillagerUnit extends Pillager implements Unit, AttackerUnit, Ranged
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, PillagerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, PillagerUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, PillagerUnit.armorValue);
     }
 

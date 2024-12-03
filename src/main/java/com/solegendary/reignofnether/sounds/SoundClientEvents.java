@@ -18,24 +18,36 @@ public class SoundClientEvents {
     // mute the next sound played at each pos in ClientLevelMixin, then remove it from the list
     public static ArrayList<BlockPos> mutedBps = new ArrayList<>();
 
-    public static void playSoundForAction(SoundAction soundAction, BlockPos bp) {
+    public static void playSoundAtPos(SoundAction soundAction, BlockPos bp) {
+        playSoundAtPos(soundAction, bp, 1.0f);
+    }
+
+    public static void playSoundAtPos(SoundAction soundAction, BlockPos bp, float volume) {
         SoundEvent soundEvent = SOUND_MAP.get(soundAction);
         ClientLevel level = Minecraft.getInstance().level;
         if (level != null)
-            level.playSound(null, bp.getX(), bp.getY(), bp.getZ(), soundEvent, SoundSource.NEUTRAL, 1.0F, 1.0F);
+            level.playSound(null, bp.getX(), bp.getY(), bp.getZ(), soundEvent, SoundSource.NEUTRAL, volume, 1.0F);
     }
 
-    public static void playSoundForAllPlayers(SoundAction soundAction) {
+    public static void playSoundForLocalPlayer(SoundAction soundAction) {
+        playSoundForLocalPlayer(soundAction, 1.0f);
+    }
+
+    public static void playSoundForLocalPlayer(SoundAction soundAction, float volume) {
         Minecraft MC = Minecraft.getInstance();
         if (MC.player != null) {
-            MC.player.playSound(SOUND_MAP.get(soundAction), 1.0f, 1.0f);
+            MC.player.playSound(SOUND_MAP.get(soundAction), volume, 1.0f);
         }
     }
 
-    public static void playSoundForPlayer(SoundAction soundAction, String playerName) {
+    public static void playSoundIfPlayer(SoundAction soundAction, String playerName) {
+        playSoundIfPlayer(soundAction, playerName, 1.0f);
+    }
+
+    public static void playSoundIfPlayer(SoundAction soundAction, String playerName, float volume) {
         Minecraft MC = Minecraft.getInstance();
         if (MC.player != null && MC.player.getName().getString().equals(playerName)) {
-            MC.player.playSound(SOUND_MAP.get(soundAction), 1.0f, 1.0f);
+            MC.player.playSound(SOUND_MAP.get(soundAction), volume, 1.0f);
         }
     }
 

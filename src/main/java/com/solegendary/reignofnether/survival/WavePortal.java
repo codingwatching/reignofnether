@@ -32,7 +32,7 @@ public class WavePortal {
         this.portal = portal;
         this.portal.selfBuilding = true;
         this.wave = wave;
-        this.initialSpawnPop = wave.population / Math.max(2, wave.number / 2);
+        this.initialSpawnPop = (wave.population / wave.getNumPortals()) / 2;
     }
 
     public Portal getPortal() {
@@ -54,6 +54,10 @@ public class WavePortal {
     }
 
     public void doSpawn() {
+        int pop = SurvivalServerEvents.getTotalEnemyPopulation();
+        if (pop > wave.population * 1.5f)
+            return;
+
         Random random = new Random();
         int tier = random.nextInt(wave.highestUnitTier) + 1;
         EntityType<? extends Unit> mobType = (EntityType<? extends Unit>) wave.getRandomUnitOfTier(Faction.PIGLINS, tier);
