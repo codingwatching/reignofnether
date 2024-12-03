@@ -41,7 +41,7 @@ Features
         - When moving far distances (>50 blocks), some commands are ignored if the last move command was to a similar location
         - Move commands across water/lava are ignored if the unit would not move as a result (eg. they're stuck at the coast)
 
-[🟡] Configurable Unit Costs (Thanks to @DoodleNoodles)
+[❌] Configurable Unit Costs (Thanks to @DoodleNoodles)
     - Includes all costs, population values and build times
     - Modify the files generated at configs/reignofnether-config.toml to adjust them
     - If the server config is adjusted, this will be enforced for all players joining the match
@@ -67,30 +67,31 @@ Bugfixes
 Quality of Life
 ---------------
 
-[❌] Aggro enemy survival players except for allies
+[🟡] Units now attack survival players automatically when idle or attack-moving (except if allied)
 
 [🟡] Reduced volume of the Call To Arms bell when used by villagers
 
-[🟡] Show refund resources popup when cancelling buildings
-    - consider switching to SC2 system? (flat 75% refund)
+[🟡] Cancelling a building shows a resource popup
+
+[🟡] Right click to autocast build/repair on workers
 
 [❌] /gamerule groundYLevel for mapmakers
     - Maybe separate for ghasts and bridges?
 
-[❌] Right click to autocast repair on workers
-
-
 Balancing
 ---------
-[❌] De-RNG farm growth, and properly measure their output for balancing
 
 [✔] Spiders & Poison Spiders: +1 dmg
 
 [🟡] Capitols after the first take twice as long to build
 [🟡] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
 
+[❌] De-RNG farm growth, and properly measure their output for balancing
+
+
 
 Languages
 ---------
 NEW:
 "block.reignofnether.walkable_magma_block": "Walkable Magma",
+"hud.actionbuttons.reignofnether.build_repair_autocast": "(Right-click to auto-repair)",

@@ -174,10 +174,10 @@ public interface AttackerUnit {
         if (garr != null)
             aggroRange  = garr.getAttackRange();
 
-        Mob closestMob = MiscUtil.findClosestAttackableUnit((Mob) this, aggroRange, level);
-        if (closestMob != null) {
+        LivingEntity entity = MiscUtil.findClosestAttackableEntity((Mob) this, aggroRange, level);
+        if (entity != null) {
             ((Unit) this).getMoveGoal().stopMoving();
-            setUnitAttackTarget(closestMob);
+            setUnitAttackTarget(entity);
             return;
         }
         if (canAttackBuildings()) {

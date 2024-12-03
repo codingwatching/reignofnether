@@ -261,6 +261,13 @@ public class UnitActionItem {
                         unit.setMoveTarget(preselectedBlockPos);
                     }
                 }
+                case ENABLE_AUTOCAST_BUILD_REPAIR, DISABLE_AUTOCAST_BUILD_REPAIR -> {
+                    // if the unit can't actually build/repair just treat this as a move action
+                    if (unit instanceof WorkerUnit workerUnit) {
+                        workerUnit.getBuildRepairGoal().autocastRepair =
+                                action == UnitAction.ENABLE_AUTOCAST_BUILD_REPAIR;
+                    }
+                }
                 case FARM -> {
                     if (unit instanceof WorkerUnit workerUnit) {
                         GatherResourcesGoal goal = workerUnit.getGatherResourceGoal();

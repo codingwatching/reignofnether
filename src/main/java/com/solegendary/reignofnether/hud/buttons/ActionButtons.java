@@ -8,7 +8,10 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
+import com.solegendary.reignofnether.unit.goals.BuildRepairGoal;
+import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -27,12 +30,29 @@ public class ActionButtons {
             Button.itemIconSize,
             new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/shovel.png"),
             Keybindings.build,
-            () -> CursorClientEvents.getLeftClickAction() == UnitAction.BUILD_REPAIR,
+            () -> CursorClientEvents.getLeftClickAction() == UnitAction.BUILD_REPAIR ||
+                    HudClientEvents.hudSelectedEntity instanceof WorkerUnit workerUnit &&
+                    workerUnit.getBuildRepairGoal() != null &&
+                    workerUnit.getBuildRepairGoal().autocastRepair,
             () -> false,
             () -> true,
             () -> CursorClientEvents.setLeftClickAction(UnitAction.BUILD_REPAIR),
-            null,
-            List.of(FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.build_repair"), Style.EMPTY))
+            () -> {
+                LivingEntity hudEntity = HudClientEvents.hudSelectedEntity;
+                if (hudEntity instanceof WorkerUnit workerUnit) {
+                    BuildRepairGoal goal = workerUnit.getBuildRepairGoal();
+                    if (goal != null) {
+                        if (goal.autocastRepair)
+                            UnitClientEvents.sendUnitCommand(UnitAction.DISABLE_AUTOCAST_BUILD_REPAIR);
+                        else
+                            UnitClientEvents.sendUnitCommand(UnitAction.ENABLE_AUTOCAST_BUILD_REPAIR);
+                    }
+                }
+            },
+            List.of(
+                    FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.build_repair"), Style.EMPTY),
+                    FormattedCharSequence.forward(I18n.get("hud.actionbuttons.reignofnether.build_repair_autocast"), Style.EMPTY)
+            )
     );
     public static final Button GATHER = new Button(
             "Gather",
