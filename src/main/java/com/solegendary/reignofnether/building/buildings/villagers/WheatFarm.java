@@ -1,6 +1,8 @@
 package com.solegendary.reignofnether.building.buildings.villagers;
 
+import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.building.*;
+import com.solegendary.reignofnether.building.buildings.shared.AbstractFarm;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.research.ResearchClient;
@@ -19,20 +21,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.world.level.block.StemGrownBlock;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class WheatFarm extends Building {
+public class WheatFarm extends AbstractFarm {
 
     public final static String buildingName = "Wheat Farm";
     public final static String structureName = "wheat_farm";
     public final static ResourceCost cost = ResourceCosts.WHEAT_FARM;
-
-    private static final int ICE_CHECK_TICKS_MAX = 100;
-    private int ticksToNextIceCheck = ICE_CHECK_TICKS_MAX;
 
     public WheatFarm(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
         super(level, originPos, rotation, ownerName, getAbsoluteBlockData(getRelativeBlockData(level), level, originPos, rotation), false);
@@ -77,19 +78,5 @@ public class WheatFarm extends Building {
                 ),
                 null
         );
-    }
-
-    @Override
-    public void tick(Level tickLevel) {
-        super.tick(tickLevel);
-        if (!tickLevel.isClientSide()) {
-            ticksToNextIceCheck -= 1;
-            if (ticksToNextIceCheck <= 0) {
-                for (BuildingBlock bb : blocks)
-                    if (tickLevel.getBlockState(bb.getBlockPos()).getBlock() == Blocks.ICE)
-                        tickLevel.setBlockAndUpdate(bb.getBlockPos(), Blocks.WATER.defaultBlockState());
-                ticksToNextIceCheck = ICE_CHECK_TICKS_MAX;
-            }
-        }
     }
 }
