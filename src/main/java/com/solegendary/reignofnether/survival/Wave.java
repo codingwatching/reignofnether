@@ -25,7 +25,7 @@ public class Wave {
     }
 
     public int getNumPortals() {
-        return Math.max(1, number / 2);
+        return Math.max(1, 1 + number / 3);
     }
 
     public static Wave getWave(int number) {

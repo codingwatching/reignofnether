@@ -184,7 +184,7 @@ public class RavagerUnit extends Ravager implements Unit, AttackerUnit {
                 .add(Attributes.ARMOR, RavagerUnit.armorValue)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75)
-                .add(Attributes.FOLLOW_RANGE, 32);
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     // prevent shield blocks from stunning and triggering a roar

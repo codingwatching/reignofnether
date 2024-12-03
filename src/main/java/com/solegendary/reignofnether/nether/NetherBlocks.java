@@ -145,7 +145,10 @@ public class NetherBlocks {
             )
         );
         MAPPINGS.put(Blocks.MAGMA_BLOCK,
-            List.of(Blocks.COBBLESTONE)
+                List.of(Blocks.COBBLESTONE)
+        );
+        MAPPINGS.put(BlockRegistrar.WALKABLE_MAGMA_BLOCK.get(),
+                List.of(Blocks.COBBLESTONE)
         );
         MAPPINGS.put(Blocks.SHROOMLIGHT,
             List.of(Blocks.BEE_NEST)

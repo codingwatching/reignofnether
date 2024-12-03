@@ -76,7 +76,7 @@ public class ResourceCosts {
     public static ResourceCost BLACKSTONE_BRIDGE = ResourceCost.Building(0,0,100, 0);
 
     // Monsters
-    public static ResourceCost MAUSOLEUM = ResourceCost.Building(0,300,150, 10);
+    public static ResourceCost MAUSOLEUM = ResourceCost.Building(0,350,250, 10);
     public static ResourceCost HAUNTED_HOUSE = ResourceCost.Building(0,100,0, 10);
     public static ResourceCost PUMPKIN_FARM = ResourceCost.Building(0,200,0, 0);
     public static ResourceCost SCULK_CATALYST = ResourceCost.Building(0,125,0, 0);
@@ -88,7 +88,7 @@ public class ResourceCosts {
     public static ResourceCost STRONGHOLD = ResourceCost.Building(0,400,300, 0);
 
     // Villagers
-    public static ResourceCost TOWN_CENTRE = ResourceCost.Building(0,300,150, 10);
+    public static ResourceCost TOWN_CENTRE = ResourceCost.Building(0,350,250, 10);
     public static ResourceCost VILLAGER_HOUSE = ResourceCost.Building(0,100,0, 10);
     public static ResourceCost WHEAT_FARM = ResourceCost.Building(0,150,0, 0);
     public static ResourceCost BARRACKS = ResourceCost.Building(0,150,0, 0);
@@ -100,7 +100,7 @@ public class ResourceCosts {
     public static ResourceCost IRON_GOLEM_BUILDING = ResourceCost.Building(0,50,250, 0);
 
     // Piglins
-    public static ResourceCost CENTRAL_PORTAL = ResourceCost.Building(0,300,150, 10);
+    public static ResourceCost CENTRAL_PORTAL = ResourceCost.Building(0,350,250, 10);
     public static ResourceCost BASIC_PORTAL = ResourceCost.Building(0, 75, 0, 0);
     public static ResourceCost NETHERWART_FARM = ResourceCost.Building(0, 150, 0, 0);
     public static ResourceCost BASTION = ResourceCost.Building(0, 150, 100, 0);

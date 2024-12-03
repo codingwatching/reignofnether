@@ -17,7 +17,7 @@ public class SoundClientboundPacket {
     BlockPos bp;
     String playerName;
 
-    public static void playSoundForAllPlayers(SoundAction soundAction, BlockPos bp) {
+    public static void playSoundAtPos(SoundAction soundAction, BlockPos bp) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
                 new SoundClientboundPacket(soundAction, bp, ""));
     }
@@ -57,12 +57,12 @@ public class SoundClientboundPacket {
                     () -> () -> {
                         if (bp.equals(new BlockPos(0,0,0))) {
                             if (playerName.isBlank())
-                                SoundClientEvents.playSoundForAllPlayers(soundAction);
+                                SoundClientEvents.playSoundForLocalPlayer(soundAction);
                             else
-                                SoundClientEvents.playSoundForPlayer(soundAction, playerName);
+                                SoundClientEvents.playSoundIfPlayer(soundAction, playerName);
                         }
                         else
-                            SoundClientEvents.playSoundForAction(soundAction, bp);
+                            SoundClientEvents.playSoundAtPos(soundAction, bp);
                         success.set(true);
                     });
         });
