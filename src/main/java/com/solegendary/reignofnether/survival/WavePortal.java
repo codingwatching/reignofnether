@@ -45,19 +45,21 @@ public class WavePortal {
 
         if (initialSpawnPop > 0) {
             doSpawn();
-        } else if (spawnTicks >= SPAWN_TICKS_MAX) {
-            spawnTicks = 0;
-            doSpawn();
         } else {
-            spawnTicks += ticksToAdd;
+            int pop = SurvivalServerEvents.getTotalEnemyPopulation();
+            if (pop > wave.population * 2.0f) {
+                return;
+            }
+            else if (spawnTicks >= SPAWN_TICKS_MAX) {
+                spawnTicks = 0;
+                doSpawn();
+            } else {
+                spawnTicks += ticksToAdd;
+            }
         }
     }
 
     public void doSpawn() {
-        int pop = SurvivalServerEvents.getTotalEnemyPopulation();
-        if (pop > wave.population * 1.5f)
-            return;
-
         Random random = new Random();
         int tier = random.nextInt(wave.highestUnitTier) + 1;
         EntityType<? extends Unit> mobType = (EntityType<? extends Unit>) wave.getRandomUnitOfTier(Faction.PIGLINS, tier);

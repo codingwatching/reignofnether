@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.time.TimeUtils;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,6 +41,7 @@ public class SurvivalServerEvents {
     public static final String VILLAGER_OWNER_NAME = "Illagers";
     public static final List<String> ENEMY_OWNER_NAMES = List.of(MONSTER_OWNER_NAME, PIGLIN_OWNER_NAME, VILLAGER_OWNER_NAME);
     private static final Random random = new Random();
+    public static Faction lastFaction = Faction.NONE;
 
     public static final ArrayList<WavePortal> portals = new ArrayList<>();
 
@@ -285,10 +287,32 @@ public class SurvivalServerEvents {
         nextWave = Wave.getWave(nextWave.number + 1);
         SurvivalClientboundPacket.setWaveNumber(nextWave.number);
         saveStage(level);
-        switch (random.nextInt(3)) {
-            case 0 -> spawnMonsterWave(level, nextWave);
-            case 1 -> spawnIllagerWave(level, nextWave);
-            case 2 -> spawnPiglinWave(level, nextWave);
+        switch (lastFaction) {
+            case VILLAGERS -> {
+                if (random.nextBoolean())
+                    spawnMonsterWave(level, nextWave);
+                else
+                    spawnPiglinWave(level, nextWave);
+            }
+            case MONSTERS -> {
+                if (random.nextBoolean())
+                    spawnIllagerWave(level, nextWave);
+                else
+                    spawnPiglinWave(level, nextWave);
+            }
+            case PIGLINS -> {
+                if (random.nextBoolean())
+                    spawnMonsterWave(level, nextWave);
+                else
+                    spawnIllagerWave(level, nextWave);
+            }
+            case NONE -> {
+                switch (random.nextInt(3)) {
+                    case 0 -> spawnMonsterWave(level, nextWave);
+                    case 1 -> spawnIllagerWave(level, nextWave);
+                    case 2 -> spawnPiglinWave(level, nextWave);
+                }
+            }
         }
     }
 

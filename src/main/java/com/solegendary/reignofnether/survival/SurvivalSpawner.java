@@ -106,6 +106,7 @@ public class SurvivalSpawner {
         if (remainingPop > 0) {
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of monster units");
         }
+        lastFaction = Faction.MONSTERS;
     }
 
     // spawn illagers from one direction
@@ -173,6 +174,7 @@ public class SurvivalSpawner {
         if (remainingPop > 0) {
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of monster units");
         }
+        lastFaction = Faction.VILLAGERS;
     }
 
     // spawn portals which spawn half of the wave immediately, and trickle in constantly
@@ -218,6 +220,8 @@ public class SurvivalSpawner {
         }
         if (failedPortalPlacements > 0)
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + failedPortalPlacements + " portals!");
+
+        lastFaction = Faction.PIGLINS;
     }
 
     public static List<BlockPos> getValidSpawnPoints(int amount, Level level, boolean allowLiquid) {
