@@ -518,6 +518,8 @@
     "research.reignofnether.sculk_amplifiers.tooltip1": "Wardens can Sonic Boom Sculk Catalysts to split the boom ",
     "research.reignofnether.sculk_amplifiers.tooltip2": "onto %d random nearby enemies within a range of %d",
     "research.reignofnether.sculk_amplifiers.tooltip3": "Requires a Stronghold.",
+    "research.reignofnether.grand_library": "Grand Library",
+    "research.reignofnether.grand_library.tooltip1": "Upgrades this library, unlocking more powerful enchantments.",
 
     "resources.reignofnether.food": "Food",
     "resources.reignofnether.wood": "Wood",
