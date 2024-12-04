@@ -1,6 +1,5 @@
 package com.solegendary.reignofnether.unit;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.alliance.AllianceSystem;
@@ -603,7 +602,7 @@ public class UnitServerEvents {
             for (int i = 0; i < qty; i++) {
                 Entity entity = entityType.create(level);
                 if (entity != null) {
-                    entity.moveTo(pos.getX() + i, pos.getY(), pos.getZ());
+                    entity.moveTo(pos.above().getX() + i, pos.above().getY(), pos.above().getZ());
                     entities.add(entity);
                     if (entity instanceof Unit unit) {
                         unit.setOwnerName(ownerName);

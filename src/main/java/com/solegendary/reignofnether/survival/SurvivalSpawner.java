@@ -4,7 +4,6 @@ import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.BuildingUtils;
-import com.solegendary.reignofnether.building.buildings.monsters.PumpkinFarm;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.BlockRegistrar;
@@ -91,8 +90,6 @@ public class SurvivalSpawner {
 
             int tier = random.nextInt(wave.highestUnitTier) + 1;
             EntityType<? extends Mob> mobType = wave.getRandomUnitOfTier(Faction.MONSTERS, tier);
-
-            bp = bp.above();
 
             ArrayList<Entity> entities = UnitServerEvents.spawnMobs(mobType, level,
                     mobType.getDescription().getString().contains("spider") ? bp.above().above(): bp.above(),

@@ -86,9 +86,8 @@ Balancing
 [🟡] Capitols after the first take twice as long to build
 [🟡] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
 
-[❌] De-RNG farm growth, and properly measure their output for balancing
-
-
+[🟡] Farm growth is no longer random
+[🟡] Pumpkins now take +1s to gather, and give -1 food
 
 Languages
 ---------
