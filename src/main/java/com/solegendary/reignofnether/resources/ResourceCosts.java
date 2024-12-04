@@ -45,7 +45,7 @@ public class ResourceCosts {
     public static ResourceCost DROWNED = ResourceCost.Unit(75,0,0,18,1);
     public static ResourceCost SPIDER = ResourceCost.Unit(90,25,25,25,2);
     public static ResourceCost POISON_SPIDER = ResourceCost.Unit(90,25,25,25,2);
-    public static ResourceCost WARDEN = ResourceCost.Unit(250,0,125,40,4);
+    public static ResourceCost WARDEN = ResourceCost.Unit(275,0,125,50,5);
 
     public static ResourceCost ZOMBIE_PIGLIN = ResourceCost.Unit(0,0,0,10,1);
     public static ResourceCost ZOGLIN = ResourceCost.Unit(0,0,0,10,2);

@@ -11,17 +11,23 @@
 
 Wave Survival 0.4
 -----------------
+
+Bugfixes
+--------
+[🟡] Fixed enemies sometimes spawning in the ground
 [🟡] Enemy units no longer try to attack bridges or pile up near them
-[🟡] Deleting a completed building gives a 50% refund (scaled to how damaged it is)
 [🟡] Ranged units no longer pile up inside buildings
+[❌] Fixed a bug where teams would randomly switch
+
+Quality of Life
+---------------
+[🟡] Deleting a completed building gives a 50% refund (scaled to how damaged it is)
 [🟡] Wave difficulty is advanced on each night regardless of if you cleared the previous wave or not
 [🟡] Waves no longer repeat the same faction two nights in a row
 [🟡] The spawn warning is now only shown if less than the expected number of units spawned
     - If you see one of these warnings, please show me a screenshot of your world
 [🟡] Added another debug option:
     - /debug-next-night - advances to the next night and wave
-
-[❌] Fixed a bug where teams would randomly switch
 
 Piglin wave changes
 -------------------
@@ -50,11 +56,11 @@ Bugfixes
 [🟡] Spectators can no longer cancel units from RTS players' building queues
     - test in lilypad server?
 [🟡] Fixed some units randomly spawning as neutral
-[🟡] Can no longer enter enemy garrisons
+[✔] Can no longer enter enemy garrisons
     - You can still enter allied garrisons
-[🟡] Tall grass and barrier blocks are now ignored by the cursor
+[✔] Tall grass and barrier blocks are now ignored by the cursor
 [🟡] Only save resource data if the unit was actively gathering
-[🟡] Fix weird pathing over magma
+[✔] Fix weird pathing over magma
     - To fix this, there is now a new block identical in texture and function to magma called "Walkable Magma"
     - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
 
@@ -65,10 +71,10 @@ Bugfixes
 Quality of Life
 ---------------
 
-[🟡] Units now attack survival players automatically when idle or attack-moving (except if allied)
-[🟡] Reduced volume of the Call To Arms bell when used by villagers
-[🟡] Cancelling an unfinished building now shows a resource popup for the refund
-[🟡] You can now right-click the build/repair button to have workers auto-repair nearby buildings
+[✔] Units now attack survival players automatically when idle or attack-moving (except if allied)
+[✔] Reduced volume of the Call To Arms bell when used by villagers
+[✔] Cancelling an unfinished building now shows a resource popup for the refund
+[✔] You can now right-click the build/repair button to have workers auto-repair nearby buildings
 
 [❌] /gamerule groundYLevel for mapmakers
     - Maybe separate for ghasts and bridges?
@@ -76,14 +82,23 @@ Quality of Life
 Balancing
 ---------
 
-[✔] Spiders & Poison Spiders: +1 dmg
+[✔] Farm growth is no longer random
 [🟡] Capitols after the first take twice as long to build
-[🟡] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
-[🟡] Farm growth is no longer random
-[🟡] Pumpkins now take +1s to gather, and give -1 food
+[✔] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
+
+Monsters:
+[✔] Wardens: +25 food, +10s, +1 pop
+[✔] Spiders & Poison Spiders: +1 dmg
+[✔] Pumpkins now take +1s to gather, and give -1 food
+
+
+
 
 Languages
 ---------
 NEW:
+"buildings.monsters.reignofnether.mausoleum.tooltip3": "Only one capitol can produce workers at any given time.",
+"buildings.monsters.reignofnether.central_portal.tooltip2": "Only one capitol can produce workers at any given time.",
+"buildings.monsters.reignofnether.town_centre.tooltip2": "Only one capitol can produce workers at any given time.",
 "block.reignofnether.walkable_magma_block": "Walkable Magma",
 "hud.actionbuttons.reignofnether.build_repair_autocast": "(Right-click to auto-repair)",
