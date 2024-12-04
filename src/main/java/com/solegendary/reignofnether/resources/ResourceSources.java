@@ -21,7 +21,10 @@ import net.minecraft.world.level.material.Material;
 import java.util.List;
 
 public class ResourceSources {
-    public static final List<Material> CLEAR_MATERIALS = List.of(Material.WATER, Material.AIR, Material.PLANT, Material.LEAVES);
+
+    public static final List<Material> CLEAR_MATERIALS = List.of(
+            Material.WATER, Material.AIR, Material.PLANT, Material.LEAVES, Material.STRUCTURAL_AIR
+    );
 
     public static final int TICKS_PER_SECOND = 20;
 
