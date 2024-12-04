@@ -36,6 +36,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -107,7 +108,10 @@ public class MiscUtil {
         do {
             bs = level.getBlockState(new BlockPos(blockPos.getX(), y, blockPos.getZ()));
             y -= 1;
-        } while((bs.isAir() || (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
+        } while((bs.isAir() ||
+                bs.getBlock() == Blocks.LIGHT ||
+                bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
         return new BlockPos(blockPos.getX(), y, blockPos.getZ());
     }
     public static BlockPos getHighestNonAirBlock(Level level, BlockPos blockPos) {
