@@ -4,7 +4,6 @@ import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.BuildingUtils;
-import com.solegendary.reignofnether.building.buildings.monsters.PumpkinFarm;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.BlockRegistrar;
@@ -92,8 +91,6 @@ public class SurvivalSpawner {
             int tier = random.nextInt(wave.highestUnitTier) + 1;
             EntityType<? extends Mob> mobType = wave.getRandomUnitOfTier(Faction.MONSTERS, tier);
 
-            bp = bp.above();
-
             ArrayList<Entity> entities = UnitServerEvents.spawnMobs(mobType, level,
                     mobType.getDescription().getString().contains("spider") ? bp.above().above(): bp.above(),
                     1, MONSTER_OWNER_NAME);
@@ -109,6 +106,7 @@ public class SurvivalSpawner {
         if (remainingPop > 0) {
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of monster units");
         }
+        lastFaction = Faction.MONSTERS;
     }
 
     // spawn illagers from one direction
@@ -176,6 +174,7 @@ public class SurvivalSpawner {
         if (remainingPop > 0) {
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of monster units");
         }
+        lastFaction = Faction.VILLAGERS;
     }
 
     // spawn portals which spawn half of the wave immediately, and trickle in constantly
@@ -221,6 +220,8 @@ public class SurvivalSpawner {
         }
         if (failedPortalPlacements > 0)
             PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + failedPortalPlacements + " portals!");
+
+        lastFaction = Faction.PIGLINS;
     }
 
     public static List<BlockPos> getValidSpawnPoints(int amount, Level level, boolean allowLiquid) {

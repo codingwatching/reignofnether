@@ -5,7 +5,6 @@ package com.solegendary.reignofnether.building;
 import com.solegendary.reignofnether.building.buildings.monsters.*;
 import com.solegendary.reignofnether.building.buildings.piglins.*;
 import com.solegendary.reignofnether.building.buildings.piglins.BlackstoneBridge;
-import com.solegendary.reignofnether.building.buildings.monsters.SpruceBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
 import com.solegendary.reignofnether.building.buildings.villagers.OakBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
@@ -20,8 +19,6 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 

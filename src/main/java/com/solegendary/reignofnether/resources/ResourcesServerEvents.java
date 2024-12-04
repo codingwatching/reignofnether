@@ -202,36 +202,11 @@ public class ResourcesServerEvents {
 
     private static final Random random = new Random();
 
-    // speed up crop growth without having to increase gamerule randomTickSpeed (as that causes more lag)
+    // prevent vanilla growth mechanics because they're slow and random, see AbstractFarm instead
     @SubscribeEvent
     public static void onCropGrow(BlockEvent.CropGrowEvent.Pre evt) {
-        BlockState blockState = evt.getLevel().getBlockState(evt.getPos());
-        Block block = blockState.getBlock();
-        if (block instanceof BeetrootBlock) {
-            evt.setResult(Event.Result.ALLOW);
-        }
-        // always allow growth of gourd blocks
-        else if (block instanceof StemBlock && blockState.getValue(BlockStateProperties.AGE_7) == 7) {
-            evt.setResult(Event.Result.ALLOW);
-        }
-        // prevent natural growth, use our algorithm instead to randomly speed up growth
-        else if (block instanceof CropBlock || block instanceof StemBlock) {
-            int newAge = blockState.getValue(BlockStateProperties.AGE_7) + (random.nextFloat() > 0.6f ? 1 : 2);
-            if (newAge > 7) {
-                newAge = 7;
-            }
-            BlockState grownState = block.defaultBlockState().setValue(BlockStateProperties.AGE_7, newAge);
-            evt.getLevel().setBlock(evt.getPos(), grownState, 2);
+        if (BuildingUtils.isPosInsideAnyBuilding(evt.getLevel().isClientSide(), evt.getPos()))
             evt.setResult(Event.Result.DENY);
-        } else if (block instanceof NetherWartBlock) {
-            int newAge = blockState.getValue(BlockStateProperties.AGE_3) + (random.nextFloat() > 0.42f ? 0 : 1);
-            if (newAge > 3) {
-                newAge = 3;
-            }
-            BlockState grownState = block.defaultBlockState().setValue(BlockStateProperties.AGE_3, newAge);
-            evt.getLevel().setBlock(evt.getPos(), grownState, 2);
-            evt.setResult(Event.Result.DENY);
-        }
     }
 
     @SubscribeEvent

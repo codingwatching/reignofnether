@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.building.buildings.monsters;
 
 import com.solegendary.reignofnether.building.*;
+import com.solegendary.reignofnether.building.buildings.shared.AbstractFarm;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.research.ResearchClient;
@@ -23,7 +24,7 @@ import java.util.List;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class PumpkinFarm extends Building {
+public class PumpkinFarm extends AbstractFarm {
 
     public final static String buildingName = "Pumpkin Farm";
     public final static String structureName = "pumpkin_farm";
@@ -75,19 +76,5 @@ public class PumpkinFarm extends Building {
                 ),
                 null
         );
-    }
-
-    @Override
-    public void tick(Level tickLevel) {
-        super.tick(tickLevel);
-        if (!tickLevel.isClientSide()) {
-            ticksToNextIceCheck -= 1;
-            if (ticksToNextIceCheck <= 0) {
-                for (BuildingBlock bb : blocks)
-                    if (tickLevel.getBlockState(bb.getBlockPos()).getBlock() == Blocks.ICE)
-                        tickLevel.setBlockAndUpdate(bb.getBlockPos(), Blocks.WATER.defaultBlockState());
-                ticksToNextIceCheck = ICE_CHECK_TICKS_MAX;
-            }
-        }
     }
 }

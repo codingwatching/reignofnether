@@ -472,9 +472,6 @@ public abstract class Building {
     }
 
     public boolean shouldBeDestroyed() {
-        if (tickAge % 4 == 0) {
-            return false;
-        }
         if (!this.level.getWorldBorder().isWithinBounds(centrePos)) {
             return true;
         }
@@ -706,7 +703,7 @@ public abstract class Building {
         if (isBuilt) {
             tickAgeAfterBuilt += 1;
         }
-        tickAge = +1;
+        tickAge += 1;
     }
 
     @OnlyIn(Dist.CLIENT)

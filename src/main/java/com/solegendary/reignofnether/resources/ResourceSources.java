@@ -139,8 +139,8 @@ public class ResourceSources {
             new ResourceSource("Gourds",
                     List.of(Blocks.MELON, Blocks.PUMPKIN, Blocks.CARVED_PUMPKIN),
                     List.of(Items.MELON, Items.PUMPKIN, Items.CARVED_PUMPKIN),
-                    TICKS_PER_SECOND * 3,
-                    7,
+                    TICKS_PER_SECOND * 4,
+                    6,
                     ResourceName.FOOD
             ),
             new ResourceSource("Carrots",

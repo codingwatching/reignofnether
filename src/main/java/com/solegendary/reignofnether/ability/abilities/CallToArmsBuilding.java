@@ -82,10 +82,10 @@ public class CallToArmsBuilding extends Ability {
             vUnit.callToArmsGoal.setNearestTownCentreAsTarget();
         }
 
-        if (level.isClientSide()) {
-            SoundClientEvents.playSoundAtPos(SoundAction.BELL, buildingUsing.centrePos);
+        if (!level.isClientSide()) {
+            SoundClientboundPacket.playSoundAtPos(SoundAction.BELL, buildingUsing.centrePos);
             CompletableFuture.delayedExecutor(300, TimeUnit.MILLISECONDS).execute(() -> {
-                SoundClientEvents.playSoundAtPos(SoundAction.BELL, buildingUsing.centrePos);
+                SoundClientboundPacket.playSoundAtPos(SoundAction.BELL, buildingUsing.centrePos);
             });
         }
     }
