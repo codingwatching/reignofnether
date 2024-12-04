@@ -9,33 +9,9 @@
 
 
 
-Wave Survival 0.4
------------------
-
-Bugfixes
---------
-[🟡] Fixed enemies sometimes spawning in the ground
-[🟡] Enemy units no longer try to attack bridges or pile up near them
-[🟡] Ranged units no longer pile up inside buildings
+Wave Survival 0.4a
+------------------
 [❌] Fixed a bug where teams would randomly switch
-
-Quality of Life
----------------
-[🟡] Deleting a completed building gives a 50% refund (scaled to how damaged it is)
-[🟡] Wave difficulty is advanced on each night regardless of if you cleared the previous wave or not
-[🟡] Waves no longer repeat the same faction two nights in a row
-[🟡] The spawn warning is now only shown if less than the expected number of units spawned
-    - If you see one of these warnings, please show me a screenshot of your world
-[🟡] Added another debug option:
-    - /debug-next-night - advances to the next night and wave
-
-Piglin wave changes
--------------------
-[🟡] Reduced portal count from 1/2 to 1/3 of wave number but with the same total population each wave
-[🟡] Portals can no longer spawn over water (but they can still spawn on land across water)
-[🟡] Portals can no longer spawn too close to another portal
-[🟡] Portals no longer spawn units periodically if there's already too many enemies (2x current wave population)
-[🟡] Enemy ghasts no longer friendly fire their own portals
 
 Features
 --------
@@ -52,7 +28,7 @@ Features
 
 Bugfixes
 --------
-
+/ga
 [🟡] Spectators can no longer cancel units from RTS players' building queues
     - test in lilypad server?
 [🟡] Fixed some units randomly spawning as neutral
