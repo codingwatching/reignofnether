@@ -11,6 +11,7 @@
 
 Wave Survival 0.4a
 ------------------
+[❌] Enemies from different factions should not attach each other
 [❌] Fixed a bug where teams would randomly switch
 
 Features
@@ -28,7 +29,6 @@ Features
 
 Bugfixes
 --------
-/ga
 [🟡] Spectators can no longer cancel units from RTS players' building queues
     - test in lilypad server?
 [🟡] Fixed some units randomly spawning as neutral
