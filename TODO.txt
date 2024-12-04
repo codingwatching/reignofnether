@@ -29,6 +29,7 @@ Features
 
 Bugfixes
 --------
+[✔] Light and structure void blocks no longer impede unit spawns
 [🟡] Spectators can no longer cancel units from RTS players' building queues
     - test in lilypad server?
 [🟡] Fixed some units randomly spawning as neutral
