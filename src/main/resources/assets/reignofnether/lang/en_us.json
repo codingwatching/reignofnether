@@ -231,7 +231,7 @@
     "buildings.monsters.reignofnether.sculk_catalyst.tooltip1": "A pillar which spreads sculk when nearby units die.",
     "buildings.monsters.reignofnether.sculk_catalyst.tooltip2": "Distorts time to midnight within a %d block radius.",
     "buildings.monsters.reignofnether.sculk_catalyst.tooltip3": "Nearby sculk extends this range up to %d and ",
-    "buildings.monsters.reignofnether.sculk_catalyst.tooltip4": "provides absorption health.",
+    "buildings.monsters.reignofnether.sculk_catalyst.tooltip4": "gives the catalyst absorption health.",
 
     "buildings.piglins.reignofnether.bastion": "Bastion",
     "buildings.piglins.reignofnether.bastion.tooltip1": "A fortified barracks to house Headhunter piglins, ",
@@ -382,7 +382,9 @@
     "hud.reignofnether.gather_resources": "Gather Resources (%s)",
     "hud.reignofnether.change_target_resource": "Click to change target resource",
     "hud.reignofnether.total_workers": "Total Workers: %d",
-    "hud.reignofnether.workers_on": "Workers on %s",
+    "hud.reignofnether.workers_on_food": "Workers on food",
+    "hud.reignofnether.workers_on_wood": "Workers on wood",
+    "hud.reignofnether.workers_on_ore": "Workers on ore",
     "hud.reignofnether.max_resources": "%s (Max: %d)",
     "hud.reignofnether.players_resources": "%s's resources",
     "hud.reignofnether.you_are_spectator": "You are a spectator",
@@ -518,6 +520,8 @@
     "research.reignofnether.sculk_amplifiers.tooltip1": "Wardens can Sonic Boom Sculk Catalysts to split the boom ",
     "research.reignofnether.sculk_amplifiers.tooltip2": "onto %d random nearby enemies within a range of %d",
     "research.reignofnether.sculk_amplifiers.tooltip3": "Requires a Stronghold.",
+    "research.reignofnether.grand_library": "Grand Library",
+    "research.reignofnether.grand_library.tooltip1": "Upgrades this library, unlocking more powerful enchantments.",
 
     "resources.reignofnether.food": "Food",
     "resources.reignofnether.wood": "Wood",
