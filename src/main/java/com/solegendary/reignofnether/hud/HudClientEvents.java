@@ -1018,13 +1018,12 @@ public class HudClientEvents {
                             .toList()
                             .size();
                         tooltipWorkersAssigned =
-                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether" + ".total_workers",
+                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether.total_workers",
                             numWorkers
                         ), Style.EMPTY));
                     } else {
                         tooltipWorkersAssigned =
-                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether" + ".workers_on",
-                            locName
+                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether.workers_on_" + resourceName
                         ), Style.EMPTY));
                     }
                     MyRenderer.renderTooltip(evt.getPoseStack(), tooltipWorkersAssigned, mouseX + 5, mouseY);

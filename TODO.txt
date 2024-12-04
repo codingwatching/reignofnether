@@ -34,13 +34,12 @@ Bugfixes
 [🟡] Fixed some units randomly spawning as neutral
 [✔] Can no longer enter enemy garrisons
     - You can still enter allied garrisons
-[✔] Tall grass and barrier blocks are now ignored by the cursor
+[✔] Tall grass and other plants with no collision are now ignored by the cursor
 [🟡] Only save resource data if the unit was actively gathering
 [✔] Fix weird pathing over magma
     - To fix this, there is now a new block identical in texture and function to magma called "Walkable Magma"
     - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
 
-[❌] Fix #localisation channel problems
 [❌] Wipe all saved data on /rts-reset
 [❌] You no longer have to restart your client to change button languages
 
@@ -68,13 +67,8 @@ Monsters:
 [✔] Pumpkins now take +1s to gather, and give -1 food
 
 
-
-
 Languages
 ---------
-NEW:
-"buildings.monsters.reignofnether.mausoleum.tooltip3": "Only one capitol can produce workers at any given time.",
-"buildings.monsters.reignofnether.central_portal.tooltip2": "Only one capitol can produce workers at any given time.",
-"buildings.monsters.reignofnether.town_centre.tooltip2": "Only one capitol can produce workers at any given time.",
-"block.reignofnether.walkable_magma_block": "Walkable Magma",
-"hud.actionbuttons.reignofnether.build_repair_autocast": "(Right-click to auto-repair)",
+Vietnamese added (thanks to @hungtq1016)
+
+
