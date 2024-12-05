@@ -41,8 +41,8 @@ Bugfixes
 [✔] Fix weird pathing over magma
     - To fix this, there is now a new block identical in texture and function to magma called "Walkable Magma"
     - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
-[🟡] Fixed groups of buildings not evenly splitting production items
-[❌] You can now tab and shift-tab to move between sub-groups of selected buildings just like units
+[✔] Fixed groups of buildings not evenly splitting production items
+[✔] You can now tab and shift-tab to move between sub-groups of selected buildings just like units
 
 [❌] Wipe all saved data on /rts-reset
 [❌] You no longer have to restart your client to change button languages
