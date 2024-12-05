@@ -100,6 +100,10 @@ public class OrthoviewClientEvents {
     public static double ORTHOVIEW_PLAYER_BASE_Y = 100;
     public static double ORTHOVIEW_PLAYER_MAX_Y = 160;
 
+    private static float getEdgeCamPanSensitivity() {
+        return (float) (Math.sqrt(getZoom()) / (Math.sqrt(ZOOM_MAX))) * 0.9f;
+    }
+
     public static void updateOrthoviewY() {
         if (MC.player != null && MC.level != null) {
             BlockPos playerPos = MC.player.blockPosition();
@@ -305,7 +309,15 @@ public class OrthoviewClientEvents {
         MinimapClientEvents.setMapCentre(x, z);
         // at 0deg by default camera is facing +Z and we want to move it backwards from this
         Vec2 XZRotated = MyMath.rotateCoords(0, -20, OrthoviewClientEvents.getCamRotX());
-        PlayerServerboundPacket.teleportPlayer(x + XZRotated.x, MC.player.getY(), z + XZRotated.y);
+
+        float offset = getEdgeCamPanSensitivity();
+
+        Vec2 XZRotatedOffset = MyMath.rotateCoords(0, -(offset * 35), -camRotX - camRotAdjX);
+
+        PlayerServerboundPacket.teleportPlayer(
+                x + XZRotated.x + XZRotatedOffset.x, MC.player.getY(),
+                z + XZRotated.y + XZRotatedOffset.y
+        );
     }
 
     @SubscribeEvent
@@ -408,23 +420,21 @@ public class OrthoviewClientEvents {
         double cursorX = glfwCursorX.get();
         double cursorY = glfwCursorY.get();
 
-        float edgeCamPanSensitivity = 1.5f * (getZoom() / ZOOM_MAX);
-
         // panCam when cursor is at edge of screen
         // remember that mouse (0,0) is top left of screen
         if (!Keybindings.altMod.isDown() && MC.isWindowActive() && !isCameraLocked()) {
             if (cursorX <= 0) {
-                panCam(edgeCamPanSensitivity, 0, 0);
+                panCam(getEdgeCamPanSensitivity(), 0, 0);
                 TutorialClientEvents.pannedLeft = true;
             } else if (cursorX >= glfwWinWidth) {
-                panCam(-edgeCamPanSensitivity, 0, 0);
+                panCam(-getEdgeCamPanSensitivity(), 0, 0);
                 TutorialClientEvents.pannedRight = true;
             }
             if (cursorY <= 0) {
-                panCam(0, 0, edgeCamPanSensitivity);
+                panCam(0, 0, getEdgeCamPanSensitivity());
                 TutorialClientEvents.pannedUp = true;
             } else if (cursorY >= glfwWinHeight) {
-                panCam(0, 0, -edgeCamPanSensitivity);
+                panCam(0, 0, -getEdgeCamPanSensitivity());
                 TutorialClientEvents.pannedDown = true;
             }
         }

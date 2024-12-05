@@ -30,19 +30,10 @@ Features
 
 Bugfixes
 --------
-[✔] Light and structure void blocks no longer impede unit spawns
 [🟡] Spectators can no longer cancel units from RTS players' building queues
     - test in lilypad server?
 [🟡] Fixed some units randomly spawning as neutral
-[✔] Can no longer enter enemy garrisons
-    - You can still enter allied garrisons
-[✔] Tall grass and other plants with no collision are now ignored by the cursor
 [🟡] Only save resource data if the unit was actively gathering
-[✔] Fix weird pathing over magma
-    - To fix this, there is now a new block identical in texture and function to magma called "Walkable Magma"
-    - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
-[✔] Fixed groups of buildings not evenly splitting production items
-[✔] You can now tab and shift-tab to move between sub-groups of selected buildings just like units
 
 [❌] Wipe all saved data on /rts-reset
 [❌] Wipe specific data before save actions
@@ -51,38 +42,11 @@ Bugfixes
 Quality of Life
 ---------------
 
-[✔] Units now attack survival players automatically when idle or attack-moving (except if allied)
-[✔] Reduced volume of the Call To Arms bell when used by villagers
-[✔] Cancelling an unfinished building now shows a resource popup for the refund
-[✔] You can now right-click the build/repair button to have workers auto-repair nearby buildings
-[✔] Piglin Brutes now use gold swords
+[✔] Moving the camera to a unit or building is now more accurately centered
 
-[❌] Centre camera correctly on units/buildings
 
-[❌] /gamerule groundYLevel for mapmakers
-    - Maybe separate for ghasts and bridges?
-
-Balancing
----------
-
-[✔] Farm growth is no longer random
-[✔] Capitols after the first take twice as long to build
-[✔] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
-
-Villagers:
-[✔] Berry bushes now convert into Red mushrooms (worth +10% food)
-
-Villagers:
-[✔] Evoker Fangs: -1s channel time
-
-Monsters:
-[✔] Wardens: +25 food, +10s, +1 pop
-[✔] Spiders & Poison Spiders: +1 dmg
-[✔] Pumpkins now take +1s to gather, and give -1 food
-[✔] Mausoleums now only have a night radius after being fully built
 
 Languages
 ---------
 Vietnamese added (thanks to @hungtq1016)
-
 
