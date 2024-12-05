@@ -19,6 +19,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
@@ -92,6 +93,9 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
             }
         }
         if (!hasClearNeighbour)
+            return false;
+
+        if (bs.getValue(BlockStateProperties.WATERLOGGED))
             return false;
 
         // not targeted by another nearby worker

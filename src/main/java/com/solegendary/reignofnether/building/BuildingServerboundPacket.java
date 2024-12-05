@@ -4,6 +4,7 @@ import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractStockpile;
 import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
+import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -74,11 +75,13 @@ public class BuildingServerboundPacket {
                 "", buildingPos, BlockPos.ZERO, Rotation.NONE, "", new int[]{ entityId }, false));
     }
     public static void startProduction(BlockPos buildingPos, String itemName) {
-        PacketHandler.INSTANCE.sendToServer(new BuildingServerboundPacket(
-                BuildingAction.START_PRODUCTION,
-                itemName, buildingPos, BlockPos.ZERO, Rotation.NONE, "", new int[0], false));
-
         BuildingClientEvents.switchHudToIdlestBuilding();
+
+        if (HudClientEvents.hudSelectedBuilding != null) {
+            PacketHandler.INSTANCE.sendToServer(new BuildingServerboundPacket(
+                    BuildingAction.START_PRODUCTION,
+                    itemName, HudClientEvents.hudSelectedBuilding.originPos, BlockPos.ZERO, Rotation.NONE, "", new int[0], false));
+        }
     }
     public static void cancelProduction(BlockPos buildingPos, String itemName, boolean frontItem) {
         PacketHandler.INSTANCE.sendToServer(new BuildingServerboundPacket(
