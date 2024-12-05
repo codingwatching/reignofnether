@@ -158,10 +158,8 @@ public class BuildingClientEvents {
                 }
             }
         }
-        if (idlestBuilding != null) {
+        if (idlestBuilding != null)
             hudSelectedBuilding = idlestBuilding;
-            System.out.println(prodTicksLeftMax);
-        }
     }
 
     public static void setBuildingToPlace(Class<? extends Building> building) {

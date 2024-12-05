@@ -1359,9 +1359,8 @@ public class HudClientEvents {
         if (entities.isEmpty())
             return;
 
-        if (Keybindings.shiftMod.isDown()) {
+        if (Keybindings.shiftMod.isDown())
             Collections.reverse(entities);
-        }
 
         if (hudSelectedEntity != null) {
             String hudSelectedEntityName = HudClientEvents.getModifiedEntityName(hudSelectedEntity);
@@ -1392,9 +1391,8 @@ public class HudClientEvents {
         if (buildings.isEmpty())
             return;
 
-        if (Keybindings.shiftMod.isDown()) {
+        if (Keybindings.shiftMod.isDown())
             Collections.reverse(buildings);
-        }
 
         if (hudSelectedBuilding != null) {
             String hudSelectedBuildingName = hudSelectedBuilding.name;
@@ -1409,9 +1407,8 @@ public class HudClientEvents {
                 }
                 lastBuildingName = currentBuildingName;
             }
-            if (!cycled) {
+            if (!cycled)
                 hudSelectedBuilding = buildings.get(0);
-            }
         }
     }
 
