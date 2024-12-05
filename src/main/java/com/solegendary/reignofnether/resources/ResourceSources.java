@@ -26,6 +26,10 @@ public class ResourceSources {
             Material.WATER, Material.AIR, Material.PLANT, Material.LEAVES, Material.STRUCTURAL_AIR
     );
 
+    public static final List<Block> GATHERABLE_PLANTS = List.of(
+            Blocks.SWEET_BERRY_BUSH, Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM
+    );
+
     public static final int TICKS_PER_SECOND = 20;
 
     public static boolean isHuntableAnimal(LivingEntity entity) {

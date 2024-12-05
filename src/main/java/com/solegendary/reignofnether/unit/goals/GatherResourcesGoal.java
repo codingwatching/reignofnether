@@ -95,9 +95,6 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
         if (!hasClearNeighbour)
             return false;
 
-        if (bs.getValue(BlockStateProperties.WATERLOGGED))
-            return false;
-
         // not targeted by another nearby worker
         AABB aabb = AABB.ofSize(this.mob.position(), REACH_RANGE * 2,REACH_RANGE * 2,REACH_RANGE * 2);
         for (LivingEntity entity : this.mob.level.getNearbyEntities(LivingEntity.class, TargetingConditions.forNonCombat(), this.mob, aabb)) {

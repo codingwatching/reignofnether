@@ -57,6 +57,8 @@ Quality of Life
 [✔] You can now right-click the build/repair button to have workers auto-repair nearby buildings
 [✔] Piglin Brutes now use gold swords
 
+[❌] Centre camera correctly on units/buildings
+
 [❌] /gamerule groundYLevel for mapmakers
     - Maybe separate for ghasts and bridges?
 
@@ -64,7 +66,7 @@ Balancing
 ---------
 
 [✔] Farm growth is no longer random
-[🟡] Capitols after the first take twice as long to build
+[✔] Capitols after the first take twice as long to build
 [✔] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
 
 Villagers:

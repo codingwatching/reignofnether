@@ -193,6 +193,8 @@ public class CursorClientEvents {
                 !BuildingUtils.isPosInsideAnyBuilding(true, preselectedBlockPos) &&
                 BuildingUtils.isPosInsideAnyBuilding(true, preselectedBlockPos.above()))
                 preselectedBlockPos = preselectedBlockPos.above();
+            else if (ResourceSources.GATHERABLE_PLANTS.contains(MC.level.getBlockState(preselectedBlockPos.above()).getBlock()))
+                preselectedBlockPos = preselectedBlockPos.above();
         }
 
         // ****************************************
