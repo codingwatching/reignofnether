@@ -45,6 +45,7 @@ Bugfixes
 [✔] You can now tab and shift-tab to move between sub-groups of selected buildings just like units
 
 [❌] Wipe all saved data on /rts-reset
+[❌] Wipe specific data before save actions
 [❌] You no longer have to restart your client to change button languages
 
 Quality of Life
@@ -66,11 +67,17 @@ Balancing
 [🟡] Capitols after the first take twice as long to build
 [✔] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
 
+Villagers:
+[✔] Berry bushes now convert into Red mushrooms (worth +10% food)
+
+Villagers:
+[✔] Evoker Fangs: -1s channel time
+
 Monsters:
 [✔] Wardens: +25 food, +10s, +1 pop
 [✔] Spiders & Poison Spiders: +1 dmg
 [✔] Pumpkins now take +1s to gather, and give -1 food
-
+[✔] Mausoleums now only have a night radius after being fully built
 
 Languages
 ---------

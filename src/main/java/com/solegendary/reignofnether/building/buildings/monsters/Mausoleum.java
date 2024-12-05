@@ -70,7 +70,7 @@ public class Mausoleum extends ProductionBuilding implements NightSource {
     }
 
     public int getNightRange() {
-        return nightRange;
+        return (isBuilt || isBuiltServerside) ? nightRange : 0;
     }
 
     @Override

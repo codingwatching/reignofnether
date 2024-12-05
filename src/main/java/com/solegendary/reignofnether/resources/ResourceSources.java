@@ -174,7 +174,7 @@ public class ResourceSources {
                     List.of(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM),
                     List.of(Items.RED_MUSHROOM, Items.BROWN_MUSHROOM),
                     TICKS_PER_SECOND * 5,
-                    20,
+                    22,
                     ResourceName.FOOD
             ),
             new ResourceSource("Misc. Forageable",

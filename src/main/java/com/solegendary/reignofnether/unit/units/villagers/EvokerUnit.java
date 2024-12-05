@@ -143,7 +143,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
     public static final int FANGS_RANGE_LINE = 10;
     public static final int FANGS_RANGE_CIRCLE = 3;
     public static final float FANGS_DAMAGE = 6f; // can sometimes be doubled or tripled due to overlapping fang hitboxes
-    public static final int FANGS_CHANNEL_SECONDS = 2;
+    public static final int FANGS_CHANNEL_SECONDS = 1;
     public static final int SUMMON_VEXES_AMOUNT = 3;
     public static final int VEX_TARGET_RANGE = 20;
     public static final int VEX_TARGET_RANGE_GARRISON = 30;
