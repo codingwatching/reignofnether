@@ -31,6 +31,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -210,10 +211,12 @@ public class MiscUtil {
     private static boolean isIdleOrMoveAttackable(Mob unitMob, LivingEntity targetEntity, boolean neutralAggro) {
         Relationship rs = UnitServerEvents.getUnitToEntityRelationship((Unit) unitMob, targetEntity);
 
-        // If the relationship is FRIENDLY, do not allow the attack
-        if (rs == Relationship.FRIENDLY) {
+        if (targetEntity instanceof Player player && (player.isCreative() || player.isSpectator()))
             return false;
-        }
+
+        // If the relationship is FRIENDLY, do not allow the attack
+        if (rs == Relationship.FRIENDLY)
+            return false;
 
         // Prevents certain attacks based on specific unit and goal conditions
         if (targetEntity instanceof Unit unit &&

@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.building.buildings.villagers.Library;
 import com.solegendary.reignofnether.fogofwar.FrozenChunkClientboundPacket;
 import com.solegendary.reignofnether.nether.NetherBlocks;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
+import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.survival.SurvivalServerEvents;
@@ -620,10 +621,13 @@ public class BuildingServerEvents {
             }
         }
         // don't do any block damage apart from the scripted building damage above or damage to leaves/tnt
-        evt.getAffectedBlocks().removeIf(bp -> {
-            BlockState bs = evt.getLevel().getBlockState(bp);
-            return !(bs.getBlock() instanceof LeavesBlock) && !(bs.getBlock() instanceof TntBlock);
-        });
+        if (!serverLevel.getGameRules().getRule(GameRuleRegistrar.DO_UNIT_GRIEFING).get()) {
+            evt.getAffectedBlocks().removeIf(bp -> {
+                BlockState bs = evt.getLevel().getBlockState(bp);
+                return !(bs.getBlock() instanceof LeavesBlock) && !(bs.getBlock() instanceof TntBlock);
+            });
+        }
+
     }
 
     @SubscribeEvent

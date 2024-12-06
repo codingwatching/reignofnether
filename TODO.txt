@@ -32,18 +32,13 @@ Bugfixes
 --------
 [🟡] Spectators can no longer cancel units from RTS players' building queues
     - test in lilypad server?
-[🟡] Fixed some units randomly spawning as neutral
 [🟡] Only save resource data if the unit was actively gathering
 
-[❌] Wipe all saved data on /rts-reset
-[❌] Wipe specific data before save actions
 [❌] You no longer have to restart your client to change button languages
 
 Quality of Life
 ---------------
-
-[✔] Moving the camera to a unit or building is now more accurately centered
-
+[✔] Add gamerule for explosions breaking terrain /gamerule doUnitGriefing (false by default)
 
 
 Languages

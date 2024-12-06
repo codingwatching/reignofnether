@@ -44,7 +44,6 @@ public class ResourcesServerEvents {
         if (serverLevel == null) {
             return;
         }
-
         ResourcesSaveData data = ResourcesSaveData.getInstance(serverLevel);
         data.resources.clear();
         resourcesList.forEach(r -> {
