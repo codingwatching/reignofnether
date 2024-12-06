@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.registrars;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningServerEvents;
 import com.solegendary.reignofnether.building.BuildingClientEvents;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
+import com.solegendary.reignofnether.config.ConfigClientEvents;
 import com.solegendary.reignofnether.config.ConfigVanillaServerEvents;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
@@ -62,6 +63,7 @@ public class ClientEventRegistrar {
         vanillaEventBus.register(TitleClientEvents.class);
         vanillaEventBus.register(WorldBorderClientEvents.class);
         vanillaEventBus.register(SurvivalClientEvents.class);
+        vanillaEventBus.register(ConfigClientEvents.class);
 
         // to allow singleplayer integrated server to work
         vanillaEventBus.register(TutorialServerEvents.class);

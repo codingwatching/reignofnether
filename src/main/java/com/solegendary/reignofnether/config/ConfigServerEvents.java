@@ -9,6 +9,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /*
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = ReignOfNether.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.DEDICATED_SERVER)
 public class ConfigServerEvents {
+    /*
     public static List<ResourceCost> costList;
     @SubscribeEvent
     public static void onConfigLoad(ModConfigEvent.Loading evt) {
@@ -58,8 +60,8 @@ public class ConfigServerEvents {
                 //ew
                 //TODO: FIX VARIABLE NAME PLEASE
                 ResourceCostConfigEntry rcce = (ResourceCostConfigEntry) costField.get(null);
-                ResourceCost cost = ResourceCost.fromConfigEntry(rcce);
-                costList.add(cost);
+                //ResourceCost cost = ResourceCost.fromConfigEntry(rcce);
+                //costList.add(cost);
             }
             catch (IllegalAccessException e) {
                 // Handle exception here
@@ -67,4 +69,5 @@ public class ConfigServerEvents {
         }
         list.addAll(costList);
     }
+     */
 }

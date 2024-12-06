@@ -1,17 +1,11 @@
 package com.solegendary.reignofnether.config;
 
-import ca.weblite.objc.Client;
 import com.solegendary.reignofnether.resources.ResourceCost;
-import com.solegendary.reignofnether.resources.ResourceCosts;
-import com.solegendary.reignofnether.votesystem.networking.ClientEvents;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -26,7 +20,7 @@ import java.util.function.Supplier;
  */
 public class ClientboundSyncConfigPacket {
     //private final List<ResourceCost> resourceCosts;
-    public ClientboundSyncConfigPacket(List<ResourceCost> resourceCosts) {
+    public ClientboundSyncConfigPacket() {
         //this.resourceCosts = resourceCosts;
     }
     public ClientboundSyncConfigPacket(FriendlyByteBuf buf) {
@@ -66,7 +60,7 @@ public class ClientboundSyncConfigPacket {
         final var success = new AtomicBoolean(false);
         NetworkEvent.Context context = ctx.get();
         context.enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientConfigEvents.loadConfigData(msg, ctx));
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ConfigClientEvents.loadConfigData(msg, ctx));
             success.set(true);
         });
         context.setPacketHandled(true);

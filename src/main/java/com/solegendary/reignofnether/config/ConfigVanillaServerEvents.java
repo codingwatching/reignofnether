@@ -16,18 +16,13 @@ import java.util.function.Supplier;
 public class ConfigVanillaServerEvents {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent evt) {
-        Player player = evt.getEntity();
         Supplier<ServerPlayer> serverPlayerSupplier = () -> (ServerPlayer) evt.getEntity();
         ReignOfNether.LOGGER.info("onPlayerJoined fired from ConfigVanillaServerEvents");
-        ReignOfNether.LOGGER.info(player.level.isClientSide());
-        if (player.level.isClientSide()) {
-            //rebake from clientside configs
-            ResourceCosts.deferredLoadResourceCosts();
-        }
-        else {
+        //If this is not a singleplayer server that we own..
+        if(!evt.getEntity().getServer().isSingleplayerOwner(evt.getEntity().getGameProfile())) {
             //rebake from serverside configs
-            System.out.println("Attempted to send packet");
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(serverPlayerSupplier), new ClientboundSyncConfigPacket(ConfigServerEvents.costList));
+            System.out.println("Attempted to send packet to rebake from server..");
+            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(serverPlayerSupplier), new ClientboundSyncConfigPacket());
         }
     }
 }

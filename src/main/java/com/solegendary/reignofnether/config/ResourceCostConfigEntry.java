@@ -1,52 +1,76 @@
 package com.solegendary.reignofnether.config;
 
+import com.solegendary.reignofnether.resources.ResourceCost;
+import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.unit.units.monsters.CreeperProd;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.apache.commons.compress.archivers.sevenz.CLI;
+import oshi.util.tuples.Pair;
+
+import javax.annotation.Nullable;
+import javax.naming.spi.ResolveResult;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ResourceCostConfigEntry {
+    //TODO: When event fires to send config values to the client, or to rebake config values,
+    //TODO: iterate through this list of entries, and send each one over the network through a packet if applicable
+    //TODO: then, we reconstruct the ResourceCostConfigEntry, and use its string as the key in the ResourceCost ENTRIES
+    //TODO: hashmap to obtain the appropriate ResourceCost; then, we simply rebake the vaules.
+    public static final List<ResourceCostConfigEntry> ENTRIES = new ArrayList<>();
+
+
     private ForgeConfigSpec.ConfigValue<Integer> FOOD;
     private ForgeConfigSpec.ConfigValue<Integer> WOOD;
     private ForgeConfigSpec.ConfigValue<Integer> ORE;
     private ForgeConfigSpec.ConfigValue<Integer> SECONDS;
     private ForgeConfigSpec.ConfigValue<Integer> POPULATION;
 
-    private final int DEFAULT_FOOD;
-    private final int DEFAULT_WOOD;
-    private final int DEFAULT_ORE;
-    private final int DEFAULT_SECONDS;
-    private final int DEFAULT_POPULATION;
+    private final int default_food;
+    private final int default_wood;
+    private final int default_ore;
+    private final int default_seconds;
+    private final int default_population;
+    public final String id;
     //TODO: Use translateable component, add to lang file
-    private final String COMMENT;
+    private final String comment;
 
-    private ResourceCostConfigEntry(int food, int wood, int ore, int seconds, int population, String comment) {
-        this.DEFAULT_FOOD = food;
-        this.DEFAULT_WOOD = wood;
-        this.DEFAULT_ORE = ore;
-        this.DEFAULT_SECONDS = seconds;
-        this.DEFAULT_POPULATION = population;
-        this.COMMENT = comment;
+    private ResourceCostConfigEntry(int food, int wood, int ore, int seconds, int population, ResourceCost associatedCost, String comment) {
+        this.default_food = food;
+        this.default_wood = wood;
+        this.default_ore = ore;
+        this.default_seconds = seconds;
+        this.default_population = population;
+        this.comment = comment;
+        this.id = associatedCost.id;
+        ENTRIES.add(this);
+
     }
-    public static ResourceCostConfigEntry Unit(int food, int wood, int ore, int seconds, int population, String comment) { // units
-        return new ResourceCostConfigEntry(food, wood, ore, seconds, population, comment);
+    public static ResourceCostConfigEntry Unit(int food, int wood, int ore, int seconds, int population, ResourceCost associatedCost, String comment) { // units
+        return new ResourceCostConfigEntry(food, wood, ore, seconds, population, associatedCost, comment);
     }
-    public static ResourceCostConfigEntry Research(int food, int wood, int ore, int seconds, String comment) { // research
-        return new ResourceCostConfigEntry(food, wood, ore, seconds, 0, comment);
+    public static ResourceCostConfigEntry Research(int food, int wood, int ore, int seconds, ResourceCost associatedCost, String comment) { // research
+        return new ResourceCostConfigEntry(food, wood, ore, seconds, 0, associatedCost, comment);
     }
-    public static ResourceCostConfigEntry Building(int food, int wood, int ore, int supply, String comment) { // buildings
-        return new ResourceCostConfigEntry(food, wood, ore, 0, supply, comment);
+    public static ResourceCostConfigEntry Building(int food, int wood, int ore, int supply, ResourceCost associatedCost, String comment) { // buildings
+        return new ResourceCostConfigEntry(food, wood, ore, 0, supply, associatedCost, comment);
     }
-    public static ResourceCostConfigEntry Enchantment(int food, int wood, int ore, String comment) { // enchantments
-        return new ResourceCostConfigEntry(food, wood, ore, 0, 0, comment);
+    public static ResourceCostConfigEntry Enchantment(int food, int wood, int ore, ResourceCost associatedCost, String comment) { // enchantments
+        return new ResourceCostConfigEntry(food, wood, ore, 0, 0, associatedCost, comment);
     }
 
     //Defines each config value for the given ResourceCostConfigEntry
     public void define(ForgeConfigSpec.Builder builder) {
-        builder.push(this.COMMENT);
-        this.FOOD = builder.define("Food cost", this.DEFAULT_FOOD);
-        this.WOOD = builder.define("Wood cost", this.DEFAULT_WOOD);
-        this.ORE = builder.define("Ore cost", this.DEFAULT_ORE);
-        this.SECONDS = builder.define("Time to create", this.DEFAULT_SECONDS);
-        this.POPULATION = builder.define("Population value", this.DEFAULT_POPULATION);
+        builder.push(this.comment);
+        this.FOOD = builder.define("Food cost", this.default_food);
+        this.WOOD = builder.define("Wood cost", this.default_wood);
+        this.ORE = builder.define("Ore cost", this.default_ore);
+        this.SECONDS = builder.define("Time to create", this.default_seconds);
+        this.POPULATION = builder.define("Population value", this.default_population);
         builder.pop();
     }
 
