@@ -48,22 +48,30 @@ public class ConfigClientEvents {
         if (evt.getEntity().getServer().isSingleplayerOwner(evt.getEntity().getGameProfile())) {
             //rebake from clientsideside configs
             ReignOfNether.LOGGER.info("Attempting to rebake from client..");
-            ReignOfNether.LOGGER.info("DEBUG - LIST OF RESOURCE COSTS: ");
+            /*
             for(ResourceCostConfigEntry entry : ResourceCostConfigEntry.ENTRIES) {
-                ReignOfNether.LOGGER.info(entry.id);
+                String key = entry.id;
+                if(ResourceCost.ENTRIES.containsKey(key)) {
+                    ResourceCost rescost = ResourceCost.ENTRIES.get(key);
+                    rescost.bakeValues(entry);
+                }
             }
+             */
+            /*
+            //Debug print
             ReignOfNether.LOGGER.info(ResourceCostConfigEntry.ENTRIES);
             for (String key : ResourceCost.ENTRIES.keySet()) {
                 System.out.println("Key: " + key + ", Value: " + ResourceCost.ENTRIES.get(key));
             }
+             */
             ResourceCosts.deferredLoadResourceCosts();
-            //CreeperProd.cost = ResourceCosts.CREEPER;
             List<Building> buildingList = BuildingClientEvents.getBuildings();
             List<LivingEntity> unitList = UnitClientEvents.getAllUnits();
             for (Building building : buildingList) {
                 building.rebakeButtons();
             }
             for (LivingEntity unit : unitList) {
+                //NYI
                 //unit.rebakeButtons();
             }
         }

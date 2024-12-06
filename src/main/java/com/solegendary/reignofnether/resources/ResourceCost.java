@@ -21,7 +21,7 @@ public class ResourceCost {
     public int ore;
     public int ticks;
     public int population; // for a building, indicates supply, for a unit, indicates usage
-    public String id = null;
+    public String id;
 
     private ResourceCost(int food, int wood, int ore, int seconds, int population) { // units
         this.food = food;

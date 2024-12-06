@@ -25,6 +25,7 @@ public class ResourceCosts {
     public static final ResourceCost ZOMBIE_PIGLIN = new ResourceCost(ID, "ZOMBIE_PIGLIN");
     public static final ResourceCost ZOGLIN = new ResourceCost(ID, "ZOGLIN");
     public static final ResourceCost VILLAGER = new ResourceCost(ID, "VILLAGER");
+    public static final ResourceCost MILITIA = new ResourceCost(ID, "MILITIA");
     public static final ResourceCost IRON_GOLEM = new ResourceCost(ID, "IRON_GOLEM");
     public static final ResourceCost PILLAGER = new ResourceCost(ID, "PILLAGER");
     public static final ResourceCost VINDICATOR = new ResourceCost(ID, "VINDICATOR");
@@ -168,6 +169,7 @@ public class ResourceCosts {
         ZOGLIN.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.ZOGLIN);
         // Villagers
         VILLAGER.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.VILLAGER);
+        MILITIA.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.MILITIA);
         IRON_GOLEM.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.IRON_GOLEM);
         PILLAGER.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.PILLAGER);
         VINDICATOR.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.VINDICATOR);

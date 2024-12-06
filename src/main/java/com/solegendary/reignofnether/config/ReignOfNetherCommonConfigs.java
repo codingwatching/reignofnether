@@ -31,6 +31,7 @@ public class ReignOfNetherCommonConfigs {
         //Villagers
         BUILDER.comment("Villagers");
         UnitCosts.VILLAGER.define(BUILDER);
+        UnitCosts.MILITIA.define(BUILDER);
         UnitCosts.IRON_GOLEM.define(BUILDER);
         UnitCosts.PILLAGER.define(BUILDER);
         UnitCosts.VINDICATOR.define(BUILDER);
@@ -145,6 +146,7 @@ public class ReignOfNetherCommonConfigs {
 
         // Villagers
         public static final ResourceCostConfigEntry VILLAGER = ResourceCostConfigEntry.Unit(50,0,0,15,1, ResourceCosts.VILLAGER, "Villager Config");
+        public static final ResourceCostConfigEntry MILITIA = ResourceCostConfigEntry.Unit(50,0,0,15,1, ResourceCosts.MILITIA, "Militia Config");
         public static final ResourceCostConfigEntry IRON_GOLEM = ResourceCostConfigEntry.Unit(0,50,200,40,4, ResourceCosts.IRON_GOLEM, "Iron Golem Config");
         public static final ResourceCostConfigEntry PILLAGER = ResourceCostConfigEntry.Unit(120,85,0,35,3, ResourceCosts.PILLAGER, "Pillager Config");
         public static final ResourceCostConfigEntry VINDICATOR = ResourceCostConfigEntry.Unit(175,0,0,35,3, ResourceCosts.VINDICATOR, "Vindicator Config");
