@@ -127,6 +127,8 @@ public abstract class Building {
 
     public boolean isDiagonalBridge = false;
 
+    public boolean selfBuilding = false; // if set to true, will build itself quickly without workers (but not repair)
+
     // blocks types that are placed automatically when the building is placed
     // used to control size of initial foundations while keeping it symmetrical
     public final ArrayList<Block> startingBlockTypes = new ArrayList<>();
@@ -253,6 +255,10 @@ public abstract class Building {
     }
 
     public boolean canAfford(String ownerName) {
+        if (SurvivalServerEvents.isEnabled() &&
+            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(ownerName))
+            return true;
+
         for (Resources resources : ResourcesServerEvents.resourcesList)
             if (resources.ownerName.equals(ownerName)) {
                 return (
@@ -357,7 +363,7 @@ public abstract class Building {
     // place blocks according to the following rules:
     // - block must be connected to something else (not air)
     // - block must be the lowest Y value possible
-    private void buildNextBlock(ServerLevel level, String builderName) {
+    public void buildNextBlock(ServerLevel level, String builderName) {
 
         // if the building is already constructed then start subtracting resources for repairs
         if (isBuilt) {
@@ -540,8 +546,6 @@ public abstract class Building {
                             this.ownerName,
                             PlayerServerEvents.TICKS_TO_REVEAL / ResourceCost.TICKS_PER_SECOND
                     );
-                } else if (SurvivalServerEvents.isEnabled()) {
-                    PlayerServerEvents.defeat(this.ownerName, Component.translatable("server.reignofnether.lost_capitol_defeat").getString());
                 }
             }
         }
@@ -713,48 +717,54 @@ public abstract class Building {
     private void handleServerTick(ServerLevel serverLevel, float blocksPlaced, float blocksTotal) {
         ArrayList<WorkerUnit> workerUnits = getBuilders(serverLevel);
         int builderCount = workerUnits.size();
+        boolean hasFastBuildCheat = ResearchServerEvents.playerHasCheat(this.ownerName, "warpten");
 
         // place a block if the tick has run down
-        if (blocksPlaced < blocksTotal && builderCount > 0) {
-            this.ticksToExtinguish += 1;
-            if (ticksToExtinguish >= TICKS_TO_EXTINGUISH) {
-                if (!(this instanceof FlameSanctuary) && !(this instanceof Fortress)) {
-                    extinguishFires(serverLevel);
+        if (blocksPlaced < blocksTotal) {
+
+            if (builderCount > 0) {
+                this.ticksToExtinguish += 1;
+                if (ticksToExtinguish >= TICKS_TO_EXTINGUISH) {
+                    if (!(this instanceof FlameSanctuary) && !(this instanceof Fortress)) {
+                        extinguishFires(serverLevel);
+                    }
+                    ticksToExtinguish = 0;
                 }
-                ticksToExtinguish = 0;
-            }
-            // AoE 2 speed:
-            // 1 builder  - 3/3 (100%)
-            // 2 builders - 3/4 (75%)
-            // 3 builders - 3/5 (60%)
-            // 4 builders - 3/6 (50%)
-            // 5 builders - 3/7 (43%)
-            int msPerBuild = (3 * BASE_MS_PER_BUILD) / (builderCount + 2);
-            if (!isBuilt) {
-                msPerBuild *= buildTimeModifier;
-            } else {
-                msPerBuild *= repairTimeModifier;
-            }
+                // AoE 2 speed:
+                // 1 builder  - 3/3 (100%)
+                // 2 builders - 3/4 (75%)
+                // 3 builders - 3/5 (60%)
+                // 4 builders - 3/6 (50%)
+                // 5 builders - 3/7 (43%)
+                int msPerBuild = (3 * BASE_MS_PER_BUILD) / (builderCount + 2);
+                if (!isBuilt) {
+                    msPerBuild *= buildTimeModifier;
+                } else {
+                    msPerBuild *= repairTimeModifier;
+                }
 
-            if (this instanceof Portal && !BuildingServerEvents.isOnNetherBlocks(blocks, originPos, serverLevel)
-                && !ResearchServerEvents.playerHasResearch(ownerName, ResearchAdvancedPortals.itemName)) {
-                msPerBuild *= Portal.NON_NETHER_BUILD_TIME_MODIFIER;
-            }
+                if (this instanceof Portal && !BuildingServerEvents.isOnNetherBlocks(blocks, originPos, serverLevel)
+                        && !ResearchServerEvents.playerHasResearch(ownerName, ResearchAdvancedPortals.itemName)) {
+                    msPerBuild *= Portal.NON_NETHER_BUILD_TIME_MODIFIER;
+                }
 
-            if (msToNextBuild > msPerBuild) {
-                msToNextBuild = msPerBuild;
-            }
+                if (msToNextBuild > msPerBuild) {
+                    msToNextBuild = msPerBuild;
+                }
 
-            if (ResearchServerEvents.playerHasCheat(this.ownerName, "warpten")) {
-                msToNextBuild -= 500;
-            } else {
-                msToNextBuild -= 50;
-            }
+                if (hasFastBuildCheat) {
+                    msToNextBuild -= 500;
+                } else {
+                    msToNextBuild -= 50;
+                }
 
-            if (msToNextBuild <= 0) {
-                msToNextBuild = msPerBuild;
-                String builderName = ((Unit) workerUnits.get(new Random().nextInt(builderCount))).getOwnerName();
-                buildNextBlock(serverLevel, builderName);
+                if (msToNextBuild <= 0) {
+                    msToNextBuild = msPerBuild;
+                    String builderName = ((Unit) workerUnits.get(new Random().nextInt(builderCount))).getOwnerName();
+                    buildNextBlock(serverLevel, builderName);
+                }
+            } else if ((selfBuilding || hasFastBuildCheat) && !isBuilt) {
+                buildNextBlock(serverLevel, ownerName);
             }
         } else {
             this.ticksToExtinguish = 0;
@@ -840,7 +850,7 @@ public abstract class Building {
                 if (retries < MAX_RETRIES) {
                     spawnAttempts = 0;
                     retries += 1;
-                    range -= 25;
+                    range -= (range * 0.35f);
                 } else {
                     ReignOfNether.LOGGER.warn("Gave up trying to find a suitable animal spawn!");
                     return;
@@ -850,6 +860,7 @@ public abstract class Building {
             || spawnBs.getMaterial() == Material.WOOD
             || spawnBp.distSqr(centrePos) < ANIMAL_SPAWN_RANGE_MIN * ANIMAL_SPAWN_RANGE_MIN
             || spawnBp.distSqr(centrePos) > range * range
+            || Math.abs(spawnBp.getY() - minCorner.getY()) >= 4
             || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp)
             || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp.above()));
 

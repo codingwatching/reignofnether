@@ -402,7 +402,7 @@
     "research.reignofnether.resource_capacity.tooltip1": "Підвищує інвентарь працівників зі 100 до 200 ресурсів",
     "research.reignofnether.resource_capacity.tooltip2": "Робітники тепер автоматично повертають ресурси, коли їх кількість перевищує 100",
     "research.reignofnether.silverfish": "Лусківниця",
-    "research.reignofnether.silverfish.tooltip1": "Дає вашим будівлям %d шанс заспавнити",
+    "research.reignofnether.silverfish.tooltip1": "Дає вашим будівлям %s шанс заспавнити",
     "research.reignofnether.silverfish.tooltip2": "лусківницю щоразу, коли руйнується блок. ",
     "research.reignofnether.silverfish.tooltip3": "Тривалість життя лусківниці обмежена.",
     "research.reignofnether.silverfish.tooltip4": "Потребує Твердиню.",

@@ -54,7 +54,10 @@ public class ResearchPortalForTransport extends ProductionItem {
                 prodBuilding instanceof Portal portal && portal.isUpgraded()
             ),
             () -> ResearchClient.hasResearch(ResearchAdvancedPortals.itemName),
-            () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
+            () -> {
+                if (prodBuilding.productionQueue.isEmpty())
+                    BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName);
+            },
             null,
             List.of(FormattedCharSequence.forward(
                     I18n.get("research.reignofnether.transport_portal"),

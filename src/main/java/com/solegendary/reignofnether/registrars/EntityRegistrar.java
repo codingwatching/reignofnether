@@ -93,6 +93,12 @@ public class EntityRegistrar {
                     .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
                     .build(new ResourceLocation(ReignOfNether.MOD_ID, "villager_unit").toString()));
 
+    public static final RegistryObject<EntityType<MilitiaUnit>> MILITIA_UNIT = ENTITIES.register("militia_unit",
+            () -> EntityType.Builder.of(MilitiaUnit::new, MobCategory.CREATURE)
+                    .sized(EntityType.VILLAGER.getWidth(), EntityType.VILLAGER.getHeight())
+                    .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
+                    .build(new ResourceLocation(ReignOfNether.MOD_ID, "militia_unit").toString()));
+
     public static final RegistryObject<EntityType<VindicatorUnit>> VINDICATOR_UNIT = ENTITIES.register("vindicator_unit",
             () -> EntityType.Builder.of(VindicatorUnit::new, MobCategory.CREATURE)
                     .sized(EntityType.VINDICATOR.getWidth(), EntityType.VINDICATOR.getHeight())

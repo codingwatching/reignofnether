@@ -1,5 +1,7 @@
 package com.solegendary.reignofnether.unit.units.villagers;
 
+import com.solegendary.reignofnether.building.BuildingUtils;
+import com.solegendary.reignofnether.hud.HudClientEvents;
 import net.minecraft.client.resources.language.I18n;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.BuildingServerboundPacket;
@@ -48,7 +50,12 @@ public class VillagerProd extends ProductionItem {
             () -> false,
             () -> false,
             () -> true,
-            () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
+            () -> {
+                if (!BuildingUtils.anyOtherCapitolProducingWorkers(true, prodBuilding))
+                    BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName);
+                else
+                    HudClientEvents.showTemporaryMessage("Only one capitol may build workers at a time.");
+            },
             null,
             List.of(
                 FormattedCharSequence.forward(I18n.get("units.villagers.reignofnether.villager"), Style.EMPTY.withBold(true)),

@@ -1,5 +1,5 @@
 
-1.19.2-1.0.9
+1.19.2-1.0.10
 -------------
 
 - Done and tested
@@ -7,89 +7,103 @@
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
+
+
 Features
 --------
-[🟡] Wave Survival
-    [🟡] Save on exit
-    [❌] Frostwalker sometimes doesn't work (because of kelp?)
-    [❌] Frostwalker doesn't work on lava
-    [❌] Cave sounds are localised in the world
-    [❌] Check that defeat doesn't bug out the world
 
-    - REMEMBER TO LOCK THIS BEFORE RELEASE!
-
-
-[🟡] Wave Survival (Alpha Test)
-    - Disabled in the main release, see #wavesurvivalalphatest for a test jar
-    - This will be updated over the upcoming weeks until it's ready for full release
-
-[✔] Bloodlust ability
-    - Unlockable active ability for Brutes and Headhunters
-    - Researched at the Fortress (250 all resources, 150s)
-    - When used, instantly trades 10hp for 10s of +50% attack speed and +20% movement speed
-    - Headhunters cannot bloodlust while mounted
-
+Villager Militia
+    - Town Centres and villagers now have a 'Call to Arms' button
+    - When used, they run to the nearest Town Centre to be turned into a Militia unit
+    - Militia have 35 HP and 3 damage but cannot do regular worker activities
+    - Militia transform back into villagers any time with a button or if they move 50 blocks away from the town centre
+    - Militia only do 1 damage to huntable animals
+    - Added a bell to the town centre
 
 Bugfixes
 --------
-[✔] Fixed Illager Captain banners becoming invisible
-[✔] Fixed crash on exit when neutral units are placed
-[✔] Mangrove roots are now gatherable (same value as logs)
-[✔] Fixed being unable to exit an ally's garrison
-[✔] Hoglins can no longer spawn as neutral baby hoglins from spawn eggs
-[✔] Piglins can now build on all types of blackstone and nether brick
-[✔] Farmland and overworld crops convert into soulsand and nether wart respectively
-    - Excludes solid crop blocks like melons and pumpkins
-    - Plant blocks replaced by nether blocks no longer drop items
-[✔] Fixed crash related to attacking buildings (again)
-[✔] Shroomlight is now gatherable for 120 food
-[✔] Various language fixes and additions
+
+[🟡] Portals can sometimes stack the same upgrade if they're upgraded with multiple selected
+
+[🟡] Vindicators can no longer spawn with random enchantments on their equipment
+
+[🟡] Ranged units now stagger their attack speeds by a few ticks randomly
+    - This is to work around Minecraft's built-in 1-tick invincibility frames
+
+[🟡] Animals cannot spawn on Y levels too different to your capitol
+
+[🟡] Queued units no longer progress if you're at the population cap instead of being stuck at 99%
+    - This is to fix an issue of being able to go over the max cap when the server is lagging
+
+[🟡] Creepers no longer explode when using /rts-reset
+    - This was to fix a bug where the reset failed if a creeper exploded from it
+
+[🟡] Fixed not being able to upgrade two labs at the same time
+
+[🟡] Fixed crash related to transport portals
+
+[🟡] Fixed sonic booms cancelling the first warden's charge up instead of cycling to the next one
 
 
 Quality of Life Features
 ------------------------
-[✔] Removing control groups now requires SHIFT + right-click
-[✔] RTS data now saves every 60 seconds to reduce chance of losing unit/building control on a server crash
-[✔] Added sounds when you make or disband an alliance
-[✔] Added name checks to network packets to prevent exploits
-[✔] If animals can't spawn at the required range around your capitol, spawning is reattempted at a closer range
-[✔] Portals being placed on overworld terrain show a yellow indicator
 
-[✔] Workers no longer collide with other units
-[✔] Spider Webs can now be autocast by right-clicking it
-    - When active, the first unit they attack will be webbed if off cooldown
+[✔] /gamerule doMobSpawning is now turned off by default
 
-[✔] Witch potions can now be thrown by right-clicking a unit
-    - Right-clicking a friendly unit throws a regen potion
-    - Right-clicking an enemy unit throws a harming potion
-    - Only one potion is thrown at a time if multiple witches are selected
-    - This will NOT be automatically used off cooldown
+[🟡] The warpten cheatcode now also makes buildings build themselves without workers
+
+[✔] All buildings can now be built directly adjacent to each other
+    - This means you can use houses as walls (but you won't be able to shoot past them)
+
+[✔] Spectators can see what's being produced on anyone's buildings
+
+
 
 Balancing
 ---------
-[✔] All bridges: +50 wood (ore for piglins)
-[✔] Random damage dealt to garrisoned units by explosions has been halved
-    - This affects creepers and ghasts
 
-Piglins
-[✔] Bastion: -20% build time
-[✔] All piglin units now move at regular speed on soulsand
-[✔] Ghasts are now immune to knockback
-[✔] Brute Shields now make brutes immune to knockback when active
+[✔] All factions may build additional capitols, but only one can produce workers at any given time
+    - you can also now delete capitols if you have more than one
 
-Monsters
-[✔] Creepers now friendly fire
-[✔] Dark Watchtower: -25 ore
-[✔] Husks: -5hp
-[✔] Skeletons & Strays: -10 food, +10 wood
-[✔] Night now begins 10 mins after game start
-    - This reverses the change from 1.0.5 which was made before Sculk Catalysts
+[✔] Ghasts: +10s build time, +1 pop
 
-Villagers
-[✔] Watchtower: -25 ore
-[✔] Vindicators: -5 food, +5hp, -3s
-[✔] Pillager: -5 wood, -3s
-[✔] Witch: -10 all resources
-[✔] Evoker: -30 ore
-[✔] Iron Golem: +50 ore, +5s (including when built by workers)
+[✔] Creeper friendly fire is halved and friendly fire to other creepers is quartered
 
+[✔] Reduced charged creeper explosion power to 5
+    - For reference, standard creeper power is 3 and charged is 6
+    - Also reduced charged creeper damage to buildings from 40 to 34
+
+[🟡] Reworked Wither Skeletons:
+    - Wither Skeleton: -4 dmg, -0.1as
+    - Wither on hit is now stackable up to 5 times
+        - At maximum stacks: 1 dmg every 0.2s (5 dmg per second)
+    - Wither duration reduced from 7 to 6 seconds
+    - All stacks disappear if the duration expires
+    - Wither cloud duration increased to 15 seconds
+    - Removed withering melee enemies that attack a wither skeleton
+    - Removed passive bonus damage to damaged targets
+
+
+Languages
+---------
+
+Updated:
+"buildings.monsters.reignofnether.mausoleum.tooltip3": "Only one capitol can produce workers at any given time.",
+"buildings.piglins.reignofnether.central_portal.tooltip2": "Only one capitol can produce workers any given time.",
+"buildings.villagers.reignofnether.town_centre.tooltip2": "Only one capitol can produce workers any given time.",
+"abilities.reignofnether.sonic_boom.tooltip4": "Right-click to toggle simultaneous casting.",
+
+New:
+"item.reignofnether.militia_unit_spawn_egg": "Spawn Militia Unit",
+"abilities.reignofnether.call_to_arms_building": "Call to Arms",
+"abilities.reignofnether.call_to_arms_building.tooltip1": "Calls all nearby villagers to be converted ",
+"abilities.reignofnether.call_to_arms_building.tooltip2": "into temporary militia to defend your base.",
+"abilities.reignofnether.call_to_arms_unit": "Call to Arms",
+"abilities.reignofnether.call_to_arms_unit.tooltip1": "Run to the nearest Town Centre to be converted ",
+"abilities.reignofnether.call_to_arms_unit.tooltip2": "into a temporary militia to defend your base.",
+"abilities.reignofnether.back_to_work_building": "Back to Work",
+"abilities.reignofnether.back_to_work_building.tooltip1": "Converts all nearby militia back into villagers ",
+"abilities.reignofnether.back_to_work_building.tooltip2": "and have them go back to their last work position.",
+"abilities.reignofnether.back_to_work_unit": "Back to Work",
+"abilities.reignofnether.back_to_work_unit.tooltip1": "Convert this Militia back into a Villager ",
+"abilities.reignofnether.back_to_work_unit.tooltip2": "and go back to its last work position.",

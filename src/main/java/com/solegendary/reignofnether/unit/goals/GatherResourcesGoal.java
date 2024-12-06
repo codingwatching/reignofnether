@@ -32,6 +32,34 @@ import static com.solegendary.reignofnether.resources.BlockUtils.isLogBlock;
 
 public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
+    public class GatherResourcesSaveData {
+        // saved copies of the above so we can later return to
+        public final ArrayList<BlockPos> todoGatherTargets = new ArrayList<>();
+        public BlockPos gatherTarget = null;
+        public ResourceName targetResourceName = ResourceName.NONE;
+        public ResourceSource targetResourceSource = null;
+        public Building targetFarm = null;
+
+        public boolean hasData() {
+            return this.todoGatherTargets.size() > 0 ||
+                    this.gatherTarget != null ||
+                    this.targetResourceName != ResourceName.NONE ||
+                    this.targetResourceSource != null ||
+                    this.targetFarm != null;
+        }
+        public void delete() {
+            this.todoGatherTargets.clear();
+            this.gatherTarget = null;
+            this.targetResourceName = ResourceName.NONE;
+            this.targetResourceSource = null;
+            this.targetFarm = null;
+        }
+    }
+
+    public GatherResourcesSaveData saveData = new GatherResourcesSaveData();
+    // copy of saveData that is never erased, used for Call to Arms / Back to Work
+    public GatherResourcesSaveData permSaveData = new GatherResourcesSaveData();
+
     private static final int REACH_RANGE = 5;
     private static final int DEFAULT_MAX_GATHER_TICKS = 600; // ticks to gather blocks - actual ticks may be lower, depending on the ResourceSource targeted
     private int gatherTicksLeft = DEFAULT_MAX_GATHER_TICKS;
@@ -47,19 +75,11 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     private int ticksIdle = 0; // ticksWithoutTarget but never reset unless we've reacquired a target - used for idle checks
     private BlockPos altSearchPos = null; // block search origin that may be used instead of the mob position
 
-
     private final ArrayList<BlockPos> todoGatherTargets = new ArrayList<>();
     private BlockPos gatherTarget = null;
     private ResourceName targetResourceName = ResourceName.NONE; // if !None, will passively target blocks around it
     private ResourceSource targetResourceSource = null;
     private Building targetFarm = null;
-
-    // saved copies of the above so we can later return to
-    private final ArrayList<BlockPos> todoGatherTargetsSaved = new ArrayList<>();
-    private BlockPos gatherTargetSaved = null;
-    private ResourceName targetResourceNameSaved = ResourceName.NONE;
-    private ResourceSource targetResourceSourceSaved = null;
-    private Building targetFarmSaved = null;
 
     // whenever we attempt to assign a block as a target it must pass this test
     private final Predicate<BlockPos> BLOCK_CONDITION = bp -> {
@@ -315,35 +335,31 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     }
 
     private void saveState() {
-        todoGatherTargetsSaved.clear();
-        todoGatherTargetsSaved.addAll(todoGatherTargets);
-        gatherTargetSaved = gatherTarget;
-        targetResourceNameSaved = targetResourceName;
-        targetResourceSourceSaved = targetResourceSource;
-        targetFarmSaved = targetFarm;
+        saveData.todoGatherTargets.clear();
+        saveData.todoGatherTargets.addAll(todoGatherTargets);
+        saveData.gatherTarget = gatherTarget;
+        saveData.targetResourceName = targetResourceName;
+        saveData.targetResourceSource = targetResourceSource;
+        saveData.targetFarm = targetFarm;
+
+        if (saveData.hasData()) {
+            permSaveData.todoGatherTargets.clear();
+            permSaveData.todoGatherTargets.addAll(todoGatherTargets);
+            permSaveData.gatherTarget = gatherTarget;
+            permSaveData.targetResourceName = targetResourceName;
+            permSaveData.targetResourceSource = targetResourceSource;
+            permSaveData.targetFarm = targetFarm;
+        }
     }
     public void loadState() {
         todoGatherTargets.clear();
-        todoGatherTargets.addAll(todoGatherTargetsSaved);
-        gatherTarget = gatherTargetSaved;
-        targetResourceName = targetResourceNameSaved;
-        targetResourceSource = targetResourceSourceSaved;
-        targetFarm = targetFarmSaved;
+        todoGatherTargets.addAll(saveData.todoGatherTargets);
+        gatherTarget = saveData.gatherTarget;
+        targetResourceName = saveData.targetResourceName;
+        targetResourceSource = saveData.targetResourceSource;
+        targetFarm = saveData.targetFarm;
     }
-    public boolean hasSavedData() {
-        return todoGatherTargetsSaved.size() > 0 ||
-                gatherTargetSaved != null ||
-                targetResourceNameSaved != ResourceName.NONE ||
-                targetResourceSourceSaved != null ||
-                targetFarmSaved != null;
-    }
-    public void deleteSavedState() {
-        todoGatherTargetsSaved.clear();
-        gatherTargetSaved = null;
-        targetResourceNameSaved = ResourceName.NONE;
-        targetResourceSourceSaved = null;
-        targetFarmSaved = null;
-    }
+
 
     private boolean isBlockInRange(BlockPos target) {
         int reachRangeBonus = Math.min(5, ticksWithoutTarget / TICK_CD);
@@ -410,6 +426,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
     // stop gathering and searching entirely, and remove saved data for
     public void stopGathering() {
+        this.saveState();
         this.mob.level.destroyBlockProgress(this.mob.getId(), new BlockPos(0,0,0), 0);
         todoGatherTargets.clear();
         targetFarm = null;

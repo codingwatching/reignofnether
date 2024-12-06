@@ -92,7 +92,7 @@ public abstract class ProductionBuilding extends Building {
         return spawnPoint;
     }
 
-    public void produceUnit(ServerLevel level, EntityType<? extends Unit> entityType, String ownerName, boolean spawnIndoors) {
+    public Entity produceUnit(ServerLevel level, EntityType<? extends Unit> entityType, String ownerName, boolean spawnIndoors) {
 
         BlockPos spawnPoint;
         if (spawnIndoors) {
@@ -159,6 +159,7 @@ public abstract class ProductionBuilding extends Building {
                 });
             }
         }
+        return entity;
     }
 
     // return true if successful
