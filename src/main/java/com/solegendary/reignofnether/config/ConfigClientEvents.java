@@ -6,9 +6,7 @@ import com.solegendary.reignofnether.building.BuildingClientEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
-import com.solegendary.reignofnether.unit.units.monsters.CreeperProd;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -28,18 +26,20 @@ public class ConfigClientEvents {
     //TODO: and *update* the values of the resourcecost from the resourcecostconfigentries.
     private static final Minecraft MC = Minecraft.getInstance();
     //Load config data from server
-    public static void loadConfigData(ClientboundSyncConfigPacket msg, Supplier<NetworkEvent.Context> ctx) {
-        MC.player.sendSystemMessage(Component.literal("Packet sent"));
-        //ResourceCosts.CREEPER = ResourceCost.Unit(25,25,25,25,25);
-        //CreeperProd.cost = ResourceCosts.CREEPER;
-
-        List<Building> buildingList = BuildingClientEvents.getBuildings();
-        for (Building building : buildingList) {
-            building.rebakeButtons();
+    public static void loadConfigData(ClientboundSyncResourceCostPacket msg, Supplier<NetworkEvent.Context> ctx) {
+        String key = msg.getId();
+        if(ResourceCost.ENTRIES.containsKey(key)) {
+            ResourceCost rescost = ResourceCost.ENTRIES.get(key);
+            //jank, but this is how we rebake using the values sent from the packet currently
+            //we can clean this up later
+            rescost.wood = msg.getWood();
+            rescost.food = msg.getFood();
+            rescost.ore = msg.getOre();
+            rescost.ticks = msg.getTicks() * ResourceCost.TICKS_PER_SECOND;
+            rescost.population = msg.getPopulation();
         }
-        //TODO: use msg.getResourceCosts() and manually assign each ResourceCost to associated ResourceCosts field
-        //List<ResourceCost> resourceCosts = msg.getResourceCosts();
-        //System.out.println("Resource Costs: " + resourceCosts);
+
+        //TODO: Move to separate packet; this fires like 100 billion times as-is
     }
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent evt) {
@@ -48,32 +48,15 @@ public class ConfigClientEvents {
         if (evt.getEntity().getServer().isSingleplayerOwner(evt.getEntity().getGameProfile())) {
             //rebake from clientsideside configs
             ReignOfNether.LOGGER.info("Attempting to rebake from client..");
-            /*
             for(ResourceCostConfigEntry entry : ResourceCostConfigEntry.ENTRIES) {
                 String key = entry.id;
                 if(ResourceCost.ENTRIES.containsKey(key)) {
                     ResourceCost rescost = ResourceCost.ENTRIES.get(key);
+                    ReignOfNether.LOGGER.info("ID found: " + key + ", replacing resourcecost " + ResourceCost.ENTRIES.get(key));
                     rescost.bakeValues(entry);
                 }
             }
-             */
-            /*
-            //Debug print
-            ReignOfNether.LOGGER.info(ResourceCostConfigEntry.ENTRIES);
-            for (String key : ResourceCost.ENTRIES.keySet()) {
-                System.out.println("Key: " + key + ", Value: " + ResourceCost.ENTRIES.get(key));
-            }
-             */
             ResourceCosts.deferredLoadResourceCosts();
-            List<Building> buildingList = BuildingClientEvents.getBuildings();
-            List<LivingEntity> unitList = UnitClientEvents.getAllUnits();
-            for (Building building : buildingList) {
-                building.rebakeButtons();
-            }
-            for (LivingEntity unit : unitList) {
-                //NYI
-                //unit.rebakeButtons();
-            }
         }
     }
 }

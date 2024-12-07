@@ -32,6 +32,7 @@ public class ServerEventRegistrar {
      */
     public void registerServerEvents() {
         vanillaEventBus.register(PlayerServerEvents.class);
+        vanillaEventBus.register(ConfigVanillaServerEvents.class);
         vanillaEventBus.register(UnitServerEvents.class);
         vanillaEventBus.register(BuildingServerEvents.class);
         vanillaEventBus.register(AttackWarningServerEvents.class);
@@ -41,6 +42,5 @@ public class ServerEventRegistrar {
         vanillaEventBus.register(ResearchServerEvents.class);
         vanillaEventBus.register(SurvivalServerEvents.class);
         vanillaEventBus.register(GameModeServerEvents.class);
-        vanillaEventBus.register(ConfigVanillaServerEvents.class);
     }
 }

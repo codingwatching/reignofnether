@@ -250,9 +250,6 @@ public abstract class Building {
         return null;
     }
 
-    //Override in child classes
-    public void rebakeButtons() {
-    }
 
     public boolean canAfford(String ownerName) {
         if (SurvivalServerEvents.isEnabled() &&

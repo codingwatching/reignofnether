@@ -47,6 +47,7 @@ public class ClientEventRegistrar {
     public void registerClientEvents() {
         vanillaEventBus.register(OrthoviewClientEvents.class);
         vanillaEventBus.register(TopdownGuiClientEvents.class);
+        vanillaEventBus.register(ConfigClientEvents.class);
         vanillaEventBus.register(BuildingClientEvents.class); // being first fixes a bug with drawBuildingToPlace()
         vanillaEventBus.register(UnitClientEvents.class);
         vanillaEventBus.register(HealthBarClientEvents.class);
@@ -63,11 +64,11 @@ public class ClientEventRegistrar {
         vanillaEventBus.register(TitleClientEvents.class);
         vanillaEventBus.register(WorldBorderClientEvents.class);
         vanillaEventBus.register(SurvivalClientEvents.class);
-        vanillaEventBus.register(ConfigClientEvents.class);
 
         // to allow singleplayer integrated server to work
         vanillaEventBus.register(TutorialServerEvents.class);
         vanillaEventBus.register(PlayerServerEvents.class);
+        vanillaEventBus.register(ConfigVanillaServerEvents.class);
         vanillaEventBus.register(UnitServerEvents.class);
         vanillaEventBus.register(BuildingServerEvents.class);
         vanillaEventBus.register(AttackWarningServerEvents.class);
@@ -77,6 +78,5 @@ public class ClientEventRegistrar {
         vanillaEventBus.register(ResearchServerEvents.class);
         vanillaEventBus.register(SurvivalServerEvents.class);
         vanillaEventBus.register(GameModeServerEvents.class);
-        vanillaEventBus.register(ConfigVanillaServerEvents.class);
     }
 }

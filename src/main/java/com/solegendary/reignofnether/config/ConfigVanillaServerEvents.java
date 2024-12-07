@@ -2,10 +2,8 @@ package com.solegendary.reignofnether.config;
 
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.registrars.PacketHandler;
-import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.resources.ResourceCost;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
@@ -22,7 +20,9 @@ public class ConfigVanillaServerEvents {
         if(!evt.getEntity().getServer().isSingleplayerOwner(evt.getEntity().getGameProfile())) {
             //rebake from serverside configs
             System.out.println("Attempted to send packet to rebake from server..");
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(serverPlayerSupplier), new ClientboundSyncConfigPacket());
+            for(ResourceCostConfigEntry entry : ResourceCostConfigEntry.ENTRIES) {
+                PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(serverPlayerSupplier), new ClientboundSyncResourceCostPacket(entry));
+            }
         }
     }
 }

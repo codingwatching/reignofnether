@@ -52,15 +52,6 @@ public class Dungeon extends ProductionBuilding {
         this.startingBlockTypes.add(Blocks.DEEPSLATE_BRICK_STAIRS);
 
         this.explodeChance = 0.2f;
-
-        if (level.isClientSide())
-            this.productionButtons = Arrays.asList(
-                CreeperProd.getStartButton(this, Keybindings.keyQ)
-            );
-    }
-
-    @Override
-    public void rebakeButtons() {
         if (level.isClientSide())
             this.productionButtons = Arrays.asList(
                     CreeperProd.getStartButton(this, Keybindings.keyQ)
