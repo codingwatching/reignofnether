@@ -175,6 +175,7 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, WardenUnit.attackDamage)
                 .add(Attributes.ARMOR, WardenUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, WardenUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5);
     }
@@ -198,8 +199,8 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
         this.sonicBoomGoal.tick();
 
         // apply slowness level 2 during daytime for a short time repeatedly
-        if (tickCount % 4 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
-            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 1));
+        if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
+            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, 1));
     }
 
     public void initialiseGoals() {
@@ -207,7 +208,7 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
         this.sonicBoomGoal = new SonicBoomGoal(this, SONIC_BOOM_CHANNEL_TICKS, SONIC_BOOM_RANGE, this::doEntitySonicBoom, this::doBuildingSonicBoom);
@@ -287,12 +288,10 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
                     .stream().filter(mob -> mob instanceof Unit unit &&
                             UnitServerEvents.getUnitToEntityRelationship(this, mob) == Relationship.HOSTILE)
                     .toList();
-            if (nearbyEnemies.size() > 0)
-                doEntitySonicBoom(nearbyEnemies.get(0), Vec3.atCenterOf(targetBuilding.centrePos));
-            if (nearbyEnemies.size() > 1)
-                doEntitySonicBoom(nearbyEnemies.get(1), Vec3.atCenterOf(targetBuilding.centrePos));
-            if (nearbyEnemies.size() > 2)
-                doEntitySonicBoom(nearbyEnemies.get(2), Vec3.atCenterOf(targetBuilding.centrePos));
+
+            for (int i = 0; i < ResearchSculkAmplifiers.SPLIT_BOOM_AMOUNT; i++)
+                if (nearbyEnemies.size() > i)
+                    doEntitySonicBoom(nearbyEnemies.get(i), Vec3.atCenterOf(targetBuilding.centrePos));
         }
         else
             targetBuilding.destroyRandomBlocks((int) SONIC_BOOM_DAMAGE / 2);

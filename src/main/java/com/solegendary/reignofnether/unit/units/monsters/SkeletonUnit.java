@@ -172,6 +172,7 @@ public class SkeletonUnit extends Skeleton implements Unit, AttackerUnit, Ranged
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, SkeletonUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, SkeletonUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, SkeletonUnit.armorValue);
     }
 
@@ -202,7 +203,7 @@ public class SkeletonUnit extends Skeleton implements Unit, AttackerUnit, Ranged
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, false);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new UnitBowAttackGoal<>(this, getAttackCooldown());
+        this.attackGoal = new UnitBowAttackGoal<>(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
         this.mountGoal = new MountGoal(this);
     }

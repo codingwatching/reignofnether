@@ -15,12 +15,15 @@ public enum UnitAction {
     ATTACK_MOVE, // enacted by attack button + left click on ground
     FOLLOW, // enacted by move button + left click on another entity
     BUILD_REPAIR, // build or repair the building at the targeted blockPos
+    ENABLE_AUTOCAST_BUILD_REPAIR,
+    DISABLE_AUTOCAST_BUILD_REPAIR,
     FARM, // sets the villager's target gather resource
     TOGGLE_GATHER_TARGET, // cycle between gathering nothing, food, wood or ore
     RETURN_RESOURCES, // drops off resources to the building
     RETURN_RESOURCES_TO_CLOSEST, // drops off resources to the nearest building that accepts resources
     DELETE, // instantly kills this unit
     DISCARD, // instantly removes this unit from the level without any death animation/event
+    AUTOCAST, // toggle autocast for a unit's ability
 
     ATTACK_GROUND,
     // special abilities - these can also be assigned to cursor actions
@@ -51,6 +54,11 @@ public enum UnitAction {
     SACRIFICE,
     WITHER_CLOUD,
     SPIN_WEBS,
+    BLOOD_LUST,
+    CALL_TO_ARMS_BUILDING,
+    CALL_TO_ARMS_UNIT,
+    BACK_TO_WORK_BUILDING,
+    BACK_TO_WORK_UNIT,
 
     ENCHANT_MULTISHOT,
     ENCHANT_MAIMING,

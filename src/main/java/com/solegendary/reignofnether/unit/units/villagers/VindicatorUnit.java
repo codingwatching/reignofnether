@@ -15,15 +15,14 @@ import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -37,6 +36,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
 
     final static public float attackDamage = 6.0f;
     final static public float attacksPerSecond = 0.5f;
-    final static public float maxHealth = 60.0f;
+    final static public float maxHealth = 65.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.28f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
@@ -178,7 +178,8 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
                 .add(Attributes.MOVEMENT_SPEED, VindicatorUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, VindicatorUnit.attackDamage)
                 .add(Attributes.ARMOR, VindicatorUnit.armorValue)
-                .add(Attributes.MAX_HEALTH, VindicatorUnit.maxHealth);
+                .add(Attributes.MAX_HEALTH, VindicatorUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     public void tick() {
@@ -194,7 +195,7 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }
@@ -267,5 +268,11 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
         if (hurt && hasMaimingEnchant() && pEntity instanceof LivingEntity le)
             le.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1));
         return hurt;
+    }
+
+    @Override
+    @Nullable
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        return pSpawnData;
     }
 }

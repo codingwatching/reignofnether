@@ -1,8 +1,6 @@
 package com.solegendary.reignofnether.unit.units.monsters;
 
-import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.monsters.*;
-import com.solegendary.reignofnether.building.buildings.monsters.SpruceBridge;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.research.ResearchClient;
@@ -180,7 +178,6 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
 
         if (level.isClientSide()) {
             AbilityButton mausoleumButton = Mausoleum.getBuildButton(Keybindings.keyQ);
-            mausoleumButton.isEnabled = () -> !BuildingUtils.doesPlayerOwnCapitol(level.isClientSide(), getOwnerName());
             this.abilityButtons.add(mausoleumButton);
             this.abilityButtons.add(SpruceStockpile.getBuildButton(Keybindings.keyW));
             this.abilityButtons.add(HauntedHouse.getBuildButton(Keybindings.keyE));
@@ -197,6 +194,11 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
     }
 
     @Override
+    public boolean isPushable() {
+        return false;
+    }
+
+    @Override
     public boolean removeWhenFarAway(double d) { return false; }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -204,6 +206,7 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
                 .add(Attributes.ATTACK_DAMAGE, VillagerUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, ZombieVillagerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, ZombieVillagerUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, ZombieVillagerUnit.armorValue);
     }
 
@@ -246,8 +249,8 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
         WorkerUnit.tick(this);
 
         // apply slowness level 2 during daytime for a short time repeatedly
-        if (tickCount % 4 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
-            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 1));
+        if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
+            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, 1));
     }
 
     public void initialiseGoals() {
@@ -255,7 +258,7 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), true);
+        this.attackGoal = new MeleeAttackUnitGoal(this, true);
         this.buildRepairGoal = new BuildRepairGoal(this);
         this.gatherResourcesGoal = new GatherResourcesGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);

@@ -31,11 +31,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -107,7 +109,10 @@ public class MiscUtil {
         do {
             bs = level.getBlockState(new BlockPos(blockPos.getX(), y, blockPos.getZ()));
             y -= 1;
-        } while((bs.isAir() || (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
+        } while((bs.isAir() ||
+                bs.getBlock() == Blocks.LIGHT ||
+                bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
         return new BlockPos(blockPos.getX(), y, blockPos.getZ());
     }
     public static BlockPos getHighestNonAirBlock(Level level, BlockPos blockPos) {
@@ -182,37 +187,39 @@ public class MiscUtil {
         return retBps;
     }
 
-    public static Mob findClosestAttackableUnit(Mob unitMob, float range, ServerLevel level) {
+    public static LivingEntity findClosestAttackableEntity(Mob unitMob, float range, ServerLevel level) {
         Vector3d unitPosition = new Vector3d(unitMob.position().x, unitMob.position().y, unitMob.position().z);
-        List<Mob> nearbyMobs = MiscUtil.getEntitiesWithinRange(unitPosition, range, Mob.class, level);
+        List<LivingEntity> nearbyEntities = MiscUtil.getEntitiesWithinRange(unitPosition, range, LivingEntity.class, level);
 
         double closestDist = range;
-        Mob closestMob = null;
+        LivingEntity closestTarget = null;
         boolean neutralAggro = unitMob.getLevel().getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get();
 
-        for (Mob tMob : nearbyMobs) {
-            if (isAttackable(unitMob, tMob, neutralAggro) && hasLineOfSightForAttacks(unitMob, tMob)) {
-                double dist = unitMob.position().distanceTo(tMob.position());
+        for (LivingEntity tle : nearbyEntities) {
+            if (isIdleOrMoveAttackable(unitMob, tle, neutralAggro) && hasLineOfSightForAttacks(unitMob, tle)) {
+                double dist = unitMob.position().distanceTo(tle.position());
                 if (dist < closestDist) {
                     closestDist = dist;
-                    closestMob = tMob;
+                    closestTarget = tle;
                 }
             }
         }
-        return closestMob;
+        return closestTarget;
     }
 
+    // does not cover explicit attack commands
+    private static boolean isIdleOrMoveAttackable(Mob unitMob, LivingEntity targetEntity, boolean neutralAggro) {
+        Relationship rs = UnitServerEvents.getUnitToEntityRelationship((Unit) unitMob, targetEntity);
 
-    private static boolean isAttackable(Mob unitMob, Mob tMob, boolean neutralAggro) {
-        Relationship rs = UnitServerEvents.getUnitToEntityRelationship((Unit) unitMob, tMob);
+        if (targetEntity instanceof Player player && (player.isCreative() || player.isSpectator()))
+            return false;
 
         // If the relationship is FRIENDLY, do not allow the attack
-        if (rs == Relationship.FRIENDLY) {
+        if (rs == Relationship.FRIENDLY)
             return false;
-        }
 
         // Prevents certain attacks based on specific unit and goal conditions
-        if (tMob instanceof Unit unit &&
+        if (targetEntity instanceof Unit unit &&
                 unit.getMoveGoal() instanceof FlyingMoveToTargetGoal &&
                 unitMob instanceof AttackerUnit attackerUnit &&
                 attackerUnit.getAttackGoal() instanceof MeleeAttackUnitGoal) {
@@ -222,11 +229,11 @@ public class MiscUtil {
         // Checks if neutral units can be attacked based on neutralAggro flag and other conditions
         boolean canAttackNeutral =
                 rs == Relationship.NEUTRAL && neutralAggro &&
-                        !(tMob instanceof Vex) &&
-                        !ResourceSources.isHuntableAnimal(tMob);
+                        !(targetEntity instanceof Vex) &&
+                        !ResourceSources.isHuntableAnimal(targetEntity);
 
         return (rs == Relationship.HOSTILE || canAttackNeutral) &&
-                tMob.getId() != unitMob.getId();
+                targetEntity.getId() != unitMob.getId();
     }
 
 
@@ -265,8 +272,8 @@ public class MiscUtil {
     }
 
 
-    private static boolean hasLineOfSightForAttacks(Mob mob, Mob targetMob) {
-        return mob.hasLineOfSight(targetMob) || mob instanceof GhastUnit ||
+    private static boolean hasLineOfSightForAttacks(Mob mob, LivingEntity targetEntity) {
+        return mob.hasLineOfSight(targetEntity) || mob instanceof GhastUnit ||
                 (mob instanceof Unit unit && GarrisonableBuilding.getGarrison((Unit) mob) != null);
     }
 

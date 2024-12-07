@@ -1,5 +1,6 @@
 package com.solegendary.reignofnether.unit.goals;
 
+import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.GarrisonableBuilding;
@@ -50,29 +51,34 @@ public class GarrisonGoal extends MoveToTargetBlockGoal {
 
     public void setBuildingTarget(BlockPos blockPos) {
         if (blockPos != null) {
-            if (this.mob.level.isClientSide()) {
-                this.buildingTarget = BuildingUtils.findBuilding(true, blockPos);
-                if (this.buildingTarget instanceof GarrisonableBuilding garrisonableBuilding
-                    && buildingTarget.ownerName.equals(((Unit) mob).getOwnerName())) {
+            boolean clientside = this.mob.level.isClientSide();
+            Building building = BuildingUtils.findBuilding(clientside, blockPos);
 
-                    if (!garrisonableBuilding.isFull()) {
-                        MiscUtil.addUnitCheckpoint(((Unit) mob), new BlockPos(
-                            buildingTarget.centrePos.getX(),
-                            buildingTarget.originPos.getY() + 1,
-                            buildingTarget.centrePos.getZ()
-                        ));
-                        ((Unit) mob).setIsCheckpointGreen(true);
-                    } else {
-                        HudClientEvents.showTemporaryMessage(I18n.get("hud.reignofnether.building_full"));
-                    }
-                } else if (this.buildingTarget == null) {
-                    HudClientEvents.showTemporaryMessage(I18n.get("hud.reignofnether.not_garrisonable"));
-                }
-            } else {
-                this.buildingTarget = BuildingUtils.findBuilding(false, blockPos);
+            if (building == null) {
+                return;
             }
-            calcMoveTarget();
-            this.start();
+            else if (!(building instanceof GarrisonableBuilding garrisonableBuilding) ||
+                (!building.ownerName.equals(((Unit) mob).getOwnerName()) &&
+                !AllianceSystem.isAllied(building.ownerName, ((Unit) mob).getOwnerName()))) {
+                if (clientside)
+                    HudClientEvents.showTemporaryMessage(I18n.get("hud.reignofnether.not_garrisonable"));
+            }
+            else if (garrisonableBuilding.isFull()) {
+                if (clientside)
+                    HudClientEvents.showTemporaryMessage(I18n.get("hud.reignofnether.building_full"));
+            } else {
+                if (clientside) {
+                    MiscUtil.addUnitCheckpoint(((Unit) mob), new BlockPos(
+                            building.centrePos.getX(),
+                            building.originPos.getY() + 1,
+                            building.centrePos.getZ()
+                    ));
+                    ((Unit) mob).setIsCheckpointGreen(true);
+                }
+                this.buildingTarget = building;
+                calcMoveTarget();
+                this.start();
+            }
         }
     }
 

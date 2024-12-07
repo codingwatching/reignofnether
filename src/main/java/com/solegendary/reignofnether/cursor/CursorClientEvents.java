@@ -193,6 +193,8 @@ public class CursorClientEvents {
                 !BuildingUtils.isPosInsideAnyBuilding(true, preselectedBlockPos) &&
                 BuildingUtils.isPosInsideAnyBuilding(true, preselectedBlockPos.above()))
                 preselectedBlockPos = preselectedBlockPos.above();
+            else if (ResourceSources.GATHERABLE_PLANTS.contains(MC.level.getBlockState(preselectedBlockPos.above()).getBlock()))
+                preselectedBlockPos = preselectedBlockPos.above();
         }
 
         // ****************************************
@@ -413,7 +415,7 @@ public class CursorClientEvents {
         // clip() returns the point of clip, not the clipped block giving off-by-one errors so move slightly to compensate
         HitResult hitResult = null;
         if (MC.level != null) {
-            hitResult = clip(MC.level, new ClipContext(vectorNear, vectorFar, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, null));
+            hitResult = clip(MC.level, new ClipContext(vectorNear, vectorFar, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, null));
         }
 
         if (hitResult != null)

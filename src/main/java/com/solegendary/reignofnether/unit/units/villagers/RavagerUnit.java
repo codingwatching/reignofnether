@@ -184,7 +184,7 @@ public class RavagerUnit extends Ravager implements Unit, AttackerUnit {
                 .add(Attributes.ARMOR, RavagerUnit.armorValue)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75)
-                .add(Attributes.FOLLOW_RANGE, 32);
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     // prevent shield blocks from stunning and triggering a roar
@@ -203,7 +203,7 @@ public class RavagerUnit extends Ravager implements Unit, AttackerUnit {
         this.usePortalGoal = new UsePortalGoal(this);
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
     }
 

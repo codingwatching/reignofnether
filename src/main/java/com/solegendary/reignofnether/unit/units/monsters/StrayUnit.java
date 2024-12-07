@@ -169,6 +169,7 @@ public class StrayUnit extends Stray implements Unit, AttackerUnit, RangedAttack
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, StrayUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, StrayUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, StrayUnit.armorValue);
     }
 
@@ -196,7 +197,7 @@ public class StrayUnit extends Stray implements Unit, AttackerUnit, RangedAttack
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, false);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new UnitBowAttackGoal<>(this, getAttackCooldown());
+        this.attackGoal = new UnitBowAttackGoal<>(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
         this.mountGoal = new MountGoal(this);
     }

@@ -162,11 +162,12 @@ public class PortraitRendererUnit<T extends LivingEntity, M extends EntityModel<
         drawY += yAndScaleOffsets.getFirst();
         sizeFinal += yAndScaleOffsets.getSecond();
 
-        ItemStack itemStack = entity.getItemBySlot(EquipmentSlot.HEAD);
-        if (itemStack.getItem() instanceof BannerItem) {
+        boolean hasBanner = false;
+        ItemStack bannerStack = entity.getItemBySlot(EquipmentSlot.HEAD);
+        if (bannerStack.getItem() instanceof BannerItem) {
+            hasBanner = true;
             entity.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
         }
-
         drawEntityOnScreen(poseStack, entity, drawX, drawY, sizeFinal);
 
         name = WordUtils.capitalize(name);
@@ -238,6 +239,9 @@ public class PortraitRendererUnit<T extends LivingEntity, M extends EntityModel<
         multibuffersource$buffersource.endBatch();
         poseStack.popPose();
 
+        if (hasBanner)
+            entity.setItemSlot(EquipmentSlot.HEAD, bannerStack);
+
         return rectZone;
     }
 
@@ -260,7 +264,7 @@ public class PortraitRendererUnit<T extends LivingEntity, M extends EntityModel<
             int atkDmg =
                 (int) attackerUnit.getUnitAttackDamage() + (int) AttackerUnit.getWeaponDamageModifier(attackerUnit);
             if (unit instanceof CreeperUnit cUnit && cUnit.isPowered()) {
-                atkDmg *= 2;
+                atkDmg *= CreeperUnit.CHARGED_DAMAGE_MULT;
             }
             if (unit instanceof WorkerUnit wUnit) {
                 atkDmg = (int) attackerUnit.getUnitAttackDamage();

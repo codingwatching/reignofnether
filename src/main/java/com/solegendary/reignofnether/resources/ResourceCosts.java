@@ -38,25 +38,26 @@ public class ResourceCosts {
     // Monsters
     public static ResourceCost ZOMBIE_VILLAGER = ResourceCost.Unit(50,0,0,15,1);
     public static ResourceCost CREEPER = ResourceCost.Unit(50,0,100,35,2);
-    public static ResourceCost SKELETON = ResourceCost.Unit(60,35,0,18,1);
-    public static ResourceCost STRAY = ResourceCost.Unit(60,35,0,18,1);
+    public static ResourceCost SKELETON = ResourceCost.Unit(50,45,0,18,1);
+    public static ResourceCost STRAY = ResourceCost.Unit(50,45,0,18,1);
     public static ResourceCost ZOMBIE = ResourceCost.Unit(75,0,0,18,1);
     public static ResourceCost HUSK = ResourceCost.Unit(75,0,0,18,1);
     public static ResourceCost DROWNED = ResourceCost.Unit(75,0,0,18,1);
     public static ResourceCost SPIDER = ResourceCost.Unit(90,25,25,25,2);
     public static ResourceCost POISON_SPIDER = ResourceCost.Unit(90,25,25,25,2);
-    public static ResourceCost WARDEN = ResourceCost.Unit(250,0,125,40,4);
+    public static ResourceCost WARDEN = ResourceCost.Unit(275,0,125,50,5);
 
     public static ResourceCost ZOMBIE_PIGLIN = ResourceCost.Unit(0,0,0,10,1);
     public static ResourceCost ZOGLIN = ResourceCost.Unit(0,0,0,10,2);
 
     // Villagers
+    public static ResourceCost MILITIA = ResourceCost.Unit(50,0,0,15,1);
     public static ResourceCost VILLAGER = ResourceCost.Unit(50,0,0,15,1);
-    public static ResourceCost IRON_GOLEM = ResourceCost.Unit(0,50,200,40,4);
-    public static ResourceCost PILLAGER = ResourceCost.Unit(120,85,0,35,3);
-    public static ResourceCost VINDICATOR = ResourceCost.Unit(175,0,0,35,3);
-    public static ResourceCost WITCH = ResourceCost.Unit(100,100,100,35,3);
-    public static ResourceCost EVOKER = ResourceCost.Unit(150,0,150,35,3);
+    public static ResourceCost IRON_GOLEM = ResourceCost.Unit(0,50,250,45,4);
+    public static ResourceCost PILLAGER = ResourceCost.Unit(120,80,0,32,3);
+    public static ResourceCost VINDICATOR = ResourceCost.Unit(170,0,0,32,3);
+    public static ResourceCost WITCH = ResourceCost.Unit(90,90,90,35,3);
+    public static ResourceCost EVOKER = ResourceCost.Unit(150,0,120,35,3);
     public static ResourceCost RAVAGER = ResourceCost.Unit(400,50,150,60,7);
 
     // Piglins
@@ -66,16 +67,16 @@ public class ResourceCosts {
     public static ResourceCost HOGLIN = ResourceCost.Unit(150,0,75,35,3);
     public static ResourceCost BLAZE = ResourceCost.Unit(50,50,100,30,2);
     public static ResourceCost WITHER_SKELETON = ResourceCost.Unit(200,0,150,40,4);
-    public static ResourceCost GHAST = ResourceCost.Unit(100,150,250,50,5);
+    public static ResourceCost GHAST = ResourceCost.Unit(100,150,250,60,6);
 
     // ******************* BUILDINGS ******************* //
     public static ResourceCost STOCKPILE = ResourceCost.Building(0,75,0, 0);
-    public static ResourceCost OAK_BRIDGE = ResourceCost.Building(0,50,0, 0);
-    public static ResourceCost SPRUCE_BRIDGE = ResourceCost.Building(0,50,0, 0);
-    public static ResourceCost BLACKSTONE_BRIDGE = ResourceCost.Building(0,0,50, 0);
+    public static ResourceCost OAK_BRIDGE = ResourceCost.Building(0,100,0, 0);
+    public static ResourceCost SPRUCE_BRIDGE = ResourceCost.Building(0,100,0, 0);
+    public static ResourceCost BLACKSTONE_BRIDGE = ResourceCost.Building(0,0,100, 0);
 
     // Monsters
-    public static ResourceCost MAUSOLEUM = ResourceCost.Building(0,300,150, 10);
+    public static ResourceCost MAUSOLEUM = ResourceCost.Building(0,350,250, 10);
     public static ResourceCost HAUNTED_HOUSE = ResourceCost.Building(0,100,0, 10);
     public static ResourceCost PUMPKIN_FARM = ResourceCost.Building(0,200,0, 0);
     public static ResourceCost SCULK_CATALYST = ResourceCost.Building(0,125,0, 0);
@@ -83,23 +84,23 @@ public class ResourceCosts {
     public static ResourceCost SPIDER_LAIR = ResourceCost.Building(0,150,75, 0);
     public static ResourceCost DUNGEON = ResourceCost.Building(0,150,75, 0);
     public static ResourceCost LABORATORY = ResourceCost.Building(0,250,150, 0);
-    public static ResourceCost DARK_WATCHTOWER = ResourceCost.Building(0,100,100, 0);
+    public static ResourceCost DARK_WATCHTOWER = ResourceCost.Building(0,100,75, 0);
     public static ResourceCost STRONGHOLD = ResourceCost.Building(0,400,300, 0);
 
     // Villagers
-    public static ResourceCost TOWN_CENTRE = ResourceCost.Building(0,300,150, 10);
+    public static ResourceCost TOWN_CENTRE = ResourceCost.Building(0,350,250, 10);
     public static ResourceCost VILLAGER_HOUSE = ResourceCost.Building(0,100,0, 10);
     public static ResourceCost WHEAT_FARM = ResourceCost.Building(0,150,0, 0);
     public static ResourceCost BARRACKS = ResourceCost.Building(0,150,0, 0);
     public static ResourceCost BLACKSMITH = ResourceCost.Building(0,100,300, 0);
     public static ResourceCost ARCANE_TOWER = ResourceCost.Building(0,200,100, 0);
     public static ResourceCost LIBRARY = ResourceCost.Building(0,300,100, 0);
-    public static ResourceCost WATCHTOWER = ResourceCost.Building(0,100,100, 0);
+    public static ResourceCost WATCHTOWER = ResourceCost.Building(0,100,75, 0);
     public static ResourceCost CASTLE = ResourceCost.Building(0,400,300, 0);
-    public static ResourceCost IRON_GOLEM_BUILDING = ResourceCost.Building(0,50,200, 0);
+    public static ResourceCost IRON_GOLEM_BUILDING = ResourceCost.Building(0,50,250, 0);
 
     // Piglins
-    public static ResourceCost CENTRAL_PORTAL = ResourceCost.Building(0,300,150, 10);
+    public static ResourceCost CENTRAL_PORTAL = ResourceCost.Building(0,350,250, 10);
     public static ResourceCost BASIC_PORTAL = ResourceCost.Building(0, 75, 0, 0);
     public static ResourceCost NETHERWART_FARM = ResourceCost.Building(0, 150, 0, 0);
     public static ResourceCost BASTION = ResourceCost.Building(0, 150, 100, 0);
@@ -131,6 +132,7 @@ public class ResourceCosts {
     public static ResourceCost RESEARCH_BLAZE_FIRE_WALL = ResourceCost.Research(400, 0, 300, 150);
     public static ResourceCost RESEARCH_FIRE_RESISTANCE = ResourceCost.Research(0, 200, 200, 100);
     public static ResourceCost RESEARCH_WITHER_CLOUDS = ResourceCost.Research(250, 0, 350, 150);
+    public static ResourceCost RESEARCH_BLOODLUST = ResourceCost.Research(250, 250, 250, 150);
     public static ResourceCost RESEARCH_ADVANCED_PORTALS = ResourceCost.Research(0, 300, 300, 150);
     public static ResourceCost RESEARCH_CIVILIAN_PORTAL = ResourceCost.Research(0, 75, 0, 20);
     public static ResourceCost RESEARCH_MILITARY_PORTAL = ResourceCost.Research(0, 125, 0, 30);

@@ -12,8 +12,10 @@ import com.solegendary.reignofnether.building.buildings.villagers.Library;
 import com.solegendary.reignofnether.fogofwar.FrozenChunkClientboundPacket;
 import com.solegendary.reignofnether.nether.NetherBlocks;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
+import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.*;
+import com.solegendary.reignofnether.survival.SurvivalServerEvents;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
@@ -46,6 +48,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class BuildingServerEvents {
@@ -69,11 +72,23 @@ public class BuildingServerEvents {
 
     public static final Random random = new Random();
 
-    public static void saveBuildings() {
-        if (serverLevel == null) {
+    private static final int SAVE_TICKS_MAX = 1200;
+    private static int saveTicks = 0;
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent evt) {
+        if (evt.phase != TickEvent.Phase.END)
             return;
+        saveTicks += 1;
+        if (saveTicks >= SAVE_TICKS_MAX) {
+            ServerLevel level = evt.getServer().getLevel(Level.OVERWORLD);
+            if (level != null) {
+                saveBuildings(level);
+                saveTicks = 0;
+            }
         }
+    }
 
+    public static void saveBuildings(ServerLevel level) {
         BuildingSaveData buildingData = BuildingSaveData.getInstance(serverLevel);
         buildingData.buildings.clear();
 
@@ -85,7 +100,7 @@ public class BuildingServerEvents {
             }
 
             buildingData.buildings.add(new BuildingSave(b.originPos,
-                serverLevel,
+                level,
                 b.name,
                 b.ownerName,
                 b.rotation,
@@ -98,19 +113,15 @@ public class BuildingServerEvents {
             ReignOfNether.LOGGER.info("saved buildings/nether in serverevents: " + b.originPos);
         });
         buildingData.save();
-        serverLevel.getDataStorage().save();
+        level.getDataStorage().save();
     }
 
-    public static void saveNetherZones() {
-        if (serverLevel == null) {
-            return;
-        }
-
-        NetherZoneSaveData netherData = NetherZoneSaveData.getInstance(serverLevel);
+    public static void saveNetherZones(ServerLevel level) {
+        NetherZoneSaveData netherData = NetherZoneSaveData.getInstance(level);
         netherData.netherZones.clear();
         netherData.netherZones.addAll(netherZones);
         netherData.save();
-        serverLevel.getDataStorage().save();
+        level.getDataStorage().save();
 
         ReignOfNether.LOGGER.info("saved " + netherZones.size() + " netherzones in serverevents");
     }
@@ -176,12 +187,16 @@ public class BuildingServerEvents {
     }
 
     @SubscribeEvent
-    public static void onServerStop(ServerStoppingEvent evt) {
-        saveNetherZones();
-        saveBuildings();
+    public static void onServerStopping(ServerStoppingEvent evt) {
+        ServerLevel level = evt.getServer().getLevel(Level.OVERWORLD);
+        if (level != null) {
+            saveNetherZones(level);
+            saveBuildings(level);
+        }
     }
 
-    public static void placeBuilding(
+    @Nullable
+    public static Building placeBuilding(
         String buildingName,
         BlockPos pos,
         Rotation rotation,
@@ -211,7 +226,7 @@ public class BuildingServerEvents {
 
                 if (!canAffordPop) {
                     ResourcesClientboundPacket.warnInsufficientPopulation(ownerName);
-                    return;
+                    return null;
                 }
             }
 
@@ -220,12 +235,10 @@ public class BuildingServerEvents {
                 newBuilding.forceChunk(true);
                 int minY = BuildingUtils.getMinCorner(newBuilding.blocks).getY();
 
-                if (!(newBuilding instanceof AbstractBridge)) {
+                if (!(newBuilding instanceof AbstractBridge))
                     for (BuildingBlock block : newBuilding.blocks)
-                        if (block.getBlockPos().getY() == minY && !block.getBlockState().isAir()) {
+                        if (block.getBlockPos().getY() == minY && !block.getBlockState().isAir())
                             placeScaffoldingUnder(block, newBuilding);
-                        }
-                }
 
                 newBuilding.blocks.stream()
                     .filter(block -> block.getBlockPos().getY() == minY
@@ -251,16 +264,19 @@ public class BuildingServerEvents {
                 ));
 
                 assignBuilderUnits(builderUnitIds, queue, newBuilding);
+
+                UnitServerEvents.getAllUnits()
+                        .stream()
+                        .filter(entity -> entity instanceof Unit unit && unit.getOwnerName().equals(ownerName)
+                                && newBuilding.isPosInsideBuilding(entity.getOnPos().above().above()))
+                        .forEach(entity -> moveNonBuildersAwayFromBuildingFoundations(entity, builderUnitIds, newBuilding));
+
             } else if (!PlayerServerEvents.isBot(ownerName)) {
                 warnInsufficientResources(newBuilding);
             }
-
-            UnitServerEvents.getAllUnits()
-                .stream()
-                .filter(entity -> entity instanceof Unit unit && unit.getOwnerName().equals(ownerName)
-                    && newBuilding.isPosInsideBuilding(entity.getOnPos().above().above()))
-                .forEach(entity -> moveNonBuildersAwayFromBuildingFoundations(entity, builderUnitIds, newBuilding));
+            return newBuilding;
         }
+        return null;
     }
 
     private static void placeScaffoldingUnder(BuildingBlock block, Building newBuilding) {
@@ -334,30 +350,44 @@ public class BuildingServerEvents {
         }
     }
 
-
     public static void cancelBuilding(Building building) {
-        if (building == null || building.isCapitol) {
+        if (building == null)
             return;
-        }
+        if (building.isBuilt &&
+            BuildingUtils.getTotalCompletedBuildingsOwned(false, building.ownerName) == 1)
+            return;
 
         // remove from tracked buildings, all of its leftover queued blocks and then blow it up
         buildings.remove(building);
         if (building instanceof NetherConvertingBuilding nb && nb.getZone() != null) {
             nb.getZone().startRestoring();
-            saveNetherZones();
+            saveNetherZones(serverLevel);
         }
         FrozenChunkClientboundPacket.setBuildingDestroyedServerside(building.originPos);
 
         // AOE2-style refund: return the % of the non-built portion of the building
         // eg. cancelling a building at 70% completion will refund only 30% cost
-        if (!building.isBuilt) {
+        // in survival, refund 50% of this amount
+        if (!building.isBuilt || SurvivalServerEvents.isEnabled()) {
+
             float buildPercent = building.getBlocksPlacedPercent();
-            ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName,
-                Math.round(building.foodCost * (1 - buildPercent)),
-                Math.round(building.woodCost * (1 - buildPercent)),
-                Math.round(building.oreCost * (1 - buildPercent))
-            ));
+            int food = Math.round(building.foodCost * (1 - buildPercent));
+            int wood = Math.round(building.woodCost * (1 - buildPercent));
+            int ore = Math.round(building.oreCost * (1 - buildPercent));
+
+            if (building.isBuilt && SurvivalServerEvents.isEnabled()) {
+                food = Math.round(building.foodCost * 0.5f * buildPercent);
+                wood = Math.round(building.woodCost * 0.5f * buildPercent);
+                ore = Math.round(building.oreCost * 0.5f * buildPercent);
+            }
+            if (food > 0 || wood > 0 || ore > 0) {
+                ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName, food, wood, ore));
+                Resources res = new Resources(building.ownerName, food, wood, ore);
+                ResourcesServerEvents.addSubtractResources(res);
+                ResourcesClientboundPacket.showFloatingText(res, building.centrePos);
+            }
         }
+
         building.destroy((ServerLevel) building.getLevel());
     }
 
@@ -461,7 +491,7 @@ public class BuildingServerEvents {
             if (b.shouldBeDestroyed()) {
                 if (b instanceof NetherConvertingBuilding nb && nb.getZone() != null) {
                     nb.getZone().startRestoring();
-                    saveNetherZones();
+                    saveNetherZones(serverLevel);
                 }
                 FrozenChunkClientboundPacket.setBuildingDestroyedServerside(b.originPos);
                 return true;
@@ -482,7 +512,7 @@ public class BuildingServerEvents {
         netherZones.removeIf(NetherZone::isDone);
         int nzSizeAfter = netherZones.size();
         if (nzSizeBefore != nzSizeAfter) {
-            saveNetherZones();
+            saveNetherZones(serverLevel);
         }
     }
 
@@ -550,8 +580,13 @@ public class BuildingServerEvents {
             Set<Building> affectedBuildings = new HashSet<>();
             for (BlockPos bp : evt.getAffectedBlocks()) {
                 Building building = BuildingUtils.findBuilding(false, bp);
+
                 if (building != null) {
-                    affectedBuildings.add(building);
+                    // prevent enemy ghasts friendly firing their own buildings
+                    if (!(SurvivalServerEvents.isEnabled() && ghastUnit != null &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAME.equals(ghastUnit.getOwnerName()) &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAME.equals(building.ownerName)))
+                        affectedBuildings.add(building);
                 }
             }
             for (Building building : affectedBuildings) {
@@ -561,7 +596,7 @@ public class BuildingServerEvents {
                 } else if (creeperUnit != null) {
                     atkDmg = (int) creeperUnit.getUnitAttackDamage();
                     if (creeperUnit.isPowered()) {
-                        atkDmg *= 2;
+                        atkDmg *= CreeperUnit.CHARGED_DAMAGE_MULT;
                     }
                 } else if (pillagerUnit != null) {
                     atkDmg = (int) pillagerUnit.getUnitAttackDamage() / 2;
@@ -570,10 +605,10 @@ public class BuildingServerEvents {
                 }
 
                 if (atkDmg > 0) {
-                    // all explosion damage will directly hit all occupants at an average of half rate
+                    // all explosion damage will directly hit all occupants at an average of 1/4 rate
                     if (building instanceof GarrisonableBuilding garr) {
                         for (LivingEntity le : garr.getOccupants())
-                            le.hurt(exp.getDamageSource(), random.nextInt(atkDmg + 1));
+                            le.hurt(exp.getDamageSource(), (random.nextInt(atkDmg + 1)) / 2f);
                     }
 
                     if (building instanceof AbstractBridge) {
@@ -586,10 +621,13 @@ public class BuildingServerEvents {
             }
         }
         // don't do any block damage apart from the scripted building damage above or damage to leaves/tnt
-        evt.getAffectedBlocks().removeIf(bp -> {
-            BlockState bs = evt.getLevel().getBlockState(bp);
-            return !(bs.getBlock() instanceof LeavesBlock) && !(bs.getBlock() instanceof TntBlock);
-        });
+        if (!serverLevel.getGameRules().getRule(GameRuleRegistrar.DO_UNIT_GRIEFING).get()) {
+            evt.getAffectedBlocks().removeIf(bp -> {
+                BlockState bs = evt.getLevel().getBlockState(bp);
+                return !(bs.getBlock() instanceof LeavesBlock) && !(bs.getBlock() instanceof TntBlock);
+            });
+        }
+
     }
 
     @SubscribeEvent

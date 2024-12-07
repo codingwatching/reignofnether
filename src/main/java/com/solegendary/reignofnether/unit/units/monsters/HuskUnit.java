@@ -84,7 +84,9 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
 
     // which player owns this unit? this format ensures its synched to client without having to use packets
     public String getOwnerName() { return this.entityData.get(ownerDataAccessor); }
-    public void setOwnerName(String name) { this.entityData.set(ownerDataAccessor, name); }
+    public void setOwnerName(String name) {
+        this.entityData.set(ownerDataAccessor, name);
+    }
     public static final EntityDataAccessor<String> ownerDataAccessor =
             SynchedEntityData.defineId(HuskUnit.class, EntityDataSerializers.STRING);
 
@@ -115,7 +117,7 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
 
     final static public float attackDamage = 3.0f;
     final static public float attacksPerSecond = 0.6f;
-    final static public float maxHealth = 45.0f;
+    final static public float maxHealth = 40.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.28f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
@@ -146,6 +148,7 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, HuskUnit.attackDamage)
                 .add(Attributes.ARMOR, HuskUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, HuskUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 
@@ -162,7 +165,7 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }

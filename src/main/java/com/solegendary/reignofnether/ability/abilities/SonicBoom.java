@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.unit.UnitAction;
+import com.solegendary.reignofnether.unit.goals.SonicBoomGoal;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
 import com.solegendary.reignofnether.util.MyRenderer;
@@ -37,6 +38,14 @@ public class SonicBoom extends Ability {
             true
         );
         this.wardenUnit = wardenUnit;
+    }
+
+    @Override
+    public boolean isChanneling() {
+        SonicBoomGoal goal = this.wardenUnit.getSonicBoomGoal();
+        if (goal == null)
+            return false;
+        return goal.isCasting() || goal.getMoveTarget() != null || goal.getTargetEntity() != null;
     }
 
     @Override

@@ -150,7 +150,7 @@
   "ability.reignofnether.enchant.multishot.tooltip4": "Højreklik for automatisk aktivering",
   "ability.reignofnether.enchant.vigor": "Fortryllelse: Vitalitet",
   "ability.reignofnether.enchant.vigor.tooltip1": "Giver en Fremkalder en stav fortryllet med",
-  "ability.reignofnether.enchant.vigor.tooltip2": "Vitalitet, hvilket sænker deres cooldowns med 25%%.",
+  "ability.reignofnether.enchant.vigor.tooltip2": "Vitalitet, hvilket sænker deres cooldowns med 30%%.",
   "ability.reignofnether.enchant.vigor.tooltip3": "Fjerner alle andre fortryllelser.",
   "ability.reignofnether.enchant.vigor.tooltip4": "Højreklik for automatisk aktivering",
 
@@ -457,7 +457,7 @@
   "research.reignofnether.resource_capacity.tooltip1": "Hæver ressourcekapaciteten for arbejdere fra 100 til 200",
   "research.reignofnether.resource_capacity.tooltip2": "Arbejderne returnerer nu automatisk ressourcer, når de holder over 100",
   "research.reignofnether.silverfish": "Silverfish",
-  "research.reignofnether.silverfish.tooltip1": "Giver dine bygninger en %d chance for at spawne",
+  "research.reignofnether.silverfish.tooltip1": "Giver dine bygninger en %s chance for at spawne",
   "research.reignofnether.silverfish.tooltip2": "en silverfish, når en blok ødelægges.",
   "research.reignofnether.silverfish.tooltip3": "Silverfish har begrænsede levetider.",
   "research.reignofnether.silverfish.tooltip4": "Kræver en Stronghold.",

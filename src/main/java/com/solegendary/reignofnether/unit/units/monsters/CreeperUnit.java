@@ -26,7 +26,9 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -125,6 +127,10 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
     final static public boolean aggressiveWhenIdle = false;
     final static public int popCost = ResourceCosts.CREEPER.population;
 
+    final static public float EXPLOSION_RADIUS = 3;
+    final static public float CHARGED_EXPLOSION_RADIUS = 5;
+    final static public float CHARGED_DAMAGE_MULT = 1.7f;
+
     final static public int maxResources = 0;
 
     private MeleeAttackBuildingGoal attackBuildingGoal;
@@ -146,6 +152,18 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
     }
 
     @Override
+    public void explodeCreeper() {
+        if (!this.level.isClientSide) {
+            Explosion.BlockInteraction explosion$blockinteraction = ForgeEventFactory.getMobGriefingEvent(this.level, this) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
+            float radius = this.isPowered() ? CHARGED_EXPLOSION_RADIUS : EXPLOSION_RADIUS;
+            this.dead = true;
+            this.level.explode(this, this.getX(), this.getY(), this.getZ(), radius, explosion$blockinteraction);
+            this.discard();
+            this.spawnLingeringCloud();
+        }
+    }
+
+    @Override
     public boolean removeWhenFarAway(double d) { return false; }
 
     public boolean canExplodeOnTarget() {
@@ -159,6 +177,7 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, CreeperUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, CreeperUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, CreeperUnit.armorValue);
     }
 
@@ -175,8 +194,8 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
             this.setSwellDir(-1);
 
         // apply slowness level 2 during daytime for a short time repeatedly
-        if (tickCount % 4 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
-            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 1));
+        if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
+            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, 1));
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -50,11 +51,11 @@ public class ResearchGrandLibrary extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(ResearchGrandLibrary.itemName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(I18n.get("research.reignofnether.grand_library"), Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Upgrades this library, unlocking more powerful enchantments.", Style.EMPTY)
+                        FormattedCharSequence.forward(I18n.get("research.reignofnether.grand_library.tooltip1"), Style.EMPTY)
                 )
         );
     }

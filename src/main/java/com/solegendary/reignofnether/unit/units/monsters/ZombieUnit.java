@@ -154,6 +154,7 @@ public class ZombieUnit extends Zombie implements Unit, AttackerUnit, Convertabl
                 .add(Attributes.ATTACK_DAMAGE, ZombieUnit.attackDamage)
                 .add(Attributes.ARMOR, ZombieUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, ZombieUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 
@@ -178,7 +179,7 @@ public class ZombieUnit extends Zombie implements Unit, AttackerUnit, Convertabl
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }

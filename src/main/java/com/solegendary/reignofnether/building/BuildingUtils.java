@@ -5,7 +5,6 @@ package com.solegendary.reignofnether.building;
 import com.solegendary.reignofnether.building.buildings.monsters.*;
 import com.solegendary.reignofnether.building.buildings.piglins.*;
 import com.solegendary.reignofnether.building.buildings.piglins.BlackstoneBridge;
-import com.solegendary.reignofnether.building.buildings.monsters.SpruceBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
 import com.solegendary.reignofnether.building.buildings.villagers.OakBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
@@ -18,9 +17,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -45,10 +43,14 @@ public class BuildingUtils {
                     building.getBlocksPlaced() < building.getBlocksTotal();
     }
 
-    public static boolean doesPlayerOwnCapitol(boolean isClientSide, String playerName) {
+    public static boolean anyOtherCapitolProducingWorkers(boolean isClientSide, Building building) {
         List<Building> buildings = isClientSide ? BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
-        for (Building building : buildings)
-            if (building.isCapitol && building.ownerName.equals(playerName))
+        List<Building> capitols = buildings.stream().filter(
+                b -> b.isCapitol && b.ownerName.equals(building.ownerName) &&
+                        !b.originPos.equals(building.originPos)).toList();
+        for (Building capitol : capitols)
+            if (capitol instanceof ProductionBuilding pb &&
+                !pb.productionQueue.isEmpty())
                 return true;
         return false;
     }
@@ -261,6 +263,7 @@ public class BuildingUtils {
         return false;
     }
 
+    @Nullable
     public static Building findClosestBuilding(boolean isClientSide, Vec3 pos, Predicate<Building> condition) {
         List<Building> buildings;
         if (isClientSide)

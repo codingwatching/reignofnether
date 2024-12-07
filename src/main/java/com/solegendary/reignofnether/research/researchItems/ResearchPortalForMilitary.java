@@ -53,7 +53,10 @@ public class ResearchPortalForMilitary extends ProductionItem {
                 prodBuilding instanceof Portal portal && portal.isUpgraded()
             ),
             () -> true,
-            () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
+            () -> {
+                if (prodBuilding.productionQueue.isEmpty())
+                    BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName);
+            },
             null,
             List.of(FormattedCharSequence.forward(
                     I18n.get("research.reignofnether.military_portal"),

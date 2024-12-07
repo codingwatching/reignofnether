@@ -14,7 +14,6 @@ import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
-import com.solegendary.reignofnether.unit.units.monsters.HuskUnit;
 import com.solegendary.reignofnether.unit.units.monsters.ZombieUnit;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
@@ -75,12 +74,7 @@ public class ResearchHusks extends ProductionItem {
                 ResourceCosts.getFormattedTime(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("research.reignofnether.husks.tooltip1"), Style.EMPTY),
-                FormattedCharSequence.forward(
-                    I18n.get("research.reignofnether.husks.tooltip2",
-                        (int) (HuskUnit.maxHealth - ZombieUnit.maxHealth)
-                    ),
-                    Style.EMPTY
-                ),
+                FormattedCharSequence.forward(I18n.get("research.reignofnether.husks.tooltip2"), Style.EMPTY),
                 FormattedCharSequence.forward("", Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("research.reignofnether.husks.tooltip3"), Style.EMPTY)
             )

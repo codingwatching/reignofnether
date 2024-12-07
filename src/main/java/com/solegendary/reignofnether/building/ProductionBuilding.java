@@ -90,7 +90,7 @@ public abstract class ProductionBuilding extends Building {
         return spawnPoint;
     }
 
-    public void produceUnit(ServerLevel level, EntityType<? extends Unit> entityType, String ownerName, boolean spawnIndoors) {
+    public Entity produceUnit(ServerLevel level, EntityType<? extends Unit> entityType, String ownerName, boolean spawnIndoors) {
 
         BlockPos spawnPoint;
         if (spawnIndoors) {
@@ -157,6 +157,7 @@ public abstract class ProductionBuilding extends Building {
                 });
             }
         }
+        return entity;
     }
 
     // return true if successful
@@ -217,6 +218,7 @@ public abstract class ProductionBuilding extends Building {
                 case ResearchFireResistance.itemName -> prodItem = new ResearchFireResistance(building);
                 case ResearchGrandLibrary.itemName -> prodItem = new ResearchGrandLibrary(building);
                 case ResearchSpiderWebs.itemName -> prodItem = new ResearchSpiderWebs(building);
+                case ResearchBloodlust.itemName -> prodItem = new ResearchBloodlust(building);
 
                 case ResearchPortalForCivilian.itemName -> prodItem = new ResearchPortalForCivilian(building);
                 case ResearchPortalForMilitary.itemName -> prodItem = new ResearchPortalForMilitary(building);

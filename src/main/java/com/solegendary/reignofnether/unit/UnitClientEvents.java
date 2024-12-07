@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.unit;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
+import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
@@ -29,10 +30,7 @@ import com.solegendary.reignofnether.unit.units.monsters.ZoglinUnit;
 import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
 import com.solegendary.reignofnether.unit.units.piglins.GhastUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
-import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
-import com.solegendary.reignofnether.unit.units.villagers.IronGolemUnit;
-import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
-import com.solegendary.reignofnether.unit.units.villagers.VindicatorUnit;
+import com.solegendary.reignofnether.unit.units.villagers.*;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import com.solegendary.reignofnether.util.MyMath;
@@ -40,17 +38,20 @@ import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -62,6 +63,7 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static com.solegendary.reignofnether.cursor.CursorClientEvents.getPreselectedBlockPos;
@@ -91,6 +93,8 @@ public class UnitClientEvents {
     private static final ArrayList<LivingEntity> selectedUnits = new ArrayList<>();
     // tracking of all existing units
     private static final ArrayList<LivingEntity> allUnits = new ArrayList<>();
+
+    @Nullable private static UnitActionItem lastClientUAIActioned = null;
 
     public static ArrayList<LivingEntity> getPreselectedUnits() { return preselectedUnits; }
     public static ArrayList<LivingEntity> getSelectedUnits() {
@@ -176,23 +180,9 @@ public class UnitClientEvents {
     }
 
     public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
-                                             BlockPos preselectedBlockPos, BlockPos selectedBuildingPos) {
-        if (MC.player != null) {
-            UnitActionItem actionItem = new UnitActionItem(
-                MC.player.getName().getString(),
-                action, unitId, unitIds,
-                preselectedBlockPos,
-                selectedBuildingPos
-            );
-            actionItem.action(MC.level);
-
-            PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
-                MC.player.getName().getString(),
-                action, unitId, unitIds,
-                preselectedBlockPos,
-                selectedBuildingPos
-            ));
-        }
+                                             BlockPos preselectedBlockPos, boolean clientside, boolean serverside) {
+        sendUnitCommandManual(action, unitId, unitIds, preselectedBlockPos,
+                new BlockPos(0,0,0), clientside, serverside);
     }
 
     public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds) {
@@ -207,6 +197,54 @@ public class UnitClientEvents {
                 new BlockPos(0,0,0));
     }
 
+    public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
+                                             BlockPos preselectedBlockPos, BlockPos selectedBuildingPos) {
+        if (MC.player != null) {
+            UnitActionItem actionItem = new UnitActionItem(
+                MC.player.getName().getString(),
+                action, unitId, unitIds,
+                preselectedBlockPos,
+                selectedBuildingPos
+            );
+            // prevent spam clicking the same action repeatedly
+            if (!actionItem.equals(lastClientUAIActioned)) {
+                actionItem.action(MC.level);
+                lastClientUAIActioned = actionItem;
+            }
+
+            PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
+                MC.player.getName().getString(),
+                action, unitId, unitIds,
+                preselectedBlockPos,
+                selectedBuildingPos
+            ));
+        }
+    }
+
+    public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
+                                             BlockPos preselectedBlockPos, BlockPos selectedBuildingPos,
+                                             boolean clientside, boolean serverside) {
+        if (MC.player != null) {
+            if (clientside) {
+                UnitActionItem actionItem = new UnitActionItem(
+                        MC.player.getName().getString(),
+                        action, unitId, unitIds,
+                        preselectedBlockPos,
+                        selectedBuildingPos
+                );
+                actionItem.action(MC.level);
+            }
+            if (serverside) {
+                PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
+                        MC.player.getName().getString(),
+                        action, unitId, unitIds,
+                        preselectedBlockPos,
+                        selectedBuildingPos
+                ));
+            }
+        }
+    }
+
     public static void sendUnitCommand(UnitAction action) {
         BlockPos bp = getPreselectedBlockPos();
         if (action == UnitAction.STARTRTS_VILLAGERS) {
@@ -218,11 +256,21 @@ public class UnitClientEvents {
         }
 
         if (MC.player != null) {
+            int[] selUnits = selectedUnits.stream()
+                    .filter(u -> {
+                        if (u instanceof Unit unit)
+                            for (Ability ability : unit.getAbilities())
+                                if (ability.isChanneling() && ability.oneClickOneUse && ability.action == action)
+                                    return false;
+                        return true;
+                    })
+                    .mapToInt(Entity::getId).toArray();
+
             UnitActionItem actionItem = new UnitActionItem(
                 MC.player.getName().getString(),
                 action,
                 preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
-                selectedUnits.stream().mapToInt(Entity::getId).toArray(),
+                selUnits,
                 bp,
                 HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
             );
@@ -232,7 +280,7 @@ public class UnitClientEvents {
                 MC.player.getName().getString(),
                 action,
                 preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
-                selectedUnits.stream().mapToInt(Entity::getId).toArray(),
+                selUnits,
                 bp,
                 HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
             ));
@@ -242,7 +290,11 @@ public class UnitClientEvents {
     private static void resolveMoveAction() {
         // follow friendly unit
         if (preselectedUnits.size() == 1 && !targetingSelf()) {
-            sendUnitCommand(UnitAction.FOLLOW);
+            if (hudSelectedEntity instanceof WitchUnit witchUnit) {
+                sendUnitCommand(UnitAction.THROW_LINGERING_REGEN_POTION);
+            } else {
+                sendUnitCommand(UnitAction.FOLLOW);
+            }
         }
         // move to ground pos (disabled during camera manip)
         else if (!Keybindings.altMod.isDown() && selectedUnits.size() > 0 && MC.level != null) {
@@ -252,12 +304,35 @@ public class UnitClientEvents {
             if (selectedUnits.size() == 1 || isGathering)
                 sendUnitCommand(UnitAction.MOVE);
             else { // if we do not have a gathering villager as the fist
+
                 List<Pair<Integer, BlockPos>> formationPairs = UnitFormations.getMoveFormation(
                     MC.level, selectedUnits, getPreselectedBlockPos()
                 );
+
                 for (Pair<Integer, BlockPos> pair : formationPairs) {
-                    sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{pair.getFirst()}, pair.getSecond());
+                    int entityId = pair.getFirst();
+                    BlockPos targetPos = pair.getSecond();
+                    Entity entity = MC.level.getEntity(entityId);
+                    if (entity instanceof Unit unit &&
+                        unit.getMoveGoal() != null) {
+                        /**
+                         *   BlockPos oldFinalPos = unit.getMoveGoal().getFinalNodePos();
+                         *   sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
+                         *   BlockPos newFinalPos = unit.getMoveGoal().getFinalNodePos();
+                         *
+                         *   // if the client didn't calculate a new enough finalNodePos, then don't bother sending the server command
+                         *   if (oldFinalPos != null && newFinalPos != null &&
+                         *       oldFinalPos.distToCenterSqr(newFinalPos.getX(), newFinalPos.getY(), newFinalPos.getZ()) <= 9) {
+                         *       skips += 1;
+                         *       continue;
+                         *   }
+                         */
+                        sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos);
+                    }
                 }
+                for (LivingEntity le : selectedUnits)
+                    if (le instanceof Unit unit && unit.getMoveGoal() != null)
+                        unit.getMoveGoal().lastSelectedMoveTarget = getPreselectedBlockPos();
             }
         }
     }
@@ -395,6 +470,7 @@ public class UnitClientEvents {
     /**
      * Add and update entities from clientside action
      */
+
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent evt) {
         Entity entity = evt.getEntity();
@@ -472,8 +548,10 @@ public class UnitClientEvents {
             else if (CursorClientEvents.getLeftClickAction() == UnitAction.MOVE)
                 resolveMoveAction();
             // resolve any other abilities not explicitly covered here
-            else if (CursorClientEvents.getLeftClickAction() != null)
+            else if (CursorClientEvents.getLeftClickAction() != null && MC.player != null) {
                 sendUnitCommand(CursorClientEvents.getLeftClickAction());
+            }
+
 
             // left click -> select a single unit
             // if shift is held, deselect a unit or add it to the selected group
@@ -515,7 +593,11 @@ public class UnitClientEvents {
                      getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.HOSTILE ||
                      ResourceSources.isHuntableAnimal(preselectedUnits.get(0)))) {
 
-                    sendUnitCommand(UnitAction.ATTACK);
+                     if (hudSelectedEntity instanceof WitchUnit witchUnit) {
+                         sendUnitCommand(UnitAction.THROW_LINGERING_HARMING_POTION);
+                     } else {
+                         sendUnitCommand(UnitAction.ATTACK);
+                     }
                 }
                 // right click -> attack unfriendly building
                 else if (hudSelectedEntity instanceof AttackerUnit &&
@@ -661,6 +743,14 @@ public class UnitClientEvents {
                                 MyRenderer.drawSolidBox(evt.getPoseStack(), aabb, Direction.UP, green ? 0 : 1, green ? 1 : 0, 0, a, new ResourceLocation("forge:textures/white.png"));
                             } else {
                                 MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, green ? 0 : 1, green ? 1 : 0, 0, a);
+                            }
+                        }
+
+                        // draw path nodes
+                        if (unit instanceof Mob mob && mob.getNavigation().getPath() != null) {
+                            for (Node node : mob.getNavigation().getPath().nodes) {
+                                BlockPos bp = new BlockPos(node.x, node.y, node.z).below();
+                                MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, 0, 1, 0, a);
                             }
                         }
                     }

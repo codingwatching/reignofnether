@@ -143,6 +143,7 @@ public class ZombiePiglinUnit extends ZombifiedPiglin implements Unit, AttackerU
                 .add(Attributes.ATTACK_DAMAGE, ZombiePiglinUnit.attackDamage)
                 .add(Attributes.ARMOR, ZombiePiglinUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, ZombiePiglinUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0);
     }
 
@@ -167,7 +168,7 @@ public class ZombiePiglinUnit extends ZombifiedPiglin implements Unit, AttackerU
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }

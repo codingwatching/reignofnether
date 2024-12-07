@@ -1,11 +1,14 @@
 package com.solegendary.reignofnether.building;
 
+import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractStockpile;
 import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
+import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Rotation;
@@ -27,6 +30,22 @@ public class BuildingServerboundPacket {
     public int[] builderUnitIds;
     public BuildingAction action;
     public Boolean isDiagonalBridge;
+
+    // does auth check against ownerName or against the existing building.ownerName?
+    // if not in either list (eg. check stockpile, request replacement), no auth is needed
+    private final static List<BuildingAction> newBuildingAuthActions = List.of(
+            BuildingAction.PLACE,
+            BuildingAction.PLACE_AND_QUEUE
+    );
+    private final static List<BuildingAction> existingBuildingAuthActions = List.of(
+            BuildingAction.DESTROY,
+            BuildingAction.SET_RALLY_POINT,
+            BuildingAction.SET_RALLY_POINT_ENTITY,
+            BuildingAction.START_PRODUCTION,
+            BuildingAction.CANCEL_PRODUCTION,
+            BuildingAction.CANCEL_BACK_PRODUCTION,
+            BuildingAction.CHANGE_PORTAL
+    );
 
     public static void placeBuilding(String itemName, BlockPos originPos, Rotation rotation,
                                      String ownerName, int[] builderUnitIds, boolean isDiagonalBridge) {
@@ -56,11 +75,13 @@ public class BuildingServerboundPacket {
                 "", buildingPos, BlockPos.ZERO, Rotation.NONE, "", new int[]{ entityId }, false));
     }
     public static void startProduction(BlockPos buildingPos, String itemName) {
-        PacketHandler.INSTANCE.sendToServer(new BuildingServerboundPacket(
-                BuildingAction.START_PRODUCTION,
-                itemName, buildingPos, BlockPos.ZERO, Rotation.NONE, "", new int[0], false));
-
         BuildingClientEvents.switchHudToIdlestBuilding();
+
+        if (HudClientEvents.hudSelectedBuilding != null) {
+            PacketHandler.INSTANCE.sendToServer(new BuildingServerboundPacket(
+                    BuildingAction.START_PRODUCTION,
+                    itemName, HudClientEvents.hudSelectedBuilding.originPos, BlockPos.ZERO, Rotation.NONE, "", new int[0], false));
+        }
     }
     public static void cancelProduction(BlockPos buildingPos, String itemName, boolean frontItem) {
         PacketHandler.INSTANCE.sendToServer(new BuildingServerboundPacket(
@@ -116,12 +137,27 @@ public class BuildingServerboundPacket {
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {
         final var success = new AtomicBoolean(false);
         ctx.get().enqueueWork(() -> {
-
             Building building = null;
             if (!List.of(BuildingAction.PLACE, BuildingAction.PLACE_AND_QUEUE).contains(this.action)) {
                 building = findBuilding(false, this.buildingPos);
                 if (building == null)
                     return;
+            }
+
+            ServerPlayer player = ctx.get().getSender();
+            if (player == null) {
+                ReignOfNether.LOGGER.warn("Sender for unit action packet was null");
+                success.set(false);
+                return;
+            }
+            else if ((newBuildingAuthActions.contains(this.action) &&
+                    !player.getName().getString().equals(ownerName)) ||
+                    (existingBuildingAuthActions.contains(this.action) && building != null &&
+                    !player.getName().getString().equals(building.ownerName)) ) {
+
+                ReignOfNether.LOGGER.warn("Tried to process packet from " + player.getName() + " for " + ownerName);
+                success.set(false);
+                return;
             }
             switch (this.action) {
                 case PLACE -> {

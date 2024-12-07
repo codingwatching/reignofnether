@@ -140,22 +140,26 @@ public class BuildingClientEvents {
 
     // switch to the building with the least production, so we can spread out production items
     public static void switchHudToIdlestBuilding() {
+        if (hudSelectedBuilding == null)
+            return;
         Building idlestBuilding = null;
+
+        List<Building> sameNameBuildings = selectedBuildings.stream().filter(
+                b -> b.name.equals(hudSelectedBuilding.name)
+        ).toList();
+
         int prodTicksLeftMax = Integer.MAX_VALUE;
-        if (selectedBuildings.size() > 0) {
-            for (Building building : selectedBuildings) {
-                if (building instanceof ProductionBuilding prodB) {
-                    int prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0, Integer::sum);
-                    if (prodTicksLeft < prodTicksLeftMax) {
-                        prodTicksLeftMax = prodTicksLeft;
-                        idlestBuilding = building;
-                    }
+        for (Building building : sameNameBuildings) {
+            if (building instanceof ProductionBuilding prodB) {
+                int prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0, Integer::sum);
+                if (prodTicksLeft < prodTicksLeftMax) {
+                    prodTicksLeftMax = prodTicksLeft;
+                    idlestBuilding = building;
                 }
             }
         }
-        if (idlestBuilding != null) {
+        if (idlestBuilding != null)
             hudSelectedBuilding = idlestBuilding;
-        }
     }
 
     public static void setBuildingToPlace(Class<? extends Building> building) {
@@ -282,6 +286,17 @@ public class BuildingClientEvents {
 
         float r = valid ? 0 : 1.0f;
         float g = valid ? 1.0f : 0;
+
+        // highlight yellow if we are placing a portal on overworld terrain
+        if (valid) {
+            String buildingName = buildingToPlace.getName().toLowerCase();
+            if (buildingName.contains("portal") &&
+                !buildingName.contains("central_portal") &&
+                !isOnNetherBlocks(blocksToDraw, originPos)) {
+                r = 0.5f;
+                g = 0.5f;
+            }
+        }
         ResourceLocation rl = new ResourceLocation("forge:textures/white.png");
         AABB aabb = new AABB(minX, minY, minZ, maxX, minY, maxZ);
         MyRenderer.drawLineBox(matrix, aabb, r, g, 0, 0.5f);
@@ -376,8 +391,8 @@ public class BuildingClientEvents {
 
         BlockPos origin = getOriginPos();
         Vec3i originOffset = new Vec3i(origin.getX(), origin.getY(), origin.getZ());
-        BlockPos minPos = BuildingUtils.getMinCorner(blocksToDraw).offset(originOffset).offset(-1, -1, -1);
-        BlockPos maxPos = BuildingUtils.getMaxCorner(blocksToDraw).offset(originOffset).offset(1, 1, 1);
+        BlockPos minPos = BuildingUtils.getMinCorner(blocksToDraw).offset(originOffset);//.offset(-1, -1, -1);
+        BlockPos maxPos = BuildingUtils.getMaxCorner(blocksToDraw).offset(originOffset);//.offset(1, 1, 1);
 
         for (Building building : buildings) {
             for (BuildingBlock block : building.blocks) {

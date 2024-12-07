@@ -1,6 +1,5 @@
 package com.solegendary.reignofnether.unit;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.alliance.AllianceSystem;
@@ -33,6 +32,7 @@ import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
@@ -66,10 +66,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import static com.solegendary.reignofnether.player.PlayerServerEvents.isRTSPlayer;
+import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
 
 public class UnitServerEvents {
 
@@ -78,8 +79,6 @@ public class UnitServerEvents {
 
     // max possible pop you can have regardless of buildings, adjustable via /gamerule maxPopulation
     public static int maxPopulation = ResourceCosts.DEFAULT_MAX_POPULATION;
-
-    private static ServerLevel serverLevel = null;
 
     private static final List<UnitActionItem> unitActionQueue = Collections.synchronizedList(new ArrayList<>());
     private static final ArrayList<LivingEntity> allUnits = new ArrayList<>();
@@ -91,47 +90,85 @@ public class UnitServerEvents {
     }
 
     public static final ArrayList<UnitSave> savedUnits = new ArrayList<>();
+    public static final ArrayList<TargetResourcesSave> savedTargetResources = new ArrayList<>();
+
+    private static final int SAVE_TICKS_MAX = 1200;
+    private static int saveTicks = 0;
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent evt) {
+        if (evt.phase != TickEvent.Phase.END)
+            return;
+        saveTicks += 1;
+        if (saveTicks >= SAVE_TICKS_MAX) {
+            ServerLevel level = evt.getServer().getLevel(Level.OVERWORLD);
+            if (level != null) {
+                saveUnits(level);
+                saveTicks = 0;
+            }
+        }
+    }
 
     @SubscribeEvent
-    public static void saveUnits(ServerStoppingEvent evt) {
-        if (serverLevel == null) {
-            return;
+    public static void onServerStopping(ServerStoppingEvent evt) {
+        ServerLevel level = evt.getServer().getLevel(Level.OVERWORLD);
+        if (level != null) {
+            saveUnits(level);
+            saveGatherTargets(level);
         }
+    }
 
-        UnitSaveData data = UnitSaveData.getInstance(serverLevel);
+    public static void saveUnits(ServerLevel level) {
+        UnitSaveData data = UnitSaveData.getInstance(level);
         data.units.clear();
         getAllUnits().forEach(e -> {
             if (e instanceof Unit unit) {
-                UUID ownerUUID = null;
-                GameProfile profile = serverLevel.getServer().getProfileCache().get(unit.getOwnerName()).orElse(null);
-                if (profile != null) {
-                    ownerUUID = profile.getId();
-                    e.getPersistentData().putUUID("OwnerUUID", ownerUUID);
-                } else {
-                    System.out.println("Could not find UUID for owner name: " + unit.getOwnerName());
-                }
-
                 // Save unit data as usual
                 data.units.add(new UnitSave(e.getName().getString(), unit.getOwnerName(), e.getStringUUID()));
-                System.out.println(
-                    "saved unit in serverevents: " + unit.getOwnerName() + "|" + e.getName().getString() + "|"
-                        + e.getId());
             }
         });
         data.save();
-        serverLevel.getDataStorage().save();
+        level.getDataStorage().save();
+        ReignOfNether.LOGGER.info("Saved " + getAllUnits().size() + " units");
     }
 
+    public static void saveGatherTargets(ServerLevel level) {
+        TargetResourcesSaveData data = TargetResourcesSaveData.getInstance(level);
+        data.targetData.clear();
+        AtomicInteger numWorkersSaved = new AtomicInteger();
+        getAllUnits().forEach(e -> { // if currently gathering, save that gather data
+            if (e instanceof WorkerUnit wUnit) {
+                if (wUnit.getGatherResourceGoal().data.hasData()) {
+                    wUnit.getGatherResourceGoal().data.unitUUID = e.getStringUUID();
+                    data.targetData.add(wUnit.getGatherResourceGoal().data);
+                    numWorkersSaved.addAndGet(1);
+                } else if (wUnit.getGatherResourceGoal().saveData.hasData()) {
+                    wUnit.getGatherResourceGoal().saveData.unitUUID = e.getStringUUID();
+                    data.targetData.add(wUnit.getGatherResourceGoal().saveData);
+                    numWorkersSaved.addAndGet(1);
+                }
+            }
+        });
+        data.save();
+        level.getDataStorage().save();
+        ReignOfNether.LOGGER.info("Saved " + numWorkersSaved + " gatherTargets");
+    }
 
     @SubscribeEvent
-    public static void loadUnits(ServerStartedEvent evt) {
+    public static void onServerStarted(ServerStartedEvent evt) {
         ServerLevel level = evt.getServer().getLevel(Level.OVERWORLD);
 
         synchronized (savedUnits) {
             if (level != null) {
                 UnitSaveData data = UnitSaveData.getInstance(level);
                 savedUnits.addAll(data.units); // actually assign the data in TickEvent as entities don't exist here yet
-                ReignOfNether.LOGGER.info("saved " + data.units.size() + " units in serverevents");
+                ReignOfNether.LOGGER.info("Loaded " + data.units.size() + " units in serverevents");
+            }
+        }
+        synchronized (savedTargetResources) {
+            if (level != null) {
+                TargetResourcesSaveData data = TargetResourcesSaveData.getInstance(level);
+                savedTargetResources.addAll(data.targetData); // actually assign the data in TickEvent as entities don't exist here yet
+                ReignOfNether.LOGGER.info("Loaded " + data.targetData.size() + " gatherTargets in serverevents");
             }
         }
     }
@@ -155,8 +192,9 @@ public class UnitServerEvents {
         for (LivingEntity unit : unitsToConvert) {
             if (unit instanceof ConvertableUnit cUnit) {
                 oldIds.add(unit.getId());
-                int newId = cUnit.convertToUnit(entityType);
-                newIds.add(newId);
+                LivingEntity newEntity = cUnit.convertToUnit(entityType);
+                if (newEntity != null)
+                    newIds.add(newEntity.getId());
             }
         }
         if (oldIds.size() == newIds.size() && oldIds.size() > 0) {
@@ -194,13 +232,15 @@ public class UnitServerEvents {
         BlockPos selectedBuildingPos
     ) {
         synchronized (unitActionQueue) {
-            unitActionQueue.add(new UnitActionItem(ownerName,
-                action,
-                unitId,
-                unitIds,
-                preselectedBlockPos,
-                selectedBuildingPos
-            ));
+            UnitActionItem uai = new UnitActionItem(ownerName,
+                    action,
+                    unitId,
+                    unitIds,
+                    preselectedBlockPos,
+                    selectedBuildingPos
+            );
+            if (!(!unitActionQueue.isEmpty() && unitActionQueue.get(0).equals(uai) && action == UnitAction.MOVE))
+                unitActionQueue.add(uai);
         }
     }
     public static Relationship getUnitToEntityRelationship(Unit unit, Entity entity) {
@@ -214,7 +254,6 @@ public class UnitServerEvents {
         } else {
             return Relationship.NEUTRAL;
         }
-
 
         // Check if the owners are allied first
         if (AllianceSystem.isAllied(ownerName1, ownerName2)) {
@@ -239,20 +278,16 @@ public class UnitServerEvents {
             return Relationship.OWNED;
         } else if (AllianceSystem.isAllied(unitOwnerName, buildingOwnerName)) {
             return Relationship.FRIENDLY;
-
-
         } else {
             return Relationship.HOSTILE;
         }
     }
-
 
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent evt) {
 
         if (evt.getEntity() instanceof Unit && evt.getEntity() instanceof Mob mob) {
             mob.setBaby(false);
-            mob.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0);
             mob.setPathfindingMalus(BlockPathTypes.WATER, -1.0f);
             mob.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
             mob.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
@@ -271,12 +306,27 @@ public class UnitServerEvents {
                         UnitSyncClientboundPacket.sendSyncResourcesPacket(unit);
                         UnitSyncClientboundPacket.sendSyncOwnerNamePacket(unit);
                         ReignOfNether.LOGGER.info(
-                            "loaded unit in serverevents: " + su.ownerName + "|" + su.name + "|" + su.uuid);
+                                "loaded unit in serverevents: " + su.ownerName + "|" + su.name + "|" + su.uuid);
                         return true;
                     }
                     return false;
                 });
             }
+            if (unit instanceof WorkerUnit wUnit) {
+                synchronized (savedTargetResources) {
+                    savedTargetResources.removeIf(sr -> {
+                        if (sr.unitUUID.equals(entity.getStringUUID())) {
+                            wUnit.getGatherResourceGoal().saveData = sr;
+                            wUnit.getGatherResourceGoal().loadState();
+                            ReignOfNether.LOGGER.info(
+                                    "loaded gatherTarget in serverevents: " + sr.gatherTarget);
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+            }
+
             ((Unit) entity).setupEquipmentAndUpgradesServer();
 
             ChunkAccess chunk = evt.getLevel().getChunk(entity.getOnPos());
@@ -314,7 +364,7 @@ public class UnitServerEvents {
                 .size();
             if (unitsOwned == 0 && isRTSPlayer(unit.getOwnerName())
                 && BuildingUtils.getTotalCompletedBuildingsOwned(false, unit.getOwnerName()) == 0) {
-                PlayerServerEvents.defeat(unit.getOwnerName(), "server.reignofnether.lost_all");
+                PlayerServerEvents.defeat(unit.getOwnerName(), Component.translatable("server.reignofnether.lost_all").getString());
             }
         }
     }
@@ -360,7 +410,11 @@ public class UnitServerEvents {
             for (ItemStack itemStack : itemStacks)
                 evt.getEntity().spawnAtLocation(itemStack);
         }
-        if (evt.getEntity() instanceof CreeperUnit creeperUnit) {
+
+        // for some reason, if we discard() creepers en masse via exploding them,
+        // /rts-reset fails to run
+        if (evt.getEntity() instanceof CreeperUnit creeperUnit &&
+            !PlayerServerEvents.rtsPlayers.isEmpty()) {
             creeperUnit.explodeCreeper();
         }
 
@@ -429,8 +483,7 @@ public class UnitServerEvents {
         if (evt.phase != TickEvent.Phase.END || evt.level.isClientSide() || evt.level.dimension() != Level.OVERWORLD) {
             return;
         }
-
-        serverLevel = (ServerLevel) evt.level;
+        ServerLevel serverLevel = (ServerLevel) evt.level;
 
         unitSyncTicks -= 1;
         if (unitSyncTicks <= 0) {
@@ -542,6 +595,16 @@ public class UnitServerEvents {
             && (!(shooter instanceof EvokerUnit));
     }
 
+    public static Entity spawnMob(
+            EntityType<? extends Mob> entityType, ServerLevel level, Vec3i pos, String ownerName
+    ) {
+        ArrayList<Entity> entities = UnitServerEvents.spawnMobs(entityType, level, pos,1, ownerName);
+        if (entities.isEmpty())
+            return null;
+        else
+            return entities.get(0);
+    }
+
     public static ArrayList<Entity> spawnMobs(
         EntityType<? extends Mob> entityType, ServerLevel level, Vec3i pos, int qty, String ownerName
     ) {
@@ -550,12 +613,12 @@ public class UnitServerEvents {
             for (int i = 0; i < qty; i++) {
                 Entity entity = entityType.create(level);
                 if (entity != null) {
-                    entity.moveTo(pos.getX() + i, pos.getY(), pos.getZ());
-                    level.addFreshEntity(entity);
+                    entity.moveTo(pos.above().getX() + i, pos.above().getY(), pos.above().getZ());
                     entities.add(entity);
                     if (entity instanceof Unit unit) {
                         unit.setOwnerName(ownerName);
                     }
+                    level.addFreshEntity(entity);
                 }
             }
         }
@@ -568,24 +631,27 @@ public class UnitServerEvents {
             knockbackIgnoreIds.add(evt.getEntity().getId());
         }
 
-        // wither skeletons deal up to double damage to enemies with less health left
+        // halve friendly fire from your own/friendly creepers (but still cause knockback)
+        if (evt.getSource().getEntity() instanceof CreeperUnit creeperUnit &&
+                getUnitToEntityRelationship(creeperUnit, evt.getEntity()) == Relationship.FRIENDLY) {
+            evt.setAmount(evt.getAmount() / 2);
+
+            if (evt.getEntity() instanceof CreeperUnit)
+                evt.setAmount(evt.getAmount() / 2);
+        }
+
+        if (ResourceSources.isHuntableAnimal(evt.getEntity()) && (
+            evt.getSource().getEntity() instanceof MilitiaUnit
+        )) {
+            evt.setAmount(1);
+            return;
+        }
+
         if (evt.getEntity() instanceof Unit && (
             evt.getSource() == DamageSource.SWEET_BERRY_BUSH || evt.getSource() == DamageSource.CACTUS
         )) {
             evt.setCanceled(true);
             return;
-        }
-
-        // wither skeletons deal up to double damage to enemies with less health left
-        if (evt.getSource().getEntity() instanceof WitherSkeletonUnit) {
-            float maxHp = evt.getEntity().getMaxHealth();
-            float hp = evt.getEntity().getHealth();
-            float damageMult = 2.0f - (hp / maxHp);
-            evt.setAmount(evt.getAmount() * damageMult);
-        }
-        // increase wither damage since we are playing with (average) doubled mob health
-        if (evt.getSource() == DamageSource.WITHER) {
-            evt.setAmount(evt.getAmount() * 2);
         }
 
         // halve direct ghast damage since they get bonus damage from launching units into the air
@@ -611,16 +677,6 @@ public class UnitServerEvents {
             evt.setAmount(evt.getAmount() / 4);
         }
 
-        if (evt.getEntity() instanceof CreeperUnit && (evt.getSource().isExplosion())) {
-            evt.setCanceled(true);
-        }
-
-        // prevent friendly fire from your own/friendly creepers (but still cause knockback)
-        if (evt.getSource().getEntity() instanceof CreeperUnit creeperUnit
-            && getUnitToEntityRelationship(creeperUnit, evt.getEntity()) == Relationship.FRIENDLY) {
-            evt.setCanceled(true);
-        }
-
         if (evt.getSource() == DamageSource.LIGHTNING_BOLT) {
             if (evt.getEntity() instanceof CreeperUnit) {
                 evt.setCanceled(true);
@@ -638,17 +694,7 @@ public class UnitServerEvents {
         if (evt.getEntity() instanceof BruteUnit brute && brute.isHoldingUpShield && (evt.getSource().isProjectile())) {
             evt.setAmount(evt.getAmount() / 3);
         }
-
-        if (evt.getEntity() instanceof CreeperUnit && (evt.getSource().isExplosion())) {
-            evt.setCanceled(true);
-        }
-
-        // prevent friendly fire from your own creepers (but still set off chained explosions and cause knockback)
-        if (evt.getSource().getEntity() instanceof CreeperUnit creeperUnit
-            && getUnitToEntityRelationship(creeperUnit, evt.getEntity()) == Relationship.FRIENDLY) {
-            evt.setCanceled(true);
-        }
-
+        
         if (evt.getSource() == DamageSource.LIGHTNING_BOLT) {
             if (evt.getEntity() instanceof CreeperUnit) {
                 evt.setCanceled(true);
@@ -723,9 +769,12 @@ public class UnitServerEvents {
 
     @SubscribeEvent
     public static void onLivingKnockBack(LivingKnockBackEvent evt) {
-        if (knockbackIgnoreIds.removeIf(i -> i == evt.getEntity().getId())) {
+        if (evt.getEntity() instanceof GhastUnit)
             evt.setCanceled(true);
-        }
+        else if (evt.getEntity() instanceof BruteUnit bruteUnit && bruteUnit.isHoldingUpShield)
+            evt.setCanceled(true);
+        else if (knockbackIgnoreIds.removeIf(i -> i == evt.getEntity().getId()))
+            evt.setCanceled(true);
     }
 
     // make creepers explode from other explosions, like TNT

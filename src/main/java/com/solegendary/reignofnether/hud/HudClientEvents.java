@@ -3,8 +3,11 @@ package com.solegendary.reignofnether.hud;
 import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
+import com.solegendary.reignofnether.ability.abilities.SonicBoom;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientEvents;
 import com.solegendary.reignofnether.building.*;
+import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
 import com.solegendary.reignofnether.guiscreen.TopdownGui;
 import com.solegendary.reignofnether.hud.buttons.ActionButtons;
 import com.solegendary.reignofnether.hud.buttons.StartButtons;
@@ -25,14 +28,12 @@ import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
-import com.solegendary.reignofnether.unit.units.monsters.PoisonSpiderUnit;
-import com.solegendary.reignofnether.unit.units.monsters.SkeletonUnit;
-import com.solegendary.reignofnether.unit.units.monsters.SpiderUnit;
-import com.solegendary.reignofnether.unit.units.monsters.StrayUnit;
+import com.solegendary.reignofnether.unit.units.monsters.*;
 import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
@@ -40,6 +41,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -104,7 +106,6 @@ public class HudClientEvents {
 
     private static final ArrayList<RectZone> hudZones = new ArrayList<>();
 
-    // sets the
     public static void setLowestCdHudEntity() {
         if (UnitClientEvents.getSelectedUnits().isEmpty() || hudSelectedEntity == null) {
             return;
@@ -113,8 +114,11 @@ public class HudClientEvents {
         List<Pair<LivingEntity, Integer>> pairs = UnitClientEvents.getSelectedUnits().stream().map((le) -> {
             int totalCd = 0;
             if (le instanceof Unit unit) {
-                for (Ability ability : unit.getAbilities())
+                for (Ability ability : unit.getAbilities()) {
                     totalCd += ability.getCooldown();
+                    if (ability.isChanneling())
+                        totalCd += 10;
+                }
             }
             return new Pair<>(le, totalCd);
         }).filter(p -> {
@@ -123,9 +127,8 @@ public class HudClientEvents {
             return str1.equals(str2);
         }).sorted(Comparator.comparing(Pair::getSecond)).toList();
 
-        if (!pairs.isEmpty()) {
+        if (!pairs.isEmpty())
             setHudSelectedEntity(pairs.get(0).getFirst());
-        }
     }
 
     public static void setHudSelectedEntity(LivingEntity entity) {
@@ -163,7 +166,6 @@ public class HudClientEvents {
         ItemStack itemStack = ((LivingEntity) entity).getItemBySlot(EquipmentSlot.HEAD);
 
         if (itemStack.getItem() instanceof BannerItem) {
-            entity.setItemSlot(EquipmentSlot.HEAD, itemStack);
             name += " " + I18n.get("units.reignofnether.captain");
         }
         if (entity.getPassengers().size() == 1) {
@@ -379,12 +381,19 @@ public class HudClientEvents {
             // ---------------------------------------------------------------
             // Building production queue (show only if 1 building is selected)
             // ---------------------------------------------------------------
-            else if (hudSelBuildingOwned && hudSelectedBuilding instanceof ProductionBuilding selProdBuilding) {
+            else if ((hudSelBuildingOwned || !PlayerClientEvents.isRTSPlayer) && hudSelectedBuilding instanceof ProductionBuilding selProdBuilding) {
                 blitY = screenHeight - iconFrameSize * 2 - 5;
 
-                for (int i = 0; i < selProdBuilding.productionQueue.size(); i++)
-                    productionButtons.add(selProdBuilding.productionQueue.get(i)
-                        .getCancelButton(selProdBuilding, i == 0));
+                for (int i = 0; i < selProdBuilding.productionQueue.size(); i++) {
+
+                    Button button = selProdBuilding.productionQueue.get(i)
+                            .getCancelButton(selProdBuilding, i == 0);
+                    if (!hudSelBuildingOwned) {
+                        button.onLeftClick = () -> { };
+                        button.onRightClick = () -> { };
+                    }
+                    productionButtons.add(button);
+                }
 
                 if (productionButtons.size() >= 1) {
                     // background frame
@@ -460,7 +469,7 @@ public class HudClientEvents {
             blitX = 0;
             blitY = screenHeight - iconFrameSize;
 
-            if (hudSelectedBuilding != null && hudSelBuildingOwned && !hudSelectedBuilding.isBuilt) {
+            if (hudSelectedBuilding != null && (hudSelBuildingOwned) && !hudSelectedBuilding.isBuilt) {
                 if (!buildingCancelButton.isHidden.get()) {
                     buildingCancelButton.render(evt.getPoseStack(), 0, screenHeight - iconFrameSize, mouseX, mouseY);
                     renderedButtons.add(buildingCancelButton);
@@ -730,6 +739,11 @@ public class HudClientEvents {
             }
             actionButtons.add(ActionButtons.STOP);
 
+            if (hudSelectedEntity instanceof VillagerUnit vUnit)
+                for (Ability ability : vUnit.getAbilities())
+                    if (ability instanceof CallToArmsUnit callToArmsUnit)
+                        actionButtons.add(callToArmsUnit.getButton(Keybindings.keyV));
+
             for (Button actionButton : actionButtons) {
 
                 // GATHER button does not have a static icon
@@ -770,13 +784,16 @@ public class HudClientEvents {
                     if (livingEntity == hudSelectedEntity) {
                         List<AbilityButton> abilityButtons = ((Unit) livingEntity).getAbilityButtons();
 
-                        int shownAbilities = abilityButtons.stream().filter(b -> !b.isHidden.get()).toList().size();
-                        int rowsUp = (int) Math.floor((float) (shownAbilities - 1) / MAX_BUTTONS_PER_ROW);
+                        List<AbilityButton> shownAbilities = abilityButtons.stream()
+                                .filter(ab -> !ab.isHidden.get() && !(ab.ability instanceof CallToArmsUnit))
+                                .toList();
+
+                        int rowsUp = (int) Math.floor((float) (shownAbilities.size() - 1) / MAX_BUTTONS_PER_ROW);
                         rowsUp = Math.max(0, rowsUp);
                         blitY -= iconFrameSize * rowsUp;
 
                         int i = 0;
-                        for (AbilityButton abilityButton : abilityButtons) {
+                        for (AbilityButton abilityButton : shownAbilities) {
                             if (!abilityButton.isHidden.get()) {
                                 i += 1;
                                 abilityButton.render(evt.getPoseStack(), blitX, blitY, mouseX, mouseY);
@@ -949,29 +966,28 @@ public class HudClientEvents {
                             }
                         }
                     }
+                }
+                if (resName == ResourceName.FOOD) {
+                    numWorkersAssigned += numWorkersHunting;
+                }
 
-                    if (resName == ResourceName.FOOD) {
-                        numWorkersAssigned += numWorkersHunting;
-                    }
-
-                    hudZones.add(MyRenderer.renderIconFrameWithBg(evt.getPoseStack(),
+                hudZones.add(MyRenderer.renderIconFrameWithBg(evt.getPoseStack(),
                         new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
                         blitX + 69,
                         blitY,
                         iconFrameSize,
                         iconBgColour
-                    ));
+                ));
 
-                    GuiComponent.drawCenteredString(evt.getPoseStack(),
+                GuiComponent.drawCenteredString(evt.getPoseStack(),
                         MC.font,
                         String.valueOf(numWorkersAssigned),
                         blitX + 69 + (iconFrameSize / 2),
                         blitY + (iconSize / 2) + 1,
                         0xFFFFFF
-                    );
+                );
 
-                    blitY += iconFrameSize - 1;
-                }
+                blitY += iconFrameSize - 1;
             }
 
             blitY = resourceBlitYStart;
@@ -1002,13 +1018,12 @@ public class HudClientEvents {
                             .toList()
                             .size();
                         tooltipWorkersAssigned =
-                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether" + ".total_workers",
+                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether.total_workers",
                             numWorkers
                         ), Style.EMPTY));
                     } else {
                         tooltipWorkersAssigned =
-                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether" + ".workers_on",
-                            locName
+                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether.workers_on_" + resourceName
                         ), Style.EMPTY));
                     }
                     MyRenderer.renderTooltip(evt.getPoseStack(), tooltipWorkersAssigned, mouseX + 5, mouseY);
@@ -1086,6 +1101,20 @@ public class HudClientEvents {
         // Start buttons (spectator only)
         // ------------------------------
         if (!PlayerClientEvents.isRTSPlayer && !PlayerClientEvents.rtsLocked) {
+
+            /*
+            Button gamemodeButton = ClientGameModeHelper.getButton();
+            if (gamemodeButton != null && !gamemodeButton.isHidden.get() && !TutorialClientEvents.isEnabled()) {
+                gamemodeButton.render(evt.getPoseStack(),
+                        screenWidth - (StartButtons.ICON_SIZE * 8),
+                        StartButtons.ICON_SIZE / 2,
+                        mouseX,
+                        mouseY
+                );
+                renderedButtons.add(gamemodeButton);
+            }
+             */
+
             if (!StartButtons.villagerStartButton.isHidden.get()) {
                 StartButtons.villagerStartButton.render(evt.getPoseStack(),
                     screenWidth - (StartButtons.ICON_SIZE * 6),
@@ -1220,7 +1249,6 @@ public class HudClientEvents {
         if (evt.phase != TickEvent.Phase.END) {
             return;
         }
-
         if (OrthoviewClientEvents.isEnabled()) {
             portraitRendererUnit.tickAnimation();
         }
@@ -1317,40 +1345,72 @@ public class HudClientEvents {
 
         // Cycle through selected units
         if (evt.getKeyCode() == Keybindings.tab.key) {
-            List<LivingEntity> entities = new ArrayList<>(getSelectedUnits().stream()
+            cycleUnitSubgroups();
+            cycleBuildingSubgroups();
+        }
+    }
+
+    private static void cycleUnitSubgroups() {
+        List<LivingEntity> entities = new ArrayList<>(getSelectedUnits().stream()
                 .filter(e -> e instanceof Unit)
                 .sorted(Comparator.comparing(HudClientEvents::getSimpleEntityName))
                 .toList());
 
-            if (entities.isEmpty())
-                return;
+        if (entities.isEmpty())
+            return;
 
-            if (Keybindings.shiftMod.isDown()) {
-                Collections.reverse(entities);
+        if (Keybindings.shiftMod.isDown())
+            Collections.reverse(entities);
+
+        if (hudSelectedEntity != null) {
+            String hudSelectedEntityName = HudClientEvents.getModifiedEntityName(hudSelectedEntity);
+            String lastEntityName = "";
+            boolean cycled = false;
+            for (LivingEntity entity : entities) {
+                String currentEntityName = HudClientEvents.getModifiedEntityName(entity);
+                if (lastEntityName.equals(hudSelectedEntityName) && !currentEntityName.equals(lastEntityName)) {
+                    HudClientEvents.setHudSelectedEntity(entity);
+                    cycled = true;
+                    break;
+                }
+                lastEntityName = currentEntityName;
             }
-
-            if (hudSelectedEntity != null) {
-                String hudSelectedEntityName = HudClientEvents.getModifiedEntityName(hudSelectedEntity);
-                String lastEntityName = "";
-                boolean cycled = false;
-                for (LivingEntity entity : entities) {
-                    String currentEntityName = HudClientEvents.getModifiedEntityName(entity);
-                    if (lastEntityName.equals(hudSelectedEntityName) && !currentEntityName.equals(lastEntityName)) {
-                        HudClientEvents.setHudSelectedEntity(entity);
-                        cycled = true;
-                        break;
-                    }
-                    lastEntityName = currentEntityName;
-                }
-                if (!cycled) {
-                    HudClientEvents.setHudSelectedEntity(entities.get(0));
-                } else {
-                    HudClientEvents.setLowestCdHudEntity();
-                }
+            if (!cycled) {
+                HudClientEvents.setHudSelectedEntity(entities.get(0));
+            } else {
+                HudClientEvents.setLowestCdHudEntity();
             }
         }
     }
 
+    private static void cycleBuildingSubgroups() {
+        List<Building> buildings = new ArrayList<>(BuildingClientEvents.getSelectedBuildings().stream()
+                .sorted(Comparator.comparing(b -> b.name))
+                .toList());
+
+        if (buildings.isEmpty())
+            return;
+
+        if (Keybindings.shiftMod.isDown())
+            Collections.reverse(buildings);
+
+        if (hudSelectedBuilding != null) {
+            String hudSelectedBuildingName = hudSelectedBuilding.name;
+            String lastBuildingName = "";
+            boolean cycled = false;
+            for (Building building : buildings) {
+                String currentBuildingName = building.name;
+                if (lastBuildingName.equals(hudSelectedBuildingName) && !currentBuildingName.equals(lastBuildingName)) {
+                    hudSelectedBuilding = building;
+                    cycled = true;
+                    break;
+                }
+                lastBuildingName = currentBuildingName;
+            }
+            if (!cycled)
+                hudSelectedBuilding = buildings.get(0);
+        }
+    }
 
     // newUnitIds are replacing oldUnitIds - replace them in every control group while retaining their index
     public static void convertControlGroups(int[] oldUnitIds, int[] newUnitIds) {

@@ -17,11 +17,13 @@ import com.solegendary.reignofnether.unit.units.modelling.VillagerUnitModel;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -35,6 +37,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -140,7 +143,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
     public static final int FANGS_RANGE_LINE = 10;
     public static final int FANGS_RANGE_CIRCLE = 3;
     public static final float FANGS_DAMAGE = 6f; // can sometimes be doubled or tripled due to overlapping fang hitboxes
-    public static final int FANGS_CHANNEL_SECONDS = 2;
+    public static final int FANGS_CHANNEL_SECONDS = 1;
     public static final int SUMMON_VEXES_AMOUNT = 3;
     public static final int VEX_TARGET_RANGE = 20;
     public static final int VEX_TARGET_RANGE_GARRISON = 30;
@@ -195,6 +198,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, EvokerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, EvokerUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, EvokerUnit.armorValue);
     }
 
@@ -226,7 +230,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new UnitBowAttackGoal<>(this, getAttackCooldown());
+        this.attackGoal = new UnitBowAttackGoal<>(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
         this.castFangsGoal = new CastFangsGoal(this, FANGS_CHANNEL_SECONDS * ResourceCost.TICKS_PER_SECOND, FANGS_RANGE_LINE, this::createEvokerFangs);
         this.castSummonVexesGoal = new CastSummonVexesGoal(this);
@@ -396,5 +400,11 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
         ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
         Optional<Enchantment> enchant = itemStack.getAllEnchantments().keySet().stream().findFirst();
         return enchant.orElse(null);
+    }
+
+    @Override
+    @Nullable
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        return pSpawnData;
     }
 }

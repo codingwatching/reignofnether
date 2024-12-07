@@ -19,6 +19,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
@@ -98,6 +99,10 @@ public class OrthoviewClientEvents {
     // by default orthoview players stay at BASE_Y, but can be raised to as high as MAX_Y if they are clipping terrain
     public static double ORTHOVIEW_PLAYER_BASE_Y = 100;
     public static double ORTHOVIEW_PLAYER_MAX_Y = 160;
+
+    private static float getEdgeCamPanSensitivity() {
+        return (float) (Math.sqrt(getZoom()) / (Math.sqrt(ZOOM_MAX))) * 0.9f;
+    }
 
     public static void updateOrthoviewY() {
         if (MC.player != null && MC.level != null) {
@@ -277,6 +282,8 @@ public class OrthoviewClientEvents {
         enabled = !enabled;
 
         if (enabled) {
+            MC.options.tutorialStep = TutorialSteps.NONE;
+            MC.getTutorial().stop();
             enabledCount += 1;
             PlayerServerboundPacket.enableOrthoview();
             MinimapClientEvents.setMapCentre(MC.player.getX(), MC.player.getZ());
@@ -287,6 +294,7 @@ public class OrthoviewClientEvents {
             MC.options.setCameraType(CameraType.FIRST_PERSON);
             switchToEasyIfPeaceful();
         } else {
+
             PlayerServerboundPacket.disableOrthoview();
             TopdownGuiServerboundPacket.closeTopdownGui(MC.player.getId());
         }
@@ -301,7 +309,15 @@ public class OrthoviewClientEvents {
         MinimapClientEvents.setMapCentre(x, z);
         // at 0deg by default camera is facing +Z and we want to move it backwards from this
         Vec2 XZRotated = MyMath.rotateCoords(0, -20, OrthoviewClientEvents.getCamRotX());
-        PlayerServerboundPacket.teleportPlayer(x + XZRotated.x, MC.player.getY(), z + XZRotated.y);
+
+        float offset = getEdgeCamPanSensitivity();
+
+        Vec2 XZRotatedOffset = MyMath.rotateCoords(0, -(offset * 35), -camRotX - camRotAdjX);
+
+        PlayerServerboundPacket.teleportPlayer(
+                x + XZRotated.x + XZRotatedOffset.x, MC.player.getY(),
+                z + XZRotated.y + XZRotatedOffset.y
+        );
     }
 
     @SubscribeEvent
@@ -404,23 +420,21 @@ public class OrthoviewClientEvents {
         double cursorX = glfwCursorX.get();
         double cursorY = glfwCursorY.get();
 
-        float edgeCamPanSensitivity = 1.5f * (getZoom() / ZOOM_MAX);
-
         // panCam when cursor is at edge of screen
         // remember that mouse (0,0) is top left of screen
         if (!Keybindings.altMod.isDown() && MC.isWindowActive() && !isCameraLocked()) {
             if (cursorX <= 0) {
-                panCam(edgeCamPanSensitivity, 0, 0);
+                panCam(getEdgeCamPanSensitivity(), 0, 0);
                 TutorialClientEvents.pannedLeft = true;
             } else if (cursorX >= glfwWinWidth) {
-                panCam(-edgeCamPanSensitivity, 0, 0);
+                panCam(-getEdgeCamPanSensitivity(), 0, 0);
                 TutorialClientEvents.pannedRight = true;
             }
             if (cursorY <= 0) {
-                panCam(0, 0, edgeCamPanSensitivity);
+                panCam(0, 0, getEdgeCamPanSensitivity());
                 TutorialClientEvents.pannedUp = true;
             } else if (cursorY >= glfwWinHeight) {
-                panCam(0, 0, -edgeCamPanSensitivity);
+                panCam(0, 0, -getEdgeCamPanSensitivity());
                 TutorialClientEvents.pannedDown = true;
             }
         }

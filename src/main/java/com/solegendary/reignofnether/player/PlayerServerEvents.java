@@ -2,7 +2,6 @@ package com.solegendary.reignofnether.player;
 
 import com.mojang.brigadier.context.ParsedArgument;
 import com.mojang.brigadier.context.ParsedCommandNode;
-import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.alliance.AllyCommand;
@@ -24,6 +23,7 @@ import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
+import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.commands.CommandSourceStack;
@@ -71,7 +71,7 @@ public class PlayerServerEvents {
     public static boolean rtsLocked = false; // can players join as RTS players or not?
     public static boolean rtsSyncingEnabled = true; // will logging in players sync units and buildings?
 
-    private static final int MONSTER_START_TIME_OF_DAY = 6500; // 6500 = noon, 12500 = dusk
+    private static final int MONSTER_START_TIME_OF_DAY = 500; // 500 = dawn, 6500 = noon, 12500 = dusk
 
     public static final int ORTHOVIEW_PLAYER_BASE_Y = 85;
 
@@ -579,7 +579,7 @@ public class PlayerServerEvents {
             rtsPlayers.removeIf(rtsPlayer -> {
                 if (rtsPlayer.name.equals(playerName)) {
                     sendMessageToAllPlayers(playerName + " has " + reason + " and is defeated!", true);
-                    sendMessageToAllPlayers("There are " + (rtsPlayers.size() - 1) + " RTS player(s) remaining");
+                    sendMessageToAllPlayers("server.reignofnether.players_remaining", false, (rtsPlayers.size() - 1));
 
                     PlayerClientboundPacket.defeat(playerName);
 
@@ -619,14 +619,14 @@ public class PlayerServerEvents {
                 if (remainingPlayers.equals(factionGroup)) {
                     // Declare victory for all players in the faction group
                     for (String winner : remainingPlayers) {
-                        sendMessageToAllPlayers(winner + " and their allies are victorious!", true);
+                        sendMessageToAllPlayers("server.reignofnether.victory_alliance", true, winner);
                         PlayerClientboundPacket.victory(winner);
                     }
                 }
             } else if (rtsPlayers.size() == 1) {
                 // Single remaining player - declare victory
                 RTSPlayer winner = rtsPlayers.get(0);
-                sendMessageToAllPlayers(winner.name + " is victorious!", true);
+                sendMessageToAllPlayers("server.reignofnether.victorious", true, winner.name);
                 PlayerClientboundPacket.victory(winner.name);
             }
         }
@@ -648,6 +648,7 @@ public class PlayerServerEvents {
 
             for (LivingEntity entity : UnitServerEvents.getAllUnits())
                 entity.kill();
+
             UnitServerEvents.getAllUnits().clear();
 
             for (Building building : BuildingServerEvents.getBuildings()) {
@@ -659,24 +660,28 @@ public class PlayerServerEvents {
             BuildingServerEvents.getBuildings().clear();
             ResearchServerEvents.removeAllResearch();
             ResearchServerEvents.removeAllCheats();
-
             PlayerClientboundPacket.resetRTS();
 
             if (!TutorialServerEvents.isEnabled()) {
                 sendMessageToAllPlayers("server.reignofnether.match_reset", true);
             }
-
             ResourcesServerEvents.resourcesList.clear();
-            saveRTSPlayers();
-
             BuildingServerEvents.netherZones.forEach(NetherZone::startRestoring);
+
+            // clear all saved data
+            saveRTSPlayers();
+            BuildingServerEvents.saveBuildings(serverLevel);
+            BuildingServerEvents.saveNetherZones(serverLevel);
+            UnitServerEvents.saveUnits(serverLevel);
+            UnitServerEvents.saveGatherTargets(serverLevel);
+            ResourcesServerEvents.saveResources(serverLevel);
+            ResearchServerEvents.saveResearch();
 
             if (rtsLocked)
                 setRTSLock(false);
             AllianceSystem.resetAllAlliances();
             if (SurvivalServerEvents.isEnabled()) {
-                SurvivalServerEvents.resetWaves();
-                SurvivalServerEvents.setEnabled(false);
+                SurvivalServerEvents.reset();
             }
         }
     }

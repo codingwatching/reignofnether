@@ -168,7 +168,6 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
 
         if (level.isClientSide()) {
             AbilityButton centralPortalButton = CentralPortal.getBuildButton(Keybindings.keyQ);
-            centralPortalButton.isEnabled = () -> !BuildingUtils.doesPlayerOwnCapitol(level.isClientSide(), getOwnerName());
             this.abilityButtons.add(centralPortalButton);
             this.abilityButtons.add(Portal.getBuildButton(Keybindings.keyW));
             this.abilityButtons.add(NetherwartFarm.getBuildButton(Keybindings.keyE));
@@ -182,6 +181,11 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
     }
 
     @Override
+    public boolean isPushable() {
+        return false;
+    }
+
+    @Override
     public boolean removeWhenFarAway(double d) { return false; }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -189,6 +193,7 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
                 .add(Attributes.ATTACK_DAMAGE, GruntUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, GruntUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, GruntUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, GruntUnit.armorValue);
     }
 
@@ -218,7 +223,7 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.buildRepairGoal = new BuildRepairGoal(this);
         this.gatherResourcesGoal = new GatherResourcesGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);

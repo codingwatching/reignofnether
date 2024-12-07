@@ -21,7 +21,14 @@ import net.minecraft.world.level.material.Material;
 import java.util.List;
 
 public class ResourceSources {
-    public static final List<Material> CLEAR_MATERIALS = List.of(Material.WATER, Material.AIR, Material.PLANT, Material.LEAVES);
+
+    public static final List<Material> CLEAR_MATERIALS = List.of(
+            Material.WATER, Material.AIR, Material.PLANT, Material.LEAVES, Material.STRUCTURAL_AIR
+    );
+
+    public static final List<Block> GATHERABLE_PLANTS = List.of(
+            Blocks.SWEET_BERRY_BUSH, Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM
+    );
 
     public static final int TICKS_PER_SECOND = 20;
 
@@ -139,8 +146,8 @@ public class ResourceSources {
             new ResourceSource("Gourds",
                     List.of(Blocks.MELON, Blocks.PUMPKIN, Blocks.CARVED_PUMPKIN),
                     List.of(Items.MELON, Items.PUMPKIN, Items.CARVED_PUMPKIN),
-                    TICKS_PER_SECOND * 3,
-                    7,
+                    TICKS_PER_SECOND * 4,
+                    6,
                     ResourceName.FOOD
             ),
             new ResourceSource("Carrots",
@@ -171,7 +178,7 @@ public class ResourceSources {
                     List.of(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM),
                     List.of(Items.RED_MUSHROOM, Items.BROWN_MUSHROOM),
                     TICKS_PER_SECOND * 5,
-                    20,
+                    22,
                     ResourceName.FOOD
             ),
             new ResourceSource("Misc. Forageable",
@@ -207,6 +214,13 @@ public class ResourceSources {
                     List.of(Items.BEE_NEST),
                     TICKS_PER_SECOND * 10,
                     100,
+                    ResourceName.FOOD
+            ),
+            new ResourceSource("Shroomlight",
+                    List.of(Blocks.SHROOMLIGHT),
+                    List.of(Items.SHROOMLIGHT),
+                    TICKS_PER_SECOND * 10,
+                    120,
                     ResourceName.FOOD
             ),
             new ResourceSource("Extra large food item",
@@ -279,6 +293,13 @@ public class ResourceSources {
                     15,
                     ResourceName.WOOD
             ),
+            new ResourceSource("Roots",
+                    List.of(Blocks.MUDDY_MANGROVE_ROOTS, Blocks.MANGROVE_ROOTS),
+                    List.of(Items.MUDDY_MANGROVE_ROOTS, Items.MANGROVE_ROOTS),
+                    TICKS_PER_SECOND * 12,
+                    15,
+                    ResourceName.WOOD
+            ),
             new ResourceSource("Nether Logs",
                     List.of(Blocks.CRIMSON_STEM, Blocks.WARPED_STEM, Blocks.CRIMSON_HYPHAE, Blocks.WARPED_HYPHAE,
                             BlockRegistrar.FALLING_WARPED_STEM.get(),
@@ -289,7 +310,7 @@ public class ResourceSources {
                     17,
                     ResourceName.WOOD
             ),
-            new ResourceSource("Leaves", // can't actually gather but can be targeted to begin wood gathering
+            new ResourceSource("Leaves",
                     List.of(Blocks.ACACIA_LEAVES, Blocks.AZALEA_LEAVES, Blocks.BIRCH_LEAVES, Blocks.FLOWERING_AZALEA_LEAVES, Blocks.JUNGLE_LEAVES, Blocks.DARK_OAK_LEAVES,
                             Blocks.MANGROVE_LEAVES, Blocks.OAK_LEAVES, Blocks.SPRUCE_LEAVES, BlockRegistrar.DECAYABLE_NETHER_WART_BLOCK.get(), BlockRegistrar.DECAYABLE_NETHER_WART_BLOCK.get()),
                     List.of(Items.ACACIA_LEAVES, Items.AZALEA_LEAVES, Items.BIRCH_LEAVES, Items.FLOWERING_AZALEA_LEAVES, Items.JUNGLE_LEAVES, Items.DARK_OAK_LEAVES,

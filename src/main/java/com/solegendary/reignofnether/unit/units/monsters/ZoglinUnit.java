@@ -178,6 +178,7 @@ public class ZoglinUnit extends Zoglin implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, ZoglinUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, ZoglinUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, ZoglinUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, ZoglinUnit.armorValue);
     }
 
@@ -209,7 +210,7 @@ public class ZoglinUnit extends Zoglin implements Unit, AttackerUnit {
         this.usePortalGoal = new UsePortalGoal(this);
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
     }
 

@@ -150,7 +150,8 @@ public class EndermanUnit extends EnderMan implements Unit, AttackerUnit {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, EndermanUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, EndermanUnit.attackDamage)
-                .add(Attributes.MAX_HEALTH, EndermanUnit.maxHealth);
+                .add(Attributes.MAX_HEALTH, EndermanUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     public void tick() {
@@ -166,7 +167,7 @@ public class EndermanUnit extends EnderMan implements Unit, AttackerUnit {
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }

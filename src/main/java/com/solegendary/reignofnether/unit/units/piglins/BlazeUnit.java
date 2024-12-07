@@ -157,6 +157,7 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
                 .add(Attributes.ATTACK_DAMAGE, BlazeUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, BlazeUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, BlazeUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, BlazeUnit.armorValue);
     }
 
@@ -191,7 +192,7 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new UnitBowAttackGoal<>(this, getAttackCooldown());
+        this.attackGoal = new UnitBowAttackGoal<>(this);
     }
 
     @Override
