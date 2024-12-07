@@ -6,6 +6,4 @@ import java.util.Set;
 
 public interface NightSource {
     public int getNightRange();
-    public void updateNightBorderBps();
-    public Set<BlockPos> getNightBorderBps();
 }

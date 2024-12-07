@@ -100,7 +100,7 @@ public class SurvivalServerEvents {
         long normTime = TimeUtils.normaliseTime(evt.level.getDayTime());
 
         if (!isStarted()) {
-            setToStartingDayTime();
+            setToGameStartTime();
             return;
         }
 
@@ -114,8 +114,8 @@ public class SurvivalServerEvents {
                 SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
                 setToStartingNightTime();
             }
-            if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 100 &&
-                    normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 100) {
+            if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 50 &&
+                    normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 50) {
                 startNextWave((ServerLevel) evt.level);
             }
             if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
@@ -256,6 +256,10 @@ public class SurvivalServerEvents {
 
     public static void setToStartingNightTime() {
         serverLevel.setDayTime(TimeUtils.DUSK + getDifficultyTimeModifier());
+    }
+
+    public static void setToGameStartTime() {
+        serverLevel.setDayTime(TimeUtils.DUSK + getDifficultyTimeModifier() + 60);
     }
 
     public static boolean isEnabled() { return isEnabled; }

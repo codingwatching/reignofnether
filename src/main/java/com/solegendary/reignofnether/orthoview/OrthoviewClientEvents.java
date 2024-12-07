@@ -3,7 +3,7 @@ package com.solegendary.reignofnether.orthoview;
 import com.mojang.math.Matrix4f;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingClientEvents;
-import com.solegendary.reignofnether.building.NightSource;
+import com.solegendary.reignofnether.building.RangeIndicator;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
 import com.solegendary.reignofnether.guiscreen.TopdownGui;
 import com.solegendary.reignofnether.guiscreen.TopdownGuiServerboundPacket;
@@ -275,9 +275,8 @@ public class OrthoviewClientEvents {
         }
 
         for (Building building : BuildingClientEvents.getBuildings())
-            if (building instanceof NightSource ns) {
-                ns.updateNightBorderBps();
-            }
+            if (building instanceof RangeIndicator ri)
+                ri.updateBorderBps();
 
         enabled = !enabled;
 

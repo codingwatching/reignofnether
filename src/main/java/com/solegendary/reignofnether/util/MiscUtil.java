@@ -385,7 +385,7 @@ public class MiscUtil {
     }
 
     // get the tops of all blocks which are of at a certain horizontal distance away from the centrePos
-    public static Set<BlockPos> getNightCircleBlocks(BlockPos centrePos, int radius, Level level) {
+    public static Set<BlockPos> getRangeIndicatorCircleBlocks(BlockPos centrePos, int radius, Level level) {
         if (radius <= 0)
             return Set.of();
 
