@@ -11,11 +11,6 @@
 
 Wave Survival 0.5
 ------------------
-[✔] Enemies from different factions should no longer attack each other
-[✔] Added mounted units for all enemy factions
-[✔] Added creepers and charged creepers - they ignore all units and will explode at the nearest building
-[❌] Enemies more consistently spawn with ice below them when over water
-[✔] Unit tiers increase every 3rd wave now instead of every 2nd
 
 [❌] Fixed a bug where teams would randomly switch
 
@@ -23,12 +18,6 @@ Wave Survival 0.5
 
 Features
 --------
-[🟡] Improved pathfinding accuracy for all units
-    - Increasing the accuracy also increased server CPU usage, so several optimisations have also been included:
-        - If the last move command is identical to the current one (same units, same location, etc.) the command is ignored
-        - When moving far distances (>50 blocks), some commands are ignored if the last move command was to a similar location
-        - Move commands across water/lava are ignored if the unit would not move as a result (eg. they're stuck at the coast)
-
 [❌] Configurable Unit Costs (Thanks to @DoodleNoodles)
     - Includes all costs, population values and build times
     - Modify the files generated at configs/reignofnether-config.toml to adjust them
@@ -36,10 +25,6 @@ Features
 
 Bugfixes
 --------
-[🟡] Spectators can no longer cancel units from RTS players' building queues
-    - test in lilypad server?
-[🟡] Only save resource data if the unit was actively gathering
-
 [❌] You no longer have to restart your client to change button languages
 
 Quality of Life
