@@ -310,13 +310,16 @@ public class NetherBlocks {
                 Blocks.LARGE_FERN,
                 Blocks.ROSE_BUSH,
                 Blocks.DEAD_BUSH,
-                Blocks.SWEET_BERRY_BUSH,
                 Blocks.MANGROVE_ROOTS,
                 Blocks.MUDDY_MANGROVE_ROOTS,
                 Blocks.AZALEA,
                 Blocks.FLOWERING_AZALEA,
                 Blocks.SUGAR_CANE,
                 Blocks.CACTUS
+            ));
+        PLANT_MAPPINGS.put(Blocks.RED_MUSHROOM,
+            List.of(
+                Blocks.SWEET_BERRY_BUSH
             ));
         PLANT_MAPPINGS.put(Blocks.NETHER_WART,
             List.of(

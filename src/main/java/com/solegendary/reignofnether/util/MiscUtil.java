@@ -31,11 +31,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -107,7 +109,10 @@ public class MiscUtil {
         do {
             bs = level.getBlockState(new BlockPos(blockPos.getX(), y, blockPos.getZ()));
             y -= 1;
-        } while((bs.isAir() || (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
+        } while((bs.isAir() ||
+                bs.getBlock() == Blocks.LIGHT ||
+                bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
         return new BlockPos(blockPos.getX(), y, blockPos.getZ());
     }
     public static BlockPos getHighestNonAirBlock(Level level, BlockPos blockPos) {
@@ -206,10 +211,12 @@ public class MiscUtil {
     private static boolean isIdleOrMoveAttackable(Mob unitMob, LivingEntity targetEntity, boolean neutralAggro) {
         Relationship rs = UnitServerEvents.getUnitToEntityRelationship((Unit) unitMob, targetEntity);
 
-        // If the relationship is FRIENDLY, do not allow the attack
-        if (rs == Relationship.FRIENDLY) {
+        if (targetEntity instanceof Player player && (player.isCreative() || player.isSpectator()))
             return false;
-        }
+
+        // If the relationship is FRIENDLY, do not allow the attack
+        if (rs == Relationship.FRIENDLY)
+            return false;
 
         // Prevents certain attacks based on specific unit and goal conditions
         if (targetEntity instanceof Unit unit &&

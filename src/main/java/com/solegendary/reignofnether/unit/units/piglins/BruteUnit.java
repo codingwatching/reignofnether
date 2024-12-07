@@ -236,7 +236,7 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
 
     @Override
     public void setupEquipmentAndUpgradesServer() {
-        ItemStack axeStack = new ItemStack(Items.IRON_SWORD);
+        ItemStack axeStack = new ItemStack(Items.GOLDEN_SWORD);
         AttributeModifier mod = new AttributeModifier(UUID.randomUUID().toString(), 0, AttributeModifier.Operation.ADDITION);
         axeStack.addAttributeModifier(Attributes.ATTACK_DAMAGE, mod, EquipmentSlot.MAINHAND);
         this.setItemSlot(EquipmentSlot.MAINHAND, axeStack);

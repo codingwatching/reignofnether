@@ -249,7 +249,7 @@ public class PlayerClientEvents {
         BuildingClientEvents.getSelectedBuildings().clear();
         BuildingClientEvents.getBuildings().clear();
         ResourcesClientEvents.resourcesList.clear();
-        ClientGameModeHelper.gameMode = GameMode.STANDARD;
+        ClientGameModeHelper.gameMode = ClientGameModeHelper.DEFAULT_GAMEMODE;
         SurvivalClientEvents.reset();
         if (!ClientGameModeHelper.disallowSurvival)
             ClientGameModeHelper.gameModeLocked = false;

@@ -60,6 +60,11 @@ Quality of Life Features
 
 [❌] Cast spells with the closest unit first
 
+[❌] Spiders should move towards the target before webbing
+
+[❌] /gamerule groundYLevel for mapmakers
+    - Maybe separate for ghasts and bridges?
+
 
 Balancing
 ---------

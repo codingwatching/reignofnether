@@ -660,17 +660,22 @@ public class PlayerServerEvents {
             BuildingServerEvents.getBuildings().clear();
             ResearchServerEvents.removeAllResearch();
             ResearchServerEvents.removeAllCheats();
-
             PlayerClientboundPacket.resetRTS();
 
             if (!TutorialServerEvents.isEnabled()) {
                 sendMessageToAllPlayers("server.reignofnether.match_reset", true);
             }
-
             ResourcesServerEvents.resourcesList.clear();
-            saveRTSPlayers();
-
             BuildingServerEvents.netherZones.forEach(NetherZone::startRestoring);
+
+            // clear all saved data
+            saveRTSPlayers();
+            BuildingServerEvents.saveBuildings(serverLevel);
+            BuildingServerEvents.saveNetherZones(serverLevel);
+            UnitServerEvents.saveUnits(serverLevel);
+            UnitServerEvents.saveGatherTargets(serverLevel);
+            ResourcesServerEvents.saveResources(serverLevel);
+            ResearchServerEvents.saveResearch();
 
             if (rtsLocked)
                 setRTSLock(false);

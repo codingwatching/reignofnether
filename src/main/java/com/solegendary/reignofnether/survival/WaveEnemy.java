@@ -8,9 +8,11 @@ import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +40,9 @@ public class WaveEnemy {
     }
 
     public void tick(long ticksToAdd) {
+        if (getEntity().isPassenger())
+            return;
+
         ticks += ticksToAdd;
 
         boolean isAttacking = unit.getTargetGoal().getTarget() != null;
@@ -63,6 +68,15 @@ public class WaveEnemy {
 
         if (idleTicks > 0 && idleTicks % IDLE_COMMAND_INTERVAL == 0)
             idleCommand();
+
+        if (unit instanceof CreeperUnit creeperUnit) {
+            Building nearestBuilding = getNearestAttackableBuilding();
+            if (nearestBuilding != null) {
+                BlockPos bpTarget = nearestBuilding.getClosestGroundPos(((Entity) unit).getOnPos(), 1);
+                if (creeperUnit.distanceToSqr(Vec3.atCenterOf(bpTarget)) < 4)
+                    creeperUnit.startToExplode();
+            }
+        }
     }
 
     // done shortly after spawn
@@ -81,26 +95,39 @@ public class WaveEnemy {
     }
 
     // done when attacked
-    public void retaliateCommand() {
+    public void retaliateCommand() { }
 
+    private Building getNearestAttackableBuilding() {
+        List<Building> buildings = BuildingServerEvents.getBuildings().stream()
+                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAME.equals(b.ownerName) && !b.ownerName.isBlank())
+                .sorted(Comparator.comparing(b -> b.centrePos.distToCenterSqr(((Entity) unit).getEyePosition())))
+                .toList();
+
+        BlockPos targetBp = null;
+        if (!buildings.isEmpty())
+            return buildings.get(0);
+
+        return null;
     }
 
     private void attackMoveNearestBuilding() {
         unit.resetBehaviours();
 
         Entity entity = (Entity) unit;
-        List<Building> buildings = BuildingServerEvents.getBuildings().stream()
-                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank())
-                .sorted(Comparator.comparing(b -> b.centrePos.distToCenterSqr(entity.getEyePosition())))
-                .toList();
+        Building nearestBuilding = getNearestAttackableBuilding();
 
         BlockPos targetBp = null;
-        if (!buildings.isEmpty())
-            targetBp = buildings.get(0).getClosestGroundPos(((Entity) unit).getOnPos(), 1);
+        if (nearestBuilding != null)
+            targetBp = nearestBuilding.getClosestGroundPos(((Entity) unit).getOnPos(), 1);
 
-        if (targetBp != null)
-            UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,
-                    new int[]{entity.getId()},  targetBp, new BlockPos(0,0,0));
+        if (targetBp != null) {
+            if (unit instanceof AttackerUnit)
+                UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,
+                        new int[]{entity.getId()},  targetBp, new BlockPos(0,0,0));
+            else
+                UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.MOVE, -1,
+                        new int[]{entity.getId()},  targetBp, new BlockPos(0,0,0));
+        }
     }
 
     private void attackMoveRandomBuilding() {
@@ -110,16 +137,22 @@ public class WaveEnemy {
         Collections.shuffle(buildings);
 
         List<Building> playerBuildings = buildings.stream()
-                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank())
+                .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAME.equals(b.ownerName) && !b.ownerName.isBlank())
                 .toList();
 
         BlockPos targetBp = null;
         if (!playerBuildings.isEmpty())
             targetBp = buildings.get(0).getClosestGroundPos(((Entity) unit).getOnPos(), 1);
 
-        if (targetBp != null)
-            UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,
-                    new int[]{((Entity) unit).getId()},  targetBp, new BlockPos(0,0,0));
+
+        if (targetBp != null) {
+            if (unit instanceof AttackerUnit)
+                UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,
+                        new int[]{((Entity) unit).getId()},  targetBp, new BlockPos(0,0,0));
+            else
+                UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.MOVE, -1,
+                        new int[]{((Entity) unit).getId()},  targetBp, new BlockPos(0,0,0));
+        }
     }
 
     private void attackMoveNearestUnit(AttackerUnit unit, String ownerName) {

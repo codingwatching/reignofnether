@@ -140,22 +140,26 @@ public class BuildingClientEvents {
 
     // switch to the building with the least production, so we can spread out production items
     public static void switchHudToIdlestBuilding() {
+        if (hudSelectedBuilding == null)
+            return;
         Building idlestBuilding = null;
+
+        List<Building> sameNameBuildings = selectedBuildings.stream().filter(
+                b -> b.name.equals(hudSelectedBuilding.name)
+        ).toList();
+
         int prodTicksLeftMax = Integer.MAX_VALUE;
-        if (selectedBuildings.size() > 0) {
-            for (Building building : selectedBuildings) {
-                if (building instanceof ProductionBuilding prodB) {
-                    int prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0, Integer::sum);
-                    if (prodTicksLeft < prodTicksLeftMax) {
-                        prodTicksLeftMax = prodTicksLeft;
-                        idlestBuilding = building;
-                    }
+        for (Building building : sameNameBuildings) {
+            if (building instanceof ProductionBuilding prodB) {
+                int prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0, Integer::sum);
+                if (prodTicksLeft < prodTicksLeftMax) {
+                    prodTicksLeftMax = prodTicksLeft;
+                    idlestBuilding = building;
                 }
             }
         }
-        if (idlestBuilding != null) {
+        if (idlestBuilding != null)
             hudSelectedBuilding = idlestBuilding;
-        }
     }
 
     public static void setBuildingToPlace(Class<? extends Building> building) {

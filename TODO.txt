@@ -9,19 +9,15 @@
 
 
 
-Wave Survival 0.4a
+Wave Survival 0.5
 ------------------
-[❌] Enemies from different factions should not attach each other
+
 [❌] Fixed a bug where teams would randomly switch
+
+
 
 Features
 --------
-[🟡] Improved pathfinding accuracy for all units
-    - Increasing the accuracy also increased server CPU usage, so several optimisations have also been included:
-        - If the last move command is identical to the current one (same units, same location, etc.) the command is ignored
-        - When moving far distances (>50 blocks), some commands are ignored if the last move command was to a similar location
-        - Move commands across water/lava are ignored if the unit would not move as a result (eg. they're stuck at the coast)
-
 [❌] Configurable Unit Costs (Thanks to @DoodleNoodles)
     - Includes all costs, population values and build times
     - Modify the files generated at configs/reignofnether-config.toml to adjust them
@@ -29,46 +25,14 @@ Features
 
 Bugfixes
 --------
-[🟡] Spectators can no longer cancel units from RTS players' building queues
-    - test in lilypad server?
-[🟡] Fixed some units randomly spawning as neutral
-[✔] Can no longer enter enemy garrisons
-    - You can still enter allied garrisons
-[✔] Tall grass and other plants with no collision are now ignored by the cursor
-[🟡] Only save resource data if the unit was actively gathering
-[✔] Fix weird pathing over magma
-    - To fix this, there is now a new block identical in texture and function to magma called "Walkable Magma"
-    - @Mapmakers should replace any regular magma blocks in their maps with this block to improve pathfinding
-
-[❌] Wipe all saved data on /rts-reset
 [❌] You no longer have to restart your client to change button languages
 
 Quality of Life
 ---------------
-
-[✔] Units now attack survival players automatically when idle or attack-moving (except if allied)
-[✔] Reduced volume of the Call To Arms bell when used by villagers
-[✔] Cancelling an unfinished building now shows a resource popup for the refund
-[✔] You can now right-click the build/repair button to have workers auto-repair nearby buildings
-
-[❌] /gamerule groundYLevel for mapmakers
-    - Maybe separate for ghasts and bridges?
-
-Balancing
----------
-
-[✔] Farm growth is no longer random
-[🟡] Capitols after the first take twice as long to build
-[✔] All Capitols: +50 wood, +100 ore (starting resources adjusted accordingly)
-
-Monsters:
-[✔] Wardens: +25 food, +10s, +1 pop
-[✔] Spiders & Poison Spiders: +1 dmg
-[✔] Pumpkins now take +1s to gather, and give -1 food
+[✔] Add gamerule for explosions breaking terrain /gamerule doUnitGriefing (false by default)
 
 
 Languages
 ---------
 Vietnamese added (thanks to @hungtq1016)
-
 
