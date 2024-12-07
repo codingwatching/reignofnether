@@ -32,8 +32,3 @@ Quality of Life
 ---------------
 [✔] Add gamerule for explosions breaking terrain /gamerule doUnitGriefing (false by default)
 [✔] Range indicators for Town Centres and Laboratories are shown when selected
-
-Languages
----------
-Vietnamese added (thanks to @hungtq1016)
-
