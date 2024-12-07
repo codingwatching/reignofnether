@@ -2,7 +2,7 @@
 1.19.2-1.0.11
 -------------
 
-- Done and testedZ
+- Done and tested
 [✔] Done and tested
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
@@ -16,6 +16,8 @@ Wave Survival 0.5a
 [❌] Fixed a bug where teams would randomly switch
 [🟡] Time now begins at dusk on the first day
     - This means day 1 is no longer half the length of other days
+[❌] Ranged ground units should target the nearest unit
+
 
 Features
 --------
@@ -27,8 +29,4 @@ Features
 Bugfixes
 --------
 [❌] Fixed issue of your units sometimes showing other players' movement indicators
-
-Quality of Life
----------------
-[✔] Add gamerule for explosions breaking terrain /gamerule doUnitGriefing (false by default)
-[✔] Range indicators for Town Centres and Laboratories are shown when selected
+[✔] Melee units now periodically acquire the nearest target instead of chasing the first target they saw

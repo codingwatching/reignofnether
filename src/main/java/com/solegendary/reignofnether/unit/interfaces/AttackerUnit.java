@@ -46,6 +46,14 @@ public interface AttackerUnit {
         }
         ((Unit) this).getTargetGoal().setTarget(target);
     }
+
+    // chase and attack the target ignoring all else until it is dead or out of sight
+    public default void setUnitAttackTargetForced(@Nullable LivingEntity target) {
+        setUnitAttackTarget(target);
+        if (target != null)
+            ((Unit) this).getTargetGoal().forced = true;
+    }
+
     // move to a building and start attacking it
     public default void setAttackBuildingTarget(BlockPos preselectedBlockPos) {
         if (this.canAttackBuildings()) {
@@ -110,7 +118,14 @@ public interface AttackerUnit {
 
             if (attackerUnit.getAttackBuildingGoal() != null && attackerUnit.canAttackBuildings())
                 attackerUnit.getAttackBuildingGoal().tick();
+        }
+        else if (unit instanceof RangedAttackerUnit rangedAttackerUnit) {
+            int revealDuration = rangedAttackerUnit.getFogRevealDuration();
+            if (revealDuration > 0)
+                rangedAttackerUnit.setFogRevealDuration(revealDuration - 1);
+        }
 
+        if (!unitMob.level.isClientSide && unitMob.tickCount % 4 == 0) {
             boolean isAttackingBuilding = isAttackingBuilding(attackerUnit);
 
             // enact attack moving
@@ -152,11 +167,12 @@ public interface AttackerUnit {
             // enact aggression when idle
             if (attackerUnit.isIdle() && !isAttackingBuilding && attackerUnit.getAggressiveWhenIdle())
                 attackerUnit.attackClosestEnemy((ServerLevel) unitMob.level);
-        }
-        else if (unit instanceof RangedAttackerUnit rangedAttackerUnit) {
-            int revealDuration = rangedAttackerUnit.getFogRevealDuration();
-            if (revealDuration > 0)
-                rangedAttackerUnit.setFogRevealDuration(revealDuration - 1);
+
+            // if attacking another unit as melee, retarget the closest unit periodically
+            // unless targeting a building or targeting a specific unit
+            if (!isAttackingBuilding &&
+                !((Unit) attackerUnit).getTargetGoal().forced)
+                attackerUnit.retargetToClosestUnit((ServerLevel) unitMob.level);
         }
     }
 
@@ -166,6 +182,27 @@ public interface AttackerUnit {
                 !unit.hasLivingTarget() &&
                 unit.getMoveGoal().getMoveTarget() == null &&
                 unit.getFollowTarget() == null;
+    }
+
+    // if the nearest target is closer than the current target, retarget to the nearest
+    public default void retargetToClosestUnit(ServerLevel level) {
+        float aggroRange = this.getAggroRange();
+        GarrisonableBuilding garr = GarrisonableBuilding.getGarrison((Unit) this);
+        if (garr != null)
+            aggroRange  = garr.getAttackRange();
+
+        LivingEntity closestTarget = MiscUtil.findClosestAttackableEntity((Mob) this, aggroRange, level);
+        LivingEntity currentTarget = ((Mob) this).getTarget();
+
+        if (closestTarget != null && currentTarget != null) {
+            double distClosestTarget =  ((Mob) this).distanceToSqr(closestTarget.position());
+            double distCurrentTarget =  ((Mob) this).distanceToSqr(currentTarget.position());
+
+            if (distClosestTarget < distCurrentTarget) {
+                ((Unit) this).getMoveGoal().stopMoving();
+                setUnitAttackTarget(closestTarget);
+            }
+        }
     }
 
     public default void attackClosestEnemy(ServerLevel level) {
