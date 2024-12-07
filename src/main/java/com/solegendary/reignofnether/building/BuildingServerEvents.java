@@ -584,8 +584,8 @@ public class BuildingServerEvents {
                 if (building != null) {
                     // prevent enemy ghasts friendly firing their own buildings
                     if (!(SurvivalServerEvents.isEnabled() && ghastUnit != null &&
-                            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(ghastUnit.getOwnerName()) &&
-                            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(building.ownerName)))
+                            SurvivalServerEvents.ENEMY_OWNER_NAME.equals(ghastUnit.getOwnerName()) &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAME.equals(building.ownerName)))
                         affectedBuildings.add(building);
                 }
             }

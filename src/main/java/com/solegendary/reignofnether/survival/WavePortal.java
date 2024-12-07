@@ -1,21 +1,23 @@
 package com.solegendary.reignofnether.survival;
 
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
+import com.solegendary.reignofnether.registrars.EntityRegistrar;
+import com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
+import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.solegendary.reignofnether.survival.SurvivalServerEvents.PIGLIN_OWNER_NAME;
-import static com.solegendary.reignofnether.survival.SurvivalServerEvents.VILLAGER_OWNER_NAME;
-import static com.solegendary.reignofnether.survival.SurvivalSpawner.getModifiedPopCost;
+import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
+import static com.solegendary.reignofnether.survival.spawners.WaveSpawner.getModifiedPopCost;
 
 public class WavePortal {
 
@@ -62,14 +64,25 @@ public class WavePortal {
     public void doSpawn() {
         Random random = new Random();
         int tier = random.nextInt(wave.highestUnitTier) + 1;
-        EntityType<? extends Unit> mobType = (EntityType<? extends Unit>) wave.getRandomUnitOfTier(Faction.PIGLINS, tier);
+        EntityType<? extends Unit> mobType = (EntityType<? extends Unit>) PiglinWaveSpawner.getRandomUnitOfTier(tier);
 
         ServerLevel level = (ServerLevel) portal.getLevel();
 
         // produceUnit spawns them before applying the ownerName, meaning they aren't registered as WaveEnemies automatically
-        Entity entity = portal.produceUnit(level, mobType, PIGLIN_OWNER_NAME, true);
+        Entity entity = portal.produceUnit(level, mobType, ENEMY_OWNER_NAME, true);
 
         if (entity instanceof Unit unit) {
+
+            if (wave.highestUnitTier >= 3 && entity instanceof HoglinUnit hoglinUnit) {
+                Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.HEADHUNTER_UNIT.get(),
+                        level, hoglinUnit.getOnPos(), ENEMY_OWNER_NAME);
+                if (entityPassenger instanceof Unit pUnit) {
+                    entityPassenger.startRiding(hoglinUnit);
+                    if (initialSpawnPop > 0)
+                        initialSpawnPop -= getModifiedPopCost(unit);
+                }
+            }
+
             List<Unit> enemies = SurvivalServerEvents.getCurrentEnemies().stream().map(e -> e.unit).toList();
             if (!enemies.contains(unit))
                 SurvivalServerEvents.getCurrentEnemies().add(new WaveEnemy(unit));

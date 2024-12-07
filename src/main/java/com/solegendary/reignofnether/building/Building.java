@@ -253,7 +253,7 @@ public abstract class Building {
 
     public boolean canAfford(String ownerName) {
         if (SurvivalServerEvents.isEnabled() &&
-            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(ownerName))
+            SurvivalServerEvents.ENEMY_OWNER_NAME.equals(ownerName))
             return true;
 
         for (Resources resources : ResourcesServerEvents.resourcesList)

@@ -9,10 +9,17 @@
 
 
 
-Wave Survival 0.4a
+Wave Survival 0.5
 ------------------
-[❌] Enemies from different factions should not attach each other
+[✔] Enemies from different factions should no longer attack each other
+[✔] Added mounted units for all enemy factions
+[✔] Added creepers and charged creepers - they ignore all units and will explode at the nearest building
+[❌] Enemies more consistently spawn with ice below them when over water
+[✔] Unit tiers increase every 3rd wave now instead of every 2nd
+
 [❌] Fixed a bug where teams would randomly switch
+
+
 
 Features
 --------
@@ -26,7 +33,6 @@ Features
     - Includes all costs, population values and build times
     - Modify the files generated at configs/reignofnether-config.toml to adjust them
     - If the server config is adjusted, this will be enforced for all players joining the match
-
 
 Bugfixes
 --------

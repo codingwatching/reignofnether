@@ -70,6 +70,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import static com.solegendary.reignofnether.player.PlayerServerEvents.isRTSPlayer;
+import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
 
 public class UnitServerEvents {
 
@@ -592,6 +593,16 @@ public class UnitServerEvents {
 
         return evt.getSource().isMagic() && evt.getSource() instanceof IndirectEntityDamageSource
             && (!(shooter instanceof EvokerUnit));
+    }
+
+    public static Entity spawnMob(
+            EntityType<? extends Mob> entityType, ServerLevel level, Vec3i pos, String ownerName
+    ) {
+        ArrayList<Entity> entities = UnitServerEvents.spawnMobs(entityType, level, pos,1, ownerName);
+        if (entities.isEmpty())
+            return null;
+        else
+            return entities.get(0);
     }
 
     public static ArrayList<Entity> spawnMobs(
