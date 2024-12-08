@@ -105,8 +105,7 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.POISON_SPIDER.population;}
+    public int getPopCost() {return popCost;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -114,7 +113,7 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
 
     // endregion
 
-    final static public float attackDamage = 3.0f;
+    final static public float attackDamage = 4.0f;
     final static public float attacksPerSecond = 0.6f;
     final static public float maxHealth = 30.0f;
     final static public float armorValue = 0.0f;
@@ -123,6 +122,7 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+    final static public int popCost = ResourceCosts.POISON_SPIDER.population;
 
     public int maxResources = 100;
 
@@ -154,7 +154,8 @@ public class PoisonSpiderUnit extends CaveSpider implements Unit, AttackerUnit {
                 .add(Attributes.MOVEMENT_SPEED, PoisonSpiderUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, PoisonSpiderUnit.attackDamage)
                 .add(Attributes.ARMOR, PoisonSpiderUnit.armorValue)
-                .add(Attributes.MAX_HEALTH, PoisonSpiderUnit.maxHealth);
+                .add(Attributes.MAX_HEALTH, PoisonSpiderUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     @Override

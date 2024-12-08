@@ -7,9 +7,7 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.units.monsters.ZombieVillagerProd;
-import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
-import com.solegendary.reignofnether.unit.units.monsters.ZombieVillagerProd;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.resources.language.I18n;
@@ -72,7 +70,7 @@ public class Mausoleum extends ProductionBuilding implements NightSource {
     }
 
     public int getNightRange() {
-        return nightRange;
+        return (isBuilt || isBuiltServerside) ? nightRange : 0;
     }
 
     @Override

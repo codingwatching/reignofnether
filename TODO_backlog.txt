@@ -22,30 +22,23 @@ Features
         - Healing fountain
         - Mini beacon
 
-[❌] Solution to discourage rushing
-    - villagers are most vulnerable due to their lategame nature
-    - copy the wc3 ability of turning villagers into temporary militia?
-        - give them a helmet and stone sword upgrade for +2 damage
-        - turn back on isPushable
-        - damage to animals should still be 1
-
 [❌] Piglin mines
     - Static defense for piglins, but can also be used to siege
     - When built, can be exploded manaully (or set to autoexplode on nearby enemies approaching)
     - Explodes into combination of soulsand and magma
 
+[❌] Magma cubes
+    - See discord post
+
+
 Bugfixes
 --------
 
-[❌] Fix weird pathing over magma
-
-[❌] In wave survival, teams randomly switch
-
 [❌] Central portals sometimes do not ignite (and this somehow makes grunts spawn underground)
 
-[❌] Must restart client when switching languages for it to take effect
+[❌] Cobwebs in a spider lair should not slow down anything
 
-[❌] Tall grass and barrier blocks are now ignored by the cursor
+
 
 
 
@@ -59,16 +52,20 @@ Quality of Life Features
     - Add end detections in goals for when to move to nextActionItem
     - Add clientside checkpoints
 
+[❌] Save transport portal links between server restarts
+
 [❌] Flatten terrain ability
     - Require that villagers work on it like a building
     - Will need a new flatten zone object (no need to save it)
 
 [❌] Cast spells with the closest unit first
 
+[❌] Spiders should move towards the target before webbing
+
+[❌] /gamerule groundYLevel for mapmakers
+    - Maybe separate for ghasts and bridges?
+
 
 Balancing
 ---------
-
-[❌] Implement damage dropoffs to buildings for charged creepers
-    - and provide a radius indicator for them when hovering over explode
 

@@ -42,7 +42,7 @@ public abstract class LivingEntityMixin extends Entity {
         Entity entity = this.getLevel().getEntity(this.getId());
 
         if (!this.getLevel().isClientSide() && entity instanceof Unit unit)
-            if (SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(unit.getOwnerName()))
+            if (SurvivalServerEvents.isEnabled() && SurvivalServerEvents.ENEMY_OWNER_NAME.equals(unit.getOwnerName()))
                 FrostWalkerOnEntityMoved((LivingEntity) entity, this.level, pPos, 1);
     }
 

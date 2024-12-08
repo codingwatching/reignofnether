@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.sounds.SoundAction;
+import com.solegendary.reignofnether.sounds.SoundClientEvents;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
@@ -82,9 +83,9 @@ public class CallToArmsBuilding extends Ability {
         }
 
         if (!level.isClientSide()) {
-            SoundClientboundPacket.playSoundForAllPlayers(SoundAction.BELL, buildingUsing.centrePos);
+            SoundClientboundPacket.playSoundAtPos(SoundAction.BELL, buildingUsing.centrePos);
             CompletableFuture.delayedExecutor(300, TimeUnit.MILLISECONDS).execute(() -> {
-                SoundClientboundPacket.playSoundForAllPlayers(SoundAction.BELL, buildingUsing.centrePos);
+                SoundClientboundPacket.playSoundAtPos(SoundAction.BELL, buildingUsing.centrePos);
             });
         }
     }

@@ -115,8 +115,7 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.VINDICATOR.population;}
+    public int getPopCost() {return popCost;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -133,6 +132,7 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+    final static public int popCost = ResourceCosts.VINDICATOR.population;
 
     public int maxResources = 100;
 
@@ -178,7 +178,8 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
                 .add(Attributes.MOVEMENT_SPEED, VindicatorUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, VindicatorUnit.attackDamage)
                 .add(Attributes.ARMOR, VindicatorUnit.armorValue)
-                .add(Attributes.MAX_HEALTH, VindicatorUnit.maxHealth);
+                .add(Attributes.MAX_HEALTH, VindicatorUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
     public void tick() {

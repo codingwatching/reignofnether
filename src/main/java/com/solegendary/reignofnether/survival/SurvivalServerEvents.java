@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.time.TimeUtils;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,7 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.solegendary.reignofnether.survival.SurvivalSpawner.*;
+import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerWave;
+import static com.solegendary.reignofnether.survival.spawners.MonsterWaveSpawner.spawnMonsterWave;
+import static com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner.spawnPiglinWave;
 
 public class SurvivalServerEvents {
 
@@ -35,11 +38,9 @@ public class SurvivalServerEvents {
     public static Wave nextWave = Wave.getWave(0);
     private static WaveDifficulty difficulty = WaveDifficulty.EASY;
     private static final ArrayList<WaveEnemy> enemies = new ArrayList<>();
-    public static final String MONSTER_OWNER_NAME = "Monsters";
-    public static final String PIGLIN_OWNER_NAME = "Piglins";
-    public static final String VILLAGER_OWNER_NAME = "Illagers";
-    public static final List<String> ENEMY_OWNER_NAMES = List.of(MONSTER_OWNER_NAME, PIGLIN_OWNER_NAME, VILLAGER_OWNER_NAME);
+    public static final String ENEMY_OWNER_NAME = "Enemy";
     private static final Random random = new Random();
+    public static Faction lastFaction = Faction.NONE;
 
     public static final ArrayList<WavePortal> portals = new ArrayList<>();
 
@@ -138,7 +139,7 @@ public class SurvivalServerEvents {
 
         // detect new portals and update portals list accordingly
         List<Building> currentPortals = BuildingServerEvents.getBuildings().stream().filter(b ->
-                ENEMY_OWNER_NAMES.contains(b.ownerName) && b instanceof Portal)
+                ENEMY_OWNER_NAME.equals(b.ownerName) && !b.ownerName.isBlank() && b instanceof Portal)
                 .toList();
 
         for (Building portal : currentPortals)
@@ -161,11 +162,18 @@ public class SurvivalServerEvents {
         evt.getDispatcher().register(Commands.literal("debug-end-wave")
                 .executes((command) -> {
                     PlayerServerEvents.sendMessageToAllPlayers("Ending current wave");
-                    for (WaveEnemy enemy : enemies)
+                    ArrayList<WaveEnemy> enemiesCopy = new ArrayList<>(enemies);
+                    for (WaveEnemy enemy : enemiesCopy)
                         enemy.getEntity().kill();
                     ArrayList<WavePortal> portalsCopy = new ArrayList<>(portals);
                     for (WavePortal portal : portalsCopy)
                         portal.portal.destroy(serverLevel);
+                    return 1;
+                }));
+        evt.getDispatcher().register(Commands.literal("debug-next-night")
+                .executes((command) -> {
+                    PlayerServerEvents.sendMessageToAllPlayers("Advancing to next night and wave");
+                    serverLevel.setDayTime(12450);
                     return 1;
                 }));
     }
@@ -210,7 +218,7 @@ public class SurvivalServerEvents {
         if (evt.getEntity() instanceof Unit unit &&
                 evt.getEntity() instanceof LivingEntity entity &&
                 !evt.getLevel().isClientSide &&
-                ENEMY_OWNER_NAMES.contains(unit.getOwnerName())) {
+                ENEMY_OWNER_NAME.equals(unit.getOwnerName())) {
 
             enemies.add(new WaveEnemy(unit));
         }
@@ -221,7 +229,7 @@ public class SurvivalServerEvents {
         if (evt.getEntity() instanceof Unit unit &&
                 evt.getEntity() instanceof LivingEntity entity &&
                 !evt.getLevel().isClientSide &&
-                ENEMY_OWNER_NAMES.contains(unit.getOwnerName())) {
+                ENEMY_OWNER_NAME.equals(unit.getOwnerName())) {
 
             enemies.removeIf(e -> e.getEntity().getId() == entity.getId());
         }
@@ -263,25 +271,59 @@ public class SurvivalServerEvents {
         return enemies;
     }
 
+    public static int getTotalEnemyPopulation() {
+        int pop = 0;
+        for (WaveEnemy waveEnemy : getCurrentEnemies())
+            pop += waveEnemy.unit.getPopCost();
+        return pop;
+    }
+
     public static boolean isWaveInProgress() {
         return !getCurrentEnemies().isEmpty();
     }
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
-        switch (random.nextInt(3)) {
-            case 0 -> spawnMonsterWave(level, nextWave);
-            case 1 -> spawnIllagerWave(level, nextWave);
-            case 2 -> spawnPiglinWave(level, nextWave);
+        nextWave = Wave.getWave(nextWave.number + 1);
+        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
+        saveStage(level);
+
+        spawnMonsterWave(level, nextWave);
+
+        /*
+        switch (lastFaction) {
+            case VILLAGERS -> {
+                if (random.nextBoolean())
+                    spawnMonsterWave(level, nextWave);
+                else
+                    spawnPiglinWave(level, nextWave);
+            }
+            case MONSTERS -> {
+                if (random.nextBoolean())
+                    spawnIllagerWave(level, nextWave);
+                else
+                    spawnPiglinWave(level, nextWave);
+            }
+            case PIGLINS -> {
+                if (random.nextBoolean())
+                    spawnMonsterWave(level, nextWave);
+                else
+                    spawnIllagerWave(level, nextWave);
+            }
+            case NONE -> {
+                switch (random.nextInt(3)) {
+                    case 0 -> spawnMonsterWave(level, nextWave);
+                    case 1 -> spawnIllagerWave(level, nextWave);
+                    case 2 -> spawnPiglinWave(level, nextWave);
+                }
+            }
         }
+         */
     }
 
     // triggered when last enemy is killed
     public static void waveCleared(ServerLevel level) {
-        nextWave = Wave.getWave(nextWave.number + 1);
-        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
         PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.wave_cleared", true);
         SoundClientboundPacket.playSoundForAllPlayers(SoundAction.ALLY);
-        saveStage(level);
     }
 }

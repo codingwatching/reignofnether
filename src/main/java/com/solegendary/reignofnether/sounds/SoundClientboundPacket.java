@@ -16,36 +16,52 @@ public class SoundClientboundPacket {
     SoundAction soundAction;
     BlockPos bp;
     String playerName;
+    float volume;
 
-    public static void playSoundForAllPlayers(SoundAction soundAction, BlockPos bp) {
+    public static void playSoundAtPos(SoundAction soundAction, BlockPos bp) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-                new SoundClientboundPacket(soundAction, bp, ""));
+                new SoundClientboundPacket(soundAction, bp, "", 1.0f));
+    }
+    public static void playSoundAtPos(SoundAction soundAction, BlockPos bp, float volume) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                new SoundClientboundPacket(soundAction, bp, "", volume));
     }
     public static void playSoundForAllPlayers(SoundAction soundAction) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-                new SoundClientboundPacket(soundAction, new BlockPos(0,0,0), ""));
+                new SoundClientboundPacket(soundAction, new BlockPos(0,0,0), "", 1.0f));
+    }
+    public static void playSoundForAllPlayers(SoundAction soundAction, float volume) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                new SoundClientboundPacket(soundAction, new BlockPos(0,0,0), "", volume));
     }
     public static void playSoundForPlayer(SoundAction soundAction, String name) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-                new SoundClientboundPacket(soundAction, new BlockPos(0,0,0), name));
+                new SoundClientboundPacket(soundAction, new BlockPos(0,0,0), name, 1.0f));
+    }
+    public static void playSoundForPlayer(SoundAction soundAction, String name, float volume) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                new SoundClientboundPacket(soundAction, new BlockPos(0,0,0), name, volume));
     }
 
-    public SoundClientboundPacket(SoundAction soundAction, BlockPos bp, String playerName) {
+    public SoundClientboundPacket(SoundAction soundAction, BlockPos bp, String playerName, float volume) {
         this.soundAction = soundAction;
         this.bp = bp;
         this.playerName = playerName;
+        this.volume = volume;
     }
 
     public SoundClientboundPacket(FriendlyByteBuf buffer) {
         this.soundAction = buffer.readEnum(SoundAction.class);
         this.bp = buffer.readBlockPos();
         this.playerName = buffer.readUtf();
+        this.volume = buffer.readFloat();
     }
 
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeEnum(this.soundAction);
         buffer.writeBlockPos(this.bp);
         buffer.writeUtf(this.playerName);
+        buffer.writeFloat(this.volume);
     }
 
     // server-side packet-consuming functions
@@ -57,12 +73,12 @@ public class SoundClientboundPacket {
                     () -> () -> {
                         if (bp.equals(new BlockPos(0,0,0))) {
                             if (playerName.isBlank())
-                                SoundClientEvents.playSoundForAllPlayers(soundAction);
+                                SoundClientEvents.playSoundForLocalPlayer(soundAction, volume);
                             else
-                                SoundClientEvents.playSoundForPlayer(soundAction, playerName);
+                                SoundClientEvents.playSoundIfPlayer(soundAction, playerName, volume);
                         }
                         else
-                            SoundClientEvents.playSoundForAction(soundAction, bp);
+                            SoundClientEvents.playSoundAtPos(soundAction, bp, volume);
                         success.set(true);
                     });
         });

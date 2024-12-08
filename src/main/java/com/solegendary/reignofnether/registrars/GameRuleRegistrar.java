@@ -9,6 +9,7 @@ public class GameRuleRegistrar {
     public static GameRules.Key<GameRules.BooleanValue> NEUTRAL_AGGRO;
     public static GameRules.Key<GameRules.IntegerValue> MAX_POPULATION;
     public static GameRules.Key<GameRules.BooleanValue> DISALLOW_WAVE_SURVIVAL;
+    public static GameRules.Key<GameRules.BooleanValue> DO_UNIT_GRIEFING;
 
     public static void init() {
         // do cut trees convert their logs into falling logs?
@@ -25,6 +26,10 @@ public class GameRuleRegistrar {
         );
         // prevent clients from joining an RTS match on wave survival mode
         DISALLOW_WAVE_SURVIVAL = GameRules.register("disallowWaveSurvival", GameRules.Category.MISC,
+                GameRules.BooleanValue.create(false)
+        );
+        // allow units to damage blocks (separate from doMobGriefing which is only for vanilla mobs)
+        DO_UNIT_GRIEFING = GameRules.register("doUnitGriefing", GameRules.Category.MOBS,
                 GameRules.BooleanValue.create(false)
         );
     }

@@ -124,8 +124,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.EVOKER.population;}
+    public int getPopCost() {return popCost;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
@@ -144,7 +143,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
     public static final int FANGS_RANGE_LINE = 10;
     public static final int FANGS_RANGE_CIRCLE = 3;
     public static final float FANGS_DAMAGE = 6f; // can sometimes be doubled or tripled due to overlapping fang hitboxes
-    public static final int FANGS_CHANNEL_SECONDS = 2;
+    public static final int FANGS_CHANNEL_SECONDS = 1;
     public static final int SUMMON_VEXES_AMOUNT = 3;
     public static final int VEX_TARGET_RANGE = 20;
     public static final int VEX_TARGET_RANGE_GARRISON = 30;
@@ -158,6 +157,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
     final static public float maxHealth = 40.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
+    final static public int popCost = ResourceCosts.EVOKER.population;
 
     public boolean isUsingLineFangs = true; // toggle between line and circular fangs
 
@@ -198,6 +198,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, EvokerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, EvokerUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, EvokerUnit.armorValue);
     }
 

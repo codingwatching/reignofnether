@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.fogofwar.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
+import com.solegendary.reignofnether.registrars.BlockRegistrar;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchAdvancedPortals;
@@ -189,9 +190,9 @@ public abstract class Building {
 
         // re-hide players if they were revealed
         if (this.isCapitol && !this.level.isClientSide()) {
-            if (BuildingUtils.getTotalCompletedBuildingsOwned(false, this.ownerName) == 1
-                && !TutorialServerEvents.isEnabled()) {
-                sendMessageToAllPlayers(I18n.get("hud.reignofnether.placed_capitol", this.ownerName));
+            if (BuildingUtils.getTotalCompletedBuildingsOwned(false, this.ownerName) == 1 &&
+                !TutorialServerEvents.isEnabled() && FogOfWarServerEvents.isEnabled()) {
+                sendMessageToAllPlayers("hud.reignofnether.placed_capitol", false, this.ownerName);
             }
             FogOfWarClientboundPacket.revealOrHidePlayer(false, this.ownerName);
         }
@@ -253,7 +254,7 @@ public abstract class Building {
 
     public boolean canAfford(String ownerName) {
         if (SurvivalServerEvents.isEnabled() &&
-            SurvivalServerEvents.ENEMY_OWNER_NAMES.contains(ownerName))
+            SurvivalServerEvents.ENEMY_OWNER_NAME.equals(ownerName))
             return true;
 
         for (Resources resources : ResourcesServerEvents.resourcesList)
@@ -472,9 +473,6 @@ public abstract class Building {
     }
 
     public boolean shouldBeDestroyed() {
-        if (tickAge % 4 == 0) {
-            return false;
-        }
         if (!this.level.getWorldBorder().isWithinBounds(centrePos)) {
             return true;
         }
@@ -537,7 +535,12 @@ public abstract class Building {
             if (BuildingUtils.getTotalCompletedBuildingsOwned(false, this.ownerName) == 0) {
                 PlayerServerEvents.defeat(this.ownerName, Component.translatable("server.reignofnether.lost_buildings").getString());
             } else if (this.isCapitol) {
-                if (FogOfWarServerEvents.isEnabled()) {
+                int numCapitolsOwned = BuildingServerEvents.getBuildings()
+                        .stream()
+                        .filter(b -> b.ownerName.equals(this.name) && b.isCapitol)
+                        .toList()
+                        .size();
+                if (FogOfWarServerEvents.isEnabled() && numCapitolsOwned == 0) {
                     sendMessageToAllPlayers("server.reignofnether.lost_capitol",
                             false,
                             this.ownerName,
@@ -701,7 +704,7 @@ public abstract class Building {
         if (isBuilt) {
             tickAgeAfterBuilt += 1;
         }
-        tickAge = +1;
+        tickAge += 1;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -736,6 +739,8 @@ public abstract class Building {
                 int msPerBuild = (3 * BASE_MS_PER_BUILD) / (builderCount + 2);
                 if (!isBuilt) {
                     msPerBuild *= buildTimeModifier;
+                    if (isCapitol && BuildingUtils.getTotalCompletedBuildingsOwned(false, ownerName) > 0)
+                        msPerBuild *= 2;
                 } else {
                     msPerBuild *= repairTimeModifier;
                 }
@@ -779,7 +784,8 @@ public abstract class Building {
                 if (bs.getMaterial() == Material.WATER) {
                     if (level.getBlockState(bp.below()).getBlock() == Blocks.SOUL_SAND) {
                         level.setBlockAndUpdate(bp.below(), Blocks.SOUL_SOIL.defaultBlockState());
-                    } else if (level.getBlockState(bp.below()).getBlock() == Blocks.MAGMA_BLOCK) {
+                    } else if (level.getBlockState(bp.below()).getBlock() == Blocks.MAGMA_BLOCK ||
+                               level.getBlockState(bp.below()).getBlock() == BlockRegistrar.WALKABLE_MAGMA_BLOCK.get()) {
                         level.setBlockAndUpdate(bp.below(), Blocks.COBBLESTONE.defaultBlockState());
                     }
                 }

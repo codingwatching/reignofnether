@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
+import com.solegendary.reignofnether.unit.goals.MoveToTargetBlockGoal;
 import com.solegendary.reignofnether.unit.goals.ReturnResourcesGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
@@ -19,9 +20,11 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UnitActionItem {
@@ -31,6 +34,19 @@ public class UnitActionItem {
     private final int[] unitIds; // selected unit(s)
     private final BlockPos preselectedBlockPos;
     private final BlockPos selectedBuildingPos;
+
+    public boolean equals(UnitActionItem unitActionItem) {
+        if (unitActionItem == null)
+            return false;
+        return (
+            ownerName == null && unitActionItem.ownerName == null || (ownerName != null && ownerName.equals(unitActionItem.ownerName)) &&
+            action == null && unitActionItem.action == null || (action != null && action.equals(unitActionItem.action)) &&
+            preselectedBlockPos == null && unitActionItem.preselectedBlockPos == null || (preselectedBlockPos != null && preselectedBlockPos.equals(unitActionItem.preselectedBlockPos)) &&
+            selectedBuildingPos == null && unitActionItem.selectedBuildingPos == null || (selectedBuildingPos != null && selectedBuildingPos.equals(unitActionItem.selectedBuildingPos)) &&
+            unitId == unitActionItem.unitId &&
+            Arrays.equals(unitIds, unitActionItem.unitIds)
+        );
+    }
 
     private final List<UnitAction> nonAbilityActions = List.of(UnitAction.STOP,
         UnitAction.HOLD,
@@ -94,6 +110,23 @@ public class UnitActionItem {
 
         actionableUnitsLoop:
         for (Unit unit : actionableUnits) {
+
+            // recalculating pathfinding can be expensive, so check if we actually need to first
+            if (action == UnitAction.MOVE) {
+                MoveToTargetBlockGoal goal = unit.getMoveGoal();
+
+                if (goal != null && !level.isClientSide()) {
+                    BlockPos bp = goal.getMoveTarget();
+                    if (bp != null) {
+                        double distToTarget = bp.distSqr(((Mob) unit).getOnPos());
+                        if (distToTarget > 400) {
+                            double ignoreDist = Math.min(5, Math.sqrt(distToTarget) / 10);
+                            if (bp.distSqr(preselectedBlockPos) < ignoreDist * ignoreDist)
+                                return;
+                        }
+                    }
+                }
+            }
 
             // have to do this before resetBehaviours so we can assign the correct resourceName first
             if (action == UnitAction.TOGGLE_GATHER_TARGET) {
@@ -226,6 +259,13 @@ public class UnitActionItem {
                         }
                     } else {
                         unit.setMoveTarget(preselectedBlockPos);
+                    }
+                }
+                case ENABLE_AUTOCAST_BUILD_REPAIR, DISABLE_AUTOCAST_BUILD_REPAIR -> {
+                    // if the unit can't actually build/repair just treat this as a move action
+                    if (unit instanceof WorkerUnit workerUnit) {
+                        workerUnit.getBuildRepairGoal().autocastRepair =
+                                action == UnitAction.ENABLE_AUTOCAST_BUILD_REPAIR;
                     }
                 }
                 case FARM -> {

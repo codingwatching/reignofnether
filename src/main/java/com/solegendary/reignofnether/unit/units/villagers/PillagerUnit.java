@@ -132,8 +132,7 @@ public class PillagerUnit extends Pillager implements Unit, AttackerUnit, Ranged
     public float getUnitAttackDamage() { return attackDamage; }
     public float getUnitMaxHealth() { return maxHealth; }
     public float getUnitArmorValue() { return armorValue; }
-    @Nullable
-    public int getPopCost() { return ResourceCosts.PILLAGER.population;}
+    public int getPopCost() { return popCost; }
 
     public boolean canAttackBuildings() { return getAttackBuildingGoal() != null && isPassenger(); }
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -150,6 +149,7 @@ public class PillagerUnit extends Pillager implements Unit, AttackerUnit, Ranged
     final static public float aggroRange = 16;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+    final static public int popCost = ResourceCosts.PILLAGER.population;
 
     public int maxResources = 100;
 
@@ -190,6 +190,7 @@ public class PillagerUnit extends Pillager implements Unit, AttackerUnit, Ranged
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, PillagerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, PillagerUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, PillagerUnit.armorValue);
     }
 

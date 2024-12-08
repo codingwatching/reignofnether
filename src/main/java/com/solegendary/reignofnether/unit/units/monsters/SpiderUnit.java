@@ -108,8 +108,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.SPIDER.population;}
+    public int getPopCost() {return popCost;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -122,7 +121,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
 
     // endregion
 
-    final static public float attackDamage = 3.0f;
+    final static public float attackDamage = 4.0f;
     final static public float attacksPerSecond = 0.6f;
     final static public float maxHealth = 30.0f;
     final static public float armorValue = 0.0f;
@@ -131,6 +130,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+    final static public int popCost = ResourceCosts.SPIDER.population;
 
     public int maxResources = 100;
 
@@ -162,6 +162,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
                 .add(Attributes.MOVEMENT_SPEED, SpiderUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, SpiderUnit.attackDamage)
                 .add(Attributes.ARMOR, SpiderUnit.armorValue)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.MAX_HEALTH, SpiderUnit.maxHealth);
     }
 

@@ -120,7 +120,7 @@ public class FrozenChunk {
                     String blockName = bs.getBlock().getName().getString().toLowerCase();
                     if (blockName.equals("scaffolding")) {
                         saveBlock(bp, Blocks.AIR.defaultBlockState(), bbs);
-                    } else if (blockName.equals("magma_block") ||
+                    } else if (blockName.contains("magma_block") ||
                             blockName.equals("cobblestone")) {
                         saveBlock(bp, Blocks.COAL_ORE.defaultBlockState(), bbs);
                     } else if (blockName.equals("dirt") ||

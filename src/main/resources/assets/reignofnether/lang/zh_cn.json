@@ -92,7 +92,6 @@
   "abilities.reignofnether.sonic_boom.tooltip1": "\uE006  %d  \uE004  %ds  \uE005  ",
   "abilities.reignofnether.sonic_boom.tooltip2": "短暂延迟后，向目标发射一道音波",
   "abilities.reignofnether.sonic_boom.tooltip3": "造成大量伤害并将其击飞一段距离。",
-  "abilities.reignofnether.sonic_boom.tooltip4": "鼠标右击以切换是否同时释放技能。",
   "abilities.reignofnether.teleport": "传送",
   "abilities.reignofnether.teleport.tooltip1": "\uE004  %ds  \uE005  ",
   "abilities.reignofnether.teleport.tooltip2": "立即传送到指定位置。",
@@ -174,7 +173,7 @@
   "ability.reignofnether.enchant.multishot.tooltip4": "右击以自动附魔",
   "ability.reignofnether.enchant.vigor": "魔咒：活力",
   "ability.reignofnether.enchant.vigor.tooltip1": "给予唤魔者一把附魔活力的魔杖",
-  "ability.reignofnether.enchant.vigor.tooltip2": "使其施法间隔减少 25%%",
+  "ability.reignofnether.enchant.vigor.tooltip2": "使其施法间隔减少 30%%",
   "ability.reignofnether.enchant.vigor.tooltip3": "移除所选单位已有的其他魔咒",
   "ability.reignofnether.enchant.vigor.tooltip4": "右击以自动附魔",
 
@@ -350,6 +349,7 @@
   "hud.control_group.reignofnether.control_group": "编队 %s（同时按住 Shift + 鼠标右击以移除编队）",
 
   "hud.actionbuttons.reignofnether.build_repair": "建造/维修",
+  "hud.actionbuttons.reignofnether.build_repair_autocast": "（鼠标右击以自动维修）",
   "hud.actionbuttons.reignofnether.gather": "采集",
   "hud.actionbuttons.reignofnether.attack": "攻击",
   "hud.actionbuttons.reignofnether.stop": "停止",
@@ -382,7 +382,9 @@
   "hud.reignofnether.gather_resources": "采集资源（%s）",
   "hud.reignofnether.change_target_resource": "点击以切换目标资源",
   "hud.reignofnether.total_workers": "工人总数：%d",
-  "hud.reignofnether.workers_on": "采集%s的工人",
+  "hud.reignofnether.workers_on_food": "采集食物的工人",
+  "hud.reignofnether.workers_on_wood": "采集木材的工人",
+  "hud.reignofnether.workers_on_ore": "采集矿石的工人",
   "hud.reignofnether.max_resources": "%s（最高 %d）",
   "hud.reignofnether.players_resources": "%s的资源",
   "hud.reignofnether.you_are_spectator": "你目前正在观战",
@@ -518,6 +520,8 @@
   "research.reignofnether.sculk_amplifiers.tooltip1": "监守者能够对幽匿催发体发射一道音波冲击，使冲击四散开",
   "research.reignofnether.sculk_amplifiers.tooltip2": "随机攻击邻近 %2$d 格距离内的 %1$d 名单位。",
   "research.reignofnether.sculk_amplifiers.tooltip3": "需要末地要塞以进行研究。",
+  "research.reignofnether.grand_library": "大图书馆",
+  "research.reignofnether.grand_library.tooltip1": "升级此图书馆，以解锁更多强力魔咒。",
 
   "resources.reignofnether.food": "食物",
   "resources.reignofnether.wood": "木材",
@@ -804,6 +808,7 @@
   "block.reignofnether.falling_acacia_log": "下落的金合欢原木",
   "block.reignofnether.falling_warped_stem": "下落的诡异菌柄",
   "block.reignofnether.falling_crimson_stem": "下落的绯红菌柄",
+  "block.reignofnether.walkable_magma_block": "可行走的岩浆块",
 
   "hud.gamemode.reignofnether.standard1": "标准模式",
   "hud.gamemode.reignofnether.standard2": "经典的即时战略游戏体验。",

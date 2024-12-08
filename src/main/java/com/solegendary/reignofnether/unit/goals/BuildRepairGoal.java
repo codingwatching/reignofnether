@@ -5,6 +5,7 @@ import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
+import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
@@ -12,10 +13,13 @@ import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.solegendary.reignofnether.building.BuildingClientEvents.getBuildingsWithinRange;
 
 // Move towards a building to build/repair it
 // will continually try to move towards the building if too far away as long as this goal is being enacted
@@ -30,6 +34,9 @@ public class BuildRepairGoal extends MoveToTargetBlockGoal {
     private Building buildingTarget;
 
     private Boolean isBuildingServerside = false;
+
+    private final int AUTOCAST_RANGE = 20;
+    public boolean autocastRepair = false;
 
     public BuildRepairGoal(Mob mob) {
         super(mob, true, 0);
@@ -49,8 +56,19 @@ public class BuildRepairGoal extends MoveToTargetBlockGoal {
     }
 
     public void tick() {
-        if (buildingTarget == null)
+        if (buildingTarget == null) {
+            if (!this.mob.level.isClientSide() && WorkerUnit.isIdle((WorkerUnit) this.mob) && autocastRepair) {
+                Building building = BuildingUtils.findClosestBuilding(
+                        this.mob.level.isClientSide(),
+                        this.mob.getEyePosition(),
+                        b -> b.getBlocksPlaced() < b.getBlocksTotal() &&
+                        BuildingServerEvents.getUnitToBuildingRelationship((Unit) this.mob, b) != Relationship.HOSTILE
+                );
+                if (building != null)
+                    setBuildingTarget(building);
+            }
             return;
+        }
         if (!BuildingUtils.isBuildingBuildable(this.mob.level.isClientSide(), buildingTarget)) {
             if (!startNextQueuedBuilding()) {
                 if (buildingTarget.name.contains(" Farm") && mob instanceof WorkerUnit workerUnit) {

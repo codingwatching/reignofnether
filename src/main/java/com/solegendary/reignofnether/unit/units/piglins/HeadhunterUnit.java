@@ -102,8 +102,7 @@ public class HeadhunterUnit extends PiglinBrute implements Unit, AttackerUnit, R
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.HEADHUNTER.population;}
+    public int getPopCost() {return popCost;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public float getAttacksPerSecond() {
         if (bloodlustTicks > 0)
@@ -143,6 +142,7 @@ public class HeadhunterUnit extends PiglinBrute implements Unit, AttackerUnit, R
     final static public float maxHealth = 40.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
+    final static public int popCost = ResourceCosts.HEADHUNTER.population;
     public int maxResources = 100;
 
     public int bloodlustTicks = 0;
@@ -181,6 +181,7 @@ public class HeadhunterUnit extends PiglinBrute implements Unit, AttackerUnit, R
                 .add(Attributes.ATTACK_DAMAGE, HeadhunterUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, HeadhunterUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, HeadhunterUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.ARMOR, HeadhunterUnit.armorValue);
     }
 

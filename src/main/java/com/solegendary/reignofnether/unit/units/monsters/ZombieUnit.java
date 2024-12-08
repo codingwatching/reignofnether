@@ -108,8 +108,7 @@ public class ZombieUnit extends Zombie implements Unit, AttackerUnit, Convertabl
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.ZOMBIE.population;}
+    public int getPopCost() {return popCost;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -131,6 +130,7 @@ public class ZombieUnit extends Zombie implements Unit, AttackerUnit, Convertabl
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+    final static public int popCost = ResourceCosts.ZOMBIE.population;
 
     public int maxResources = 100;
 
@@ -154,6 +154,7 @@ public class ZombieUnit extends Zombie implements Unit, AttackerUnit, Convertabl
                 .add(Attributes.ATTACK_DAMAGE, ZombieUnit.attackDamage)
                 .add(Attributes.ARMOR, ZombieUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, ZombieUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 

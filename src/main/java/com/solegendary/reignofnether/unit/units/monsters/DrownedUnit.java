@@ -103,8 +103,7 @@ public class DrownedUnit extends Drowned implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
-    public int getPopCost() {return ResourceCosts.DROWNED.population;}
+    public int getPopCost() {return popCost;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -121,6 +120,7 @@ public class DrownedUnit extends Drowned implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+    final static public int popCost = ResourceCosts.DROWNED.population;
 
     public int maxResources = 100;
 
@@ -144,6 +144,7 @@ public class DrownedUnit extends Drowned implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, DrownedUnit.attackDamage)
                 .add(Attributes.ARMOR, DrownedUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, DrownedUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 

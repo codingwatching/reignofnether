@@ -21,7 +21,14 @@ import net.minecraft.world.level.material.Material;
 import java.util.List;
 
 public class ResourceSources {
-    public static final List<Material> CLEAR_MATERIALS = List.of(Material.WATER, Material.AIR, Material.PLANT, Material.LEAVES);
+
+    public static final List<Material> CLEAR_MATERIALS = List.of(
+            Material.WATER, Material.AIR, Material.PLANT, Material.LEAVES, Material.STRUCTURAL_AIR
+    );
+
+    public static final List<Block> GATHERABLE_PLANTS = List.of(
+            Blocks.SWEET_BERRY_BUSH, Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM
+    );
 
     public static final int TICKS_PER_SECOND = 20;
 
@@ -139,8 +146,8 @@ public class ResourceSources {
             new ResourceSource("Gourds",
                     List.of(Blocks.MELON, Blocks.PUMPKIN, Blocks.CARVED_PUMPKIN),
                     List.of(Items.MELON, Items.PUMPKIN, Items.CARVED_PUMPKIN),
-                    TICKS_PER_SECOND * 3,
-                    7,
+                    TICKS_PER_SECOND * 4,
+                    6,
                     ResourceName.FOOD
             ),
             new ResourceSource("Carrots",
@@ -171,7 +178,7 @@ public class ResourceSources {
                     List.of(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM),
                     List.of(Items.RED_MUSHROOM, Items.BROWN_MUSHROOM),
                     TICKS_PER_SECOND * 5,
-                    20,
+                    22,
                     ResourceName.FOOD
             ),
             new ResourceSource("Misc. Forageable",

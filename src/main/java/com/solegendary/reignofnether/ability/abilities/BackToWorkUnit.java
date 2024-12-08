@@ -68,5 +68,11 @@ public class BackToWorkUnit extends Ability {
     public void use(Level level, Unit unitUsing, BlockPos targetBp) {
         if (unitUsing instanceof MilitiaUnit mUnit && !level.isClientSide())
             mUnit.convertToVillager();
+        else if (unitUsing instanceof VillagerUnit vUnit && !level.isClientSide()) {
+            vUnit.callToArmsGoal.stop();
+            Unit.resetBehaviours(vUnit);
+            vUnit.getGatherResourceGoal().saveData = vUnit.getGatherResourceGoal().permSaveData;
+            vUnit.getGatherResourceGoal().loadState();
+        }
     }
 }

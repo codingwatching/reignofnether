@@ -12,10 +12,10 @@ import com.solegendary.reignofnether.building.buildings.villagers.Library;
 import com.solegendary.reignofnether.fogofwar.FrozenChunkClientboundPacket;
 import com.solegendary.reignofnether.nether.NetherBlocks;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
+import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.survival.SurvivalServerEvents;
-import com.solegendary.reignofnether.survival.WavePortal;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
@@ -350,12 +350,12 @@ public class BuildingServerEvents {
         }
     }
 
-
     public static void cancelBuilding(Building building) {
-        if (building == null ||
-            (building.isCapitol && BuildingUtils.capitolsOwned(false, building.ownerName) == 1)) {
+        if (building == null)
             return;
-        }
+        if (building.isBuilt &&
+            BuildingUtils.getTotalCompletedBuildingsOwned(false, building.ownerName) == 1)
+            return;
 
         // remove from tracked buildings, all of its leftover queued blocks and then blow it up
         buildings.remove(building);
@@ -367,14 +367,27 @@ public class BuildingServerEvents {
 
         // AOE2-style refund: return the % of the non-built portion of the building
         // eg. cancelling a building at 70% completion will refund only 30% cost
-        if (!building.isBuilt) {
+        // in survival, refund 50% of this amount
+        if (!building.isBuilt || SurvivalServerEvents.isEnabled()) {
+
             float buildPercent = building.getBlocksPlacedPercent();
-            ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName,
-                Math.round(building.foodCost * (1 - buildPercent)),
-                Math.round(building.woodCost * (1 - buildPercent)),
-                Math.round(building.oreCost * (1 - buildPercent))
-            ));
+            int food = Math.round(building.foodCost * (1 - buildPercent));
+            int wood = Math.round(building.woodCost * (1 - buildPercent));
+            int ore = Math.round(building.oreCost * (1 - buildPercent));
+
+            if (building.isBuilt && SurvivalServerEvents.isEnabled()) {
+                food = Math.round(building.foodCost * 0.5f * buildPercent);
+                wood = Math.round(building.woodCost * 0.5f * buildPercent);
+                ore = Math.round(building.oreCost * 0.5f * buildPercent);
+            }
+            if (food > 0 || wood > 0 || ore > 0) {
+                ResourcesServerEvents.addSubtractResources(new Resources(building.ownerName, food, wood, ore));
+                Resources res = new Resources(building.ownerName, food, wood, ore);
+                ResourcesServerEvents.addSubtractResources(res);
+                ResourcesClientboundPacket.showFloatingText(res, building.centrePos);
+            }
         }
+
         building.destroy((ServerLevel) building.getLevel());
     }
 
@@ -567,8 +580,13 @@ public class BuildingServerEvents {
             Set<Building> affectedBuildings = new HashSet<>();
             for (BlockPos bp : evt.getAffectedBlocks()) {
                 Building building = BuildingUtils.findBuilding(false, bp);
+
                 if (building != null) {
-                    affectedBuildings.add(building);
+                    // prevent enemy ghasts friendly firing their own buildings
+                    if (!(SurvivalServerEvents.isEnabled() && ghastUnit != null &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAME.equals(ghastUnit.getOwnerName()) &&
+                            SurvivalServerEvents.ENEMY_OWNER_NAME.equals(building.ownerName)))
+                        affectedBuildings.add(building);
                 }
             }
             for (Building building : affectedBuildings) {
@@ -603,10 +621,13 @@ public class BuildingServerEvents {
             }
         }
         // don't do any block damage apart from the scripted building damage above or damage to leaves/tnt
-        evt.getAffectedBlocks().removeIf(bp -> {
-            BlockState bs = evt.getLevel().getBlockState(bp);
-            return !(bs.getBlock() instanceof LeavesBlock) && !(bs.getBlock() instanceof TntBlock);
-        });
+        if (!serverLevel.getGameRules().getRule(GameRuleRegistrar.DO_UNIT_GRIEFING).get()) {
+            evt.getAffectedBlocks().removeIf(bp -> {
+                BlockState bs = evt.getLevel().getBlockState(bp);
+                return !(bs.getBlock() instanceof LeavesBlock) && !(bs.getBlock() instanceof TntBlock);
+            });
+        }
+
     }
 
     @SubscribeEvent

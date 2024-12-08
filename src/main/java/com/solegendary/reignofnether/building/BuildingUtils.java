@@ -5,7 +5,6 @@ package com.solegendary.reignofnether.building;
 import com.solegendary.reignofnether.building.buildings.monsters.*;
 import com.solegendary.reignofnether.building.buildings.piglins.*;
 import com.solegendary.reignofnether.building.buildings.piglins.BlackstoneBridge;
-import com.solegendary.reignofnether.building.buildings.monsters.SpruceBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
 import com.solegendary.reignofnether.building.buildings.villagers.OakBridge;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
@@ -20,8 +19,6 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -44,11 +41,6 @@ public class BuildingUtils {
         else
             return BuildingServerEvents.getBuildings().stream().map(b -> b.originPos).toList().contains(building.originPos) &&
                     building.getBlocksPlaced() < building.getBlocksTotal();
-    }
-
-    public static int capitolsOwned(boolean isClientSide, String playerName) {
-        List<Building> buildings = isClientSide ? BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
-        return buildings.stream().filter(b -> b.isCapitol && b.ownerName.equals(playerName)).toList().size();
     }
 
     public static boolean anyOtherCapitolProducingWorkers(boolean isClientSide, Building building) {

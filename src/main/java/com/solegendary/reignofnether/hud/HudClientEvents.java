@@ -384,9 +384,16 @@ public class HudClientEvents {
             else if ((hudSelBuildingOwned || !PlayerClientEvents.isRTSPlayer) && hudSelectedBuilding instanceof ProductionBuilding selProdBuilding) {
                 blitY = screenHeight - iconFrameSize * 2 - 5;
 
-                for (int i = 0; i < selProdBuilding.productionQueue.size(); i++)
-                    productionButtons.add(selProdBuilding.productionQueue.get(i)
-                        .getCancelButton(selProdBuilding, i == 0));
+                for (int i = 0; i < selProdBuilding.productionQueue.size(); i++) {
+
+                    Button button = selProdBuilding.productionQueue.get(i)
+                            .getCancelButton(selProdBuilding, i == 0);
+                    if (!hudSelBuildingOwned) {
+                        button.onLeftClick = () -> { };
+                        button.onRightClick = () -> { };
+                    }
+                    productionButtons.add(button);
+                }
 
                 if (productionButtons.size() >= 1) {
                     // background frame
@@ -1011,13 +1018,12 @@ public class HudClientEvents {
                             .toList()
                             .size();
                         tooltipWorkersAssigned =
-                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether" + ".total_workers",
+                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether.total_workers",
                             numWorkers
                         ), Style.EMPTY));
                     } else {
                         tooltipWorkersAssigned =
-                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether" + ".workers_on",
-                            locName
+                            List.of(FormattedCharSequence.forward(I18n.get("hud.reignofnether.workers_on_" + resourceName
                         ), Style.EMPTY));
                     }
                     MyRenderer.renderTooltip(evt.getPoseStack(), tooltipWorkersAssigned, mouseX + 5, mouseY);
@@ -1339,40 +1345,72 @@ public class HudClientEvents {
 
         // Cycle through selected units
         if (evt.getKeyCode() == Keybindings.tab.key) {
-            List<LivingEntity> entities = new ArrayList<>(getSelectedUnits().stream()
+            cycleUnitSubgroups();
+            cycleBuildingSubgroups();
+        }
+    }
+
+    private static void cycleUnitSubgroups() {
+        List<LivingEntity> entities = new ArrayList<>(getSelectedUnits().stream()
                 .filter(e -> e instanceof Unit)
                 .sorted(Comparator.comparing(HudClientEvents::getSimpleEntityName))
                 .toList());
 
-            if (entities.isEmpty())
-                return;
+        if (entities.isEmpty())
+            return;
 
-            if (Keybindings.shiftMod.isDown()) {
-                Collections.reverse(entities);
+        if (Keybindings.shiftMod.isDown())
+            Collections.reverse(entities);
+
+        if (hudSelectedEntity != null) {
+            String hudSelectedEntityName = HudClientEvents.getModifiedEntityName(hudSelectedEntity);
+            String lastEntityName = "";
+            boolean cycled = false;
+            for (LivingEntity entity : entities) {
+                String currentEntityName = HudClientEvents.getModifiedEntityName(entity);
+                if (lastEntityName.equals(hudSelectedEntityName) && !currentEntityName.equals(lastEntityName)) {
+                    HudClientEvents.setHudSelectedEntity(entity);
+                    cycled = true;
+                    break;
+                }
+                lastEntityName = currentEntityName;
             }
-
-            if (hudSelectedEntity != null) {
-                String hudSelectedEntityName = HudClientEvents.getModifiedEntityName(hudSelectedEntity);
-                String lastEntityName = "";
-                boolean cycled = false;
-                for (LivingEntity entity : entities) {
-                    String currentEntityName = HudClientEvents.getModifiedEntityName(entity);
-                    if (lastEntityName.equals(hudSelectedEntityName) && !currentEntityName.equals(lastEntityName)) {
-                        HudClientEvents.setHudSelectedEntity(entity);
-                        cycled = true;
-                        break;
-                    }
-                    lastEntityName = currentEntityName;
-                }
-                if (!cycled) {
-                    HudClientEvents.setHudSelectedEntity(entities.get(0));
-                } else {
-                    HudClientEvents.setLowestCdHudEntity();
-                }
+            if (!cycled) {
+                HudClientEvents.setHudSelectedEntity(entities.get(0));
+            } else {
+                HudClientEvents.setLowestCdHudEntity();
             }
         }
     }
 
+    private static void cycleBuildingSubgroups() {
+        List<Building> buildings = new ArrayList<>(BuildingClientEvents.getSelectedBuildings().stream()
+                .sorted(Comparator.comparing(b -> b.name))
+                .toList());
+
+        if (buildings.isEmpty())
+            return;
+
+        if (Keybindings.shiftMod.isDown())
+            Collections.reverse(buildings);
+
+        if (hudSelectedBuilding != null) {
+            String hudSelectedBuildingName = hudSelectedBuilding.name;
+            String lastBuildingName = "";
+            boolean cycled = false;
+            for (Building building : buildings) {
+                String currentBuildingName = building.name;
+                if (lastBuildingName.equals(hudSelectedBuildingName) && !currentBuildingName.equals(lastBuildingName)) {
+                    hudSelectedBuilding = building;
+                    cycled = true;
+                    break;
+                }
+                lastBuildingName = currentBuildingName;
+            }
+            if (!cycled)
+                hudSelectedBuilding = buildings.get(0);
+        }
+    }
 
     // newUnitIds are replacing oldUnitIds - replace them in every control group while retaining their index
     public static void convertControlGroups(int[] oldUnitIds, int[] newUnitIds) {
