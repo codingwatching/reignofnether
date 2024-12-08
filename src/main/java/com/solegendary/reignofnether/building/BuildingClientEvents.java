@@ -1021,7 +1021,8 @@ public class BuildingClientEvents {
         }
         // sync the goal so we can display the correct animations
         Entity entity = hudSelectedEntity;
-        if (entity instanceof WorkerUnit workerUnit) {
+        if (entity instanceof WorkerUnit workerUnit && entity instanceof Unit unit &&
+            unit.getOwnerName().equals(ownerName)) {
             ((Unit) entity).resetBehaviours();
             workerUnit.getBuildRepairGoal().setBuildingTarget(newBuilding);
         }

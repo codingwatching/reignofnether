@@ -26,7 +26,13 @@ Features
     - Modify the files generated at configs/reignofnether-config.toml to adjust them
     - If the server config is adjusted, this will be enforced for all players joining the match
 
+[❌] Shift queueing movements and buildings (not just placement)
+    - Add index to sendCommand packets
+    - Add recursive field to UnitActionItem: nextActionItem
+        - OR just add a list queue to each unit
+    - Add end detections in goals for when to move to nextActionItem
+    - Add clientside checkpoints
+
 Bugfixes
 --------
-[❌] Fixed issue of your units sometimes showing other players' movement indicators
-[✔] Melee units now periodically acquire the nearest target instead of chasing the first target they saw
+[✔] Fixed issue of your units sometimes showing other players' movement indicators
