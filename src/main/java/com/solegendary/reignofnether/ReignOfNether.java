@@ -43,6 +43,7 @@ import java.util.function.Supplier;
 public class ReignOfNether {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "reignofnether";
+    public static final String VERSION_STRING = "1.0.11";
 
     // Fields from ClientReset
     public static final Field handshakeField;
@@ -70,7 +71,7 @@ public class ReignOfNether {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(ReignOfNether::init);
         ModLoadingContext mlctx = ModLoadingContext.get();
-        mlctx.registerConfig(ModConfig.Type.COMMON, ReignOfNetherCommonConfigs.SPEC, "reignofnether-common.toml");
+        mlctx.registerConfig(ModConfig.Type.COMMON, ReignOfNetherCommonConfigs.SPEC, "reignofnether-common-" + VERSION_STRING + ".toml");
         mlctx.registerExtensionPoint(
             DisplayTest.class,
             () -> new DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true)

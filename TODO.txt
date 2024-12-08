@@ -2,37 +2,43 @@
 1.19.2-1.0.11
 -------------
 
-- Done and testedZ
+- Done and tested
 [✔] Done and tested
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
 
 
-Wave Survival 0.5
+Wave Survival 0.5a
 ------------------
 
+[❌] Update to 1.0.11 full release
 [❌] Fixed a bug where teams would randomly switch
-
+[🟡] Time now begins at dusk on the first day
+    - This means day 1 is no longer half the length of other days
+[❌] Ranged ground units should target the nearest unit
 
 
 Features
 --------
-[❌] Configurable Unit Costs (Thanks to @DoodleNoodles)
+
+[🟡] Improved pathfinding for gathering, especially trees
+
+[🟡] Configurable Unit Costs (Thanks to @DoodleNoodles)
     - Includes all costs, population values and build times
     - Modify the files generated at configs/reignofnether-config.toml to adjust them
     - If the server config is adjusted, this will be enforced for all players joining the match
 
+[❌] Shift queueing movements and buildings (not just placement)
+    - Add index to sendCommand packets
+    - Add recursive field to UnitActionItem: nextActionItem
+        - OR just add a list queue to each unit
+    - Add end detections in goals for when to move to nextActionItem
+    - Add clientside checkpoints
+
 Bugfixes
 --------
-[❌] You no longer have to restart your client to change button languages
-
-Quality of Life
----------------
-[✔] Add gamerule for explosions breaking terrain /gamerule doUnitGriefing (false by default)
-
-
-Languages
----------
-Vietnamese added (thanks to @hungtq1016)
-
+[❌] Bridges are no longer free
+[🟡] Testing monster borders
+[✔] Fixed issue of your units sometimes showing other players' movement indicators
+[🟡] Fixed production buildings splitting across unbuilt buildings

@@ -257,7 +257,7 @@ public class BuildingServerEvents {
                     false
                 );
 
-                ResourcesServerEvents.addSubtractResources(new Resources(newBuilding.ownerName,
+                ResourcesServerEvents.addSubtractResources(new Resources(ownerName,
                     -newBuilding.foodCost,
                     -newBuilding.woodCost,
                     -newBuilding.oreCost

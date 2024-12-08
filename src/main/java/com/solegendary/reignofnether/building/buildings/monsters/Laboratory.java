@@ -10,7 +10,9 @@ import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.ability.abilities.CallLightning;
+import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.util.Faction;
+import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
@@ -20,18 +22,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.*;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class Laboratory extends ProductionBuilding {
+public class Laboratory extends ProductionBuilding implements RangeIndicator {
 
     public final static String buildingName = "Laboratory";
     public final static String structureName = "laboratory";
     public final static String upgradedStructureName = "laboratory_lightning";
     public final static ResourceCost cost = ResourceCosts.LABORATORY;
+
+    // distance you can move away from a town centre before being turned back into a villager
+    private final Set<BlockPos> lightningBorderBps = new HashSet<>();
 
     public Laboratory(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
         super(level, originPos, rotation, ownerName, getAbsoluteBlockData(getRelativeBlockData(level), level, originPos, rotation), false);
@@ -68,6 +72,33 @@ public class Laboratory extends ProductionBuilding {
             );
             this.abilityButtons.add(callLightning.getButton(Keybindings.keyL));
         }
+    }
+
+    public void tick(Level tickLevel) {
+        super.tick(tickLevel);
+        if (tickLevel.isClientSide && tickAgeAfterBuilt > 0 && tickAgeAfterBuilt % 100 == 0)
+            updateBorderBps();
+    }
+
+    private int getLightningRange() {
+        return isUpgraded() && isBuilt ? CallLightning.RANGE : 0;
+    }
+
+    @Override
+    public void updateBorderBps() {
+        if (!level.isClientSide())
+            return;
+        this.lightningBorderBps.clear();
+        this.lightningBorderBps.addAll(MiscUtil.getRangeIndicatorCircleBlocks(centrePos,
+            getLightningRange() - TimeClientEvents.VISIBLE_BORDER_ADJ, level));
+    }
+
+    @Override
+    public Set<BlockPos> getBorderBps() { return lightningBorderBps; }
+
+    @Override
+    public boolean showOnlyWhenSelected() {
+        return true;
     }
 
     public Faction getFaction() {return Faction.MONSTERS;}

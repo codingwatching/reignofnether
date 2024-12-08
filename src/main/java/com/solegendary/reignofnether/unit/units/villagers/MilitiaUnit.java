@@ -129,9 +129,6 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     // endregion
 
-    // distance you can move away from a town centre before being turned back into a villager
-    public static final int RANGE = 50;
-
     // for going back to work as a villager
     public TargetResourcesSave resourcesSaveData = null;
 
@@ -198,8 +195,9 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                 Building building = BuildingUtils.findClosestBuilding(level.isClientSide(), this.getEyePosition(),
                         (b) -> b.isBuilt && b.ownerName.equals(getOwnerName()) && b instanceof TownCentre);
 
+                int range = TownCentre.MILITIA_RANGE;
                 if (building != null &&
-                    distanceToSqr(building.centrePos.getX(), building.centrePos.getY(), building.centrePos.getZ()) > RANGE * RANGE) {
+                    distanceToSqr(building.centrePos.getX(), building.centrePos.getY(), building.centrePos.getZ()) > range * range) {
                     convertToVillager();
                 }
             }

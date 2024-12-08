@@ -17,12 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ResourceCostConfigEntry {
-    //TODO: When event fires to send config values to the client, or to rebake config values,
-    //TODO: iterate through this list of entries, and send each one over the network through a packet if applicable
-    //TODO: then, we reconstruct the ResourceCostConfigEntry, and use its string as the key in the ResourceCost ENTRIES
-    //TODO: hashmap to obtain the appropriate ResourceCost; then, we simply rebake the vaules.
     public static final List<ResourceCostConfigEntry> ENTRIES = new ArrayList<>();
-
 
     private ForgeConfigSpec.ConfigValue<Integer> FOOD;
     private ForgeConfigSpec.ConfigValue<Integer> WOOD;

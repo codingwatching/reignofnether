@@ -10,7 +10,6 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-//TODO: Merge into ConfigServerEvents by manually adding event listeners in the main mod class
 public class ConfigVanillaServerEvents {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent evt) {

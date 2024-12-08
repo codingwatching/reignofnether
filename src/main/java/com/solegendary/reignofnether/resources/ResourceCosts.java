@@ -149,7 +149,6 @@ public class ResourceCosts {
     /*
         Unit costs are defined here during CommonSetup
         Do not read values and initialize from config earlier, else will result in IllegalStateException !!!
-        TODO: Call with event listeners (ModConfigEvent$Loading, ModConfigEvent$Reloading)
      */
     public static void deferredLoadResourceCosts() {
 
