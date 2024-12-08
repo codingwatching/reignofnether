@@ -133,13 +133,13 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry CREEPER = ResourceCostConfigEntry.Unit(50, 0, 100, 35, 2, ResourceCosts.CREEPER, "Creeper Config");
         public static final ResourceCostConfigEntry ZOMBIE = ResourceCostConfigEntry.Unit(75, 0, 0, 10, 1, ResourceCosts.ZOMBIE, "Zombie Config");
         public static final ResourceCostConfigEntry ZOMBIE_VILLAGER = ResourceCostConfigEntry.Unit(50,0,0,15,1, ResourceCosts.ZOMBIE_VILLAGER, "Zombie Villager Config");
-        public static final ResourceCostConfigEntry SKELETON = ResourceCostConfigEntry.Unit(60,35,0,18,1, ResourceCosts.SKELETON, "Skeleton Config");
-        public static final ResourceCostConfigEntry STRAY = ResourceCostConfigEntry.Unit(60,35,0,18,1, ResourceCosts.STRAY, "Stray Config");
+        public static final ResourceCostConfigEntry SKELETON = ResourceCostConfigEntry.Unit(50,45,0,18,1, ResourceCosts.SKELETON, "Skeleton Config");
+        public static final ResourceCostConfigEntry STRAY = ResourceCostConfigEntry.Unit(50,45,0,18,1, ResourceCosts.STRAY, "Stray Config");
         public static final ResourceCostConfigEntry HUSK = ResourceCostConfigEntry.Unit(75,0,0,18,1, ResourceCosts.HUSK, "Husk Config");
         public static final ResourceCostConfigEntry DROWNED = ResourceCostConfigEntry.Unit(75,0,0,18,1, ResourceCosts.DROWNED, "Drowned Config");
         public static final ResourceCostConfigEntry SPIDER = ResourceCostConfigEntry.Unit(90,25,25,25,2, ResourceCosts.SPIDER, "Spider Config");
         public static final ResourceCostConfigEntry POISON_SPIDER = ResourceCostConfigEntry.Unit(90,25,25,25,2, ResourceCosts.POISON_SPIDER, "Poison Spider Config");
-        public static final ResourceCostConfigEntry WARDEN = ResourceCostConfigEntry.Unit(250,0,125,40,4, ResourceCosts.WARDEN, "Warden Config");
+        public static final ResourceCostConfigEntry WARDEN = ResourceCostConfigEntry.Unit(275,0,125,50,5, ResourceCosts.WARDEN, "Warden Config");
 
         public static final ResourceCostConfigEntry ZOMBIE_PIGLIN = ResourceCostConfigEntry.Unit(0,0,0,10,1, ResourceCosts.ZOMBIE_PIGLIN, "Zombie Piglin Config");
         public static final ResourceCostConfigEntry ZOGLIN = ResourceCostConfigEntry.Unit(0,0,0,10,2, ResourceCosts.ZOGLIN, "Zoglin Config");
@@ -147,11 +147,11 @@ public class ReignOfNetherCommonConfigs {
         // Villagers
         public static final ResourceCostConfigEntry VILLAGER = ResourceCostConfigEntry.Unit(50,0,0,15,1, ResourceCosts.VILLAGER, "Villager Config");
         public static final ResourceCostConfigEntry MILITIA = ResourceCostConfigEntry.Unit(50,0,0,15,1, ResourceCosts.MILITIA, "Militia Config");
-        public static final ResourceCostConfigEntry IRON_GOLEM = ResourceCostConfigEntry.Unit(0,50,200,40,4, ResourceCosts.IRON_GOLEM, "Iron Golem Config");
-        public static final ResourceCostConfigEntry PILLAGER = ResourceCostConfigEntry.Unit(120,85,0,35,3, ResourceCosts.PILLAGER, "Pillager Config");
-        public static final ResourceCostConfigEntry VINDICATOR = ResourceCostConfigEntry.Unit(175,0,0,35,3, ResourceCosts.VINDICATOR, "Vindicator Config");
-        public static final ResourceCostConfigEntry WITCH = ResourceCostConfigEntry.Unit(100,100,100,35,3, ResourceCosts.WITCH, "Witch Config");
-        public static final ResourceCostConfigEntry EVOKER = ResourceCostConfigEntry.Unit(150,0,150,35,3, ResourceCosts.EVOKER, "Evoker Config");
+        public static final ResourceCostConfigEntry IRON_GOLEM = ResourceCostConfigEntry.Unit(0,50,250,45,4, ResourceCosts.IRON_GOLEM, "Iron Golem Config");
+        public static final ResourceCostConfigEntry PILLAGER = ResourceCostConfigEntry.Unit(120,80,0,32,3, ResourceCosts.PILLAGER, "Pillager Config");
+        public static final ResourceCostConfigEntry VINDICATOR = ResourceCostConfigEntry.Unit(170,0,0,32,3, ResourceCosts.VINDICATOR, "Vindicator Config");
+        public static final ResourceCostConfigEntry WITCH = ResourceCostConfigEntry.Unit(90,90,90,35,3, ResourceCosts.WITCH, "Witch Config");
+        public static final ResourceCostConfigEntry EVOKER = ResourceCostConfigEntry.Unit(150,0,120,35,3, ResourceCosts.EVOKER, "Evoker Config");
         public static final ResourceCostConfigEntry RAVAGER = ResourceCostConfigEntry.Unit(400,50,150,60,7, ResourceCosts.RAVAGER, "Ravager Config");
 
         // Piglins
@@ -161,16 +161,16 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry HOGLIN = ResourceCostConfigEntry.Unit(150,0,75,35,3, ResourceCosts.HOGLIN, "Hoglin Config");
         public static final ResourceCostConfigEntry BLAZE = ResourceCostConfigEntry.Unit(50,50,100,30,2, ResourceCosts.BLAZE, "Blaze Config");
         public static final ResourceCostConfigEntry WITHER_SKELETON = ResourceCostConfigEntry.Unit(200,0,150,40,4, ResourceCosts.WITHER_SKELETON, "Wither Skeleton Config");
-        public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,150,250,50,5, ResourceCosts.GHAST, "Ghast Config");
+        public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,150,250,60,6, ResourceCosts.GHAST, "Ghast Config");
     }
     public static class BuildingCosts implements Costs {
         public static final ResourceCostConfigEntry STOCKPILE = ResourceCostConfigEntry.Building(0,75,0, 0, ResourceCosts.STOCKPILE, "Stockpile Config");
-        public static final ResourceCostConfigEntry OAK_BRIDGE = ResourceCostConfigEntry.Building(0,50,0, 0, ResourceCosts.OAK_BRIDGE, "Oak Bridge Config");
-        public static final ResourceCostConfigEntry SPRUCE_BRIDGE = ResourceCostConfigEntry.Building(0,50,0, 0, ResourceCosts.SPRUCE_BRIDGE, "Spruce Bridge Config");
-        public static final ResourceCostConfigEntry BLACKSTONE_BRIDGE = ResourceCostConfigEntry.Building(0,0,50, 0, ResourceCosts.BLACKSTONE_BRIDGE, "Blackstone Bridge Config");
+        public static final ResourceCostConfigEntry OAK_BRIDGE = ResourceCostConfigEntry.Building(0,100,0, 0, ResourceCosts.OAK_BRIDGE, "Oak Bridge Config");
+        public static final ResourceCostConfigEntry SPRUCE_BRIDGE = ResourceCostConfigEntry.Building(0,100,0, 0, ResourceCosts.SPRUCE_BRIDGE, "Spruce Bridge Config");
+        public static final ResourceCostConfigEntry BLACKSTONE_BRIDGE = ResourceCostConfigEntry.Building(0,0,100, 0, ResourceCosts.BLACKSTONE_BRIDGE, "Blackstone Bridge Config");
 
         // Monsters
-        public static final ResourceCostConfigEntry MAUSOLEUM = ResourceCostConfigEntry.Building(0,300,150, 10, ResourceCosts.MAUSOLEUM, "Mausoleum Config");
+        public static final ResourceCostConfigEntry MAUSOLEUM = ResourceCostConfigEntry.Building(0,350,250, 10, ResourceCosts.MAUSOLEUM, "Mausoleum Config");
         public static final ResourceCostConfigEntry HAUNTED_HOUSE = ResourceCostConfigEntry.Building(0,100,0, 10, ResourceCosts.HAUNTED_HOUSE, "Haunted House Config");
         public static final ResourceCostConfigEntry PUMPKIN_FARM = ResourceCostConfigEntry.Building(0,200,0, 0, ResourceCosts.PUMPKIN_FARM, "Pumpkin Farm Config");
         public static final ResourceCostConfigEntry SCULK_CATALYST = ResourceCostConfigEntry.Building(0,125,0, 0, ResourceCosts.SCULK_CATALYST, "Sculk Catalyst Config");
@@ -182,7 +182,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry STRONGHOLD = ResourceCostConfigEntry.Building(0,400,300, 0, ResourceCosts.STRONGHOLD, "Stronghold Config");
 
         // Villagers
-        public static final ResourceCostConfigEntry TOWN_CENTRE = ResourceCostConfigEntry.Building(0,300,150, 10, ResourceCosts.TOWN_CENTRE, "Town Centre Config");
+        public static final ResourceCostConfigEntry TOWN_CENTRE = ResourceCostConfigEntry.Building(0,350,250, 10, ResourceCosts.TOWN_CENTRE, "Town Centre Config");
         public static final ResourceCostConfigEntry VILLAGER_HOUSE = ResourceCostConfigEntry.Building(0,100,0, 10, ResourceCosts.VILLAGER_HOUSE, "Villager House Config");
         public static final ResourceCostConfigEntry WHEAT_FARM = ResourceCostConfigEntry.Building(0,150,0, 0, ResourceCosts.WHEAT_FARM, "Wheat Farm Config");
         public static final ResourceCostConfigEntry BARRACKS = ResourceCostConfigEntry.Building(0,150,0, 0, ResourceCosts.BARRACKS, "Barracks Config");
@@ -191,10 +191,10 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry LIBRARY = ResourceCostConfigEntry.Building(0,300,100, 0, ResourceCosts.LIBRARY, "Library Config");
         public static final ResourceCostConfigEntry WATCHTOWER = ResourceCostConfigEntry.Building(0,100,100, 0, ResourceCosts.WATCHTOWER, "Watchtower Config");
         public static final ResourceCostConfigEntry CASTLE = ResourceCostConfigEntry.Building(0,400,300, 0, ResourceCosts.CASTLE, "Castle Config");
-        public static final ResourceCostConfigEntry IRON_GOLEM_BUILDING = ResourceCostConfigEntry.Building(0,50,200, 0, ResourceCosts.IRON_GOLEM_BUILDING, "Iron Golem Building Config");
+        public static final ResourceCostConfigEntry IRON_GOLEM_BUILDING = ResourceCostConfigEntry.Building(0,50,250, 0, ResourceCosts.IRON_GOLEM_BUILDING, "Iron Golem Building Config");
 
         // Piglins
-        public static final ResourceCostConfigEntry CENTRAL_PORTAL = ResourceCostConfigEntry.Building(0,300,150, 10, ResourceCosts.CENTRAL_PORTAL, "Central Portal Config");
+        public static final ResourceCostConfigEntry CENTRAL_PORTAL = ResourceCostConfigEntry.Building(0,350,250, 10, ResourceCosts.CENTRAL_PORTAL, "Central Portal Config");
         public static final ResourceCostConfigEntry BASIC_PORTAL = ResourceCostConfigEntry.Building(0, 75, 0, 0, ResourceCosts.BASIC_PORTAL, "Basic Portal Config");
         public static final ResourceCostConfigEntry NETHERWART_FARM = ResourceCostConfigEntry.Building(0, 150, 0, 0, ResourceCosts.NETHERWART_FARM, "Netherwart Farm Config");
         public static final ResourceCostConfigEntry BASTION = ResourceCostConfigEntry.Building(0, 150, 100, 0, ResourceCosts.BASTION, "Bastion Config");
