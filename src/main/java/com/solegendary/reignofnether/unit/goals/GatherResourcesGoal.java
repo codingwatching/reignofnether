@@ -181,7 +181,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                         // increase search range until we've maxed out (to prevent idle workers using up too much CPU)
                         int range = REACH_RANGE * (failedSearches + 1);
                         if (failedSearches > MAX_FAILED_SEARCHES) {
-                            System.out.println("Failed too many searches.");
+                            //System.out.println("Failed too many searches.");
                             stopGathering();
                             ticksIdle += 200;
                         }

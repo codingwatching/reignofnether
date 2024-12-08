@@ -140,12 +140,12 @@ public class BuildingClientEvents {
 
     // switch to the building with the least production, so we can spread out production items
     public static void switchHudToIdlestBuilding() {
-        if (hudSelectedBuilding == null)
+        if (hudSelectedBuilding == null || MC.player == null)
             return;
         Building idlestBuilding = null;
 
         List<Building> sameNameBuildings = selectedBuildings.stream().filter(
-                b -> b.name.equals(hudSelectedBuilding.name)
+                b -> b.name.equals(hudSelectedBuilding.name) && b.isBuilt && b.ownerName.equals(MC.player.getName().getString())
         ).toList();
 
         int prodTicksLeftMax = Integer.MAX_VALUE;
