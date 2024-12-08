@@ -178,7 +178,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry SPIDER_LAIR = ResourceCostConfigEntry.Building(0,150,75, 0, ResourceCosts.SPIDER_LAIR, "Spider Lair Config");
         public static final ResourceCostConfigEntry DUNGEON = ResourceCostConfigEntry.Building(0,150,75, 0, ResourceCosts.DUNGEON, "Dungeon Config");
         public static final ResourceCostConfigEntry LABORATORY = ResourceCostConfigEntry.Building(0,250,150, 0, ResourceCosts.LABORATORY, "Laboratory Config");
-        public static final ResourceCostConfigEntry DARK_WATCHTOWER = ResourceCostConfigEntry.Building(0,100,100, 0, ResourceCosts.DARK_WATCHTOWER, "Dark Watchtower Config");
+        public static final ResourceCostConfigEntry DARK_WATCHTOWER = ResourceCostConfigEntry.Building(0,100,75, 0, ResourceCosts.DARK_WATCHTOWER, "Dark Watchtower Config");
         public static final ResourceCostConfigEntry STRONGHOLD = ResourceCostConfigEntry.Building(0,400,300, 0, ResourceCosts.STRONGHOLD, "Stronghold Config");
 
         // Villagers
@@ -189,7 +189,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry BLACKSMITH = ResourceCostConfigEntry.Building(0,100,300, 0, ResourceCosts.BLACKSMITH, "Blacksmith Config");
         public static final ResourceCostConfigEntry ARCANE_TOWER = ResourceCostConfigEntry.Building(0,200,100, 0, ResourceCosts.ARCANE_TOWER, "Arcane Tower Config");
         public static final ResourceCostConfigEntry LIBRARY = ResourceCostConfigEntry.Building(0,300,100, 0, ResourceCosts.LIBRARY, "Library Config");
-        public static final ResourceCostConfigEntry WATCHTOWER = ResourceCostConfigEntry.Building(0,100,100, 0, ResourceCosts.WATCHTOWER, "Watchtower Config");
+        public static final ResourceCostConfigEntry WATCHTOWER = ResourceCostConfigEntry.Building(0,100,75, 0, ResourceCosts.WATCHTOWER, "Watchtower Config");
         public static final ResourceCostConfigEntry CASTLE = ResourceCostConfigEntry.Building(0,400,300, 0, ResourceCosts.CASTLE, "Castle Config");
         public static final ResourceCostConfigEntry IRON_GOLEM_BUILDING = ResourceCostConfigEntry.Building(0,50,250, 0, ResourceCosts.IRON_GOLEM_BUILDING, "Iron Golem Building Config");
 
