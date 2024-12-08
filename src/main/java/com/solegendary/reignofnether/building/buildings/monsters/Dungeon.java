@@ -35,7 +35,7 @@ public class Dungeon extends ProductionBuilding {
 
     public final static String buildingName = "Dungeon";
     public final static String structureName = "dungeon";
-    public static ResourceCost cost = ResourceCosts.DUNGEON;
+    public final static ResourceCost cost = ResourceCosts.DUNGEON;
 
     public Dungeon(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
         super(level, originPos, rotation, ownerName, getAbsoluteBlockData(getRelativeBlockData(level), level, originPos, rotation), false);

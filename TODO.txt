@@ -38,5 +38,6 @@ Features
 
 Bugfixes
 --------
+[🟡] Testing monster borders
 [✔] Fixed issue of your units sometimes showing other players' movement indicators
 [🟡] Fixed production buildings splitting across unbuilt buildings

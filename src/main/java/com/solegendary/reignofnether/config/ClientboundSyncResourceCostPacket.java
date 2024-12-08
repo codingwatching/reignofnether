@@ -11,10 +11,6 @@ import java.util.function.Supplier;
 /*
     Clientbound packet to synchronize serverside config options with the client
     so that the GUI and other elements can properly reflect the values present on the server.
-    TODO: Most of this is commented out because I was worried the codec classes were breaking
-    TODO: (admittedly, it was 2am me grasping at straws as to why things weren't working)
-    TODO: So, once we manage to figure out how to make visually reflected changes to ResourceCosts on the client
-    TODO: from ClientConfigEvents, we can uncomment and work with resourceCosts
  */
 public class ClientboundSyncResourceCostPacket {
     private final int food;

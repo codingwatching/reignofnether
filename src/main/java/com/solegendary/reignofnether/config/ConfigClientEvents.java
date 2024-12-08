@@ -20,10 +20,6 @@ import java.util.function.Supplier;
 @OnlyIn(Dist.CLIENT)
 public class ConfigClientEvents {
 
-    //TODO: We should NEVER be replacing the ResourceCost references stored in ResourceCosts; instead, we need to implement methods in
-    //TODO: ResourceCost that allow us to change the object values without replacing the reference the variable holds!
-    //TODO: From there, we should dynamically iterate through a Hashmap containing references to ResourceCosts and ResourceCostConfigEntries
-    //TODO: and *update* the values of the resourcecost from the resourcecostconfigentries.
     private static final Minecraft MC = Minecraft.getInstance();
     //Load config data from server
     public static void loadConfigData(ClientboundSyncResourceCostPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -38,8 +34,6 @@ public class ConfigClientEvents {
             rescost.ticks = msg.getTicks() * ResourceCost.TICKS_PER_SECOND;
             rescost.population = msg.getPopulation();
         }
-
-        //TODO: Move to separate packet; this fires like 100 billion times as-is
     }
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent evt) {
