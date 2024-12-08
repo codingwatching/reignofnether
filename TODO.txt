@@ -33,6 +33,12 @@ Features
     - Add end detections in goals for when to move to nextActionItem
     - Add clientside checkpoints
 
+    [❌] Only apply to build/repair and move
+    [❌] Detect idle attackers
+    [❌] Detect workers as idle faster
+    [❌] If queued and slowQueue does NOT contain any items for that user, reset the unit's behaviours first
+    [❌] if !queued, clear that unit's slowQueue
+
 Bugfixes
 --------
 [✔] Fixed issue of your units sometimes showing other players' movement indicators

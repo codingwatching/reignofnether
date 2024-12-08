@@ -35,6 +35,10 @@ public class UnitActionItem {
     private final BlockPos preselectedBlockPos;
     private final BlockPos selectedBuildingPos;
 
+    public final UnitAction getAction() { return action; }
+    public final int[] getUnitIds() { return unitIds; }
+    public final BlockPos getPreselectedBlockPos() { return preselectedBlockPos; }
+
     public boolean equals(UnitActionItem unitActionItem) {
         if (unitActionItem == null)
             return false;

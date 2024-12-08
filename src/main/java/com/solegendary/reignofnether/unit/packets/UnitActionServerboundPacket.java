@@ -19,6 +19,7 @@ public class UnitActionServerboundPacket {
     private final int[] unitIds; // units to be controlled
     private final BlockPos preselectedBlockPos;
     private final BlockPos selectedBuildingPos; // for building abilities
+    private final boolean queue; // shift queue actions
 
     // packet-handler functions
     public UnitActionServerboundPacket(
@@ -27,7 +28,8 @@ public class UnitActionServerboundPacket {
         int unitId,
         int[] unitIds,
         BlockPos preselectedBlockPos,
-        BlockPos selectedBuildingPos
+        BlockPos selectedBuildingPos,
+        boolean queue
     ) {
         this.ownerName = ownerName;
         this.action = action;
@@ -35,6 +37,7 @@ public class UnitActionServerboundPacket {
         this.unitIds = unitIds;
         this.preselectedBlockPos = preselectedBlockPos;
         this.selectedBuildingPos = selectedBuildingPos;
+        this.queue = queue;
     }
 
     public UnitActionServerboundPacket(FriendlyByteBuf buffer) {
@@ -44,6 +47,7 @@ public class UnitActionServerboundPacket {
         this.unitIds = buffer.readVarIntArray();
         this.preselectedBlockPos = buffer.readBlockPos();
         this.selectedBuildingPos = buffer.readBlockPos();
+        this.queue = buffer.readBoolean();
     }
 
     public void encode(FriendlyByteBuf buffer) {
@@ -53,6 +57,7 @@ public class UnitActionServerboundPacket {
         buffer.writeVarIntArray(this.unitIds);
         buffer.writeBlockPos(this.preselectedBlockPos);
         buffer.writeBlockPos(this.selectedBuildingPos);
+        buffer.writeBoolean(this.queue);
     }
 
     // server-side packet-consuming functions
@@ -82,7 +87,8 @@ public class UnitActionServerboundPacket {
                         this.unitId,
                         this.unitIds,
                         this.preselectedBlockPos,
-                        this.selectedBuildingPos
+                        this.selectedBuildingPos,
+                        this.queue
                 );
                 success.set(true);
             }

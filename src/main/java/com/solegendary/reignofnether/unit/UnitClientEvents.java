@@ -216,7 +216,8 @@ public class UnitClientEvents {
                 MC.player.getName().getString(),
                 action, unitId, unitIds,
                 preselectedBlockPos,
-                selectedBuildingPos
+                selectedBuildingPos,
+                Keybindings.shiftMod.isDown()
             ));
         }
     }
@@ -239,7 +240,8 @@ public class UnitClientEvents {
                         MC.player.getName().getString(),
                         action, unitId, unitIds,
                         preselectedBlockPos,
-                        selectedBuildingPos
+                        selectedBuildingPos,
+                        Keybindings.shiftMod.isDown()
                 ));
             }
         }
@@ -282,7 +284,8 @@ public class UnitClientEvents {
                 preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
                 selUnits,
                 bp,
-                HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
+                HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0),
+                Keybindings.shiftMod.isDown()
             ));
         }
     }

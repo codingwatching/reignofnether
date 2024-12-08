@@ -70,7 +70,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import static com.solegendary.reignofnether.player.PlayerServerEvents.isRTSPlayer;
-import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
 
 public class UnitServerEvents {
 
@@ -80,7 +79,11 @@ public class UnitServerEvents {
     // max possible pop you can have regardless of buildings, adjustable via /gamerule maxPopulation
     public static int maxPopulation = ResourceCosts.DEFAULT_MAX_POPULATION;
 
-    private static final List<UnitActionItem> unitActionQueue = Collections.synchronizedList(new ArrayList<>());
+    // actioned only when the associated unit is idle, one at a time
+    private static final List<UnitActionItem> unitActionSlowQueue = Collections.synchronizedList(new ArrayList<>());
+    // actioned ASAP regardless of what the unit was doing
+    private static final List<UnitActionItem> unitActionFastQueue = Collections.synchronizedList(new ArrayList<>());
+
     private static final ArrayList<LivingEntity> allUnits = new ArrayList<>();
 
     private static final ArrayList<Pair<Integer, ChunkAccess>> forcedUnitChunks = new ArrayList<>();
@@ -222,25 +225,53 @@ public class UnitServerEvents {
         return currentPopulation;
     }
 
-    // manually provide all the variables required to do unit actions
+    public static void addActionItem(
+            String ownerName,
+            UnitAction action,
+            int unitId,
+            int[] unitIds,
+            BlockPos preselectedBlockPos,
+            BlockPos selectedBuildingPos
+    ) {
+        addActionItem(ownerName, action, unitId, unitIds, preselectedBlockPos, selectedBuildingPos, false);
+    }
+
     public static void addActionItem(
         String ownerName,
         UnitAction action,
         int unitId,
         int[] unitIds,
         BlockPos preselectedBlockPos,
-        BlockPos selectedBuildingPos
+        BlockPos selectedBuildingPos,
+        boolean queue
     ) {
-        synchronized (unitActionQueue) {
-            UnitActionItem uai = new UnitActionItem(ownerName,
-                    action,
-                    unitId,
-                    unitIds,
-                    preselectedBlockPos,
-                    selectedBuildingPos
-            );
-            if (!(!unitActionQueue.isEmpty() && unitActionQueue.get(0).equals(uai) && action == UnitAction.MOVE))
-                unitActionQueue.add(uai);
+        if (queue) {
+            synchronized(unitActionSlowQueue) {
+                for (int actionableUnitId : unitIds) {
+                    unitActionSlowQueue.add(
+                        new UnitActionItem(ownerName,
+                                action,
+                                unitId,
+                                new int[] {actionableUnitId},
+                                preselectedBlockPos,
+                                selectedBuildingPos
+                        )
+                    );
+                    System.out.println("added item to queue: " + action.name() + "|" + actionableUnitId + "|" + preselectedBlockPos);
+                }
+            }
+        } else {
+            synchronized (unitActionFastQueue) {
+                UnitActionItem uai = new UnitActionItem(ownerName,
+                        action,
+                        unitId,
+                        unitIds,
+                        preselectedBlockPos,
+                        selectedBuildingPos
+                );
+                if (!(!unitActionFastQueue.isEmpty() && unitActionFastQueue.get(0).equals(uai) && action == UnitAction.MOVE))
+                    unitActionFastQueue.add(uai);
+            }
         }
     }
     public static Relationship getUnitToEntityRelationship(Unit unit, Entity entity) {
@@ -536,10 +567,27 @@ public class UnitServerEvents {
                 }
             }
         }
-        synchronized (unitActionQueue) {
-            for (UnitActionItem actionItem : unitActionQueue)
+        synchronized (unitActionSlowQueue) {
+            UnitActionItem actionedItem = null;
+
+            for (UnitActionItem uai : unitActionSlowQueue) {
+                if (uai.getUnitIds().length > 0) {
+                    Entity entity = evt.level.getEntity(uai.getUnitIds()[0]);
+                    if (entity instanceof WorkerUnit wUnit && WorkerUnit.isIdle(wUnit)) {
+                        uai.action(evt.level);
+                        actionedItem = uai;
+                        System.out.println("actioned item from queue: " + uai.getAction().name() + "|" + uai.getUnitIds()[0] + "|" + uai.getPreselectedBlockPos());
+                        break;
+                    }
+                }
+            }
+            if (actionedItem != null && unitActionSlowQueue.remove(actionedItem))
+                System.out.println("removed item from queue: " + actionedItem.getAction().name() + "|" + actionedItem.getUnitIds()[0] + "|" + actionedItem.getPreselectedBlockPos());
+        }
+        synchronized (unitActionFastQueue) {
+            for (UnitActionItem actionItem : unitActionFastQueue)
                 actionItem.action(evt.level);
-            unitActionQueue.clear();
+            unitActionFastQueue.clear();
         }
     }
 
