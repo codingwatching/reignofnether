@@ -21,6 +21,9 @@ Wave Survival 0.5a
 
 Features
 --------
+
+[🟡] Improved pathfinding for gathering, especially trees
+
 [❌] Configurable Unit Costs (Thanks to @DoodleNoodles)
     - Includes all costs, population values and build times
     - Modify the files generated at configs/reignofnether-config.toml to adjust them
@@ -36,3 +39,9 @@ Features
 Bugfixes
 --------
 [✔] Fixed issue of your units sometimes showing other players' movement indicators
+
+[❌] pumpkin farm planting workers seem to be stuck moving up and down the edge of the log block
+    - Possibly also happens with any gathering unit
+    - This is repeating canContinueToUse().start() every tick because the end node keeps changing for some reason
+        - Even though the moveTarget does not change
+    - Also sometimes, the workers just walks off entirely
