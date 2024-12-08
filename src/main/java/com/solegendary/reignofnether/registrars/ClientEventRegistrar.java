@@ -3,6 +3,8 @@ package com.solegendary.reignofnether.registrars;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningServerEvents;
 import com.solegendary.reignofnether.building.BuildingClientEvents;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
+import com.solegendary.reignofnether.config.ConfigClientEvents;
+import com.solegendary.reignofnether.config.ConfigVanillaServerEvents;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
 import com.solegendary.reignofnether.fogofwar.FogOfWarServerEvents;
@@ -45,6 +47,7 @@ public class ClientEventRegistrar {
     public void registerClientEvents() {
         vanillaEventBus.register(OrthoviewClientEvents.class);
         vanillaEventBus.register(TopdownGuiClientEvents.class);
+        vanillaEventBus.register(ConfigClientEvents.class);
         vanillaEventBus.register(BuildingClientEvents.class); // being first fixes a bug with drawBuildingToPlace()
         vanillaEventBus.register(UnitClientEvents.class);
         vanillaEventBus.register(HealthBarClientEvents.class);
@@ -65,6 +68,7 @@ public class ClientEventRegistrar {
         // to allow singleplayer integrated server to work
         vanillaEventBus.register(TutorialServerEvents.class);
         vanillaEventBus.register(PlayerServerEvents.class);
+        vanillaEventBus.register(ConfigVanillaServerEvents.class);
         vanillaEventBus.register(UnitServerEvents.class);
         vanillaEventBus.register(BuildingServerEvents.class);
         vanillaEventBus.register(AttackWarningServerEvents.class);
