@@ -36,8 +36,10 @@ Features
     [❌] Only apply to build/repair and move
     [❌] Detect idle attackers
     [❌] Detect workers as idle faster
+    [❌] add clientside checkpoints
     [❌] If queued and slowQueue does NOT contain any items for that user, reset the unit's behaviours first
     [❌] if !queued, clear that unit's slowQueue
+    [❌] ensure queueing farms still works correctly and a worker begins farming the last farm to be built if their slowQueue is empty
 
 Bugfixes
 --------
