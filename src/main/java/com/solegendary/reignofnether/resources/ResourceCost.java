@@ -1,16 +1,27 @@
 package com.solegendary.reignofnether.resources;
 
+import com.solegendary.reignofnether.config.ReignOfNetherCommonConfigs;
+import com.solegendary.reignofnether.config.ResourceCostConfigEntry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraftforge.fml.common.Mod;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+
 // defined here because we need to be able to access in both
 // static (for ProductionItems) and nonstatic (for getCurrentPopulation) contexts
 // and we can't declare static getters in the Unit interface
+
 public class ResourceCost {
+    public static final HashMap<String, ResourceCost> ENTRIES = new HashMap<>();
     public static final int TICKS_PER_SECOND = 20;
 
-    public final int food;
-    public final int wood;
-    public final int ore;
-    public final int ticks;
-    public final int population; // for a building, indicates supply, for a unit, indicates usage
+    public int food;
+    public int wood;
+    public int ore;
+    public int ticks;
+    public int population; // for a building, indicates supply, for a unit, indicates usage
+    public String id;
 
     private ResourceCost(int food, int wood, int ore, int seconds, int population) { // units
         this.food = food;
@@ -19,6 +30,13 @@ public class ResourceCost {
         this.ticks = seconds * TICKS_PER_SECOND;
         this.population = population;
     }
+
+    public ResourceCost(String modid, String id) {
+        //Constructor for static configurable ResourceCosts
+        this.id = modid + "." + id;
+        ENTRIES.put(this.id, this);
+    }
+
     public static ResourceCost Unit(int food, int wood, int ore, int seconds, int population) { // buildings
         return new ResourceCost(food, wood, ore, seconds, population);
     }
@@ -30,5 +48,12 @@ public class ResourceCost {
     }
     public static ResourceCost Enchantment(int food, int wood, int ore) { // buildings
         return new ResourceCost(food, wood, ore, 0, 0);
+    }
+    public void bakeValues(ResourceCostConfigEntry rcce) {
+        this.food = rcce.getFood();
+        this.wood = rcce.getWood();
+        this.ore = rcce.getOre();
+        this.ticks = rcce.getSeconds() * TICKS_PER_SECOND;
+        this.population = rcce.getPopulation();
     }
 }
