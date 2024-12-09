@@ -32,7 +32,7 @@ Bugfixes
 
 [❌] Pathing around fire is weird
 
-[❌] Warn player if the server host changed values
+[🟡] Warn player if the server host changed values
     - test for and prevent negative values
 
 [❌] can't build on sculk

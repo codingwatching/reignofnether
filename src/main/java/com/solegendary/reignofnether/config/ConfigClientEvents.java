@@ -3,12 +3,20 @@ package com.solegendary.reignofnether.config;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingClientEvents;
+import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
+import com.solegendary.reignofnether.hud.Button;
+import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
+import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,11 +24,38 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigClientEvents {
+
+    // TODO: clear on logout
+    private static ArrayList<FormattedCharSequence> tooltipLines = new ArrayList<>();
+    public static boolean showDiffsButton = false;
+
+    static {
+        tooltipLines.add(FormattedCharSequence.forward(I18n.get("config.reignofnether.warn_config_change"), Style.EMPTY.withBold(true)));
+        tooltipLines.add(FormattedCharSequence.forward(I18n.get("config.reignofnether.hide_config_change"), Style.EMPTY));
+        tooltipLines.add(FormattedCharSequence.forward("", Style.EMPTY));
+    }
+
+    public static Button getDiffsButton() {
+        return new Button(
+                "Configs Changed Warning",
+                Button.itemIconSize,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/warning.png"),
+                (Keybinding) null,
+                () -> false,
+                () -> !showDiffsButton || TutorialClientEvents.isEnabled(),
+                () -> true,
+                () -> showDiffsButton = false,
+                null,
+                tooltipLines
+        );
+    }
 
     private static final Minecraft MC = Minecraft.getInstance();
     //Load config data from server
@@ -31,39 +66,44 @@ public class ConfigClientEvents {
             //jank, but this is how we rebake using the values sent from the packet currently
             //we can clean this up later
 
-            rescost.wood = msg.getWood();
-            rescost.food = msg.getFood();
-            rescost.ore = msg.getOre();
-            rescost.ticks = msg.getTicks();
-            rescost.population = msg.getPopulation();
-
             int woodDiff = msg.getWood() - rescost.wood;
             int foodDiff = msg.getFood() - rescost.food;
             int oreDiff = msg.getOre() - rescost.ore;
             int ticksDiff = msg.getTicks() - rescost.ticks;
             int popDiff = msg.getPopulation() - rescost.population;
 
-            if (MC.player != null &&
-                (woodDiff != 0 ||
-                foodDiff != 0 ||
+            rescost.wood = msg.getWood();
+            rescost.food = msg.getFood();
+            rescost.ore = msg.getOre();
+            rescost.ticks = msg.getTicks();
+            rescost.population = msg.getPopulation();
+
+            if (foodDiff != 0 ||
+                woodDiff != 0 ||
                 oreDiff != 0 ||
                 ticksDiff != 0 ||
-                popDiff != 0)
-            ) {
-                String text = "Changed costs for: " + rescost.id;
+                popDiff != 0) {
+
+                String text = rescost.id.replace("reignofnether.", "")
+                        .replace("_","    ")
+                        .toLowerCase(Locale.ENGLISH);
+                text = text.substring(0, 1).toUpperCase() + text.substring(1);
+                text += ":";
 
                 if (foodDiff != 0)
-                    text += " \uE000  " + foodDiff;
+                    text += (foodDiff > 0 ? "    +" : "    ") + foodDiff + " \uE000";
                 if (woodDiff != 0)
-                    text += " \uE001  " + woodDiff;
+                    text += (woodDiff > 0 ? "    +" : "    ") + woodDiff + " \uE001";
                 if (oreDiff != 0)
-                    text += " \uE002  " + oreDiff;
+                    text += (oreDiff > 0 ? "    +" : "    ") + oreDiff + " \uE002";
                 if (ticksDiff != 0)
-                    text += " \uE004  " + ticksDiff / 20;
+                    text += (ticksDiff > 0 ? "    +" : "    ") + (ticksDiff / 20) + " \uE004";
                 if (popDiff != 0)
-                    text += " \uE003  " + popDiff;
+                    text += (popDiff > 0 ? "    +" : "    ") +  popDiff + " \uE003";
 
-                MC.player.sendSystemMessage(Component.literal(text));
+                showDiffsButton = true;
+
+                tooltipLines.add(FormattedCharSequence.forward(text, MyRenderer.iconStyle));
             }
         }
     }

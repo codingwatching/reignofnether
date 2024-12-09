@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
 import com.solegendary.reignofnether.ability.abilities.SonicBoom;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientEvents;
 import com.solegendary.reignofnether.building.*;
+import com.solegendary.reignofnether.config.ConfigClientEvents;
 import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
 import com.solegendary.reignofnether.guiscreen.TopdownGui;
 import com.solegendary.reignofnether.hud.buttons.ActionButtons;
@@ -1101,6 +1102,17 @@ public class HudClientEvents {
         // Start buttons (spectator only)
         // ------------------------------
         if (!PlayerClientEvents.isRTSPlayer && !PlayerClientEvents.rtsLocked) {
+
+            Button diffsButton = ConfigClientEvents.getDiffsButton();
+            if (!diffsButton.isHidden.get()) {
+                diffsButton.render(evt.getPoseStack(),
+                        screenWidth - (StartButtons.ICON_SIZE * 10),
+                        StartButtons.ICON_SIZE / 2,
+                        mouseX,
+                        mouseY
+                );
+                renderedButtons.add(diffsButton);
+            }
 
             /*
             Button gamemodeButton = ClientGameModeHelper.getButton();
