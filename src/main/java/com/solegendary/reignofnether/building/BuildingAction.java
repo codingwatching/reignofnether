@@ -9,6 +9,7 @@ public enum BuildingAction {
     SET_RALLY_POINT,
     SET_RALLY_POINT_ENTITY,
     START_PRODUCTION, // start ProductionItem
+    COMPLETE_PRODUCTION, // don't let client complete items themselves, only via reflected clientbound packets for consistency
     CANCEL_PRODUCTION, // remove ProductionItem from front of queue
     CANCEL_BACK_PRODUCTION, // remove ProductionItem from back of queue
     CHECK_STOCKPILE_CHEST, // check stockpile chests for resources to consume

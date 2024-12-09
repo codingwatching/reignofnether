@@ -115,6 +115,24 @@ public class BuildingClientboundPacket {
         );
     }
 
+    public static void completeProduction(BlockPos buildingPos, String itemName) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+            new BuildingClientboundPacket(BuildingAction.COMPLETE_PRODUCTION,
+                itemName,
+                buildingPos,
+                Rotation.NONE,
+                "",
+                0,
+                0,
+                false,
+                false,
+                false,
+                Portal.PortalType.BASIC,
+                false
+            )
+        );
+    }
+
     public static void changePortal(BlockPos buildingPos, String portalType) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
             new BuildingClientboundPacket(BuildingAction.CHANGE_PORTAL,
@@ -228,6 +246,13 @@ public class BuildingClientboundPacket {
                             (ProductionBuilding) building,
                             this.itemName,
                             this.buildingPos
+                        );
+                    }
+                    case COMPLETE_PRODUCTION -> {
+                        ProductionBuilding.completeProductionItem(
+                                (ProductionBuilding) building,
+                                this.itemName,
+                                this.buildingPos
                         );
                     }
                     case CANCEL_PRODUCTION -> {

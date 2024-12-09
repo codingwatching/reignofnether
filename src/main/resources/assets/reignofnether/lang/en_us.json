@@ -824,5 +824,12 @@
     "hud.gamemode.reignofnether.koth3": "powerful effects and win by ruling it for long enough. ",
     "hud.gamemode.reignofnether.koth4": "Left-click to place the beacon.",
     "hud.gamemode.reignofnether.changemode": "Right-click to change game mode",
-    "hud.gamemode.reignofnether.locked": "(locked)"
+    "hud.gamemode.reignofnether.locked": "(locked)",
+
+    "config.reignofnether.warn_config_change": "(locked)",
+    "config.reignofnether.food_change": "(locked)",
+    "config.reignofnether.wood_change": "(locked)",
+    "config.reignofnether.ore_change": "(locked)",
+    "config.reignofnether.time_change": "(locked)",
+    "config.reignofnether.pop_change": "Population: "
 }
