@@ -31,7 +31,7 @@ public class ConfigClientEvents {
             rescost.wood = msg.getWood();
             rescost.food = msg.getFood();
             rescost.ore = msg.getOre();
-            rescost.ticks = msg.getTicks() * ResourceCost.TICKS_PER_SECOND;
+            rescost.ticks = msg.getTicks();
             rescost.population = msg.getPopulation();
         }
     }

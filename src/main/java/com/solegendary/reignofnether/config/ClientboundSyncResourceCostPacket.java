@@ -1,5 +1,6 @@
 package com.solegendary.reignofnether.config;
 
+import com.solegendary.reignofnether.resources.ResourceCost;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -19,12 +20,13 @@ public class ClientboundSyncResourceCostPacket {
     private final int ticks;
     private final int population;
     private final String id;
-    public ClientboundSyncResourceCostPacket(ResourceCostConfigEntry entry) {
-        this.food = entry.getFood();
-        this.wood = entry.getWood();
-        this.ore = entry.getOre();
-        this.ticks = entry.getSeconds();
-        this.population = entry.getPopulation();
+
+    public ClientboundSyncResourceCostPacket(ResourceCost entry) {
+        this.food = entry.food;
+        this.wood = entry.wood;
+        this.ore = entry.ore;
+        this.ticks = entry.ticks;
+        this.population = entry.population;
         this.id = entry.id;
     }
     public ClientboundSyncResourceCostPacket(FriendlyByteBuf buf) {

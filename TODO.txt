@@ -28,10 +28,8 @@ Features
 
 [🟡] Configurable Unit Costs (Thanks to @DoodleNoodles)
     - Includes all costs, population values and build times
-    - Modify the files generated at configs/reignofnether-config.toml to adjust them
-    - If the server config is adjusted, this will be enforced for all players joining the match
-
-    [❌] Updating the server configs without restarting causes the client values to be updated on login, but not the server
+    - Modify the config at .minecraft/config/reignofnether-common-1.0.11.toml to adjust them
+    - Server values overwrite client values on login
 
 [❌] Shift queueing movements and buildings (not just placement)
     - Add index to sendCommand packets
@@ -42,8 +40,7 @@ Features
 
 Bugfixes
 --------
+
 [✔] Bridges are no longer free
 [✔] Fixed issue of your units sometimes showing other players' movement indicators
-[🟡] Fixed production buildings splitting across unbuilt buildings
-
 [🟡] Vindicator Maiming duration +2s
