@@ -16,7 +16,9 @@ Wave Survival 0.5a
 [❌] Fixed a bug where teams would randomly switch
 [🟡] Time now begins at dusk on the first day
     - This means day 1 is no longer half the length of other days
-[❌] Ranged ground units should target the nearest unit
+    [❌] Game starts on wave 2
+
+[🟡] Ranged ground units should target the nearest unit
 
 
 Features
@@ -29,6 +31,8 @@ Features
     - Modify the files generated at configs/reignofnether-config.toml to adjust them
     - If the server config is adjusted, this will be enforced for all players joining the match
 
+    [❌] Updating the server configs without restarting causes the client values to be updated on login, but not the server
+
 [❌] Shift queueing movements and buildings (not just placement)
     - Add index to sendCommand packets
     - Add recursive field to UnitActionItem: nextActionItem
@@ -38,7 +42,8 @@ Features
 
 Bugfixes
 --------
-[❌] Bridges are no longer free
-[🟡] Testing monster borders
+[✔] Bridges are no longer free
 [✔] Fixed issue of your units sometimes showing other players' movement indicators
 [🟡] Fixed production buildings splitting across unbuilt buildings
+
+[🟡] Vindicator Maiming duration +2s

@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
+import com.solegendary.reignofnether.unit.interfaces.RangedAttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import net.minecraft.core.BlockPos;
@@ -21,8 +22,8 @@ import java.util.List;
 
 public class WaveEnemy {
 
-    private static final int PERIODIC_COMMAND_INTERVAL = 200;
-    private static final int IDLE_COMMAND_INTERVAL = 200;
+    //private static final int PERIODIC_COMMAND_INTERVAL = 200;
+    private static final int IDLE_COMMAND_INTERVAL = 100;
 
     public final Unit unit;
     private long idleTicks = 0;
@@ -63,8 +64,8 @@ public class WaveEnemy {
         if (ticks > 0 && ticks == ticksToAdd * 10)
             startingCommand();
 
-        if (ticks > 0 && ticks % PERIODIC_COMMAND_INTERVAL == 0)
-            periodicCommand();
+        //if (ticks > 0 && ticks % PERIODIC_COMMAND_INTERVAL == 0)
+        //    periodicCommand();
 
         if (idleTicks > 0 && idleTicks % IDLE_COMMAND_INTERVAL == 0)
             idleCommand();
@@ -85,13 +86,17 @@ public class WaveEnemy {
     }
 
     // done every X ticks
-    public void periodicCommand() {
-        attackMoveNearestBuilding();
-    }
+    //public void periodicCommand() {
+    //    attackMoveNearestBuilding();
+    //}
 
     // done if the unit didn't change position in X ticks
     public void idleCommand() {
-        attackMoveNearestBuilding();
+        if (unit instanceof CreeperUnit ||
+            (unit instanceof AttackerUnit aUnit && aUnit.canAttackBuildings()))
+            attackMoveNearestBuilding();
+        else
+            attackMoveNearestUnit();
     }
 
     // done when attacked
@@ -100,12 +105,25 @@ public class WaveEnemy {
     private Building getNearestAttackableBuilding() {
         List<Building> buildings = BuildingServerEvents.getBuildings().stream()
                 .filter(b -> !SurvivalServerEvents.ENEMY_OWNER_NAME.equals(b.ownerName) && !b.ownerName.isBlank())
-                .sorted(Comparator.comparing(b -> b.centrePos.distToCenterSqr(((Entity) unit).getEyePosition())))
+                .sorted(Comparator.comparing(b -> b.centrePos.distToCenterSqr(((Entity) unit).position())))
                 .toList();
 
         BlockPos targetBp = null;
         if (!buildings.isEmpty())
             return buildings.get(0);
+
+        return null;
+    }
+
+    private LivingEntity getNearestAttackableUnit() {
+        List<LivingEntity> entities = UnitServerEvents.getAllUnits().stream()
+                .filter(le -> le instanceof Unit u && !SurvivalServerEvents.ENEMY_OWNER_NAME.equals(u.getOwnerName()) && !u.getOwnerName().isBlank())
+                .sorted(Comparator.comparing(le -> le.position().distanceToSqr(((Entity) unit).position())))
+                .toList();
+
+        BlockPos targetBp = null;
+        if (!entities.isEmpty())
+            return entities.get(0);
 
         return null;
     }
@@ -155,11 +173,27 @@ public class WaveEnemy {
         }
     }
 
-    private void attackMoveNearestUnit(AttackerUnit unit, String ownerName) {
+    private void attackMoveNearestUnit() {
+        unit.resetBehaviours();
 
+        Entity entity = (Entity) unit;
+        LivingEntity nearestUnit = getNearestAttackableUnit();
+
+        BlockPos targetBp = null;
+        if (nearestUnit != null)
+            targetBp = nearestUnit.getOnPos();
+
+        if (targetBp != null) {
+            if (unit instanceof AttackerUnit)
+                UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.ATTACK_MOVE, -1,
+                        new int[]{((Entity) unit).getId()},  targetBp, new BlockPos(0,0,0));
+            else
+                UnitServerEvents.addActionItem(unit.getOwnerName(), UnitAction.MOVE, -1,
+                        new int[]{((Entity) unit).getId()},  targetBp, new BlockPos(0,0,0));
+        }
     }
 
-    private void attackNearestWorker(AttackerUnit unit, String ownerName) {
+    private void attackNearestWorker() {
 
     }
 }

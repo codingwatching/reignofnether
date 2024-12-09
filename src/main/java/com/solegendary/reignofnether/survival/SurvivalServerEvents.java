@@ -161,6 +161,8 @@ public class SurvivalServerEvents {
     public static void onRegisterCommand(RegisterCommandsEvent evt) {
         evt.getDispatcher().register(Commands.literal("debug-end-wave")
                 .executes((command) -> {
+                    if (!isEnabled())
+                        return 0;
                     PlayerServerEvents.sendMessageToAllPlayers("Ending current wave");
                     ArrayList<WaveEnemy> enemiesCopy = new ArrayList<>(enemies);
                     for (WaveEnemy enemy : enemiesCopy)
@@ -172,6 +174,8 @@ public class SurvivalServerEvents {
                 }));
         evt.getDispatcher().register(Commands.literal("debug-next-night")
                 .executes((command) -> {
+                    if (!isEnabled())
+                        return 0;
                     PlayerServerEvents.sendMessageToAllPlayers("Advancing to next night and wave");
                     serverLevel.setDayTime(12450);
                     return 1;
@@ -288,13 +292,9 @@ public class SurvivalServerEvents {
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
-        nextWave = Wave.getWave(nextWave.number + 1);
         SurvivalClientboundPacket.setWaveNumber(nextWave.number);
         saveStage(level);
 
-        spawnMonsterWave(level, nextWave);
-
-        /*
         switch (lastFaction) {
             case VILLAGERS -> {
                 if (random.nextBoolean())
@@ -322,7 +322,7 @@ public class SurvivalServerEvents {
                 }
             }
         }
-         */
+        nextWave = Wave.getWave(nextWave.number + 1);
     }
 
     // triggered when last enemy is killed
