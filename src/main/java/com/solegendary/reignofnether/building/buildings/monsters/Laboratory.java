@@ -27,7 +27,7 @@ import java.util.*;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class Laboratory extends ProductionBuilding implements RangeIndicator {
+public class Laboratory extends ProductionBuilding implements RangeIndicator, ChangeableStructure {
 
     public final static String buildingName = "Laboratory";
     public final static String structureName = "laboratory";

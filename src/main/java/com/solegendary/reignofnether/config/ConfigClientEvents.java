@@ -1,46 +1,54 @@
 package com.solegendary.reignofnether.config;
 
 import com.solegendary.reignofnether.ReignOfNether;
-import com.solegendary.reignofnether.building.Building;
-import com.solegendary.reignofnether.building.BuildingClientEvents;
-import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
+import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
-import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigClientEvents {
 
-    // TODO: clear on logout
     private static ArrayList<FormattedCharSequence> tooltipLines = new ArrayList<>();
     public static boolean showDiffsButton = false;
 
     static {
+        resetDiffsTooltips();
+    }
+
+    public static void resetDiffsTooltips() {
+        tooltipLines.clear();
         tooltipLines.add(FormattedCharSequence.forward(I18n.get("config.reignofnether.warn_config_change"), Style.EMPTY.withBold(true)));
         tooltipLines.add(FormattedCharSequence.forward(I18n.get("config.reignofnether.hide_config_change"), Style.EMPTY));
         tooltipLines.add(FormattedCharSequence.forward("", Style.EMPTY));
     }
+
+    /*
+    @SubscribeEvent
+    public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn evt) {
+        // LOG IN TO SERVER WORLD ONLY
+        ReignOfNether.LOGGER.info("Resetting client config diffs");
+        resetDiffsTooltips();
+    }
+     */
 
     public static Button getDiffsButton() {
         return new Button(
@@ -104,6 +112,8 @@ public class ConfigClientEvents {
                 showDiffsButton = true;
 
                 tooltipLines.add(FormattedCharSequence.forward(text, MyRenderer.iconStyle));
+
+                ReignOfNether.LOGGER.info("Received different config from server: " + text);
             }
         }
     }

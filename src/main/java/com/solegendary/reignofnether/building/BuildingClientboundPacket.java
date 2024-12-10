@@ -133,10 +133,10 @@ public class BuildingClientboundPacket {
         );
     }
 
-    public static void changePortal(BlockPos buildingPos, String portalType) {
+    public static void changeStructure(BlockPos buildingPos, String structureName) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-            new BuildingClientboundPacket(BuildingAction.CHANGE_PORTAL,
-                portalType,
+            new BuildingClientboundPacket(BuildingAction.CHANGE_STRUCTURE,
+                structureName,
                 buildingPos,
                 Rotation.NONE,
                 "",
@@ -271,10 +271,11 @@ public class BuildingClientboundPacket {
                             false
                         );
                     }
-                    case CHANGE_PORTAL -> {
-                        if (building instanceof Portal portal) {
+                    case CHANGE_STRUCTURE -> {
+                        if (building instanceof Portal portal)
                             portal.changeStructure(Portal.PortalType.valueOf(itemName));
-                        }
+                        else if (building instanceof ChangeableStructure cBuilding)
+                            cBuilding.changeStructure(itemName);
                     }
                 }
                 success.set(true);

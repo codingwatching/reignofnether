@@ -859,7 +859,9 @@ public abstract class Building {
                     return;
                 }
             }
-        } while (!spawnBs.getMaterial().isSolid() || spawnBs.getMaterial() == Material.LEAVES
+        } while (!spawnBs.getMaterial().isSolid()
+            || spawnBs.getMaterial() == Material.LEAVES
+            || spawnBs.getBlock() == Blocks.BARRIER
             || spawnBs.getMaterial() == Material.WOOD
             || spawnBp.distSqr(centrePos) < ANIMAL_SPAWN_RANGE_MIN * ANIMAL_SPAWN_RANGE_MIN
             || spawnBp.distSqr(centrePos) > range * range
