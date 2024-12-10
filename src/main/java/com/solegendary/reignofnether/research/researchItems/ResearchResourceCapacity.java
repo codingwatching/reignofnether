@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.building.ProductionItem;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.research.ResearchClient;
+import com.solegendary.reignofnether.research.ResearchClientboundPacket;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
@@ -31,18 +32,13 @@ public class ResearchResourceCapacity extends ProductionItem {
     public ResearchResourceCapacity(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (level.isClientSide()) {
-                ResearchClient.addResearch(this.building.ownerName, ResearchResourceCapacity.itemName);
-                for (LivingEntity unit : UnitClientEvents.getAllUnits())
-                    if (unit instanceof WorkerUnit) {
-                        ((Unit) unit).setupEquipmentAndUpgradesClient();
-                    }
-            } else {
-                ResearchServerEvents.addResearch(this.building.ownerName, ResearchResourceCapacity.itemName);
+            if (!level.isClientSide()) {
+                ResearchClientboundPacket.addResearch(this.building.ownerName, itemName);
+                ResearchServerEvents.addResearch(this.building.ownerName, itemName);
+
                 for (LivingEntity unit : UnitServerEvents.getAllUnits())
-                    if (unit instanceof WorkerUnit) {
+                    if (unit instanceof WorkerUnit)
                         ((Unit) unit).setupEquipmentAndUpgradesServer();
-                    }
             }
         };
         this.foodCost = cost.food;

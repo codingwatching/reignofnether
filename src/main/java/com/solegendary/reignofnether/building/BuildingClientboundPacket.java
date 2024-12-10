@@ -115,10 +115,28 @@ public class BuildingClientboundPacket {
         );
     }
 
-    public static void changePortal(BlockPos buildingPos, String portalType) {
+    public static void completeProduction(BlockPos buildingPos, String itemName) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-            new BuildingClientboundPacket(BuildingAction.CHANGE_PORTAL,
-                portalType,
+            new BuildingClientboundPacket(BuildingAction.COMPLETE_PRODUCTION,
+                itemName,
+                buildingPos,
+                Rotation.NONE,
+                "",
+                0,
+                0,
+                false,
+                false,
+                false,
+                Portal.PortalType.BASIC,
+                false
+            )
+        );
+    }
+
+    public static void changeStructure(BlockPos buildingPos, String structureName) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+            new BuildingClientboundPacket(BuildingAction.CHANGE_STRUCTURE,
+                structureName,
                 buildingPos,
                 Rotation.NONE,
                 "",
@@ -230,6 +248,13 @@ public class BuildingClientboundPacket {
                             this.buildingPos
                         );
                     }
+                    case COMPLETE_PRODUCTION -> {
+                        ProductionBuilding.completeProductionItem(
+                                (ProductionBuilding) building,
+                                this.itemName,
+                                this.buildingPos
+                        );
+                    }
                     case CANCEL_PRODUCTION -> {
                         ProductionBuilding.cancelProductionItem(
                             (ProductionBuilding) building,
@@ -246,10 +271,11 @@ public class BuildingClientboundPacket {
                             false
                         );
                     }
-                    case CHANGE_PORTAL -> {
-                        if (building instanceof Portal portal) {
+                    case CHANGE_STRUCTURE -> {
+                        if (building instanceof Portal portal)
                             portal.changeStructure(Portal.PortalType.valueOf(itemName));
-                        }
+                        else if (building instanceof ChangeableStructure cBuilding)
+                            cBuilding.changeStructure(itemName);
                     }
                 }
                 success.set(true);

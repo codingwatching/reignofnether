@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.building.ProductionItem;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.research.ResearchClient;
+import com.solegendary.reignofnether.research.ResearchClientboundPacket;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
@@ -29,14 +30,13 @@ public class ResearchPillagerCrossbows extends ProductionItem {
     public ResearchPillagerCrossbows(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (level.isClientSide()) {
-                ResearchClient.addResearch(this.building.ownerName, ResearchPillagerCrossbows.itemName);
-            } else {
-                ResearchServerEvents.addResearch(this.building.ownerName, ResearchPillagerCrossbows.itemName);
+            if (!level.isClientSide()) {
+                ResearchClientboundPacket.addResearch(this.building.ownerName, itemName);
+                ResearchServerEvents.addResearch(this.building.ownerName, itemName);
+
                 for (LivingEntity unit : UnitServerEvents.getAllUnits())
-                    if (unit instanceof PillagerUnit pUnit && pUnit.getOwnerName().equals(building.ownerName)) {
+                    if (unit instanceof PillagerUnit pUnit && pUnit.getOwnerName().equals(building.ownerName))
                         pUnit.setupEquipmentAndUpgradesServer();
-                    }
             }
         };
         this.foodCost = cost.food;

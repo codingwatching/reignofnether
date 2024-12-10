@@ -1,9 +1,11 @@
 package com.solegendary.reignofnether.research.researchItems;
 
 import com.solegendary.reignofnether.ReignOfNether;
+import com.solegendary.reignofnether.building.BuildingClientboundPacket;
 import com.solegendary.reignofnether.building.BuildingServerboundPacket;
 import com.solegendary.reignofnether.building.ProductionBuilding;
 import com.solegendary.reignofnether.building.ProductionItem;
+import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.building.buildings.villagers.Castle;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
@@ -25,8 +27,10 @@ public class ResearchCastleFlag extends ProductionItem {
     public ResearchCastleFlag(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (this.building instanceof Castle castle) {
+            if (!level.isClientSide() &&
+                this.building instanceof Castle castle) {
                 castle.changeStructure(Castle.upgradedStructureName);
+                BuildingClientboundPacket.changeStructure(this.building.originPos, Castle.upgradedStructureName);
             }
         };
         this.foodCost = cost.food;

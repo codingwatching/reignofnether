@@ -304,13 +304,24 @@ public abstract class ProductionBuilding extends Building {
         return success;
     }
 
+    public static void completeProductionItem(ProductionBuilding building, String itemName, BlockPos pos) {
+        if (building != null && building.productionQueue.size() > 0) {
+            ProductionItem prodItem = building.productionQueue.get(0);
+            building.productionQueue.remove(0);
+        }
+    }
+
     public void tick(Level tickLevel) {
         super.tick(tickLevel);
 
         if (productionQueue.size() >= 1) {
             ProductionItem nextItem = productionQueue.get(0);
-            if (nextItem.tick(tickLevel))
-                productionQueue.remove(0);
+            if (nextItem.tick(tickLevel)) {
+                if (!tickLevel.isClientSide()) {
+                    productionQueue.remove(0);
+                    BuildingClientboundPacket.completeProduction(originPos, nextItem.getItemName());
+                }
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 
-1.19.2-1.0.11
+1.19.2-1.0.11a
 -------------
 
 - Done and tested
@@ -12,33 +12,42 @@
 Wave Survival 0.5a
 ------------------
 
-[❌] Update to 1.0.11 full release
 [❌] Fixed a bug where teams would randomly switch
-[🟡] Time now begins at dusk on the first day
+
+- Update to 1.0.11 full release
+
+- Time now begins at dusk on the first day
     - This means day 1 is no longer half the length of other days
-[❌] Ranged ground units should target the nearest unit
+- Ranged ground units now target the nearest unit instead of the nearest building
+
 
 
 Features
 --------
 
-[🟡] Improved pathfinding for gathering, especially trees
 
-[🟡] Configurable Unit Costs (Thanks to @DoodleNoodles)
-    - Includes all costs, population values and build times
-    - Modify the files generated at configs/reignofnether-config.toml to adjust them
-    - If the server config is adjusted, this will be enforced for all players joining the match
-
-[❌] Shift queueing movements and buildings (not just placement)
-    - Add index to sendCommand packets
-    - Add recursive field to UnitActionItem: nextActionItem
-        - OR just add a list queue to each unit
-    - Add end detections in goals for when to move to nextActionItem
-    - Add clientside checkpoints
 
 Bugfixes
 --------
-[❌] Bridges are no longer free
-[🟡] Testing monster borders
-[✔] Fixed issue of your units sometimes showing other players' movement indicators
-[🟡] Fixed production buildings splitting across unbuilt buildings
+
+[❌] Pathing around fire is weird
+
+[❌] can't build on sculk
+
+
+
+[❌] Clicking tops of trees may make workers idle and mess up pathfinding
+    - If blockPos hasn't changed for 5s, just null gatherTarget and let them look for new nearby resources
+    - Also check out Potato345's tree chop issue
+        - Seed: 1936221877834802093
+
+[✔] If the server host changed any resource cost configs, this is now shown next to the start buttons
+    - These are relative to your own configs
+    - For example, if Zombies officially cost 75 food, you personally changed this to 65, and your server host changed it to 85, the tooltip will show a +20 increase
+    [🟡] check relogging in and out of a change server does what you expect
+
+[✔] Fixed an issue where population was going over maximum on clientside
+
+[✔] Heavy Tridents now shows an enchanted effect on the tridents
+
+[✔] Animals can no longer spawn on barrier blocks

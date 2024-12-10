@@ -8,6 +8,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.HashMap;
 import java.util.function.Supplier;
 
 public class ConfigVanillaServerEvents {
@@ -19,8 +20,10 @@ public class ConfigVanillaServerEvents {
         if(!evt.getEntity().getServer().isSingleplayerOwner(evt.getEntity().getGameProfile())) {
             //rebake from serverside configs
             System.out.println("Attempted to send packet to rebake from server..");
-            for(ResourceCostConfigEntry entry : ResourceCostConfigEntry.ENTRIES) {
-                PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(serverPlayerSupplier), new ClientboundSyncResourceCostPacket(entry));
+            for(String id : ResourceCost.ENTRIES.keySet()) {
+                PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(serverPlayerSupplier),
+                        new ClientboundSyncResourceCostPacket(ResourceCost.ENTRIES.get(id))
+                );
             }
         }
     }

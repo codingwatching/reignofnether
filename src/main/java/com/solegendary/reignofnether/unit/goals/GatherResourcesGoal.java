@@ -55,6 +55,9 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     public static final int IDLE_TIMEOUT = 200; // ticks spent without a target to be considered idle
     private int ticksWithoutTarget = 0; // ticks spent without an active gather target (only increments serverside)
     private int ticksIdle = 0; // ticksWithoutTarget but never reset unless we've reacquired a target - used for idle checks
+    private int ticksStationaryWithTarget = 0; // ticks that the worker hasn't moved and gatherTarget != null
+    public static final int TICKS_STATIONARY_TIMEOUT = 100; // ticks that the worker hasn't moved and gatherTarget != null
+    private BlockPos lastOnPos = null;
     private BlockPos altSearchPos = null; // block search origin that may be used instead of the mob position
 
     // whenever we attempt to assign a block as a target it must pass this test
@@ -212,6 +215,20 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
         }
 
         if (data.gatherTarget != null) {
+
+            // if the mob is not gathering and not moving, it's likely trying to reach a block out of reach
+            // so remove the target and start looking passively after a timeout
+            if (this.mob.getOnPos().equals(lastOnPos) && !isGathering())
+                ticksStationaryWithTarget += TICK_CD;
+            else
+                ticksStationaryWithTarget = 0;
+
+            if (ticksStationaryWithTarget >= TICKS_STATIONARY_TIMEOUT) {
+                ticksStationaryWithTarget = 0;
+                data.gatherTarget = null;
+                return;
+            }
+            lastOnPos = this.mob.getOnPos();
 
             // if the block is no longer valid (destroyed or somehow badly targeted)
             if (!BLOCK_CONDITION.test(this.data.gatherTarget))

@@ -319,6 +319,7 @@
     "commands.reignofnether.gamerule.do_log_falling": "%s - Set whether tree logs fall when cut",
     "commands.reignofnether.gamerule.neutral_aggro": "%s - Set whether you auto-attack neutral units/buildings",
     "commands.reignofnether.gamerule.max_population": "%s - Set the highest possible population limit",
+    "commands.reignofnether.gamerule.unit_griefing": "%s - Allow explosive units to break blocks",
 
     "controls.reignofnether.toggle_cam": "F12 - Toggle RTS camera",
     "controls.reignofnether.refresh_chunks": "F8 - Refresh chunks",
@@ -823,5 +824,8 @@
     "hud.gamemode.reignofnether.koth3": "powerful effects and win by ruling it for long enough. ",
     "hud.gamemode.reignofnether.koth4": "Left-click to place the beacon.",
     "hud.gamemode.reignofnether.changemode": "Right-click to change game mode",
-    "hud.gamemode.reignofnether.locked": "(locked)"
+    "hud.gamemode.reignofnether.locked": "(locked)",
+
+    "config.reignofnether.warn_config_change": "Server host has changed configs",
+    "config.reignofnether.hide_config_change": "(Click to hide)"
 }

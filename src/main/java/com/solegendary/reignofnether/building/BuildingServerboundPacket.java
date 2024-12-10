@@ -44,7 +44,7 @@ public class BuildingServerboundPacket {
             BuildingAction.START_PRODUCTION,
             BuildingAction.CANCEL_PRODUCTION,
             BuildingAction.CANCEL_BACK_PRODUCTION,
-            BuildingAction.CHANGE_PORTAL
+            BuildingAction.CHANGE_STRUCTURE
     );
 
     public static void placeBuilding(String itemName, BlockPos originPos, Rotation rotation,
@@ -186,13 +186,13 @@ public class BuildingServerboundPacket {
                         BuildingClientboundPacket.startProduction(buildingPos, itemName);
                 }
                 case CANCEL_PRODUCTION -> {
-                    boolean prodSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, true);
-                    if (prodSuccess)
+                    boolean cancelSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, true);
+                    if (cancelSuccess)
                         BuildingClientboundPacket.cancelProduction(buildingPos, itemName, true);
                 }
                 case CANCEL_BACK_PRODUCTION -> {
-                    boolean prodSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, false);
-                    if (prodSuccess)
+                    boolean cancelSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, false);
+                    if (cancelSuccess)
                         BuildingClientboundPacket.cancelProduction(buildingPos, itemName, false);
                 }
                 case CHECK_STOCKPILE_CHEST -> {

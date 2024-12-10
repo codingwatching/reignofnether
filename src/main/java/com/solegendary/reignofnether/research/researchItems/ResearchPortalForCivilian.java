@@ -29,7 +29,7 @@ public class ResearchPortalForCivilian extends ProductionItem {
             if (this.building instanceof Portal portal) {
                 if (!level.isClientSide()) {
                     portal.changeStructure(Portal.PortalType.CIVILIAN);
-                    BuildingClientboundPacket.changePortal(this.building.originPos, Portal.PortalType.CIVILIAN.name());
+                    BuildingClientboundPacket.changeStructure(this.building.originPos, Portal.PortalType.CIVILIAN.name());
                 }
             }
         };

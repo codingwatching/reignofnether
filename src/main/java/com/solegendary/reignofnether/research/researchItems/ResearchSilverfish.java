@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.building.buildings.monsters.Stronghold;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.research.ResearchClient;
+import com.solegendary.reignofnether.research.ResearchClientboundPacket;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
@@ -30,10 +31,9 @@ public class ResearchSilverfish extends ProductionItem {
     public ResearchSilverfish(ProductionBuilding building) {
         super(building, ResourceCosts.RESEARCH_SILVERFISH.ticks);
         this.onComplete = (Level level) -> {
-            if (level.isClientSide()) {
-                ResearchClient.addResearch(this.building.ownerName, ResearchSilverfish.itemName);
-            } else {
-                ResearchServerEvents.addResearch(this.building.ownerName, ResearchSilverfish.itemName);
+            if (!level.isClientSide()) {
+                ResearchClientboundPacket.addResearch(this.building.ownerName, itemName);
+                ResearchServerEvents.addResearch(this.building.ownerName, itemName);
             }
         };
         this.foodCost = cost.food;
