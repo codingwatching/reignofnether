@@ -86,6 +86,7 @@ public class CommonModEvents {
         evt.registerEntityRenderer(EntityRegistrar.BLAZE_UNIT.get(), BlazeRenderer::new);
         evt.registerEntityRenderer(EntityRegistrar.WITHER_SKELETON_UNIT.get(), WitherSkeletonRenderer::new);
         evt.registerEntityRenderer(EntityRegistrar.GHAST_UNIT.get(), GhastUnitRenderer::new);
+        evt.registerEntityRenderer(EntityRegistrar.MAGMA_CUBE_UNIT.get(), MagmaCubeRenderer::new);
     }
 
     @SubscribeEvent
@@ -119,6 +120,7 @@ public class CommonModEvents {
         evt.put(EntityRegistrar.BLAZE_UNIT.get(), BlazeUnit.createAttributes().build());
         evt.put(EntityRegistrar.WITHER_SKELETON_UNIT.get(), WitherSkeletonUnit.createAttributes().build());
         evt.put(EntityRegistrar.GHAST_UNIT.get(), GhastUnit.createAttributes().build());
+        evt.put(EntityRegistrar.MAGMA_CUBE_UNIT.get(), MagmaCubeUnit.createAttributes().build());
     }
 
     @SubscribeEvent

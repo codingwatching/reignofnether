@@ -196,6 +196,12 @@ public class EntityRegistrar {
                     .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
                     .build(new ResourceLocation(ReignOfNether.MOD_ID, "ghast_unit").toString()));
 
+    public static final RegistryObject<EntityType<MagmaCubeUnit>> MAGMA_CUBE_UNIT = ENTITIES.register("magma_cube_unit",
+            () -> EntityType.Builder.of(MagmaCubeUnit::new, MobCategory.CREATURE)
+                    .sized(EntityType.MAGMA_CUBE.getWidth(), EntityType.MAGMA_CUBE.getHeight())
+                    .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
+                    .build(new ResourceLocation(ReignOfNether.MOD_ID, "magma_cube_unit").toString()));
+
     public static void init() {
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }

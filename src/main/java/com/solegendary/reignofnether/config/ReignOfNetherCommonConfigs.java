@@ -47,6 +47,7 @@ public class ReignOfNetherCommonConfigs {
         UnitCosts.BLAZE.define(BUILDER);
         UnitCosts.WITHER_SKELETON.define(BUILDER);
         UnitCosts.GHAST.define(BUILDER);
+        UnitCosts.MAGMA_CUBE.define(BUILDER);
 
         //*Buildings*
         BUILDER.comment("Building Cost Configurations");
@@ -162,6 +163,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry BLAZE = ResourceCostConfigEntry.Unit(50,50,100,30,2, ResourceCosts.BLAZE, "Blaze Config");
         public static final ResourceCostConfigEntry WITHER_SKELETON = ResourceCostConfigEntry.Unit(200,0,150,40,4, ResourceCosts.WITHER_SKELETON, "Wither Skeleton Config");
         public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,150,250,60,6, ResourceCosts.GHAST, "Ghast Config");
+        public static final ResourceCostConfigEntry MAGMA_CUBE = ResourceCostConfigEntry.Unit(50,50,50,40,2, ResourceCosts.MAGMA_CUBE, "Magma Cube Config");
     }
     public static class BuildingCosts implements Costs {
         public static final ResourceCostConfigEntry STOCKPILE = ResourceCostConfigEntry.Building(0,75,0, 0, ResourceCosts.STOCKPILE, "Stockpile Config");

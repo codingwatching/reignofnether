@@ -1,5 +1,5 @@
 
-1.19.2-1.0.11a
+1.19.2-1.0.12
 -------------
 
 - Done and tested
@@ -9,21 +9,27 @@
 
 
 
-Wave Survival 0.5a
+Wave Survival 0.6
 ------------------
+
+[❌] Add to main game build, mark as beta
 
 [❌] Fixed a bug where teams would randomly switch
 
-- Update to 1.0.11 full release
+[❌] Fixed a bug where enemy units being stuck would lag out the server
 
-- Time now begins at dusk on the first day
+[❌] Disable wave survival and gamemode button on tutorial world
+
+[✔] Time now begins at dusk on the first day
     - This means day 1 is no longer half the length of other days
-- Ranged ground units now target the nearest unit instead of the nearest building
+[✔] Ranged ground units now target the nearest unit instead of the nearest building
 
 
 
 Features
 --------
+
+[❌] Magma cubes
 
 
 
@@ -35,19 +41,36 @@ Bugfixes
 [❌] can't build on sculk
 
 
+Quality of Life
+---------------
 
-[❌] Clicking tops of trees may make workers idle and mess up pathfinding
-    - If blockPos hasn't changed for 5s, just null gatherTarget and let them look for new nearby resources
-    - Also check out Potato345's tree chop issue
-        - Seed: 1936221877834802093
+[❌] Shift queueing actions
 
-[✔] If the server host changed any resource cost configs, this is now shown next to the start buttons
-    - These are relative to your own configs
-    - For example, if Zombies officially cost 75 food, you personally changed this to 65, and your server host changed it to 85, the tooltip will show a +20 increase
-    [🟡] check relogging in and out of a change server does what you expect
+[❌] Spiders should move towards the target before webbing
 
-[✔] Fixed an issue where population was going over maximum on clientside
+[❌] /gamerule groundYLevel for mapmakers
+    - Maybe separate for ghasts and bridges?
 
-[✔] Heavy Tridents now shows an enchanted effect on the tridents
 
-[✔] Animals can no longer spawn on barrier blocks
+Balancing
+---------
+
+[❌] Reduce all ore source values, especially higher tiers
+    - Reduce cost of all ore units, except those that should be nerfed
+
+[❌] Allow new capitols to build workers unconditionally
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

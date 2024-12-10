@@ -39,6 +39,7 @@ public class ResourceCosts {
     public static final ResourceCost BLAZE = new ResourceCost(ID, "BLAZE");
     public static final ResourceCost WITHER_SKELETON = new ResourceCost(ID, "WITHER_SKELETON");
     public static final ResourceCost GHAST = new ResourceCost(ID, "GHAST");
+    public static final ResourceCost MAGMA_CUBE = new ResourceCost(ID, "MAGMA_CUBE");
 
     //BUILDINGS
 
@@ -183,6 +184,7 @@ public class ResourceCosts {
         BLAZE.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.BLAZE);
         WITHER_SKELETON.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.WITHER_SKELETON);
         GHAST.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.GHAST);
+        MAGMA_CUBE.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.MAGMA_CUBE);
         // ******************* BUILDINGS ******************* //
         STOCKPILE.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.STOCKPILE);
         OAK_BRIDGE.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.OAK_BRIDGE);

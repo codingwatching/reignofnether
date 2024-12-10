@@ -129,6 +129,10 @@ public class ItemRegistrar {
             ITEMS.register("ghast_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.GHAST_UNIT,
                     16382457, 12369084, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
+    public static final RegistryObject<ForgeSpawnEggItem> MAGMA_CUBE_UNIT_SPAWN_EGG =
+            ITEMS.register("magma_cube_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.MAGMA_CUBE_UNIT,
+                    3080192, 11776768, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
     public static void init() {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
