@@ -39,6 +39,7 @@ public class ConfigClientEvents {
         tooltipLines.add(FormattedCharSequence.forward(I18n.get("config.reignofnether.warn_config_change"), Style.EMPTY.withBold(true)));
         tooltipLines.add(FormattedCharSequence.forward(I18n.get("config.reignofnether.hide_config_change"), Style.EMPTY));
         tooltipLines.add(FormattedCharSequence.forward("", Style.EMPTY));
+        showDiffsButton = false;
     }
 
     /*
@@ -122,6 +123,7 @@ public class ConfigClientEvents {
         ReignOfNether.LOGGER.info("onPlayerJoined fired from ClientConfigEvents");
         //If we own this singleplayer world
         if (evt.getEntity().getServer().isSingleplayerOwner(evt.getEntity().getGameProfile())) {
+            resetDiffsTooltips();
             //rebake from clientsideside configs
             ReignOfNether.LOGGER.info("Attempting to rebake from client..");
             for(ResourceCostConfigEntry entry : ResourceCostConfigEntry.ENTRIES) {

@@ -41,7 +41,9 @@ Bugfixes
     - Also check out Potato345's tree chop issue
         - Seed: 1936221877834802093
 
-[✔] You can now see if your server host changed any configs with a tooltip next to the start buttons
+[✔] If the server host changed any resource cost configs, this is now shown next to the start buttons
+    - These are relative to your own configs
+    - For example, if Zombies officially cost 75 food, you personally changed this to 65, and your server host changed it to 85, the tooltip will show a +20 increase
     [🟡] check relogging in and out of a change server does what you expect
 
 [✔] Fixed an issue where population was going over maximum on clientside
