@@ -186,14 +186,18 @@ public class BuildingServerboundPacket {
                         BuildingClientboundPacket.startProduction(buildingPos, itemName);
                 }
                 case CANCEL_PRODUCTION -> {
-                    boolean cancelSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, true);
-                    if (cancelSuccess)
-                        BuildingClientboundPacket.cancelProduction(buildingPos, itemName, true);
+                    if (building instanceof ProductionBuilding pBuilding) {
+                        boolean cancelSuccess = ProductionBuilding.cancelProductionItem(pBuilding, this.itemName, this.buildingPos, true);
+                        if (cancelSuccess || pBuilding.productionQueue.isEmpty())
+                            BuildingClientboundPacket.cancelProduction(buildingPos, itemName, true);
+                    }
                 }
                 case CANCEL_BACK_PRODUCTION -> {
-                    boolean cancelSuccess = ProductionBuilding.cancelProductionItem(((ProductionBuilding) building), this.itemName, this.buildingPos, false);
-                    if (cancelSuccess)
-                        BuildingClientboundPacket.cancelProduction(buildingPos, itemName, false);
+                    if (building instanceof ProductionBuilding pBuilding) {
+                        boolean cancelSuccess = ProductionBuilding.cancelProductionItem(pBuilding, this.itemName, this.buildingPos, false);
+                        if (cancelSuccess || pBuilding.productionQueue.isEmpty())
+                            BuildingClientboundPacket.cancelProduction(buildingPos, itemName, false);
+                    }
                 }
                 case CHECK_STOCKPILE_CHEST -> {
                     if (building instanceof AbstractStockpile ||
