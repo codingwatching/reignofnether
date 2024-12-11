@@ -7,7 +7,6 @@ import com.solegendary.reignofnether.building.ProductionItem;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.research.ResearchClient;
-import com.solegendary.reignofnether.research.ResearchClientboundPacket;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
@@ -27,9 +26,10 @@ public class ResearchEvokerVexes extends ProductionItem {
     public ResearchEvokerVexes(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (!level.isClientSide()) {
-                ResearchClientboundPacket.addResearch(this.building.ownerName, itemName);
-                ResearchServerEvents.addResearch(this.building.ownerName, itemName);
+            if (level.isClientSide()) {
+                ResearchClient.addResearch(this.building.ownerName, ResearchEvokerVexes.itemName);
+            } else {
+                ResearchServerEvents.addResearch(this.building.ownerName, ResearchEvokerVexes.itemName);
             }
         };
         this.foodCost = cost.food;

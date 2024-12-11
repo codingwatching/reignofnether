@@ -1,7 +1,6 @@
 package com.solegendary.reignofnether.building;
 
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
-import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.researchItems.*;
 import com.solegendary.reignofnether.resources.*;
@@ -24,7 +23,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -304,24 +302,13 @@ public abstract class ProductionBuilding extends Building {
         return success;
     }
 
-    public static void completeProductionItem(ProductionBuilding building, String itemName, BlockPos pos) {
-        if (building != null && building.productionQueue.size() > 0) {
-            ProductionItem prodItem = building.productionQueue.get(0);
-            building.productionQueue.remove(0);
-        }
-    }
-
     public void tick(Level tickLevel) {
         super.tick(tickLevel);
 
         if (productionQueue.size() >= 1) {
             ProductionItem nextItem = productionQueue.get(0);
-            if (nextItem.tick(tickLevel)) {
-                if (!tickLevel.isClientSide()) {
-                    productionQueue.remove(0);
-                    BuildingClientboundPacket.completeProduction(originPos, nextItem.getItemName());
-                }
-            }
+            if (nextItem.tick(tickLevel))
+                productionQueue.remove(0);
         }
     }
 }

@@ -1,17 +1,14 @@
 package com.solegendary.reignofnether.research.researchItems;
 
 import com.solegendary.reignofnether.ReignOfNether;
-import com.solegendary.reignofnether.building.BuildingClientboundPacket;
 import com.solegendary.reignofnether.building.BuildingServerboundPacket;
 import com.solegendary.reignofnether.building.ProductionBuilding;
 import com.solegendary.reignofnether.building.ProductionItem;
-import com.solegendary.reignofnether.building.buildings.villagers.Castle;
 import com.solegendary.reignofnether.building.buildings.villagers.Library;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -27,11 +24,8 @@ public class ResearchGrandLibrary extends ProductionItem {
     public ResearchGrandLibrary(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (!level.isClientSide() &&
-                this.building instanceof Library library) {
+            if (this.building instanceof Library library)
                 library.changeStructure(Library.upgradedStructureName);
-                BuildingClientboundPacket.changeStructure(this.building.originPos, Library.upgradedStructureName);
-            }
         };
         this.foodCost = cost.food;
         this.woodCost = cost.wood;
@@ -56,11 +50,11 @@ public class ResearchGrandLibrary extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(I18n.get("research.reignofnether.grand_library"), Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(ResearchGrandLibrary.itemName, Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward(I18n.get("research.reignofnether.grand_library.tooltip1"), Style.EMPTY)
+                        FormattedCharSequence.forward("Upgrades this library, unlocking more powerful enchantments.", Style.EMPTY)
                 )
         );
     }

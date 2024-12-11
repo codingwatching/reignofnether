@@ -10,7 +10,6 @@ import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchClient;
-import com.solegendary.reignofnether.research.ResearchClientboundPacket;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
@@ -34,9 +33,10 @@ public class ResearchStrays extends ProductionItem {
     public ResearchStrays(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (!level.isClientSide()) {
-                ResearchClientboundPacket.addResearch(this.building.ownerName, itemName);
-                ResearchServerEvents.addResearch(this.building.ownerName, itemName);
+            if (level.isClientSide()) {
+                ResearchClient.addResearch(this.building.ownerName, ResearchStrays.itemName);
+            } else {
+                ResearchServerEvents.addResearch(this.building.ownerName, ResearchStrays.itemName);
 
                 // convert all skeletons into strays with the same stats/inventory/etc.
                 UnitServerEvents.convertAllToUnit(
