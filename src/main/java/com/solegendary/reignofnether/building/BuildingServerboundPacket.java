@@ -44,7 +44,7 @@ public class BuildingServerboundPacket {
             BuildingAction.START_PRODUCTION,
             BuildingAction.CANCEL_PRODUCTION,
             BuildingAction.CANCEL_BACK_PRODUCTION,
-            BuildingAction.CHANGE_STRUCTURE
+            BuildingAction.CHANGE_PORTAL
     );
 
     public static void placeBuilding(String itemName, BlockPos originPos, Rotation rotation,
