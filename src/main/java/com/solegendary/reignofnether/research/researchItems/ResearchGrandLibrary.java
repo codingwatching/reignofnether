@@ -1,11 +1,9 @@
 package com.solegendary.reignofnether.research.researchItems;
 
 import com.solegendary.reignofnether.ReignOfNether;
-import com.solegendary.reignofnether.building.BuildingClientboundPacket;
 import com.solegendary.reignofnether.building.BuildingServerboundPacket;
 import com.solegendary.reignofnether.building.ProductionBuilding;
 import com.solegendary.reignofnether.building.ProductionItem;
-import com.solegendary.reignofnether.building.buildings.villagers.Castle;
 import com.solegendary.reignofnether.building.buildings.villagers.Library;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
@@ -27,11 +25,8 @@ public class ResearchGrandLibrary extends ProductionItem {
     public ResearchGrandLibrary(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (!level.isClientSide() &&
-                this.building instanceof Library library) {
+            if (this.building instanceof Library library)
                 library.changeStructure(Library.upgradedStructureName);
-                BuildingClientboundPacket.changeStructure(this.building.originPos, Library.upgradedStructureName);
-            }
         };
         this.foodCost = cost.food;
         this.woodCost = cost.wood;

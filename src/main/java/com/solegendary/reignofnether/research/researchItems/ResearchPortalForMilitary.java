@@ -29,7 +29,7 @@ public class ResearchPortalForMilitary extends ProductionItem {
             if (this.building instanceof Portal portal) {
                 if (!level.isClientSide()) {
                     portal.changeStructure(Portal.PortalType.MILITARY);
-                    BuildingClientboundPacket.changeStructure(this.building.originPos, Portal.PortalType.MILITARY.name());
+                    BuildingClientboundPacket.changePortal(this.building.originPos, Portal.PortalType.MILITARY.name());
                 }
             }
         };

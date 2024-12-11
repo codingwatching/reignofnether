@@ -34,7 +34,7 @@ import java.util.List;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class Library extends ProductionBuilding implements ChangeableStructure {
+public class Library extends ProductionBuilding {
 
     public final static String buildingName = "Library";
     public final static String structureName = "library";

@@ -30,7 +30,7 @@ import java.util.List;
 public class EnchantSharpness extends EnchantAbility {
 
     private static final UnitAction ENCHANT_ACTION = UnitAction.ENCHANT_SHARPNESS;
-    private static final Enchantment actualEnchantment = Enchantments.SHARPNESS;
+    public static final Enchantment actualEnchantment = Enchantments.SHARPNESS;
 
     public EnchantSharpness(Library library) {
         super(ENCHANT_ACTION, library, ResourceCosts.ENCHANT_SHARPNESS);

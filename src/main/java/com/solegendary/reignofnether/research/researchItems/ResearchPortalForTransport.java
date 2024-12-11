@@ -30,7 +30,7 @@ public class ResearchPortalForTransport extends ProductionItem {
             if (this.building instanceof Portal portal) {
                 if (!level.isClientSide()) {
                     portal.changeStructure(Portal.PortalType.TRANSPORT);
-                    BuildingClientboundPacket.changeStructure(this.building.originPos, Portal.PortalType.TRANSPORT.name());
+                    BuildingClientboundPacket.changePortal(this.building.originPos, Portal.PortalType.TRANSPORT.name());
                 }
             }
         };

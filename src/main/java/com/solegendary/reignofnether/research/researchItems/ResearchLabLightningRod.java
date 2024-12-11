@@ -1,10 +1,12 @@
 package com.solegendary.reignofnether.research.researchItems;
 
 import com.solegendary.reignofnether.ReignOfNether;
-import com.solegendary.reignofnether.building.*;
+import com.solegendary.reignofnether.building.BuildingClientEvents;
+import com.solegendary.reignofnether.building.BuildingServerboundPacket;
+import com.solegendary.reignofnether.building.ProductionBuilding;
+import com.solegendary.reignofnether.building.ProductionItem;
 import com.solegendary.reignofnether.building.buildings.monsters.Dungeon;
 import com.solegendary.reignofnether.building.buildings.monsters.Laboratory;
-import com.solegendary.reignofnether.building.buildings.villagers.Library;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.resources.ResourceCost;
@@ -25,10 +27,8 @@ public class ResearchLabLightningRod extends ProductionItem {
     public ResearchLabLightningRod(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (!level.isClientSide() &&
-                this.building instanceof Laboratory lab) {
+            if (this.building instanceof Laboratory lab) {
                 lab.changeStructure(Laboratory.upgradedStructureName);
-                BuildingClientboundPacket.changeStructure(this.building.originPos, Laboratory.upgradedStructureName);
             }
         };
         this.foodCost = cost.food;

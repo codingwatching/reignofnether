@@ -115,10 +115,10 @@ public class BuildingClientboundPacket {
         );
     }
 
-    public static void completeProduction(BlockPos buildingPos, String itemName) {
+    public static void changePortal(BlockPos buildingPos, String portalType) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-            new BuildingClientboundPacket(BuildingAction.COMPLETE_PRODUCTION,
-                itemName,
+            new BuildingClientboundPacket(BuildingAction.CHANGE_PORTAL,
+                portalType,
                 buildingPos,
                 Rotation.NONE,
                 "",
@@ -133,10 +133,10 @@ public class BuildingClientboundPacket {
         );
     }
 
-    public static void changeStructure(BlockPos buildingPos, String structureName) {
+    public static void clearQueue(BlockPos buildingPos) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-            new BuildingClientboundPacket(BuildingAction.CHANGE_STRUCTURE,
-                structureName,
+            new BuildingClientboundPacket(BuildingAction.CHANGE_PORTAL,
+                "",
                 buildingPos,
                 Rotation.NONE,
                 "",
@@ -248,13 +248,6 @@ public class BuildingClientboundPacket {
                             this.buildingPos
                         );
                     }
-                    case COMPLETE_PRODUCTION -> {
-                        ProductionBuilding.completeProductionItem(
-                                (ProductionBuilding) building,
-                                this.itemName,
-                                this.buildingPos
-                        );
-                    }
                     case CANCEL_PRODUCTION -> {
                         ProductionBuilding.cancelProductionItem(
                             (ProductionBuilding) building,
@@ -271,11 +264,20 @@ public class BuildingClientboundPacket {
                             false
                         );
                     }
-                    case CHANGE_STRUCTURE -> {
-                        if (building instanceof Portal portal)
+                    case CHANGE_PORTAL -> {
+                        if (building instanceof Portal portal) {
                             portal.changeStructure(Portal.PortalType.valueOf(itemName));
-                        else if (building instanceof ChangeableStructure cBuilding)
-                            cBuilding.changeStructure(itemName);
+                        }
+                    }
+                    case CLEAR_PRODUCTION -> {
+                        if (building instanceof ProductionBuilding pBuilding) {
+                            if (!pBuilding.productionQueue.isEmpty()) {
+                                ProductionItem pItem = pBuilding.productionQueue.get(0);
+                                pItem.completed = true;
+                                pItem.onComplete.accept(pBuilding.level);
+                                pBuilding.productionQueue.clear();
+                            }
+                        }
                     }
                 }
                 success.set(true);

@@ -7,18 +7,13 @@ import com.solegendary.reignofnether.building.ProductionItem;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.research.ResearchClient;
-import com.solegendary.reignofnether.research.ResearchClientboundPacket;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
-import com.solegendary.reignofnether.unit.UnitServerEvents;
-import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
-import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -31,12 +26,10 @@ public class ResearchHeavyTridents extends ProductionItem {
     public ResearchHeavyTridents(ProductionBuilding building) {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
-            if (!level.isClientSide()) {
-                ResearchClientboundPacket.addResearch(this.building.ownerName, itemName);
-                ResearchServerEvents.addResearch(this.building.ownerName, itemName);
-                for (LivingEntity unit : UnitServerEvents.getAllUnits())
-                    if (unit instanceof HeadhunterUnit hUnit && hUnit.getOwnerName().equals(building.ownerName))
-                        hUnit.setupEquipmentAndUpgradesServer();
+            if (level.isClientSide()) {
+                ResearchClient.addResearch(this.building.ownerName, ResearchHeavyTridents.itemName);
+            } else {
+                ResearchServerEvents.addResearch(this.building.ownerName, ResearchHeavyTridents.itemName);
             }
         };
         this.foodCost = cost.food;
