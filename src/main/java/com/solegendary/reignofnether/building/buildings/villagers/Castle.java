@@ -31,7 +31,7 @@ import java.util.List;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class Castle extends ProductionBuilding implements GarrisonableBuilding, ChangeableStructure {
+public class Castle extends ProductionBuilding implements GarrisonableBuilding {
 
     public final static String buildingName = "Castle";
     public final static String structureName = "castle";
