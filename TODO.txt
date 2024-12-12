@@ -1,5 +1,6 @@
 
 1.19.2-1.0.12
+-------------
 
 - Done and tested
 [✔] Done and tested
@@ -58,18 +59,3 @@ Balancing
     - Reduce cost of all ore units, except those that should be nerfed
 
 [❌] Allow new capitols to build workers unconditionally
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
