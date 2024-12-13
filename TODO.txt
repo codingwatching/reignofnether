@@ -46,7 +46,7 @@ Quality of Life
 
 [❌] Shift queueing actions
 
-[❌] Spiders should move towards the target before webbing
+[🟡] Spiders now move towards their target before webbing
 
 [❌] /gamerule groundYLevel for mapmakers
     - Maybe separate for ghasts and bridges?

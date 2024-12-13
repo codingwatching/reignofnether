@@ -118,10 +118,18 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     final static public float maxHealthCap = 300;
     final static public float attacksPerSecond = 0.5f;
     final static public float armorValue = 0.0f;
-    final static public float movementSpeed = 0.25f;
+    final static public float movementSpeed = 0.6f; // needs to be 2x other units
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+
+    @Override
+    public int getSize() {
+        if (this.isDeadOrDying())
+            return 1; // prevent split on death
+        else
+            return super.getSize();
+    }
 
     public float getUnitAttackDamage() {
         return attackDamagePerSize * getSize();

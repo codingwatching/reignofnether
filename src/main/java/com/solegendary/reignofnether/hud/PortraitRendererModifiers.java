@@ -41,9 +41,6 @@ public class PortraitRendererModifiers {
         } else if (entity instanceof Turtle) {
             yOffset = 14;
             scale = -14;
-        } else if (entity instanceof PoisonSpiderUnit) {
-            scale = -18;
-            yOffset = 8;
         } else if (entity instanceof CaveSpider) {
             yOffset = 9;
             scale = -11;
