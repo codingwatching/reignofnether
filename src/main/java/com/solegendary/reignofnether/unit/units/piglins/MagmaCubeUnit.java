@@ -1,7 +1,11 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
+import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.ConsumeMagmaCube;
 import com.solegendary.reignofnether.hud.AbilityButton;
+import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.controls.SlimeUnitMoveControl;
@@ -9,6 +13,7 @@ import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
+import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -16,10 +21,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -29,6 +31,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -112,7 +115,8 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
 
     // endregion
 
-    final static public int startingSize = 2;
+    final static public int STARTING_SIZE = 2;
+    final static public int MAX_SIZE = 6;
 
     final static public float attackDamagePerSize = 2.0f;
     final static public float maxHealthCap = 300;
@@ -123,12 +127,28 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
 
+    private boolean forceTiny = false; // prevent split on death
+
     @Override
     public int getSize() {
-        if (this.isDeadOrDying())
-            return 1; // prevent split on death
+        if (forceTiny)
+            return 1;
         else
             return super.getSize();
+    }
+
+    @Override
+    public void remove(Entity.RemovalReason pReason) {
+        forceTiny = true;
+        super.remove(pReason);
+        forceTiny = false;
+    }
+
+    public boolean autocastingConsume() {
+        for (Ability ability : abilities)
+            if (ability instanceof ConsumeMagmaCube consume)
+                return consume.autocast;
+        return false;
     }
 
     public float getUnitAttackDamage() {
@@ -141,13 +161,11 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
             return 15 + ((getSize() - 1) * 30);
     }
 
+    public float getKnockbackResistance() {
+        return getSize() * (1.0f / 6);
+    }
+
     public int maxResources = 0;
-
-    //private static final EntityDataAccessor<Integer> ID_SIZE;
-
-    //static {
-    //    ID_SIZE = SynchedEntityData.defineId(MagmaCubeUnit.class, EntityDataSerializers.INT);
-    //}
 
     private MeleeAttackUnitGoal attackGoal;
     private MeleeAttackBuildingGoal attackBuildingGoal;
@@ -156,20 +174,36 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     private final List<Ability> abilities = new ArrayList<>();
     private final List<ItemStack> items = new ArrayList<>();
 
+    public MagmaCubeUnit consumeTarget = null;
+
     public MagmaCubeUnit(EntityType<? extends MagmaCube> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new SlimeUnitMoveControl(this);
+
+        ConsumeMagmaCube ab1 = new ConsumeMagmaCube();
+        this.abilities.add(ab1);
+        if (level.isClientSide())
+            this.abilityButtons.add(ab1.getButton(Keybindings.keyQ));
+    }
+
+    @Override
+    public void resetBehaviours() {
+        consumeTarget = null;
+        for (Ability ability : abilities)
+            if (ability instanceof ConsumeMagmaCube consume)
+                consume.autocast = false;
     }
 
     @Override
     public void setSize(int pSize, boolean pResetHealth) {
-        int i = Mth.clamp(pSize, 1, 127);
+        int i = Mth.clamp(pSize, 1, MAX_SIZE);
         this.entityData.set(ID_SIZE, i);
         this.reapplyPosition();
         this.refreshDimensions();
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(getUnitMaxHealth());
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(getMovementSpeed());
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(getUnitAttackDamage());
+        this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(getKnockbackResistance());
         if (pResetHealth)
             this.setHealth(this.getMaxHealth());
     }
@@ -196,6 +230,29 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
         super.tick();
         Unit.tick(this);
         AttackerUnit.tick(this);
+
+        if (autocastingConsume() && getSize() < MAX_SIZE && getTargetGoal().getTarget() == null) {
+
+            Vector3d unitPosition = new Vector3d(position().x, position().y, position().z);
+            List<MagmaCubeUnit> nearbyEntities = MiscUtil.getEntitiesWithinRange(unitPosition, aggroRange, MagmaCubeUnit.class, level);
+
+            double closestDist = aggroRange;
+            MagmaCubeUnit closestTarget = null;
+
+            for (MagmaCubeUnit cube : nearbyEntities) {
+                if (cube.getOwnerName().equals(getOwnerName()) && cube != this) {
+                    double dist = position().distanceTo(cube.position());
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closestTarget = cube;
+                    }
+                }
+            }
+            if (closestTarget != null) {
+                consumeTarget = closestTarget;
+                setUnitAttackTarget(closestTarget);
+            }
+        }
     }
 
     public void initialiseGoals() {
@@ -219,17 +276,23 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     }
 
     @Override
-    public void setupEquipmentAndUpgradesClient() {
-    }
-
-    @Override
-    public void setupEquipmentAndUpgradesServer() {
-    }
-
-    @Override
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-        this.setSize(startingSize, true);
+        this.setSize(STARTING_SIZE, true);
         return pSpawnData;
+    }
+
+    @Override
+    public boolean doHurtTarget(@NotNull Entity pEntity) {
+        boolean result = super.doHurtTarget(pEntity);
+        if (result &&
+            pEntity == consumeTarget) {
+            this.setSize(Math.min(MAX_SIZE, getSize() + consumeTarget.getSize() / 2), false);
+            this.heal((consumeTarget.getHealth() / 2) + 15);
+            pEntity.kill();
+            consumeTarget = null;
+            return true;
+        }
+        return result;
     }
 }

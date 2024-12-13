@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.unit.goals;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.unit.units.piglins.WitherSkeletonUnit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -146,7 +147,10 @@ public abstract class AbstractMeleeAttackUnitGoal extends Goal {
         return this.adjustedTickDelay(((AttackerUnit) this.mob).getAttackCooldown());
     }
 
-    protected double getAttackReachSqr(LivingEntity p_25556_) {
-        return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + p_25556_.getBbWidth());
+    protected double getAttackReachSqr(LivingEntity target) {
+        float targetWidth = target.getBbWidth();
+        if (target instanceof MagmaCubeUnit cube)
+            targetWidth += (0.25f * (cube.getSize() - 2));
+        return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + targetWidth);
     }
 }

@@ -128,6 +128,7 @@ public class BuildingUtils {
             case HoglinStables.buildingName -> building = new HoglinStables(level, pos, rotation, ownerName);
             case FlameSanctuary.buildingName -> building = new FlameSanctuary(level, pos, rotation, ownerName);
             case WitherShrine.buildingName -> building = new WitherShrine(level, pos, rotation, ownerName);
+            case BasaltSprings.buildingName -> building = new BasaltSprings(level, pos, rotation, ownerName);
             case Fortress.buildingName -> building = new Fortress(level, pos, rotation, ownerName);
         }
         if (building != null)

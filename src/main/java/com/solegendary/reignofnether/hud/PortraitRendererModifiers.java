@@ -68,15 +68,8 @@ public class PortraitRendererModifiers {
             yOffset = -18;
             scale = -18;
         } else if (entity instanceof Slime slime) { // largest size only
-            if (slime.getSize() == 4)
-                yOffset = -35;
-            else if (slime.getSize() == 3)
-                yOffset = -18;
-            else if (slime.getSize() == 2)
-                yOffset = -1;
-            else if (slime.getSize() == 1)
-                yOffset = 16;
-            scale = -28;
+            yOffset = 33 - (17 * slime.getSize());
+            scale = -35;
         } else if (entity instanceof Wolf) {
             yOffset = 12;
         } else if (entity instanceof Silverfish) {

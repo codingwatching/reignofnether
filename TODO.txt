@@ -47,6 +47,7 @@ Quality of Life
 [❌] Shift queueing actions
 
 [🟡] Spiders now move towards their target before webbing
+    - Test that poison spiders still work correctly
 
 [❌] /gamerule groundYLevel for mapmakers
     - Maybe separate for ghasts and bridges?
@@ -67,3 +68,22 @@ Balancing
 Languages
 ---------
 [✔] Added French translations (Thanks to @Ender-Breaker)
+
+new strings:
+
+    "buildings.piglins.reignofnether.basalt_springs": "Basalt Springs",
+    "buildings.piglins.reignofnether.basalt_springs.tooltip1": "An artificial basalt delta allowing magma cubes to remain warm ",
+    "buildings.piglins.reignofnether.basalt_springs.tooltip2": "in the overworld, enabling their production at military portals",
+    "buildings.piglins.reignofnether.basalt_springs.tooltip3": "Requires a Bastion",
+
+    "units.piglins.reignofnether.magma_cube": "Magma Cube",
+    "units.piglins.reignofnether.magma_cube.tooltip1": "A sentient molten cube of magma which can consume",
+    "units.piglins.reignofnether.magma_cube.tooltip2": "other cubes to grow in size and gain new abilities.",
+    "units.piglins.reignofnether.magma_cube.tooltip3": "Requires a Basalt Springs.",
+
+    "abilities.reignofnether.consume_magma_cube": "Consume Magma Cube",
+    "abilities.reignofnether.consume_magma_cube.tooltip1": "Kill a friendly magma cube to grow this cube.",
+    "abilities.reignofnether.consume_magma_cube.tooltip2": "Adds half of its max health and damage to this one.",
+    "abilities.reignofnether.consume_magma_cube.tooltip3": "Right-click to autocast",
+    "abilities.reignofnether.consume_magma_cube.error1": "Already at max size!",
+    "abilities.reignofnether.consume_magma_cube.error2": "Can only target Magma Cubes you own.",

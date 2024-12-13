@@ -88,6 +88,7 @@ public class ReignOfNetherCommonConfigs {
         BuildingCosts.HOGLIN_STABLES.define(BUILDER);
         BuildingCosts.FLAME_SANCTUARY.define(BUILDER);
         BuildingCosts.WITHER_SHRINE.define(BUILDER);
+        BuildingCosts.BASALT_SPRINGS.define(BUILDER);
         BuildingCosts.FORTRESS.define(BUILDER);
 
         //*Research*
@@ -203,6 +204,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry HOGLIN_STABLES = ResourceCostConfigEntry.Building(0, 250, 0, 0, ResourceCosts.HOGLIN_STABLES, "Hoglin Stables Config");
         public static final ResourceCostConfigEntry FLAME_SANCTUARY = ResourceCostConfigEntry.Building(0, 300, 150, 0, ResourceCosts.FLAME_SANCTUARY, "Flame Sanctuary Config");
         public static final ResourceCostConfigEntry WITHER_SHRINE = ResourceCostConfigEntry.Building(0, 350, 200, 0, ResourceCosts.WITHER_SHRINE, "Wither Shrine Config");
+        public static final ResourceCostConfigEntry BASALT_SPRINGS = ResourceCostConfigEntry.Building(0, 200, 200, 0, ResourceCosts.BASALT_SPRINGS, "Basalt Springs Config");
         public static final ResourceCostConfigEntry FORTRESS = ResourceCostConfigEntry.Building(0, 400, 300, 0, ResourceCosts.FORTRESS, "Fortress Config");
     }
     public static class ResearchCosts implements Costs {

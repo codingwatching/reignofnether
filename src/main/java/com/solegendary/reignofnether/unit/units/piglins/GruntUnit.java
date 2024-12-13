@@ -175,7 +175,8 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
             this.abilityButtons.add(HoglinStables.getBuildButton(Keybindings.keyT));
             this.abilityButtons.add(FlameSanctuary.getBuildButton(Keybindings.keyY));
             this.abilityButtons.add(WitherShrine.getBuildButton(Keybindings.keyU));
-            this.abilityButtons.add(Fortress.getBuildButton(Keybindings.keyI));
+            this.abilityButtons.add(BasaltSprings.getBuildButton(Keybindings.keyI));
+            this.abilityButtons.add(Fortress.getBuildButton(Keybindings.keyO));
             this.abilityButtons.add(BlackstoneBridge.getBuildButton(Keybindings.keyC));
         }
     }
