@@ -15,6 +15,7 @@ import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
+import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -159,6 +160,10 @@ public class UnitActionItem {
                             break;
                         }
                     }
+                    //if (unit instanceof MagmaCubeUnit && unit.getMoveGoal().getMoveTarget() != null) {
+                    //    shouldResetBehaviours = false;
+                    //}
+
                     if (shouldResetBehaviours && (nonAbilityActions.contains(action) || foundAbility)) {
                         resetBehaviours(unit);
                     }

@@ -1,20 +1,20 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
 import com.solegendary.reignofnether.ability.Ability;
-import com.solegendary.reignofnether.ability.abilities.PromoteIllager;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
+import com.solegendary.reignofnether.unit.controls.SlimeUnitMoveControl;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
-import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -56,7 +56,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     public UsePortalGoal getUsePortalGoal() { return usePortalGoal; }
     public boolean canUsePortal() { return getUsePortalGoal() != null; }
 
-    public Faction getFaction() {return Faction.VILLAGERS;}
+    public Faction getFaction() {return Faction.PIGLINS;}
     public List<AbilityButton> getAbilityButtons() {return abilityButtons;};
     public List<Ability> getAbilities() {return abilities;}
     public List<ItemStack> getItems() {return items;};
@@ -100,10 +100,8 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     public float getAttacksPerSecond() {return attacksPerSecond;}
     public float getAggroRange() {return aggroRange;}
     public boolean getAggressiveWhenIdle() {return aggressiveWhenIdle && !isVehicle();}
-    public float getAttackRange() {return attackRange;}
+    public float getAttackRange() { return ((getSize() + 1) * 0.5f); }
     public float getMovementSpeed() {return movementSpeed;}
-    public float getUnitAttackDamage() {return attackDamage;}
-    public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
     @Nullable
     public int getPopCost() {return ResourceCosts.MAGMA_CUBE.population;}
@@ -114,17 +112,34 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
 
     // endregion
 
-    final static public float attackDamage = 6.0f;
+    final static public int startingSize = 2;
+
+    final static public float attackDamagePerSize = 2.0f;
+    final static public float maxHealthCap = 300;
     final static public float attacksPerSecond = 0.5f;
-    final static public float maxHealth = 65.0f;
     final static public float armorValue = 0.0f;
-    final static public float movementSpeed = 0.28f;
-    final static public float attackRange = 2; // only used by ranged units or melee building attackers
+    final static public float movementSpeed = 0.25f;
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
 
+    public float getUnitAttackDamage() {
+        return attackDamagePerSize * getSize();
+    }
+    public float getUnitMaxHealth() {
+        if (getSize() <= 1)
+            return 15;
+        else
+            return 15 + ((getSize() - 1) * 30);
+    }
+
     public int maxResources = 0;
+
+    //private static final EntityDataAccessor<Integer> ID_SIZE;
+
+    //static {
+    //    ID_SIZE = SynchedEntityData.defineId(MagmaCubeUnit.class, EntityDataSerializers.INT);
+    //}
 
     private MeleeAttackUnitGoal attackGoal;
     private MeleeAttackBuildingGoal attackBuildingGoal;
@@ -135,40 +150,36 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
 
     public MagmaCubeUnit(EntityType<? extends MagmaCube> entityType, Level level) {
         super(entityType, level);
+        this.moveControl = new SlimeUnitMoveControl(this);
+    }
+
+    @Override
+    public void setSize(int pSize, boolean pResetHealth) {
+        int i = Mth.clamp(pSize, 1, 127);
+        this.entityData.set(ID_SIZE, i);
+        this.reapplyPosition();
+        this.refreshDimensions();
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(getUnitMaxHealth());
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(getMovementSpeed());
+        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(getUnitAttackDamage());
+        if (pResetHealth)
+            this.setHealth(this.getMaxHealth());
     }
 
     @Override
     public boolean removeWhenFarAway(double d) { return false; }
 
-    // all for animation syncing...
     @Override
-    public void setUnitAttackTarget(@Nullable LivingEntity target) {
-        AttackerUnit.super.setUnitAttackTarget(target);
-        if (!this.level.isClientSide()) {
-            if (target != null)
-                UnitSyncClientboundPacket.sendSyncAnimationPacket(this, target, true);
-            else
-                UnitSyncClientboundPacket.sendSyncAnimationPacket(this, false);
-        }
-    }
-    @Override
-    public void setAttackBuildingTarget(BlockPos preselectedBlockPos) {
-        AttackerUnit.super.setAttackBuildingTarget(preselectedBlockPos);
-        if (!this.level.isClientSide())
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this, preselectedBlockPos, true);
-    }
-    @Override
-    public void resetBehaviours() {
-        if (!this.level.isClientSide())
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this, false);
+    protected boolean isDealsDamage() {
+        return true;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, MagmaCubeUnit.movementSpeed)
-                .add(Attributes.ATTACK_DAMAGE, MagmaCubeUnit.attackDamage)
+                .add(Attributes.ATTACK_DAMAGE, MagmaCubeUnit.attackDamagePerSize)
                 .add(Attributes.ARMOR, MagmaCubeUnit.armorValue)
-                .add(Attributes.MAX_HEALTH, MagmaCubeUnit.maxHealth)
+                .add(Attributes.MAX_HEALTH, MagmaCubeUnit.maxHealthCap)
                 .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
     }
 
@@ -177,29 +188,23 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
         super.tick();
         Unit.tick(this);
         AttackerUnit.tick(this);
-        PromoteIllager.checkAndApplyBuff(this);
     }
 
     public void initialiseGoals() {
         this.usePortalGoal = new UsePortalGoal(this);
-        this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
+        this.moveGoal = new MoveToTargetBlockSlimeGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
-        this.garrisonGoal = new GarrisonGoal(this);
         this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
-        this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }
 
     @Override
     protected void registerGoals() {
         initialiseGoals();
         this.goalSelector.addGoal(2, usePortalGoal);
-
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, attackGoal);
         this.goalSelector.addGoal(2, attackBuildingGoal);
-        this.goalSelector.addGoal(2, returnResourcesGoal);
-        this.goalSelector.addGoal(2, garrisonGoal);
         this.targetSelector.addGoal(2, targetGoal);
         this.targetSelector.addGoal(3, moveGoal);
         this.goalSelector.addGoal(4, new RandomLookAroundUnitGoal(this));
@@ -216,6 +221,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     @Override
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        this.setSize(startingSize, true);
         return pSpawnData;
     }
 }

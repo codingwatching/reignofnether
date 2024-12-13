@@ -18,20 +18,15 @@ public class MoveToTargetBlockGoal extends Goal {
     protected int moveReachRange = 0; // how far away from the target block to stop moving (manhattan distance)
     @Nullable public BlockPos lastSelectedMoveTarget = null; // ignores unit formations, used for reducing move actions sent to server
 
-    private static final int RECALC_COOLDOWN_MAX = 20;
-    private int recalcCooldown = 0; // limit start() used by canContinueToUse
+    protected final int RECALC_COOLDOWN_MAX = 20;
+    protected void resetRecalcCooldown() { recalcCooldown = RECALC_COOLDOWN_MAX; }
+    protected int recalcCooldown = 0; // limit start() used by canContinueToUse
 
     public MoveToTargetBlockGoal(Mob mob, boolean persistent, int reachRange) {
         this.mob = mob;
         this.persistent = persistent;
         this.moveReachRange = reachRange;
         this.setFlags(EnumSet.of(Goal.Flag.MOVE));
-    }
-
-    @Override
-    public void tick() {
-        if (recalcCooldown > 0)
-            recalcCooldown -= 1;
     }
 
     public boolean isAtDestination() {
@@ -50,24 +45,28 @@ public class MoveToTargetBlockGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
+        if (recalcCooldown > 0) {
+            recalcCooldown -= 1;
+            return true;
+        }
         // PathNavigation seems to have a max length so restart it if we haven't actually reached the target yet
         if (this.mob.getNavigation().isDone() && moveTarget != null &&
-            this.mob.getOnPos().distSqr(moveTarget) > getMinDistToRecalculateSqr() &&
-            recalcCooldown <= 0) {
+            this.mob.getOnPos().distSqr(moveTarget) > getMinDistToRecalculateSqr()) {
             BlockPos oldFinalNode = getFinalNodePos();
             this.start();
             BlockPos newFinalNode = getFinalNodePos();
             // start() is very expensive, and it repeats every tick if the mob is stuck, eg. targeting over water
             if (oldFinalNode != null && oldFinalNode.equals(newFinalNode))
                 stopMoving();
-            recalcCooldown = RECALC_COOLDOWN_MAX;
+            resetRecalcCooldown();
             return true;
         }
         else if (moveTarget == null)
             return false;
         else if (this.mob.getNavigation().isDone()) {
-            if (!persistent && !((Unit) this.mob).getHoldPosition())
+            if (!persistent && !((Unit) this.mob).getHoldPosition()) {
                 moveTarget = null;
+            }
             return false;
         }
         return true;

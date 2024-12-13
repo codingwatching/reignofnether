@@ -30,7 +30,7 @@ Features
 --------
 
 [❌] Magma cubes
-
+    - Movement stops when order
 
 
 Bugfixes
@@ -55,7 +55,15 @@ Quality of Life
 Balancing
 ---------
 
+[❌] Militia range increased to 60 blocks
+
 [❌] Reduce all ore source values, especially higher tiers
     - Reduce cost of all ore units, except those that should be nerfed
 
 [❌] Allow new capitols to build workers unconditionally
+
+[✔] Creeper: -3 move speed (now same speed as most ranged units)
+
+Languages
+---------
+[✔] Added French translations (Thanks to @Ender-Breaker)
