@@ -3,7 +3,6 @@ package com.solegendary.reignofnether.blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -19,8 +18,6 @@ public class TemporaryBlock {
     public final BlockState oldBs;
     public int tickAge;
     public boolean isPlaced = false;
-
-    // TODO: check for snow
 
     public TemporaryBlock(ServerLevel level, BlockPos bp, BlockState bs, BlockState oldBs, int lifespan) {
         this.bp = bp;
@@ -52,9 +49,6 @@ public class TemporaryBlock {
             } else {
                 level.setBlockAndUpdate(bp, oldBs);
             }
-            if (level.getBlockState(bp.above()).getBlock() == Blocks.FIRE)
-                level.setBlockAndUpdate(bp.above(), Blocks.AIR.defaultBlockState());
-
             return true;
         }
         return false;

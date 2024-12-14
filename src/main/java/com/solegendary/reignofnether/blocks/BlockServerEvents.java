@@ -21,10 +21,9 @@ public class BlockServerEvents {
         if (level.getBlockState(bp) != bs)
             tempBlocks.add(new TemporaryBlock(level, bp, bs, oldBs, lifespan));
         else {
-            for (TemporaryBlock block : tempBlocks) {
+            for (TemporaryBlock block : tempBlocks)
                 if (bp.equals(block.bp))
                     block.tickAge = 0;
-            }
         }
     }
 

@@ -29,13 +29,15 @@ Wave Survival 0.6
 Features
 --------
 
-[❌] Magma cubes
+[🟡] Magma cubes
     [❌] While attacking a building, always be jumping
     [🟡] Set population == size
     [🟡] Add size-based abilities
+    [❌] Make cubes shrink on damage
+    [✔] Magma upgrade
 
-    [❌] Add magma ability
-    [❌] Add soulfire
+[🟡] Ghast Upgrade: Soul Fireballs
+    [❌] Make fire resistance not work against soulfire
 
 
 Bugfixes
@@ -63,41 +65,25 @@ Quality of Life
 Balancing
 ---------
 
-[❌] Militia range increased to 60 blocks
+[🟡] Militia range increased to 60 blocks
 
-[❌] Reduce all ore source values, especially higher tiers
-    - Reduce cost of all ore units, except those that should be nerfed
+[🟡] Reduced all ore block values by 25% and adjusted the cost of ore-heavy units
+    - Ghast: -50 wood
+    - Blaze: -10 food, -10 wood
+    - Iron Golem: -50 wood
+    - Witch: -10 all resources
+    - Evoker: -10 food, -20 ore
+    - Ravager: -40 food
+    - Hoglin: -15 ore
+    - Wither Skeleton: -50 food
+    - Spider: -10 food
+    - UNCHANGED: Creepers, Wardens
 
-[❌] Allow new capitols to build workers unconditionally
+
+[🟡] Allow new capitols to build workers unconditionally
 
 [✔] Creeper: -3 move speed (now same speed as most ranged units)
 
 Languages
 ---------
 [✔] Added French translations (Thanks to @Ender-Breaker)
-
-new strings:
-
-    "buildings.piglins.reignofnether.basalt_springs": "Basalt Springs",
-    "buildings.piglins.reignofnether.basalt_springs.tooltip1": "An artificial basalt delta allowing magma cubes to remain warm ",
-    "buildings.piglins.reignofnether.basalt_springs.tooltip2": "in the overworld, enabling their production at military portals",
-    "buildings.piglins.reignofnether.basalt_springs.tooltip3": "Requires a Bastion",
-
-    "units.piglins.reignofnether.magma_cube": "Magma Cube",
-    "units.piglins.reignofnether.magma_cube.tooltip1": "A sentient molten cube of magma which can consume",
-    "units.piglins.reignofnether.magma_cube.tooltip2": "other cubes to grow in size, health and damage.",
-    "units.piglins.reignofnether.magma_cube.tooltip3": "Requires a Basalt Springs.",
-
-    "abilities.reignofnether.consume_magma_cube": "Consume Magma Cube",
-    "abilities.reignofnether.consume_magma_cube.tooltip1": "Kill a friendly magma cube to grow this cube.",
-    "abilities.reignofnether.consume_magma_cube.tooltip2": "Adds half of its max health and damage to this one.",
-    "abilities.reignofnether.consume_magma_cube.tooltip3": "Right-click to autocast",
-    "abilities.reignofnether.consume_magma_cube.error1": "Already at max size!",
-    "abilities.reignofnether.consume_magma_cube.error2": "Can only target Magma Cubes you own.",
-
-    "research.reignofnether.cube_magma": "Cube Magma",
-    "research.reignofnether.cube_magma.tooltip1": "Upgrades Magma Cubes to create temporary ",
-    "research.reignofnether.cube_magma.tooltip2": "magma blocks around wherever they jump.",
-    "research.reignofnether.soul_fireballs": "Soul Fireballs",
-    "research.reignofnether.soul_fireballs.tooltip1": "Infuses Ghast fireballs with soulfire, causing them ",
-    "research.reignofnether.soul_fireballs.tooltip2": "to create temporary soulsand and soulfire on impact.",

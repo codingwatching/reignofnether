@@ -38,7 +38,7 @@ public class TownCentre extends ProductionBuilding implements RangeIndicator {
     public final static ResourceCost cost = ResourceCosts.TOWN_CENTRE;
 
     // distance you can move away from a town centre before being turned back into a villager
-    public static final int MILITIA_RANGE = 50;
+    public static final int MILITIA_RANGE = 60;
     private final Set<BlockPos> militiaBorderBps = new HashSet<>();
 
     public TownCentre(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
