@@ -364,7 +364,7 @@
     "hud.control_group.reignofnether.control_group": "Grupa kontrolna %s (kliknij shift+prawy przycisk myszy, aby usunąć)",
 
     "hud.actionbuttons.reignofnether.build_repair": "Buduj/Napraw",
-    "hud.actionbuttons.reignofnether.build_repair_autocast": "(Kliknij prawym przyciskiem myszy, aby naprawiać automatycznie )",
+    "hud.actionbuttons.reignofnether.build_repair_autocast": "(Kliknij prawym przyciskiem myszy, aby naprawiać automatycznie)",
     "hud.actionbuttons.reignofnether.gather": "Zbieraj",
     "hud.actionbuttons.reignofnether.attack": "Atakuj",
     "hud.actionbuttons.reignofnether.stop": "Przerwij",
