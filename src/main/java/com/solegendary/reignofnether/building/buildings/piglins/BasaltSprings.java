@@ -35,7 +35,7 @@ public class BasaltSprings extends ProductionBuilding {
         super(level, originPos, rotation, ownerName, getAbsoluteBlockData(getRelativeBlockData(level), level, originPos, rotation), false);
         this.name = buildingName;
         this.ownerName = ownerName;
-        this.portraitBlock = Blocks.MAGMA_BLOCK;
+        this.portraitBlock = Blocks.POLISHED_BASALT;
         this.icon = new ResourceLocation("minecraft", "textures/block/polished_basalt_top.png");
 
         this.canSetRallyPoint = false;

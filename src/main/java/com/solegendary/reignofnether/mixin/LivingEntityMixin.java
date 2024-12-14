@@ -37,13 +37,13 @@ public abstract class LivingEntityMixin extends Entity {
             cancellable = true
     )
     protected void onChangedBlock(BlockPos pPos, CallbackInfo ci) {
-        ci.cancel();
-
         Entity entity = this.getLevel().getEntity(this.getId());
 
         if (!this.getLevel().isClientSide() && entity instanceof Unit unit)
-            if (SurvivalServerEvents.isEnabled() && SurvivalServerEvents.ENEMY_OWNER_NAME.equals(unit.getOwnerName()))
+            if (SurvivalServerEvents.isEnabled() && SurvivalServerEvents.ENEMY_OWNER_NAME.equals(unit.getOwnerName())) {
+                ci.cancel();
                 FrostWalkerOnEntityMoved((LivingEntity) entity, this.level, pPos, 1);
+            }
     }
 
     // copied from FrostWalkerEnchantment.onEntityMoved

@@ -3,8 +3,11 @@ package com.solegendary.reignofnether.unit.units.piglins;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.ConsumeMagmaCube;
+import com.solegendary.reignofnether.ability.abilities.SpinWebs;
+import com.solegendary.reignofnether.blocks.BlockServerEvents;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.registrars.BlockRegistrar;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
@@ -19,8 +22,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -31,11 +38,14 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.MagmaBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     // region
@@ -107,7 +117,9 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitArmorValue() {return armorValue;}
     @Nullable
-    public int getPopCost() {return ResourceCosts.MAGMA_CUBE.population;}
+    public int getPopCost() {
+        return getSize();
+    }
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -126,6 +138,9 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
+
+    final static private int SET_FIRE_TICKS_MAX = 30;
+    private int setFireTicks = 0;
 
     private boolean forceTiny = false; // prevent split on death
 
@@ -253,6 +268,32 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
                 setUnitAttackTarget(closestTarget);
             }
         }
+        if (!level.isClientSide()) {
+            setFireTicks += 1;
+            if (setFireTicks >= SET_FIRE_TICKS_MAX) {
+                setFireTicks = 0;
+                ArrayList<BlockPos> bps = new ArrayList<>();
+                for (int x = -4; x < 4; x++)
+                    for (int y = -4; y < 4; y++)
+                        for (int z = -4; z < 4; z++)
+                            if (level.getBlockState(getOnPos().offset(x,y,z)).getBlock() ==
+                                    BlockRegistrar.WALKABLE_MAGMA_BLOCK.get() &&
+                                level.getBlockState(getOnPos().offset(x,y+1,z)).isAir())
+                                bps.add(getOnPos().offset(x,y,z));
+                Collections.shuffle(bps);
+                if (bps.size() >= 1)
+                    level.setBlockAndUpdate(bps.get(0).above(), Blocks.FIRE.defaultBlockState());
+                if (bps.size() >= 2)
+                    level.setBlockAndUpdate(bps.get(1).above(), Blocks.FIRE.defaultBlockState());
+            }
+        }
+    }
+
+    // create magma on hitting the ground - for some reason only detected clientside
+    @Override
+    protected void checkFallDamage(double pY, boolean pOnGround, BlockState pState, BlockPos pPos) {
+        if (!level.isClientSide() && pOnGround && !wasOnGround)
+            createMagma();
     }
 
     public void initialiseGoals() {
@@ -282,17 +323,84 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
         return pSpawnData;
     }
 
+    private static final int FIRE_DURATION_PER_SIZE = 40;
+
     @Override
     public boolean doHurtTarget(@NotNull Entity pEntity) {
         boolean result = super.doHurtTarget(pEntity);
         if (result &&
-            pEntity == consumeTarget) {
+                pEntity == consumeTarget) {
             this.setSize(Math.min(MAX_SIZE, getSize() + consumeTarget.getSize() / 2), false);
             this.heal((consumeTarget.getHealth() / 2) + 15);
             pEntity.kill();
             consumeTarget = null;
             return true;
+        } else if (getSize() >= 3) {
+            pEntity.setRemainingFireTicks(FIRE_DURATION_PER_SIZE * getSize());
         }
         return result;
+    }
+
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+        if (getSize() >= 5 && pSource.getEntity() instanceof AttackerUnit aUnit && aUnit.getAttackGoal() instanceof MeleeAttackUnitGoal)
+            pSource.getEntity().setRemainingFireTicks((FIRE_DURATION_PER_SIZE * getSize()) / 2);
+
+        if (pSource == DamageSource.ON_FIRE ||
+            pSource == DamageSource.IN_FIRE ||
+            pSource == DamageSource.LAVA)
+            return false;
+
+        return super.hurt(pSource, pAmount);
+    }
+
+    private static final int MAGMA_DURATION = 100;
+
+    public void createMagma() {
+        if (getSize() < 4 || level.isClientSide())
+            return;
+
+        BlockState bsToPlace = BlockRegistrar.WALKABLE_MAGMA_BLOCK.get().defaultBlockState();
+        BlockPos bpOn = getOnPos();
+
+        ArrayList<BlockPos> bps = new ArrayList<>();
+        if (getSize() >= 3) {
+            bps.add(bpOn);
+            bps.add(bpOn.north());
+            bps.add(bpOn.east());
+            bps.add(bpOn.south());
+            bps.add(bpOn.west());
+        }
+        if (getSize() >= 4) {
+            bps.add(bpOn.north().east());
+            bps.add(bpOn.south().west());
+            bps.add(bpOn.north().west());
+            bps.add(bpOn.south().east());
+        }
+        if (getSize() >= 5) {
+            bps.add(bpOn.north().north());
+            bps.add(bpOn.south().south());
+            bps.add(bpOn.east().east());
+            bps.add(bpOn.west().west());
+        }
+        if (getSize() >= 6) {
+            bps.add(bpOn.north().north().east());
+            bps.add(bpOn.south().south().east());
+            bps.add(bpOn.north().north().west());
+            bps.add(bpOn.south().south().west());
+            bps.add(bpOn.east().east().south());
+            bps.add(bpOn.west().west().south());
+            bps.add(bpOn.east().east().north());
+            bps.add(bpOn.west().west().north());
+        }
+
+        // Frostwalker effect provided in LivingEntityMixin, but it only happens on changing block positions on the ground
+        for (BlockPos bp : bps) {
+            BlockState bsOld = level.getBlockState(bp);
+            if (bsOld.getMaterial().isSolidBlocking()) {
+                BlockServerEvents.addTempBlock((ServerLevel) level, bp,
+                    BlockRegistrar.WALKABLE_MAGMA_BLOCK.get().defaultBlockState(), bsOld, MAGMA_DURATION);
+            }
+        }
     }
 }

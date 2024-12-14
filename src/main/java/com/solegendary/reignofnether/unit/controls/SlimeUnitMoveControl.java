@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.monster.Slime;
@@ -84,7 +85,7 @@ public class SlimeUnitMoveControl extends MoveControl {
         }
 
         if (this.slime instanceof Unit unit) {
-            BlockPos bp = unit.getMoveGoal().getMoveTarget();
+            BlockPos bp = ((Mob) unit).getNavigation().getTargetPos();
             if (bp != null) {
                 double d0 = bp.getX() - this.slime.getX();
                 double d2 = bp.getZ() - this.slime.getZ();

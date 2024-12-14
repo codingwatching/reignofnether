@@ -112,6 +112,7 @@ public class MiscUtil {
         } while((bs.isAir() ||
                 bs.getBlock() == Blocks.LIGHT ||
                 bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                !bs.getMaterial().isSolidBlocking() ||
                 (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
         return new BlockPos(blockPos.getX(), y, blockPos.getZ());
     }

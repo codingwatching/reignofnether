@@ -30,7 +30,13 @@ Features
 --------
 
 [❌] Magma cubes
-    - Movement stops when order
+    [❌] While attacking a building, always be jumping
+    [❌] Set population == size
+    [❌] Add size-based abilities
+        - Size 3: Sets target on fire
+        - Size 4: Creates temporary magma on jumping
+        - Size 5: Sets attackers on fire
+        - Size 6: Sets nearby magma on fire passively
 
 
 Bugfixes
@@ -43,6 +49,8 @@ Bugfixes
 
 Quality of Life
 ---------------
+
+[🟡] Improved performance for attack building logic
 
 [❌] Shift queueing actions
 
