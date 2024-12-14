@@ -30,6 +30,7 @@ Features
 [❌] Magma cubes
     - See discord post
 
+[❌] Shift queueing actions
 
 Bugfixes
 --------
