@@ -60,12 +60,7 @@ public class GruntProd extends ProductionItem {
             () -> false,
             () -> false,
             () -> true,
-            () -> {
-                if (!BuildingUtils.anyOtherCapitolProducingWorkers(true, prodBuilding))
-                    BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName);
-                else
-                    HudClientEvents.showTemporaryMessage("Only one capitol may build workers at a time.");
-            },
+            () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             tooltipLines
         );

@@ -79,8 +79,7 @@ Balancing
     - Spider: -10 food
     - UNCHANGED: Creepers, Wardens
 
-
-[🟡] Allow new capitols to build workers unconditionally
+[🟡] All new capitols may now build workers
 
 [✔] Creeper: -3 move speed (now same speed as most ranged units)
 
