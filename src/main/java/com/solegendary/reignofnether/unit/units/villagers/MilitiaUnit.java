@@ -106,7 +106,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    public int getPopCost() {return ResourceCosts.MILITIA.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -129,9 +129,6 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     // endregion
 
-    // distance you can move away from a town centre before being turned back into a villager
-    public static final int RANGE = 50;
-
     // for going back to work as a villager
     public TargetResourcesSave resourcesSaveData = null;
 
@@ -145,7 +142,6 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     final static public float maxHealth = 35.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
-    final static public int popCost = ResourceCosts.MILITIA.population;
     public int maxResources = 100;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
@@ -199,8 +195,9 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                 Building building = BuildingUtils.findClosestBuilding(level.isClientSide(), this.getEyePosition(),
                         (b) -> b.isBuilt && b.ownerName.equals(getOwnerName()) && b instanceof TownCentre);
 
+                int range = TownCentre.MILITIA_RANGE;
                 if (building != null &&
-                    distanceToSqr(building.centrePos.getX(), building.centrePos.getY(), building.centrePos.getZ()) > RANGE * RANGE) {
+                    distanceToSqr(building.centrePos.getX(), building.centrePos.getY(), building.centrePos.getZ()) > range * range) {
                     convertToVillager();
                 }
             }

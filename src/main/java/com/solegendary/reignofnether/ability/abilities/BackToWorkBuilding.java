@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.ability.abilities;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.building.Building;
+import com.solegendary.reignofnether.building.buildings.villagers.TownCentre;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
@@ -30,7 +31,7 @@ import static com.solegendary.reignofnether.unit.UnitClientEvents.sendUnitComman
 
 public class BackToWorkBuilding extends Ability {
 
-    private static final int RANGE = 55;
+    private static final int RANGE = TownCentre.MILITIA_RANGE + 5;
 
     public BackToWorkBuilding() {
         super(

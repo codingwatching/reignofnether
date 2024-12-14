@@ -27,7 +27,7 @@ import java.util.Set;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class Mausoleum extends ProductionBuilding implements NightSource {
+public class Mausoleum extends ProductionBuilding implements NightSource, RangeIndicator {
 
     public final static String buildingName = "Mausoleum";
     public final static String structureName = "mausoleum";
@@ -66,32 +66,37 @@ public class Mausoleum extends ProductionBuilding implements NightSource {
         if (level.isClientSide()) {
             this.productionButtons = List.of(ZombieVillagerProd.getStartButton(this, Keybindings.keyQ));
         }
-        updateNightBorderBps();
+        updateBorderBps();
     }
 
     public int getNightRange() {
-        return nightRange;
+        return (isBuilt || isBuiltServerside) ? nightRange : 0;
     }
 
     @Override
-    public void updateNightBorderBps() {
+    public void updateBorderBps() {
         if (!level.isClientSide())
             return;
         this.nightBorderBps.clear();
-        this.nightBorderBps.addAll(MiscUtil.getNightCircleBlocks(centrePos,
+        this.nightBorderBps.addAll(MiscUtil.getRangeIndicatorCircleBlocks(centrePos,
                 getNightRange() - TimeClientEvents.VISIBLE_BORDER_ADJ, level));
     }
 
     @Override
-    public Set<BlockPos> getNightBorderBps() {
+    public Set<BlockPos> getBorderBps() {
         return nightBorderBps;
+    }
+
+    @Override
+    public boolean showOnlyWhenSelected() {
+        return false;
     }
 
     @Override
     public void tick(Level tickLevel) {
         super.tick(tickLevel);
         if (tickLevel.isClientSide && tickAgeAfterBuilt > 0 && tickAgeAfterBuilt % 100 == 0)
-            updateNightBorderBps();
+            updateBorderBps();
     }
 
     public Faction getFaction() {

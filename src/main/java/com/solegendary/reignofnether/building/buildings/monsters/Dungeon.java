@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.building.buildings.monsters;
 
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
+import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.research.ResearchClient;
@@ -51,10 +52,9 @@ public class Dungeon extends ProductionBuilding {
         this.startingBlockTypes.add(Blocks.DEEPSLATE_BRICK_STAIRS);
 
         this.explodeChance = 0.2f;
-
         if (level.isClientSide())
             this.productionButtons = Arrays.asList(
-                CreeperProd.getStartButton(this, Keybindings.keyQ)
+                    CreeperProd.getStartButton(this, Keybindings.keyQ)
             );
     }
 

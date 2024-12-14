@@ -28,6 +28,8 @@ public abstract class ProductionItem {
     protected ProductionBuilding building;
     protected Consumer<Level> onComplete;
 
+    public boolean completed = false;
+
     public ProductionItem(ProductionBuilding building, int ticksToProduce) {
         this.building = building;
         this.ticksToProduce = ticksToProduce;
@@ -126,8 +128,11 @@ public abstract class ProductionItem {
                 this.ticksLeft -= 1;
         }
         if (this.ticksLeft <= 0 && isBelowPopulationSupply()) {
-            onComplete.accept(level);
-            return true;
+            if (!completed) {
+                onComplete.accept(level);
+                completed = true;
+                return true;
+            }
         }
         return false;
     }

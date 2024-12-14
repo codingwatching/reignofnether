@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.unit.units.villagers;
 
 import com.solegendary.reignofnether.ability.abilities.EnchantMaiming;
+import com.solegendary.reignofnether.ability.abilities.EnchantSharpness;
 import com.solegendary.reignofnether.ability.abilities.PromoteIllager;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.research.ResearchClient;
@@ -112,10 +113,11 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
     public boolean getAggressiveWhenIdle() {return aggressiveWhenIdle && !isVehicle();}
     public float getAttackRange() {return attackRange;}
     public float getMovementSpeed() {return movementSpeed;}
-    public float getUnitAttackDamage() {return attackDamage;}
+    public float getUnitAttackDamage() {return attackDamage + (hasSharpnessEnchant() ? 2 : 0);}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.VINDICATOR.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -132,7 +134,6 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.VINDICATOR.population;
 
     public int maxResources = 100;
 
@@ -215,6 +216,7 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
         this.goalSelector.addGoal(4, new RandomLookAroundUnitGoal(this));
     }
 
+    /*
     @Override
     public void setupEquipmentAndUpgradesClient() {
         if (hasAnyEnchant())
@@ -226,6 +228,7 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
         //    axe = Items.DIAMOND_AXE;
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(axe));
     }
+     */
 
     @Override
     public void setupEquipmentAndUpgradesServer() {
@@ -256,6 +259,11 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
         return itemStack.getAllEnchantments().containsKey(EnchantMaiming.actualEnchantment);
     }
 
+    public boolean hasSharpnessEnchant() {
+        ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
+        return itemStack.getAllEnchantments().containsKey(EnchantSharpness.actualEnchantment);
+    }
+
     public Enchantment getEnchant() {
         ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
         Optional<Enchantment> enchant = itemStack.getAllEnchantments().keySet().stream().findFirst();
@@ -266,7 +274,7 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
     public boolean doHurtTarget(Entity pEntity) {
         boolean hurt = super.doHurtTarget(pEntity);
         if (hurt && hasMaimingEnchant() && pEntity instanceof LivingEntity le)
-            le.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1));
+            le.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, EnchantMaiming.SLOWNESS_DURATION, 1));
         return hurt;
     }
 

@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.ability.abilities;
 
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.building.buildings.villagers.TownCentre;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybinding;
@@ -54,7 +55,7 @@ public class CallToArmsUnit extends Ability {
                         FormattedCharSequence.forward("", Style.EMPTY),
                         FormattedCharSequence.forward(I18n.get("abilities.reignofnether.call_to_arms_unit.tooltip1"), Style.EMPTY),
                         FormattedCharSequence.forward(I18n.get("abilities.reignofnether.call_to_arms_unit.tooltip2"), Style.EMPTY),
-                        FormattedCharSequence.forward(I18n.get("abilities.reignofnether.call_to_arms_unit.tooltip3", MilitiaUnit.RANGE), Style.EMPTY)
+                        FormattedCharSequence.forward(I18n.get("abilities.reignofnether.call_to_arms_unit.tooltip3", TownCentre.MILITIA_RANGE), Style.EMPTY)
                 ),
                 this
         );

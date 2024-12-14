@@ -28,7 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.solegendary.reignofnether.survival.SurvivalSpawner.*;
+import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerWave;
+import static com.solegendary.reignofnether.survival.spawners.MonsterWaveSpawner.spawnMonsterWave;
+import static com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner.spawnPiglinWave;
 
 public class SurvivalServerEvents {
 
@@ -36,10 +38,7 @@ public class SurvivalServerEvents {
     public static Wave nextWave = Wave.getWave(0);
     private static WaveDifficulty difficulty = WaveDifficulty.EASY;
     private static final ArrayList<WaveEnemy> enemies = new ArrayList<>();
-    public static final String MONSTER_OWNER_NAME = "Monsters";
-    public static final String PIGLIN_OWNER_NAME = "Piglins";
-    public static final String VILLAGER_OWNER_NAME = "Illagers";
-    public static final List<String> ENEMY_OWNER_NAMES = List.of(MONSTER_OWNER_NAME, PIGLIN_OWNER_NAME, VILLAGER_OWNER_NAME);
+    public static final String ENEMY_OWNER_NAME = "Enemy";
     private static final Random random = new Random();
     public static Faction lastFaction = Faction.NONE;
 
@@ -101,7 +100,7 @@ public class SurvivalServerEvents {
         long normTime = TimeUtils.normaliseTime(evt.level.getDayTime());
 
         if (!isStarted()) {
-            setToStartingDayTime();
+            setToGameStartTime();
             return;
         }
 
@@ -115,8 +114,8 @@ public class SurvivalServerEvents {
                 SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
                 setToStartingNightTime();
             }
-            if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 100 &&
-                    normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 100) {
+            if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 50 &&
+                    normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 50) {
                 startNextWave((ServerLevel) evt.level);
             }
             if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
@@ -140,7 +139,7 @@ public class SurvivalServerEvents {
 
         // detect new portals and update portals list accordingly
         List<Building> currentPortals = BuildingServerEvents.getBuildings().stream().filter(b ->
-                ENEMY_OWNER_NAMES.contains(b.ownerName) && !b.ownerName.isBlank() && b instanceof Portal)
+                ENEMY_OWNER_NAME.equals(b.ownerName) && !b.ownerName.isBlank() && b instanceof Portal)
                 .toList();
 
         for (Building portal : currentPortals)
@@ -162,8 +161,11 @@ public class SurvivalServerEvents {
     public static void onRegisterCommand(RegisterCommandsEvent evt) {
         evt.getDispatcher().register(Commands.literal("debug-end-wave")
                 .executes((command) -> {
+                    if (!isEnabled())
+                        return 0;
                     PlayerServerEvents.sendMessageToAllPlayers("Ending current wave");
-                    for (WaveEnemy enemy : enemies)
+                    ArrayList<WaveEnemy> enemiesCopy = new ArrayList<>(enemies);
+                    for (WaveEnemy enemy : enemiesCopy)
                         enemy.getEntity().kill();
                     ArrayList<WavePortal> portalsCopy = new ArrayList<>(portals);
                     for (WavePortal portal : portalsCopy)
@@ -172,6 +174,8 @@ public class SurvivalServerEvents {
                 }));
         evt.getDispatcher().register(Commands.literal("debug-next-night")
                 .executes((command) -> {
+                    if (!isEnabled())
+                        return 0;
                     PlayerServerEvents.sendMessageToAllPlayers("Advancing to next night and wave");
                     serverLevel.setDayTime(12450);
                     return 1;
@@ -218,7 +222,7 @@ public class SurvivalServerEvents {
         if (evt.getEntity() instanceof Unit unit &&
                 evt.getEntity() instanceof LivingEntity entity &&
                 !evt.getLevel().isClientSide &&
-                ENEMY_OWNER_NAMES.contains(unit.getOwnerName())) {
+                ENEMY_OWNER_NAME.equals(unit.getOwnerName())) {
 
             enemies.add(new WaveEnemy(unit));
         }
@@ -229,7 +233,7 @@ public class SurvivalServerEvents {
         if (evt.getEntity() instanceof Unit unit &&
                 evt.getEntity() instanceof LivingEntity entity &&
                 !evt.getLevel().isClientSide &&
-                ENEMY_OWNER_NAMES.contains(unit.getOwnerName())) {
+                ENEMY_OWNER_NAME.equals(unit.getOwnerName())) {
 
             enemies.removeIf(e -> e.getEntity().getId() == entity.getId());
         }
@@ -258,6 +262,10 @@ public class SurvivalServerEvents {
         serverLevel.setDayTime(TimeUtils.DUSK + getDifficultyTimeModifier());
     }
 
+    public static void setToGameStartTime() {
+        serverLevel.setDayTime(TimeUtils.DUSK + getDifficultyTimeModifier() + 60);
+    }
+
     public static boolean isEnabled() { return isEnabled; }
 
     public static boolean isStarted() {
@@ -284,9 +292,9 @@ public class SurvivalServerEvents {
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
-        nextWave = Wave.getWave(nextWave.number + 1);
         SurvivalClientboundPacket.setWaveNumber(nextWave.number);
         saveStage(level);
+
         switch (lastFaction) {
             case VILLAGERS -> {
                 if (random.nextBoolean())
@@ -314,6 +322,7 @@ public class SurvivalServerEvents {
                 }
             }
         }
+        nextWave = Wave.getWave(nextWave.number + 1);
     }
 
     // triggered when last enemy is killed

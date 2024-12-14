@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.ability.abilities;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.Building;
+import com.solegendary.reignofnether.building.buildings.villagers.TownCentre;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.ability.Ability;
@@ -32,7 +33,7 @@ import static com.solegendary.reignofnether.unit.UnitClientEvents.sendUnitComman
 
 public class CallToArmsBuilding extends Ability {
 
-    private static final int RANGE = 50;
+    private static final int RANGE = TownCentre.MILITIA_RANGE;
 
     public CallToArmsBuilding() {
         super(
@@ -61,7 +62,7 @@ public class CallToArmsBuilding extends Ability {
                         FormattedCharSequence.forward("", Style.EMPTY),
                         FormattedCharSequence.forward(I18n.get("abilities.reignofnether.call_to_arms_building.tooltip1"), Style.EMPTY),
                         FormattedCharSequence.forward(I18n.get("abilities.reignofnether.call_to_arms_building.tooltip2"), Style.EMPTY),
-                        FormattedCharSequence.forward(I18n.get("abilities.reignofnether.call_to_arms_building.tooltip3", MilitiaUnit.RANGE), Style.EMPTY)
+                        FormattedCharSequence.forward(I18n.get("abilities.reignofnether.call_to_arms_building.tooltip3", TownCentre.MILITIA_RANGE), Style.EMPTY)
                 ),
                 this
         );

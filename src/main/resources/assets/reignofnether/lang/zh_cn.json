@@ -319,6 +319,7 @@
   "commands.reignofnether.gamerule.do_log_falling": "%s - 设置伐木时原木块是否受重力影响下落",
   "commands.reignofnether.gamerule.neutral_aggro": "%s - 设置是否自动攻击中立单位/建筑",
   "commands.reignofnether.gamerule.max_population": "%s - 设置最高可达到的人口上限",
+  "commands.reignofnether.gamerule.unit_griefing": "%s - 使造成爆炸伤害的单位能够破坏方块",
 
   "controls.reignofnether.toggle_cam": "F12 - 切换原版/RTS 视角",
   "controls.reignofnether.refresh_chunks": "F8 - 刷新区块",
@@ -382,7 +383,9 @@
   "hud.reignofnether.gather_resources": "采集资源（%s）",
   "hud.reignofnether.change_target_resource": "点击以切换目标资源",
   "hud.reignofnether.total_workers": "工人总数：%d",
-  "hud.reignofnether.workers_on": "采集%s的工人",
+  "hud.reignofnether.workers_on_food": "采集食物的工人",
+  "hud.reignofnether.workers_on_wood": "采集木材的工人",
+  "hud.reignofnether.workers_on_ore": "采集矿石的工人",
   "hud.reignofnether.max_resources": "%s（最高 %d）",
   "hud.reignofnether.players_resources": "%s的资源",
   "hud.reignofnether.you_are_spectator": "你目前正在观战",
@@ -821,5 +824,8 @@
   "hud.gamemode.reignofnether.koth3": "升级信标以获得强力效果，控制信标一段时间以取胜。",
   "hud.gamemode.reignofnether.koth4": "鼠标左击以放置信标",
   "hud.gamemode.reignofnether.changemode": "鼠标右击以切换游戏模式",
-  "hud.gamemode.reignofnether.locked": "（已锁定）"
+  "hud.gamemode.reignofnether.locked": "（已锁定）",
+
+  "config.reignofnether.warn_config_change": "服务器设置已更改",
+  "config.reignofnether.hide_config_change": "（点击以隐藏）"
 }
