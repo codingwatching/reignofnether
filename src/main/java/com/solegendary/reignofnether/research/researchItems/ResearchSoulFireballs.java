@@ -44,7 +44,7 @@ public class ResearchSoulFireballs extends ProductionItem {
     public static Button getStartButton(ProductionBuilding prodBuilding, Keybinding hotkey) {
         return new Button(ResearchSoulFireballs.itemName,
             14,
-            new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/fireball.png"),
+            new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/soul_fireball.png"),
             new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame_bronze.png"),
             hotkey,
             () -> false,
@@ -68,7 +68,7 @@ public class ResearchSoulFireballs extends ProductionItem {
     public Button getCancelButton(ProductionBuilding prodBuilding, boolean first) {
         return new Button(ResearchSoulFireballs.itemName,
             14,
-            new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/fireball.png"),
+            new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/soul_fireball.png"),
             new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame_bronze.png"),
             null,
             () -> false,
