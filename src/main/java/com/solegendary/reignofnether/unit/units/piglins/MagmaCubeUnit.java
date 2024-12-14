@@ -9,6 +9,8 @@ import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.registrars.BlockRegistrar;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
+import com.solegendary.reignofnether.research.ResearchServerEvents;
+import com.solegendary.reignofnether.research.researchItems.ResearchCubeMagma;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.controls.SlimeUnitMoveControl;
@@ -139,7 +141,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
 
-    final static private int SET_FIRE_TICKS_MAX = 30;
+    final static private int SET_FIRE_TICKS_MAX = 20;
     private int setFireTicks = 0;
 
     private boolean forceTiny = false; // prevent split on death
@@ -272,19 +274,8 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
             setFireTicks += 1;
             if (setFireTicks >= SET_FIRE_TICKS_MAX) {
                 setFireTicks = 0;
-                ArrayList<BlockPos> bps = new ArrayList<>();
-                for (int x = -4; x < 4; x++)
-                    for (int y = -4; y < 4; y++)
-                        for (int z = -4; z < 4; z++)
-                            if (level.getBlockState(getOnPos().offset(x,y,z)).getBlock() ==
-                                    BlockRegistrar.WALKABLE_MAGMA_BLOCK.get() &&
-                                level.getBlockState(getOnPos().offset(x,y+1,z)).isAir())
-                                bps.add(getOnPos().offset(x,y,z));
-                Collections.shuffle(bps);
-                if (bps.size() >= 1)
-                    level.setBlockAndUpdate(bps.get(0).above(), Blocks.FIRE.defaultBlockState());
-                if (bps.size() >= 2)
-                    level.setBlockAndUpdate(bps.get(1).above(), Blocks.FIRE.defaultBlockState());
+                createMagma();
+                //createFire();
             }
         }
     }
@@ -335,7 +326,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
             pEntity.kill();
             consumeTarget = null;
             return true;
-        } else if (getSize() >= 3) {
+        } else if (getSize() >= 2) {
             pEntity.setRemainingFireTicks(FIRE_DURATION_PER_SIZE * getSize());
         }
         return result;
@@ -343,7 +334,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (getSize() >= 5 && pSource.getEntity() instanceof AttackerUnit aUnit && aUnit.getAttackGoal() instanceof MeleeAttackUnitGoal)
+        if (getSize() >= 2 && pSource.getEntity() instanceof AttackerUnit aUnit && aUnit.getAttackGoal() instanceof MeleeAttackUnitGoal)
             pSource.getEntity().setRemainingFireTicks((FIRE_DURATION_PER_SIZE * getSize()) / 2);
 
         if (pSource == DamageSource.ON_FIRE ||
@@ -360,12 +351,19 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
         if (getSize() < 4 || level.isClientSide())
             return;
 
+        if (!ResearchServerEvents.playerHasResearch(getOwnerName(), ResearchCubeMagma.itemName))
+            return;
+
         BlockState bsToPlace = BlockRegistrar.WALKABLE_MAGMA_BLOCK.get().defaultBlockState();
         BlockPos bpOn = getOnPos();
+        if (level.getBlockState(bpOn).isAir())
+            return;
 
         ArrayList<BlockPos> bps = new ArrayList<>();
-        if (getSize() >= 3) {
+        if (getSize() >= 2) {
             bps.add(bpOn);
+        }
+        if (getSize() >= 3) {
             bps.add(bpOn.north());
             bps.add(bpOn.east());
             bps.add(bpOn.south());
@@ -402,5 +400,21 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
                     BlockRegistrar.WALKABLE_MAGMA_BLOCK.get().defaultBlockState(), bsOld, MAGMA_DURATION);
             }
         }
+    }
+    public void createFire() {
+        if (getSize() < MAX_SIZE || level.isClientSide())
+            return;
+
+        ArrayList<BlockPos> bps = new ArrayList<>();
+        for (int x = -4; x < 4; x++)
+            for (int y = -4; y < 4; y++)
+                for (int z = -4; z < 4; z++)
+                    if (level.getBlockState(getOnPos().offset(x,y,z)).getBlock() ==
+                            BlockRegistrar.WALKABLE_MAGMA_BLOCK.get() &&
+                            level.getBlockState(getOnPos().offset(x,y+1,z)).isAir())
+                        bps.add(getOnPos().offset(x,y,z));
+        Collections.shuffle(bps);
+        if (bps.size() >= 1)
+            level.setBlockAndUpdate(bps.get(0).above(), Blocks.FIRE.defaultBlockState());
     }
 }

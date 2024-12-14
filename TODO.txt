@@ -31,12 +31,11 @@ Features
 
 [❌] Magma cubes
     [❌] While attacking a building, always be jumping
-    [❌] Set population == size
-    [❌] Add size-based abilities
-        - Size 3: Sets target on fire
-        - Size 4: Creates temporary magma on jumping
-        - Size 5: Sets attackers on fire
-        - Size 6: Sets nearby magma on fire passively
+    [🟡] Set population == size
+    [🟡] Add size-based abilities
+
+    [❌] Add magma ability
+    [❌] Add soulfire
 
 
 Bugfixes
@@ -86,7 +85,7 @@ new strings:
 
     "units.piglins.reignofnether.magma_cube": "Magma Cube",
     "units.piglins.reignofnether.magma_cube.tooltip1": "A sentient molten cube of magma which can consume",
-    "units.piglins.reignofnether.magma_cube.tooltip2": "other cubes to grow in size and gain new abilities.",
+    "units.piglins.reignofnether.magma_cube.tooltip2": "other cubes to grow in size, health and damage.",
     "units.piglins.reignofnether.magma_cube.tooltip3": "Requires a Basalt Springs.",
 
     "abilities.reignofnether.consume_magma_cube": "Consume Magma Cube",
@@ -95,3 +94,10 @@ new strings:
     "abilities.reignofnether.consume_magma_cube.tooltip3": "Right-click to autocast",
     "abilities.reignofnether.consume_magma_cube.error1": "Already at max size!",
     "abilities.reignofnether.consume_magma_cube.error2": "Can only target Magma Cubes you own.",
+
+    "research.reignofnether.cube_magma": "Cube Magma",
+    "research.reignofnether.cube_magma.tooltip1": "Upgrades Magma Cubes to create temporary ",
+    "research.reignofnether.cube_magma.tooltip2": "magma blocks around wherever they jump.",
+    "research.reignofnether.soul_fireballs": "Soul Fireballs",
+    "research.reignofnether.soul_fireballs.tooltip1": "Infuses Ghast fireballs with soulfire, causing them ",
+    "research.reignofnether.soul_fireballs.tooltip2": "to create temporary soulsand and soulfire on impact.",

@@ -119,6 +119,8 @@ public class ReignOfNetherCommonConfigs {
         ResearchCosts.RESEARCH_CIVILIAN_PORTAL.define(BUILDER);
         ResearchCosts.RESEARCH_MILITARY_PORTAL.define(BUILDER);
         ResearchCosts.RESEARCH_TRANSPORT_PORTAL.define(BUILDER);
+        ResearchCosts.RESEARCH_CUBE_MAGMA.define(BUILDER);
+        ResearchCosts.RESEARCH_SOUL_FIREBALLS.define(BUILDER);
 
         //*Enchantments*
         BUILDER.comment("Enchantment Cost Configurations");
@@ -234,6 +236,8 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry RESEARCH_CIVILIAN_PORTAL = ResourceCostConfigEntry.Research(0, 75, 0, 20, ResourceCosts.RESEARCH_CIVILIAN_PORTAL, "Civilian Portal Research Config");
         public static final ResourceCostConfigEntry RESEARCH_MILITARY_PORTAL = ResourceCostConfigEntry.Research(0, 125, 0, 30, ResourceCosts.RESEARCH_MILITARY_PORTAL, "Military Portal Research Config");
         public static final ResourceCostConfigEntry RESEARCH_TRANSPORT_PORTAL = ResourceCostConfigEntry.Research(0, 175, 0, 40, ResourceCosts.RESEARCH_TRANSPORT_PORTAL, "Transport Portal Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_CUBE_MAGMA = ResourceCostConfigEntry.Research(300, 0, 300, 150, ResourceCosts.RESEARCH_CUBE_MAGMA, "Cube Magma Research Config");
+        public static final ResourceCostConfigEntry RESEARCH_SOUL_FIREBALLS = ResourceCostConfigEntry.Research(0, 300, 300, 150, ResourceCosts.RESEARCH_SOUL_FIREBALLS, "Soul Fireballs Research Config");
     }
     public static class EnchantmentCosts implements Costs {
         public static final ResourceCostConfigEntry ENCHANT_MAIMING = ResourceCostConfigEntry.Enchantment(0,20, 30, ResourceCosts.ENCHANT_MAIMING, "Maiming Enchantment Config");

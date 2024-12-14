@@ -6,7 +6,9 @@ import com.solegendary.reignofnether.building.BuildingClientEvents;
 import com.solegendary.reignofnether.building.ProductionBuilding;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.research.ResearchClient;
+import com.solegendary.reignofnether.research.researchItems.ResearchCubeMagma;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.util.Faction;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
@@ -50,12 +53,10 @@ public class BasaltSprings extends ProductionBuilding {
 
         this.explodeChance = 0.2f;
 
-        /*
         if (level.isClientSide())
             this.productionButtons = Arrays.asList(
-                    ResearchBlazeFirewall.getStartButton(this, Keybindings.keyQ),
+                    ResearchCubeMagma.getStartButton(this, Keybindings.keyQ)
             );
-         */
     }
 
     public Faction getFaction() {return Faction.PIGLINS;}

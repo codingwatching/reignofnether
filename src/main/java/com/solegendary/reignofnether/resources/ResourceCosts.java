@@ -108,7 +108,9 @@ public class ResourceCosts {
     public static final ResourceCost RESEARCH_ADVANCED_PORTALS = new ResourceCost(ID, "RESEARCH_ADVANCED_PORTALS");
     public static final ResourceCost RESEARCH_CIVILIAN_PORTAL = new ResourceCost(ID, "RESEARCH_CIVILIAN_PORTAL");
     public static final ResourceCost RESEARCH_MILITARY_PORTAL = new ResourceCost(ID, "RESEARCH_MILITARY_PORTAL");
-    public static final ResourceCost RESEARCH_TRANSPORT_PORTAL = new ResourceCost(ID, "RESEARCH_TRANSPORT_PORTAL ");
+    public static final ResourceCost RESEARCH_TRANSPORT_PORTAL = new ResourceCost(ID, "RESEARCH_TRANSPORT_PORTAL");
+    public static final ResourceCost RESEARCH_CUBE_MAGMA = new ResourceCost(ID, "RESEARCH_CUBE_MAGMA");
+    public static final ResourceCost RESEARCH_SOUL_FIREBALLS = new ResourceCost(ID, "RESEARCH_SOUL_FIREBALLS");
 
     // ENCHANTMENTS
 
@@ -250,6 +252,8 @@ public class ResourceCosts {
         RESEARCH_CIVILIAN_PORTAL.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_CIVILIAN_PORTAL);
         RESEARCH_MILITARY_PORTAL.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_MILITARY_PORTAL);
         RESEARCH_TRANSPORT_PORTAL.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_TRANSPORT_PORTAL);
+        RESEARCH_CUBE_MAGMA.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_CUBE_MAGMA);
+        RESEARCH_SOUL_FIREBALLS.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_SOUL_FIREBALLS);
         // ******************* ENCHANTMENTS ******************* //
         ENCHANT_MAIMING.bakeValues(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_MAIMING);
         ENCHANT_QUICK_CHARGE.bakeValues(ReignOfNetherCommonConfigs.EnchantmentCosts.ENCHANT_QUICK_CHARGE);
