@@ -27,7 +27,9 @@
   "item.reignofnether.ghast_unit_spawn_egg": "Przyzwij jednostkę ghasta",
   "item.reignofnether.zombie_piglin_unit_spawn_egg": "Przyzwij jednostkę zzombifikowanego piglina",
   "item.reignofnether.zoglin_unit_spawn_egg": "Przyzwij jednostkę zoglina",
-  "item.reignofnether.militia_unit_spawn_egg": "Przyzwij jednostę milicji",
+  "item.reignofnether.militia_unit_spawn_egg": "Przyzwij jednostkę milicji",
+  "item.reignofnether.magma_cube_unit_spawn_egg": "Przyzwij jednostkę kostki magmy",
+
 
   "sounds.reignofnether.under_attack": "Atakują!",
   "sounds.reignofnether.victory": "Zwycięstwo!",
@@ -144,6 +146,12 @@
     "abilities.reignofnether.back_to_work_unit": "Powrót do pracy",
     "abilities.reignofnether.back_to_work_unit.tooltip1": "Przekształć tego milicjanta z powrotem w osadnika i",
     "abilities.reignofnether.back_to_work_unit.tooltip2": "wróć do jego ostatniego miejsca pracy.",
+    "abilities.reignofnether.consume_magma_cube": "Wchłoń kostkę magmy",
+    "abilities.reignofnether.consume_magma_cube.tooltip1": "Zabij przyjazną kostkę magmy, aby powiększyć wybraną kostkę. ",
+    "abilities.reignofnether.consume_magma_cube.tooltip2": "Dodaje jej połowę maksymalnego zdrowia i obrażeń.",
+    "abilities.reignofnether.consume_magma_cube.tooltip3": "Kliknij prawym przyciskiem myszy, aby używać automatycznie",
+    "abilities.reignofnether.consume_magma_cube.error1": "Już osiągnęła maksymalny rozmiar!",
+    "abilities.reignofnether.consume_magma_cube.error2": "Celem mogą być tylko posiadane przez ciebie kostki magmy.",
 
     "ability.reignofnether.enchant.error1": "Możesz zaklinać tylko swoje jednostki",
     "ability.reignofnether.enchant.error2": "Jednostka jest poza zasięgiem",
@@ -268,6 +276,10 @@
     "buildings.piglins.reignofnether.wither_shrine.tooltip1": "Mroczna kapliczka poświęcona mocy witherów.",
     "buildings.piglins.reignofnether.wither_shrine.tooltip2": "Umożliwia produkcję witherowych szkieletów w portalach wojskowych.",
     "buildings.piglins.reignofnether.wither_shrine.tooltip3": "Wymaga bastionu.",
+    "buildings.piglins.reignofnether.basalt_springs": "Basaltowe źródła",
+    "buildings.piglins.reignofnether.basalt_springs.tooltip1": "Sztuczna bazaltowa delta pozwalająca kostkom magmy",
+    "buildings.piglins.reignofnether.basalt_springs.tooltip2": "pozostać ciepłymi na powierzchni, umożliwiając ich produkcję w portalach wojskowych.",
+    "buildings.piglins.reignofnether.basalt_springs.tooltip3": "Wymaga bastionu.",
 
     "buildings.villagers.reignofnether.arcane_tower": "Tajemna wieża",
     "buildings.villagers.reignofnether.arcane_tower.tooltip1": "Magiczna wieża, w której mieszkają wiedźmy i przywoływacze.",
@@ -318,6 +330,10 @@
     "commands.reignofnether.gamerule.do_log_falling": "%s - Określa, czy pnie drzew spadają po ścięciu",
     "commands.reignofnether.gamerule.neutral_aggro": "%s - Ustawienie automatycznego atakowania neutralnych jednostek/budynków",
     "commands.reignofnether.gamerule.max_population": "%s - Ustaw najwyższy możliwy limit populacji",
+    "commands.reignofnether.gamerule.unit_griefing": "%s - Zezwalaj wybuchowym jednostkom na niszczenie bloków",
+
+    "config.reignofnether.warn_config_change": "Host serwera zmienił konfigurację",
+    "config.reignofnether.hide_config_change": "(Kliknij, aby ukryć)",
 
     "controls.reignofnether.toggle_cam": "F12 - Przełącz widok kamery RTS",
     "controls.reignofnether.refresh_chunks": "F8 - Odśwież chunki",
@@ -348,7 +364,7 @@
     "hud.control_group.reignofnether.control_group": "Grupa kontrolna %s (kliknij shift+prawy przycisk myszy, aby usunąć)",
 
     "hud.actionbuttons.reignofnether.build_repair": "Buduj/Napraw",
-    "hud.actionbuttons.reignofnether.build_repair_autocast": "(Kliknij prawym przyciskiem myszy, aby naprawiać automatycznie)",
+    "hud.actionbuttons.reignofnether.build_repair_autocast": "(Kliknij prawym przyciskiem myszy, aby naprawiać automatycznie )",
     "hud.actionbuttons.reignofnether.gather": "Zbieraj",
     "hud.actionbuttons.reignofnether.attack": "Atakuj",
     "hud.actionbuttons.reignofnether.stop": "Przerwij",
@@ -451,8 +467,8 @@
     "research.reignofnether.evoker_vexes": "Dręczyciele przywoływacza",
     "research.reignofnether.evoker_vexes.tooltip1": "Odblokowuje zdolność przywoływaczy do przywoływania dręczycieli.",
     "research.reignofnether.fire_resistance": "Odporność na ogień",
-    "research.reignofnether.fire_resistance.tooltip1": "Twoje jednostki stają się odporne na obrażenia od ognia i magmy.",
-    "research.reignofnether.fire_resistance.tooltip2": "Stanie bezpośrednio w ogniu lub lawie nadal powoduje obrażenia.",
+    "research.reignofnether.fire_resistance.tooltip1": "Twoje jednostki stają się odporne na zwykłe obrażenia od ognia.",
+    "research.reignofnether.fire_resistance.tooltip2": "Nie chroni przed ogniem dusz ani lawą.",
     "research.reignofnether.grand_library": "Wielka biblioteka",
     "research.reignofnether.grand_library.tooltip1": "Ulepsza bibliotekę, odblokowując potężniejsze zaklęcia.",
     "research.reignofnether.golem_smithing": "Wykuwanie golemów",
@@ -521,6 +537,13 @@
     "research.reignofnether.sculk_amplifiers.tooltip1": "Nadzorcy mogą użyć grom dźwiękowego na sculkowym katalizatorze,",
     "research.reignofnether.sculk_amplifiers.tooltip2": "aby rozdzielić uderzenie na %d losowych pobliskich wrogów w zasięgu %d bloków.",
     "research.reignofnether.sculk_amplifiers.tooltip3": "Wymaga twierdzy.",
+    "research.reignofnether.cube_magma": "Sześcienna magma",
+    "research.reignofnether.cube_magma.tooltip1": "Ulepsza kostki magmy, aby tworzyły tymczasowe",
+    "research.reignofnether.cube_magma.tooltip2": "bloki magmy wokół miejsca, w którym skaczą.",
+
+    "research.reignofnether.soul_fireballs": "Kule ognia-dusz",
+    "research.reignofnether.soul_fireballs.tooltip1": "Napełnia kule ognia Ghasta ogniem dusz, sprawiając, ",
+    "research.reignofnether.soul_fireballs.tooltip2": "że po uderzeniu tworzą one tymczasowy piasek dusz i ogień dusz.",
 
     "resources.reignofnether.food": "Żywność",
     "resources.reignofnether.wood": "Drewno",
@@ -756,6 +779,10 @@
     "units.piglins.reignofnether.wither_skeleton.tooltip1": "Czarny jak węgiel szkielet, który zadaje wrogom",
     "units.piglins.reignofnether.wither_skeleton.tooltip2": "kumulujące się obrażenia obumarcia.",
     "units.piglins.reignofnether.wither_skeleton.tooltip3": "Wymaga witherowej kapliczki.",
+    "units.piglins.reignofnether.magma_cube": "Kostka magmy",
+    "units.piglins.reignofnether.magma_cube.tooltip1": "Świadoma, stopiona kostka magmy, która może pochłaniać inne",
+    "units.piglins.reignofnether.magma_cube.tooltip2": "kostki, zwiększając swój rozmiar, zdrowie i obrażenia.",
+    "units.piglins.reignofnether.magma_cube.tooltip3": "Requires a Basalt Springs.",
 
     "units.villagers.reignofnether.evoker": "Przywoływacz",
     "units.villagers.reignofnether.evoker.tooltip1": "Uczony czarodziej potrafiący rzucać zaklęcia bojowe.",
