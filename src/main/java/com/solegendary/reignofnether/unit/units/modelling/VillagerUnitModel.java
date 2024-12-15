@@ -8,10 +8,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
-import net.minecraft.client.model.AnimationUtils;
-import net.minecraft.client.model.ArmedModel;
-import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -27,6 +24,8 @@ import java.util.List;
 // Based on IllagerModel
 
 // This class should be the basis of all villager-like units so that we have granular control over the arm models
+
+
 
 @OnlyIn(Dist.CLIENT)
 public class VillagerUnitModel<T extends AbstractIllager> extends HierarchicalModel<T> implements ArmedModel, HeadedModel {
@@ -56,7 +55,7 @@ public class VillagerUnitModel<T extends AbstractIllager> extends HierarchicalMo
         this.root = p_170688_;
         this.head = p_170688_.getChild("head");
         this.hat = this.head.getChild("hat");
-        this.hat.visible = false;
+        this.hat.visible = true;
         this.crossedArms = p_170688_.getChild("arms");
         this.leftLeg = p_170688_.getChild("left_leg");
         this.rightLeg = p_170688_.getChild("right_leg");

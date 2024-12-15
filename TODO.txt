@@ -39,9 +39,20 @@ Features
 [✔] Ghast Upgrade: Soul Fireballs
     [✔] Make fire resistance not work against soulfire
 
+[🟡] Villager Professions
+    [❌] Save on exit
+    [❌] Veteran upgrade (2.5mins to get profession, then 5mins to get veteran)
+        - Show diamond tools when veteran
+    [❌] Fix
+
+
 
 Bugfixes
 --------
+[❌] Fix weird pathing when chopping wood
+    - happens for all resource types
+
+[✔] Fixed militia not showing their headgear
 
 [❌] Pathing around fire is weird
 

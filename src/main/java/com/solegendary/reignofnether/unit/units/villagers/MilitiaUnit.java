@@ -141,7 +141,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     final static public float maxHealth = 35.0f;
     final static public float armorValue = 0.0f;
-    final static public float movementSpeed = 0.25f;
+    final static public float movementSpeed = 0.28f;
     public int maxResources = 100;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
