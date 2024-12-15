@@ -38,6 +38,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Fireball;
@@ -289,6 +291,8 @@ public class UnitServerEvents {
         if (evt.getEntity() instanceof Unit && evt.getEntity() instanceof Mob mob) {
             mob.setBaby(false);
             mob.setPathfindingMalus(BlockPathTypes.WATER, -1.0f);
+            mob.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 1.0f);
+            mob.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 1.0f);
             mob.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
             mob.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
             mob.setItemSlot(EquipmentSlot.LEGS, ItemStack.EMPTY);
@@ -466,6 +470,11 @@ public class UnitServerEvents {
 
                 if (res != null) {
                     unit.getItems().add(itemStack);
+                    if (unit instanceof VillagerUnit vUnit) {
+                        vUnit.incrementHunterExp();
+                        if (!(evt.getEntity() instanceof Chicken))
+                            vUnit.incrementHunterExp();
+                    }
                 }
             }
             if (Unit.atThresholdResources(unit)) {
@@ -647,6 +656,14 @@ public class UnitServerEvents {
             return;
         }
 
+        if (ResourceSources.isHuntableAnimal(evt.getEntity()) && (
+            evt.getSource().getEntity() instanceof VillagerUnit vUnit &&
+            vUnit.getUnitProfession() == VillagerUnitProfession.HUNTER
+        )) {
+            evt.setAmount(2);
+            return;
+        }
+
         if (evt.getEntity() instanceof Unit && (
             evt.getSource() == DamageSource.SWEET_BERRY_BUSH || evt.getSource() == DamageSource.CACTUS
         )) {
@@ -705,18 +722,6 @@ public class UnitServerEvents {
 
         if (evt.getEntity() instanceof Unit && (evt.getSource() == DamageSource.IN_WALL)) {
             evt.setCanceled(true);
-        }
-
-        // piglin fire immunity
-        if (evt.getEntity() instanceof Unit unit && (
-            evt.getSource() == DamageSource.ON_FIRE || evt.getSource() == DamageSource.IN_FIRE
-        )) {
-            boolean hasImmunityResearch = ResearchServerEvents.playerHasResearch(unit.getOwnerName(),
-                ResearchFireResistance.itemName
-            );
-            if (hasImmunityResearch && unit.getFaction() == Faction.PIGLINS) {
-                evt.setCanceled(true);
-            }
         }
 
         // prevent friendly fire damage from ranged units (unless specifically targeted)

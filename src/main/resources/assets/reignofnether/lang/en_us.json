@@ -713,6 +713,12 @@
     "units.reignofnether.poison_spider_jockey": "Poison Spider Jockey",
     "units.reignofnether.hoglin_rider": "Hoglin Rider",
 
+    "units.reignofnether.farmer": "Farmer",
+    "units.reignofnether.lumberjack": "Lumberjack",
+    "units.reignofnether.miner": "Miner",
+    "units.reignofnether.mason": "Mason",
+    "units.reignofnether.hunter": "Hunter",
+
     "units.monsters.reignofnether.creeper": "Creeper",
     "units.monsters.reignofnether.creeper.tooltip1": "An explosive monster that can blow up units and buildings.",
     "units.monsters.reignofnether.creeper.tooltip2": "Deals less damage to capitol buildings.",

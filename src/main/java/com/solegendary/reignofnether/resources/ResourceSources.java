@@ -154,7 +154,7 @@ public class ResourceSources {
                     List.of(Blocks.CARROTS),
                     List.of(Items.CARROT),
                     TICKS_PER_SECOND * 2,
-                    10,
+                    6,
                     ResourceName.FOOD,
                     (bs) -> bs.getValue(BlockStateProperties.AGE_7) == 7
             ),
@@ -162,7 +162,7 @@ public class ResourceSources {
                     List.of(Blocks.POTATOES),
                     List.of(Items.POTATO, Items.BAKED_POTATO),
                     TICKS_PER_SECOND * 2,
-                    10,
+                    6,
                     ResourceName.FOOD,
                     (bs) -> bs.getValue(BlockStateProperties.AGE_7) == 7
             ),
@@ -170,7 +170,7 @@ public class ResourceSources {
                     List.of(Blocks.BEETROOTS),
                     List.of(Items.BEETROOT),
                     TICKS_PER_SECOND * 2,
-                    10,
+                    6,
                     ResourceName.FOOD,
                     (bs) -> bs.getValue(BlockStateProperties.AGE_3) == 3
             ),

@@ -1,11 +1,7 @@
 package com.solegendary.reignofnether.unit.units.villagers;
 
-import com.solegendary.reignofnether.ability.abilities.BackToWorkBuilding;
+import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
-import com.solegendary.reignofnether.ability.abilities.Explode;
-import com.solegendary.reignofnether.building.BuildingUtils;
-import com.solegendary.reignofnether.building.buildings.villagers.OakBridge;
-import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
@@ -14,14 +10,12 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.ResourceCosts;
-import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.*;
-import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.unit.packets.UnitConvertClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
-import net.minecraft.client.model.VillagerModel;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -34,7 +28,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Vindicator;
@@ -137,7 +132,10 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     // endregion
 
     public BlockState getReplantBlockState() {
-        return Blocks.WHEAT.defaultBlockState();
+        if (getUnitProfession() == VillagerUnitProfession.FARMER)
+            return Blocks.POTATOES.defaultBlockState();
+        else
+            return Blocks.WHEAT.defaultBlockState();
     }
 
     final static public float attackDamage = 1.0f;
@@ -151,6 +149,73 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
     public int maxResources = 100;
+
+    public VillagerUnitProfession getUnitProfession() {
+        VillagerProfession profession = getProfession();
+        if (VillagerProfession.FARMER.equals(profession)) {
+            return VillagerUnitProfession.FARMER;
+        } else if (VillagerProfession.FLETCHER.equals(profession)) {
+            return VillagerUnitProfession.LUMBERJACK;
+        } else if (VillagerProfession.TOOLSMITH.equals(profession)) {
+            return VillagerUnitProfession.MINER;
+        } else if (VillagerProfession.MASON.equals(profession)) {
+            return VillagerUnitProfession.MASON;
+        } else if (VillagerProfession.WEAPONSMITH.equals(profession)) {
+            return VillagerUnitProfession.HUNTER;
+        }
+        return VillagerUnitProfession.NONE;
+    }
+
+    // equal to 4 full farm clears
+    // bonus == plants potatoes instead of wheat (+50% food)
+    final static public int FARMER_EXP_REQ = 8;//80;
+    private int farmerExp = 0; // farm food blocks gathered
+    public void incrementFarmerExp() {
+        farmerExp += 1;
+        if (farmerExp >= FARMER_EXP_REQ && !hasProfession())
+            setProfession(VillagerProfession.FARMER);
+    }
+
+    // equal to ~4mins of log chopping, excludes leaves
+    final static public float LUMBERJACK_SPEED_MULT = 1.5f;
+    final static public int LUMBERJACK_EXP_REQ = 2;//20;
+    private int lumberjackExp = 0;
+    public void incrementLumberjackExp() {
+        lumberjackExp += 1; // log blocks gathered
+        if (lumberjackExp >= LUMBERJACK_EXP_REQ && !hasProfession())
+            setProfession(VillagerProfession.FLETCHER);
+    }
+
+    // ~5mins of gathering
+    final static public float MINER_SPEED_MULT = 1.5f;
+    final static public int MINER_EXP_REQ = 1;//10;
+    private int minerExp = 0; // ore blocks gathered
+    public void incrementMinerExp() {
+        minerExp += 1;
+        if (minerExp >= MINER_EXP_REQ && !hasProfession())
+            setProfession(VillagerProfession.TOOLSMITH);
+    }
+
+    // blocks built or repaired, excluding first capitol
+    // ~5mins of building
+    // counted as an extra worker when building/repairing
+    final static public int MASON_EXP_REQ = 6;//600;
+    private int masonExp = 0;
+    public void incrementMasonExp() {
+        masonExp += 1;
+        if (masonExp >= MASON_EXP_REQ && !hasProfession())
+            setProfession(VillagerProfession.MASON);
+    }
+
+    // chickens only worth 1, other animals worth 2
+    // does 2 damage to huntable animals
+    final static public int HUNTER_EXP_REQ = 2;//4;
+    private int hunterExp = 0;
+    public void incrementHunterExp() {
+        hunterExp += 1;
+        if (hunterExp >= HUNTER_EXP_REQ && !hasProfession())
+            setProfession(VillagerProfession.WEAPONSMITH);
+    }
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
     private final List<Ability> abilities = new ArrayList<>();
@@ -325,6 +390,19 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public void setVillagerData(VillagerData p_35437_) {
         VillagerData villagerdata = this.getVillagerData();
         this.entityData.set(VILLAGER_DATA, p_35437_);
+    }
+
+    public void setProfession(VillagerProfession profession) {
+        this.setVillagerData(this.getVillagerData().setProfession(profession));
+    }
+    public VillagerProfession getProfession() {
+        return this.getVillagerData().getProfession();
+    }
+    public boolean hasProfession() {
+        return this.getVillagerData().getProfession() != VillagerProfession.NONE;
+    }
+    public boolean hasUnitProfession() {
+        return this.getUnitProfession() != VillagerUnitProfession.NONE;
     }
 
     static {

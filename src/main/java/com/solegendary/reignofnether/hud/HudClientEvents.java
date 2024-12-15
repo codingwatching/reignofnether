@@ -51,6 +51,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.*;
@@ -173,20 +174,30 @@ public class HudClientEvents {
             Entity passenger = entity.getPassengers().get(0);
             if (entity instanceof RavagerUnit && passenger instanceof PillagerUnit) {
                 name = I18n.get("units.reignofnether.ravager_artillery");
+            } else if (entity instanceof PoisonSpiderUnit && (
+                    passenger instanceof SkeletonUnit || passenger instanceof StrayUnit
+            )) {
+                name = I18n.get("units.reignofnether.poison_spider_jockey");
             } else if (entity instanceof SpiderUnit && (
                 passenger instanceof SkeletonUnit || passenger instanceof StrayUnit
             )) {
                 name = I18n.get("units.reignofnether.spider_jockey");
-            } else if (entity instanceof PoisonSpiderUnit && (
-                passenger instanceof SkeletonUnit || passenger instanceof StrayUnit
-            )) {
-                name = I18n.get("units.reignofnether.poison_spider_jockey");
-            } else if (entity instanceof HoglinUnit && passenger instanceof HeadhunterUnit) {
+            }else if (entity instanceof HoglinUnit && passenger instanceof HeadhunterUnit) {
                 name = I18n.get("units.reignofnether.hoglin_rider");
             } else {
                 String pName = getSimpleEntityName(entity.getPassengers().get(0)).replace("_", " ");
                 String nameCap = pName.substring(0, 1).toUpperCase() + pName.substring(1);
                 name += " & " + nameCap;
+            }
+        }
+        if (entity instanceof VillagerUnit vUnit) {
+            switch (vUnit.getUnitProfession()) {
+                case FARMER -> name = I18n.get("units.reignofnether.farmer");
+                case LUMBERJACK -> name = I18n.get("units.reignofnether.lumberjack");
+                case MINER -> name = I18n.get("units.reignofnether.miner");
+                case MASON -> name = I18n.get("units.reignofnether.mason");
+                case HUNTER -> name = I18n.get("units.reignofnether.hunter");
+                default -> name = I18n.get("units.villagers.reignofnether.villager");
             }
         }
         return name;
