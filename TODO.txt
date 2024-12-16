@@ -30,7 +30,7 @@ Features
 --------
 
 [🟡] Magma cubes
-    [❌] While attacking a building, always be jumping
+    [🟡] While attacking a building, always be jumping
     [✔] Set population == size
     [✔] Add size-based abilities
     [❌] Make cubes shrink on damage
@@ -42,11 +42,11 @@ Features
     [✔] Make fire resistance not work against soulfire
 
 [🟡] Villager Professions
-    [❌] Save on exit
-    [❌] Save on militia conversion
+    [🟡] Save on exit
+    [🟡] Save on militia conversion
     [🟡] Veteran upgrade (2.5mins to get profession, then 5mins to get veteran)
         - Show diamond tools when veteran
-    [❌] Farmer arms have wrong colour when working
+    [❌] Profession arm colours are all wrong
 
 
 
@@ -75,7 +75,7 @@ Quality of Life
 [❌] /gamerule groundYLevel for mapmakers
     - Maybe separate for ghasts and bridges?
 
-[❌] /gamerule survivalGriefing (default true)
+[🟡] /gamerule survivalGriefing (default true)
     - Allows survival players to break blocks that aren't for resources or part of a building
 
 
@@ -114,6 +114,8 @@ Languages
     "units.reignofnether.veteran_miner": "Veteran Miner",
     "units.reignofnether.veteran_mason": "Veteran Mason",
     "units.reignofnether.veteran_hunter": "Veteran Hunter",
+
+    "commands.reignofnether.gamerule.player_griefing": "%s - Allow survival players to break terrain blocks",
 
     **Updated:**
     "units.villagers.reignofnether.villager": "Villager",

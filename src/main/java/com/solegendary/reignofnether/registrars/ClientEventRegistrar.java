@@ -67,6 +67,7 @@ public class ClientEventRegistrar {
         vanillaEventBus.register(SurvivalClientEvents.class);
 
         // to allow singleplayer integrated server to work
+        vanillaEventBus.register(BlockServerEvents.class);
         vanillaEventBus.register(TutorialServerEvents.class);
         vanillaEventBus.register(PlayerServerEvents.class);
         vanillaEventBus.register(ConfigVanillaServerEvents.class);
@@ -79,6 +80,5 @@ public class ClientEventRegistrar {
         vanillaEventBus.register(ResearchServerEvents.class);
         vanillaEventBus.register(SurvivalServerEvents.class);
         vanillaEventBus.register(GameModeServerEvents.class);
-        vanillaEventBus.register(BlockServerEvents.class);
     }
 }

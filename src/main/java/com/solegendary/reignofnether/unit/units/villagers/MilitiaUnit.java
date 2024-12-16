@@ -131,6 +131,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     // for going back to work as a villager
     public TargetResourcesSave resourcesSaveData = null;
+    public VillagerProfession profession = VillagerProfession.NONE;
     public boolean isVeteran = false;
     public int farmerExp = 0;
     public int lumberjackExp = 0;
@@ -218,6 +219,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                     vUnit.getGatherResourceGoal().saveData = resourcesSaveData;
                     vUnit.getGatherResourceGoal().loadState();
                 }
+                vUnit.setProfession(this.profession);
                 vUnit.isVeteran = this.isVeteran;
                 vUnit.farmerExp = this.farmerExp;
                 vUnit.lumberjackExp = this.lumberjackExp;

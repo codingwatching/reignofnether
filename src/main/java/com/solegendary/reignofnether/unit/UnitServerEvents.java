@@ -503,6 +503,8 @@ public class UnitServerEvents {
                 if (entity instanceof Unit unit) {
                     UnitSyncClientboundPacket.sendSyncResourcesPacket(unit);
                     UnitSyncClientboundPacket.sendSyncStatsPacket(entity);
+                    if (entity instanceof VillagerUnit vUnit && vUnit.isVeteran())
+                        UnitSyncClientboundPacket.makeVillagerVeteran(vUnit);
                 }
                 if (entity instanceof WorkerUnit) {
                     UnitSyncWorkerClientBoundPacket.sendSyncWorkerPacket(entity);

@@ -10,6 +10,7 @@ public class GameRuleRegistrar {
     public static GameRules.Key<GameRules.IntegerValue> MAX_POPULATION;
     public static GameRules.Key<GameRules.BooleanValue> DISALLOW_WAVE_SURVIVAL;
     public static GameRules.Key<GameRules.BooleanValue> DO_UNIT_GRIEFING;
+    public static GameRules.Key<GameRules.BooleanValue> DO_SURVIVAL_GRIEFING;
 
     public static void init() {
         // do cut trees convert their logs into falling logs?
@@ -30,6 +31,10 @@ public class GameRuleRegistrar {
         );
         // allow units to damage blocks (separate from doMobGriefing which is only for vanilla mobs)
         DO_UNIT_GRIEFING = GameRules.register("doUnitGriefing", GameRules.Category.MOBS,
+                GameRules.BooleanValue.create(false)
+        );
+        // allow players to break blocks other than buildings and resource blocks
+        DO_SURVIVAL_GRIEFING = GameRules.register("doSurvivalGriefing", GameRules.Category.PLAYER,
                 GameRules.BooleanValue.create(false)
         );
     }

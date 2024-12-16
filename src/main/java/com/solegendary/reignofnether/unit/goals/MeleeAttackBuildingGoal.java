@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.unit.units.monsters.SpiderUnit;
 import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
 import com.solegendary.reignofnether.unit.units.monsters.ZoglinUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
+import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.unit.units.villagers.IronGolemUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
@@ -17,6 +18,7 @@ import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.monster.Zombie;
 
 import java.util.Random;
@@ -95,6 +97,9 @@ public class MeleeAttackBuildingGoal extends MoveToTargetBlockGoal {
                     if (new Random().nextDouble(1.0f) < damageFloat - damageFloor)
                         damageInt += 1;
                     buildingTarget.destroyRandomBlocks(damageInt);
+
+                    if (mob instanceof Slime slime && slime.isOnGround())
+                        slime.jumpFromGround();
                 }
             }
         }

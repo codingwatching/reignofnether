@@ -96,6 +96,7 @@ public class PlayerClientEvents {
                 MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.neutral_aggro", "/gamerule neutralAggro"));
                 MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.max_population", "/gamerule maxPopulation"));
                 MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.unit_griefing", "/gamerule doUnitGriefing"));
+                MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.player_griefing", "/gamerule doSurvivalGriefing"));
             }
             return 1;
         }));

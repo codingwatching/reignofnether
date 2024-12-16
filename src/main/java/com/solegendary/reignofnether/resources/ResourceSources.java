@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Material;
 
@@ -46,6 +47,14 @@ public class ResourceSources {
         for (List<ResourceSource> resourceSources : List.of(FOOD_BLOCKS, WOOD_BLOCKS, ORE_BLOCKS))
             for (ResourceSource resourceSource : resourceSources)
                 if (resourceSource.validBlocks.contains(block))
+                    return resourceSource;
+        return null;
+    }
+
+    public static ResourceSource getFromBlockState(BlockState bs) {
+        for (List<ResourceSource> resourceSources : List.of(FOOD_BLOCKS, WOOD_BLOCKS, ORE_BLOCKS))
+            for (ResourceSource resourceSource : resourceSources)
+                if (resourceSource.validBlocks.contains(bs.getBlock()))
                     return resourceSource;
         return null;
     }

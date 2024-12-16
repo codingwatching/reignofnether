@@ -17,6 +17,7 @@ import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.*;
 import com.solegendary.reignofnether.unit.packets.UnitConvertClientboundPacket;
+import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -177,6 +178,10 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
     public boolean isVeteran = false;
     public boolean isVeteran() { return isVeteran; }
+    public void makeVeteran() {
+        isVeteran = true;
+        UnitSyncClientboundPacket.makeVillagerVeteran(this);
+    }
 
     // equal to 4 full farm clears
     // bonus == plants carrots instead of wheat (+25% food), potatoes for veteran (+50% food)
@@ -187,7 +192,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         if (farmerExp >= (FARMER_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.FARMER);
         else if (farmerExp >= FARMER_EXP_REQ && !isVeteran && getUnitProfession() == FARMER)
-            isVeteran = true;
+            makeVeteran();
     }
 
     // equal to ~4mins of log chopping, excludes leaves
@@ -200,20 +205,20 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         if (lumberjackExp >= (LUMBERJACK_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.FLETCHER);
         else if (lumberjackExp >= LUMBERJACK_EXP_REQ && !isVeteran && getUnitProfession() == LUMBERJACK)
-            isVeteran = true;
+            makeVeteran();
     }
 
     // ~5mins of gathering
     final static public float MINER_SPEED_MULT = 1.25f;
     final static public float MINER_SPEED_MULT_VETERAN = 1.5f;
-    final static public int MINER_EXP_REQ = 1;//10;
+    final static public int MINER_EXP_REQ = 2;//10;
     public int minerExp = 0; // ore blocks gathered
     public void incrementMinerExp() {
         minerExp += 1;
         if (minerExp >= (MINER_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.TOOLSMITH);
         else if (minerExp >= MINER_EXP_REQ && !isVeteran && getUnitProfession() == MINER)
-            isVeteran = true;
+            makeVeteran();
     }
 
     // blocks built or repaired, excluding first capitol
@@ -226,7 +231,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         if (masonExp >= (MASON_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.MASON);
         else if (masonExp >= MASON_EXP_REQ && !isVeteran && getUnitProfession() == MASON)
-            isVeteran = true;
+            makeVeteran();
     }
 
     // chickens only worth 1, other animals worth 2
@@ -238,7 +243,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         if (hunterExp >= (HUNTER_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.WEAPONSMITH);
         else if (hunterExp >= HUNTER_EXP_REQ && !isVeteran && getUnitProfession() == HUNTER)
-            isVeteran = true;
+            makeVeteran();
     }
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
@@ -336,6 +341,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
             LivingEntity newEntity = this.convertToUnit(EntityRegistrar.MILITIA_UNIT.get());
             if (newEntity instanceof MilitiaUnit mUnit) {
                 mUnit.resourcesSaveData = this.gatherResourcesGoal.permSaveData;
+                mUnit.profession = this.getProfession();
                 mUnit.isVeteran = this.isVeteran;
                 mUnit.farmerExp = this.farmerExp;
                 mUnit.lumberjackExp = this.lumberjackExp;
@@ -458,7 +464,8 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         this.minerExp = pCompound.getInt("minerExp");
         this.masonExp = pCompound.getInt("masonExp");
         this.hunterExp = pCompound.getInt("hunterExp");
-        this.isVeteran = pCompound.getBoolean("isVeteran");
+        if (!level.isClientSide() && pCompound.getBoolean("isVeteran"))
+            makeVeteran();
     }
 
     static {

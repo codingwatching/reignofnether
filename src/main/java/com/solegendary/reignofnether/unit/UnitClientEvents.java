@@ -979,6 +979,12 @@ public class UnitClientEvents {
         maxPopulation = value;
     }
 
+    public static void makeVillagerVeteran(int unitId) {
+        for (LivingEntity entity : getAllUnits())
+            if (entity instanceof VillagerUnit vUnit && unitId == entity.getId())
+                vUnit.isVeteran = true;
+    }
+
     /*
     public static RenderLevelStageEvent.Stage stage = AFTER_CUTOUT_BLOCKS;
 

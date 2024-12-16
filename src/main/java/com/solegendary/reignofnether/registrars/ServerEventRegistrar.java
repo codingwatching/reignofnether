@@ -32,6 +32,7 @@ public class ServerEventRegistrar {
      * is executing code on the server side and not the client.
      */
     public void registerServerEvents() {
+        vanillaEventBus.register(BlockServerEvents.class);
         vanillaEventBus.register(PlayerServerEvents.class);
         vanillaEventBus.register(ConfigVanillaServerEvents.class);
         vanillaEventBus.register(UnitServerEvents.class);
@@ -43,6 +44,5 @@ public class ServerEventRegistrar {
         vanillaEventBus.register(ResearchServerEvents.class);
         vanillaEventBus.register(SurvivalServerEvents.class);
         vanillaEventBus.register(GameModeServerEvents.class);
-        vanillaEventBus.register(BlockServerEvents.class);
     }
 }
