@@ -1,4 +1,23 @@
 
+
+
+Wave Survival 0.6
+------------------
+
+[❌] Add to main game build, mark as beta
+
+[❌] Fixed a bug where teams would randomly switch
+
+[❌] Fixed a bug where enemy units being stuck would lag out the server
+
+[❌] Disable wave survival and gamemode button on tutorial world
+
+[✔] Time now begins at dusk on the first day
+    - This means day 1 is no longer half the length of other days
+[✔] Ranged ground units now target the nearest unit instead of the nearest building
+
+
+
 Features
 --------
 
