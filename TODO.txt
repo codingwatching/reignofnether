@@ -78,6 +78,11 @@ Quality of Life
 [🟡] /gamerule survivalGriefing (default true)
     - Allows survival players to break blocks that aren't for resources or part of a building
 
+[❌] review what config options can be added
+    - camera panning speed
+
+[❌] Right click map button to lock the map location
+
 
 Balancing
 ---------
@@ -91,7 +96,8 @@ Balancing
     - Hoglin: -15 ore
     - Wither Skeleton: -50 food
     - Spider: -10 food
-    - UNCHANGED: Creepers, Wardens, Iron Golems, Ravagers, Ghasts
+    - Ghast: -50 wood
+    - UNCHANGED: Creepers, Wardens, Iron Golems, Ravagers
 
 [🟡] All new capitols may now build workers
 

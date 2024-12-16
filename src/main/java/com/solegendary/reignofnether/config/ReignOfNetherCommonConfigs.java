@@ -166,7 +166,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry HOGLIN = ResourceCostConfigEntry.Unit(150,0,60,35,3, ResourceCosts.HOGLIN, "Hoglin Config");
         public static final ResourceCostConfigEntry BLAZE = ResourceCostConfigEntry.Unit(40,40,100,30,2, ResourceCosts.BLAZE, "Blaze Config");
         public static final ResourceCostConfigEntry WITHER_SKELETON = ResourceCostConfigEntry.Unit(150,0,150,40,4, ResourceCosts.WITHER_SKELETON, "Wither Skeleton Config");
-        public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,150,250,60,6, ResourceCosts.GHAST, "Ghast Config");
+        public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,100,250,60,6, ResourceCosts.GHAST, "Ghast Config");
         public static final ResourceCostConfigEntry MAGMA_CUBE = ResourceCostConfigEntry.Unit(40,40,40,25,2, ResourceCosts.MAGMA_CUBE, "Magma Cube Config");
     }
     public static class BuildingCosts implements Costs {
