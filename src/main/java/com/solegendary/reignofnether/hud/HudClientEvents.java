@@ -192,11 +192,36 @@ public class HudClientEvents {
         }
         if (entity instanceof VillagerUnit vUnit) {
             switch (vUnit.getUnitProfession()) {
-                case FARMER -> name = I18n.get("units.reignofnether.farmer");
-                case LUMBERJACK -> name = I18n.get("units.reignofnether.lumberjack");
-                case MINER -> name = I18n.get("units.reignofnether.miner");
-                case MASON -> name = I18n.get("units.reignofnether.mason");
-                case HUNTER -> name = I18n.get("units.reignofnether.hunter");
+                case FARMER -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.farmer");
+                    else
+                        name = I18n.get("units.reignofnether.veteran_farmer");
+                }
+                case LUMBERJACK -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.lumberjack");
+                    else
+                        name = I18n.get("units.reignofnether.veteran_lumberjack");
+                }
+                case MINER -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.miner");
+                    else
+                        name = I18n.get("units.reignofnether.veteran_miner");
+                }
+                case MASON -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.mason");
+                    else
+                        name = I18n.get("units.reignofnether.veteran_mason");
+                }
+                case HUNTER -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.hunter");
+                    else
+                        name = I18n.get("units.reignofnether.veteran_hunter");
+                }
                 default -> name = I18n.get("units.villagers.reignofnether.villager");
             }
         }

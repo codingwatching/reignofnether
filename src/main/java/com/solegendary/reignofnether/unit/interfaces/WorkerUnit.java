@@ -1,6 +1,5 @@
 package com.solegendary.reignofnether.unit.interfaces;
 
-import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.unit.goals.BuildRepairGoal;
 import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
@@ -10,6 +9,8 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+
+import static com.solegendary.reignofnether.unit.units.villagers.VillagerUnitProfession.*;
 
 public interface WorkerUnit {
 
@@ -29,22 +30,39 @@ public interface WorkerUnit {
         ItemStack mainHandItem = entity.getItemBySlot(EquipmentSlot.MAINHAND);
 
         if (unit.getBuildRepairGoal().isBuilding()) {
-            if (!mainHandItem.is(Items.IRON_SHOVEL))
-                entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SHOVEL));
+            if (!mainHandItem.is(Items.IRON_SHOVEL)) {
+                if (entity instanceof VillagerUnit vUnit && vUnit.isVeteran() && vUnit.getUnitProfession() == MASON)
+                    entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_SHOVEL));
+                else
+                    entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SHOVEL));
+            }
         }
         else if (unit.getGatherResourceGoal().isGathering()) {
             switch (unit.getGatherResourceGoal().getTargetResourceName()) {
                 case FOOD -> {
-                    if (!mainHandItem.is(Items.IRON_HOE))
-                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_HOE));
+                    if (!mainHandItem.is(Items.IRON_HOE)) {
+                        if (entity instanceof VillagerUnit vUnit && vUnit.isVeteran() && vUnit.getUnitProfession() == FARMER &&
+                                vUnit.getGatherResourceGoal().isFarming())
+                            entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_HOE));
+                        else
+                            entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_HOE));
+                    }
                 }
                 case WOOD -> {
-                    if (!mainHandItem.is(Items.IRON_AXE))
-                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
+                    if (!mainHandItem.is(Items.IRON_AXE)) {
+                        if (entity instanceof VillagerUnit vUnit && vUnit.isVeteran() && vUnit.getUnitProfession() == LUMBERJACK)
+                            entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_AXE));
+                        else
+                            entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
+                    }
                 }
                 case ORE -> {
-                    if (!mainHandItem.is(Items.IRON_PICKAXE))
-                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+                    if (!mainHandItem.is(Items.IRON_PICKAXE)) {
+                        if (entity instanceof VillagerUnit vUnit && vUnit.isVeteran() && vUnit.getUnitProfession() == MINER)
+                            entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_PICKAXE));
+                        else
+                            entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+                    }
                 }
                 case NONE -> {
                     if (!mainHandItem.is(Items.AIR))

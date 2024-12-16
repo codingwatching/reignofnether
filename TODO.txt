@@ -35,6 +35,8 @@ Features
     [✔] Add size-based abilities
     [❌] Make cubes shrink on damage
     [✔] Magma upgrade
+    [❌] Make enemies not push the cube so much
+        - End move goal once in melee attack range?
 
 [✔] Ghast Upgrade: Soul Fireballs
     [✔] Make fire resistance not work against soulfire
@@ -43,7 +45,7 @@ Features
     [❌] Save on exit
     [❌] Veteran upgrade (2.5mins to get profession, then 5mins to get veteran)
         - Show diamond tools when veteran
-    [❌] Fix
+    [❌] Farmer arms have wrong colour when working
 
 
 
@@ -54,7 +56,7 @@ Bugfixes
 
 [✔] Fixed militia not showing their headgear
 
-[❌] Pathing around fire is weird
+[🟡] Pathing around fire is weird
 
 [❌] can't build on sculk
 
@@ -103,8 +105,20 @@ Languages
 ---------
 [✔] Added French translations (Thanks to @Ender-Breaker)
 
+    **New:**
     "units.reignofnether.farmer": "Farmer",
     "units.reignofnether.lumberjack": "Lumberjack",
     "units.reignofnether.miner": "Miner",
     "units.reignofnether.mason": "Mason",
     "units.reignofnether.hunter": "Hunter",
+    "units.reignofnether.veteran_farmer": "Veteran Farmer",
+    "units.reignofnether.veteran_lumberjack": "Veteran Lumberjack",
+    "units.reignofnether.veteran_miner": "Veteran Miner",
+    "units.reignofnether.veteran_mason": "Veteran Mason",
+    "units.reignofnether.veteran_hunter": "Veteran Hunter",
+
+    **Updated:**
+    "units.villagers.reignofnether.villager": "Villager",
+    "units.villagers.reignofnether.villager.tooltip1": "A worker that can construct and repair buildings and ",
+    "units.villagers.reignofnether.villager.tooltip2": "gather resources. Villagers learn professions when  ",
+    "units.villagers.reignofnether.villager.tooltip3": "they work for a long enough time.",

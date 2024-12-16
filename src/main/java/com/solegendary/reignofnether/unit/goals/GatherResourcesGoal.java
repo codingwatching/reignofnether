@@ -273,11 +273,19 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
                     if (mob instanceof VillagerUnit vUnit) {
                         if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.WOOD &&
-                            vUnit.getUnitProfession() == VillagerUnitProfession.LUMBERJACK)
-                            ticksToProgress *= VillagerUnit.LUMBERJACK_SPEED_MULT;
+                            vUnit.getUnitProfession() == VillagerUnitProfession.LUMBERJACK) {
+                            if (vUnit.isVeteran())
+                                ticksToProgress *= VillagerUnit.LUMBERJACK_SPEED_MULT_VETERAN;
+                            else
+                                ticksToProgress *= VillagerUnit.LUMBERJACK_SPEED_MULT;
+                        }
                         else if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.ORE &&
-                                vUnit.getUnitProfession() == VillagerUnitProfession.MINER)
-                            ticksToProgress *= VillagerUnit.MINER_SPEED_MULT;
+                                vUnit.getUnitProfession() == VillagerUnitProfession.MINER) {
+                            if (vUnit.isVeteran())
+                                ticksToProgress *= VillagerUnit.MINER_SPEED_MULT_VETERAN;
+                            else
+                                ticksToProgress *= VillagerUnit.MINER_SPEED_MULT;
+                        }
                     }
 
                     this.gatherTicksLeft -= ticksToProgress;

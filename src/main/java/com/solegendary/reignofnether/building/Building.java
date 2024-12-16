@@ -720,10 +720,14 @@ public abstract class Building {
         ArrayList<WorkerUnit> workerUnits = getBuilders(serverLevel);
         int builderCount = workerUnits.size();
 
-        for (WorkerUnit workerUnit : workerUnits)
-            if (workerUnit instanceof VillagerUnit vUnit && vUnit.getUnitProfession() == VillagerUnitProfession.MASON)
-                builderCount += 1;
-
+        for (WorkerUnit workerUnit : workerUnits) {
+            if (workerUnit instanceof VillagerUnit vUnit && vUnit.getUnitProfession() == VillagerUnitProfession.MASON) {
+                if (vUnit.isVeteran())
+                    builderCount += 2;
+                else
+                    builderCount += 1;
+            }
+        }
         boolean hasFastBuildCheat = ResearchServerEvents.playerHasCheat(this.ownerName, "warpten");
 
         // place a block if the tick has run down
