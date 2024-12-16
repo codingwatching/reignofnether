@@ -152,7 +152,7 @@ public class ReignOfNetherCommonConfigs {
         // Villagers
         public static final ResourceCostConfigEntry VILLAGER = ResourceCostConfigEntry.Unit(50,0,0,15,1, ResourceCosts.VILLAGER, "Villager Config");
         public static final ResourceCostConfigEntry MILITIA = ResourceCostConfigEntry.Unit(50,0,0,15,1, ResourceCosts.MILITIA, "Militia Config");
-        public static final ResourceCostConfigEntry IRON_GOLEM = ResourceCostConfigEntry.Unit(0,0,250,45,4, ResourceCosts.IRON_GOLEM, "Iron Golem Config");
+        public static final ResourceCostConfigEntry IRON_GOLEM = ResourceCostConfigEntry.Unit(0,50,250,45,4, ResourceCosts.IRON_GOLEM, "Iron Golem Config");
         public static final ResourceCostConfigEntry PILLAGER = ResourceCostConfigEntry.Unit(120,80,0,32,3, ResourceCosts.PILLAGER, "Pillager Config");
         public static final ResourceCostConfigEntry VINDICATOR = ResourceCostConfigEntry.Unit(170,0,0,32,3, ResourceCosts.VINDICATOR, "Vindicator Config");
         public static final ResourceCostConfigEntry WITCH = ResourceCostConfigEntry.Unit(80,80,80,35,3, ResourceCosts.WITCH, "Witch Config");
@@ -166,7 +166,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry HOGLIN = ResourceCostConfigEntry.Unit(150,0,60,35,3, ResourceCosts.HOGLIN, "Hoglin Config");
         public static final ResourceCostConfigEntry BLAZE = ResourceCostConfigEntry.Unit(40,40,100,30,2, ResourceCosts.BLAZE, "Blaze Config");
         public static final ResourceCostConfigEntry WITHER_SKELETON = ResourceCostConfigEntry.Unit(150,0,150,40,4, ResourceCosts.WITHER_SKELETON, "Wither Skeleton Config");
-        public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,100,250,60,6, ResourceCosts.GHAST, "Ghast Config");
+        public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,150,250,60,6, ResourceCosts.GHAST, "Ghast Config");
         public static final ResourceCostConfigEntry MAGMA_CUBE = ResourceCostConfigEntry.Unit(40,40,40,25,2, ResourceCosts.MAGMA_CUBE, "Magma Cube Config");
     }
     public static class BuildingCosts implements Costs {
@@ -197,7 +197,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry LIBRARY = ResourceCostConfigEntry.Building(0,300,100, 0, ResourceCosts.LIBRARY, "Library Config");
         public static final ResourceCostConfigEntry WATCHTOWER = ResourceCostConfigEntry.Building(0,100,75, 0, ResourceCosts.WATCHTOWER, "Watchtower Config");
         public static final ResourceCostConfigEntry CASTLE = ResourceCostConfigEntry.Building(0,400,300, 0, ResourceCosts.CASTLE, "Castle Config");
-        public static final ResourceCostConfigEntry IRON_GOLEM_BUILDING = ResourceCostConfigEntry.Building(0,0,250, 0, ResourceCosts.IRON_GOLEM_BUILDING, "Iron Golem Building Config");
+        public static final ResourceCostConfigEntry IRON_GOLEM_BUILDING = ResourceCostConfigEntry.Building(0,50,250, 0, ResourceCosts.IRON_GOLEM_BUILDING, "Iron Golem Building Config");
 
         // Piglins
         public static final ResourceCostConfigEntry CENTRAL_PORTAL = ResourceCostConfigEntry.Building(0,350,250, 10, ResourceCosts.CENTRAL_PORTAL, "Central Portal Config");

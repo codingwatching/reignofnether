@@ -194,33 +194,33 @@ public class HudClientEvents {
             switch (vUnit.getUnitProfession()) {
                 case FARMER -> {
                     if (vUnit.isVeteran())
-                        name = I18n.get("units.reignofnether.farmer");
-                    else
                         name = I18n.get("units.reignofnether.veteran_farmer");
+                    else
+                        name = I18n.get("units.reignofnether.farmer");
                 }
                 case LUMBERJACK -> {
                     if (vUnit.isVeteran())
-                        name = I18n.get("units.reignofnether.lumberjack");
-                    else
                         name = I18n.get("units.reignofnether.veteran_lumberjack");
+                    else
+                        name = I18n.get("units.reignofnether.lumberjack");
                 }
                 case MINER -> {
                     if (vUnit.isVeteran())
-                        name = I18n.get("units.reignofnether.miner");
-                    else
                         name = I18n.get("units.reignofnether.veteran_miner");
+                    else
+                        name = I18n.get("units.reignofnether.miner");
                 }
                 case MASON -> {
                     if (vUnit.isVeteran())
-                        name = I18n.get("units.reignofnether.mason");
-                    else
                         name = I18n.get("units.reignofnether.veteran_mason");
+                    else
+                        name = I18n.get("units.reignofnether.mason");
                 }
                 case HUNTER -> {
                     if (vUnit.isVeteran())
-                        name = I18n.get("units.reignofnether.hunter");
-                    else
                         name = I18n.get("units.reignofnether.veteran_hunter");
+                    else
+                        name = I18n.get("units.reignofnether.hunter");
                 }
                 default -> name = I18n.get("units.villagers.reignofnether.villager");
             }

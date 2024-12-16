@@ -310,7 +310,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
                         if (mob.level.destroyBlock(data.gatherTarget, false)) {
 
-                            if (mob instanceof VillagerUnit vUnit && !vUnit.hasUnitProfession()) {
+                            if (mob instanceof VillagerUnit vUnit) {
                                 if (expName == ResourceName.FOOD)
                                     vUnit.incrementFarmerExp();
                                 else if (expName == ResourceName.WOOD)

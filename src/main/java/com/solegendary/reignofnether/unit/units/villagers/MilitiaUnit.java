@@ -131,6 +131,12 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     // for going back to work as a villager
     public TargetResourcesSave resourcesSaveData = null;
+    public boolean isVeteran = false;
+    public int farmerExp = 0;
+    public int lumberjackExp = 0;
+    public int minerExp = 0;
+    public int masonExp = 0;
+    public int hunterExp = 0;
 
     final static public float attackDamage = 3.0f;
     final static public float attacksPerSecond = 0.5f;
@@ -212,6 +218,13 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                     vUnit.getGatherResourceGoal().saveData = resourcesSaveData;
                     vUnit.getGatherResourceGoal().loadState();
                 }
+                vUnit.isVeteran = this.isVeteran;
+                vUnit.farmerExp = this.farmerExp;
+                vUnit.lumberjackExp = this.lumberjackExp;
+                vUnit.minerExp = this.minerExp;
+                vUnit.masonExp = this.masonExp;
+                vUnit.hunterExp = this.hunterExp;
+
                 UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newEntity.getId()));
                 converted = true;
             }
