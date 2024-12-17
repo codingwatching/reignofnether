@@ -333,6 +333,8 @@
     "commands.reignofnether.gamerule.max_population": "%s - Set the highest possible population limit",
     "commands.reignofnether.gamerule.unit_griefing": "%s - Allow explosive units to break blocks",
     "commands.reignofnether.gamerule.player_griefing": "%s - Allow survival players to break terrain blocks",
+    "commands.reignofnether.gamerule.groundYLevel": "%s - Lock the camera, flying unit and bridge Y heights",
+    "commands.reignofnether.gamerule.improvedPathfinding": "%s - Increases pathfinding accuracy, but also CPU usage",
 
     "controls.reignofnether.toggle_cam": "F12 - Toggle RTS camera",
     "controls.reignofnether.refresh_chunks": "F8 - Refresh chunks",

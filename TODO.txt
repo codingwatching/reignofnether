@@ -17,10 +17,8 @@ Features
     [🟡] While attacking a building, always be jumping
     [✔] Set population == size
     [✔] Add size-based abilities
-    [❌] Make cubes shrink on damage
     [✔] Magma upgrade
-    [❌] Make enemies not push the cube so much
-        - End move goal once in melee attack range?
+    [❌] Jump forward when attacking a unit
 
 [✔] Ghast Upgrade: Soul Fireballs
     [✔] Make fire resistance not work against soulfire
@@ -36,6 +34,13 @@ Features
 
 Bugfixes
 --------
+
+[❌] Fix production queue desync
+    - When TPS is < 20, client side may finish too early as it always progresses at the same rate
+    - Don't let client complete prod items until it gets a complete packet from the server
+    - Progress clientside prod items using TPS
+    - Do the same for cooldowns
+
 [❌] Fix weird pathing when chopping wood
     - happens for all resource types
 
@@ -48,6 +53,8 @@ Bugfixes
 
 Quality of Life
 ---------------
+[🟡] Melee units stop moving once in range of their target so they don't constantly push large mobs
+
 [✔] Changed fire resistance research icon
 
 [🟡] Improved performance for all units when attacking buildings
@@ -59,10 +66,11 @@ Quality of Life
 [🟡] /gamerule survivalGriefing (default true)
     - Allows survival players to break blocks that aren't for resources or part of a building
 
-[❌] /gamerule groundYLevel for mapmakers
-    - Include ghasts and bridges
+[🟡] /gamerule groundYLevel for mapmakers
+    [❌] Include ghasts and bridges
+    [❌] Camera rotation and map view quad seem to assume a specific height
 
-[❌] /gamerule improvedPathfinding (default true)
+[🟡] /gamerule improvedPathfinding (default true)
     - Turns off the pathfinding improvements from patch 1.0.11 to improve server CPU usage
 
 [❌] review what config options can be added
@@ -74,26 +82,31 @@ Quality of Life
 Balancing
 ---------
 
-[✔] Militia range increased to 60 blocks
-
 [✔] Reworked ore blocks to increase their value, but reduce their speed of gathering
-    - All ore blocks now give a minimum of 50 ore so that workers return ores sooner
-    - Higher tier ores are now worth much less relative to coal
-    - Piglin ores still give +20% value compared to their overworld versions
-    - Increased all gather times by 50%
     - Changed value of ore blocks:
-        - Ore: 40 -> 50
+        - Ore: 40 -> 50 (this means workers drop off after 1 block mined)
         - Iron/copper: 60 -> 65
         - Gold/emerald: 80 -> 80 (unchanged)
         - Diamond: 120 -> 100
-
-[❌] Nerf garrisoned blazes
+    - Piglin ores still give +20% value when converted
+    - Increased all gather times by 50%
 
 [🟡] All new capitols may now build workers
 
+**Villagers**
+
+[✔] Militia range increased to 60 blocks
+[✔] Militia: +3 move speed (same speed as most melee units)
+
+**Monsters**
+
 [✔] Creeper: -3 move speed (same speed as most ranged units)
 
-[✔] Militia: +3 move speed (same speed as most melee units)
+**Piglins**
+
+[❌] Nerf garrisoned blazes
+
+
 
 Languages
 ---------
@@ -112,6 +125,8 @@ Languages
     "units.reignofnether.veteran_hunter": "Veteran Hunter",
 
     "commands.reignofnether.gamerule.player_griefing": "%s - Allow survival players to break terrain blocks",
+    "commands.reignofnether.gamerule.groundYLevel": "%s - Lock the camera, flying unit and bridge Y heights",
+    "commands.reignofnether.gamerule.improvedPathfinding": "%s - Increases pathfinding accuracy, but also CPU usage",
 
     **Updated:**
     "units.villagers.reignofnether.villager": "Villager",

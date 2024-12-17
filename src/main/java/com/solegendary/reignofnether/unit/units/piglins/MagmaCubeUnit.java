@@ -282,7 +282,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
 
     public void initialiseGoals() {
         this.usePortalGoal = new UsePortalGoal(this);
-        this.moveGoal = new MoveToTargetBlockSlimeGoal(this, false, 0);
+        this.moveGoal = new MoveToTargetBlockSlimeGoal(this, false, 2);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
