@@ -38,20 +38,14 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class SpiderUnit extends Spider implements Unit, AttackerUnit, ConvertableUnit {
     // region
@@ -186,7 +180,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
                 .add(Attributes.MOVEMENT_SPEED, SpiderUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, SpiderUnit.attackDamage)
                 .add(Attributes.ARMOR, SpiderUnit.armorValue)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.MAX_HEALTH, SpiderUnit.maxHealth);
     }
 

@@ -198,7 +198,7 @@ public class EvokerUnit extends Evoker implements Unit, AttackerUnit, RangedAtta
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, EvokerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, EvokerUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.ARMOR, EvokerUnit.armorValue);
     }
 

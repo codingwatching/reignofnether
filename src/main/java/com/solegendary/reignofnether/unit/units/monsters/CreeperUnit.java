@@ -177,7 +177,7 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, CreeperUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, CreeperUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.ARMOR, CreeperUnit.armorValue);
     }
 

@@ -17,7 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,7 +31,6 @@ import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -178,7 +176,7 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, BruteUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, BruteUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, BruteUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.ARMOR, BruteUnit.armorValue);
     }
 

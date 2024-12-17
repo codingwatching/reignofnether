@@ -47,7 +47,8 @@ public interface Unit {
     static int MONSTER_HEALING_TICKS = 12 * ResourceCost.TICKS_PER_SECOND;
 
     // used for increasing pathfinding calculation range, default is 16 for most mobs
-    static int FOLLOW_RANGE = 64;
+    static int FOLLOW_RANGE_IMPROVED = 64;
+    static int FOLLOW_RANGE = 16;
 
     // list of positions to draw lines between to indicate unit intents - will fade over time unless shift is held
     public ArrayList<BlockPos> getCheckpoints();

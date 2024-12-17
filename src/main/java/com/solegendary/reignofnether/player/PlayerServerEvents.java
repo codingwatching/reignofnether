@@ -43,7 +43,6 @@ import net.minecraft.world.inventory.MenuConstructor;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
@@ -104,21 +103,6 @@ public class PlayerServerEvents {
         data.rtsPlayers.addAll(rtsPlayers);
         data.save();
         serverLevel.getDataStorage().save();
-    }
-
-    @SubscribeEvent
-    public static void onCommandUsed(CommandEvent evt) {
-        List<ParsedCommandNode<CommandSourceStack>> nodes = evt.getParseResults().getContext().getNodes();
-        if (nodes.size() >= 2 &&
-                nodes.get(0).getNode().getName().equals("gamerule") &&
-                nodes.get(1).getNode().getName().equals("maxPopulation")) {
-
-            Map<String, ParsedArgument<CommandSourceStack, ?>> args = evt.getParseResults().getContext().getArguments();
-            if (args.containsKey("value")) {
-                UnitServerEvents.maxPopulation = (int) args.get("value").getResult();
-                PlayerClientboundPacket.syncMaxPopulation(UnitServerEvents.maxPopulation);
-            }
-        }
     }
 
     @SubscribeEvent

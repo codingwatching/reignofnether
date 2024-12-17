@@ -3,15 +3,12 @@ package com.solegendary.reignofnether.unit.units.piglins;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.ConsumeMagmaCube;
-import com.solegendary.reignofnether.ability.abilities.SpinWebs;
 import com.solegendary.reignofnether.blocks.BlockServerEvents;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.registrars.BlockRegistrar;
-import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchCubeMagma;
-import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.controls.SlimeUnitMoveControl;
 import com.solegendary.reignofnether.unit.goals.*;
@@ -28,8 +25,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -41,9 +36,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.MagmaBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -239,7 +232,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, MagmaCubeUnit.attackDamagePerSize)
                 .add(Attributes.ARMOR, MagmaCubeUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, MagmaCubeUnit.maxHealthCap)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED);
     }
 
     public void tick() {

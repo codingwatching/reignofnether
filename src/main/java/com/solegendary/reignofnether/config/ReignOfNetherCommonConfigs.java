@@ -142,8 +142,8 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry STRAY = ResourceCostConfigEntry.Unit(50,45,0,18,1, ResourceCosts.STRAY, "Stray Config");
         public static final ResourceCostConfigEntry HUSK = ResourceCostConfigEntry.Unit(75,0,0,18,1, ResourceCosts.HUSK, "Husk Config");
         public static final ResourceCostConfigEntry DROWNED = ResourceCostConfigEntry.Unit(75,0,0,18,1, ResourceCosts.DROWNED, "Drowned Config");
-        public static final ResourceCostConfigEntry SPIDER = ResourceCostConfigEntry.Unit(80,25,25,25,2, ResourceCosts.SPIDER, "Spider Config");
-        public static final ResourceCostConfigEntry POISON_SPIDER = ResourceCostConfigEntry.Unit(80,25,25,25,2, ResourceCosts.POISON_SPIDER, "Poison Spider Config");
+        public static final ResourceCostConfigEntry SPIDER = ResourceCostConfigEntry.Unit(90,25,25,25,2, ResourceCosts.SPIDER, "Spider Config");
+        public static final ResourceCostConfigEntry POISON_SPIDER = ResourceCostConfigEntry.Unit(90,25,25,25,2, ResourceCosts.POISON_SPIDER, "Poison Spider Config");
         public static final ResourceCostConfigEntry WARDEN = ResourceCostConfigEntry.Unit(275,0,125,50,5, ResourceCosts.WARDEN, "Warden Config");
 
         public static final ResourceCostConfigEntry ZOMBIE_PIGLIN = ResourceCostConfigEntry.Unit(0,0,0,10,1, ResourceCosts.ZOMBIE_PIGLIN, "Zombie Piglin Config");
@@ -155,17 +155,17 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry IRON_GOLEM = ResourceCostConfigEntry.Unit(0,50,250,45,4, ResourceCosts.IRON_GOLEM, "Iron Golem Config");
         public static final ResourceCostConfigEntry PILLAGER = ResourceCostConfigEntry.Unit(120,80,0,32,3, ResourceCosts.PILLAGER, "Pillager Config");
         public static final ResourceCostConfigEntry VINDICATOR = ResourceCostConfigEntry.Unit(170,0,0,32,3, ResourceCosts.VINDICATOR, "Vindicator Config");
-        public static final ResourceCostConfigEntry WITCH = ResourceCostConfigEntry.Unit(80,80,80,35,3, ResourceCosts.WITCH, "Witch Config");
-        public static final ResourceCostConfigEntry EVOKER = ResourceCostConfigEntry.Unit(140,0,100,35,3, ResourceCosts.EVOKER, "Evoker Config");
-        public static final ResourceCostConfigEntry RAVAGER = ResourceCostConfigEntry.Unit(360,50,150,60,7, ResourceCosts.RAVAGER, "Ravager Config");
+        public static final ResourceCostConfigEntry WITCH = ResourceCostConfigEntry.Unit(90,90,90,35,3, ResourceCosts.WITCH, "Witch Config");
+        public static final ResourceCostConfigEntry EVOKER = ResourceCostConfigEntry.Unit(150,0,120,35,3, ResourceCosts.EVOKER, "Evoker Config");
+        public static final ResourceCostConfigEntry RAVAGER = ResourceCostConfigEntry.Unit(400,50,150,60,7, ResourceCosts.RAVAGER, "Ravager Config");
 
         // Piglins
         public static final ResourceCostConfigEntry GRUNT = ResourceCostConfigEntry.Unit(50,0,0,15,1, ResourceCosts.GRUNT, "Grunt Config");
         public static final ResourceCostConfigEntry BRUTE = ResourceCostConfigEntry.Unit(120,0,0,25,2, ResourceCosts.BRUTE, "Brute Config");
         public static final ResourceCostConfigEntry HEADHUNTER = ResourceCostConfigEntry.Unit(90,60,0,25,2, ResourceCosts.HEADHUNTER, "Headhunter Config");
-        public static final ResourceCostConfigEntry HOGLIN = ResourceCostConfigEntry.Unit(150,0,60,35,3, ResourceCosts.HOGLIN, "Hoglin Config");
+        public static final ResourceCostConfigEntry HOGLIN = ResourceCostConfigEntry.Unit(150,0,75,35,3, ResourceCosts.HOGLIN, "Hoglin Config");
         public static final ResourceCostConfigEntry BLAZE = ResourceCostConfigEntry.Unit(40,40,100,30,2, ResourceCosts.BLAZE, "Blaze Config");
-        public static final ResourceCostConfigEntry WITHER_SKELETON = ResourceCostConfigEntry.Unit(150,0,150,40,4, ResourceCosts.WITHER_SKELETON, "Wither Skeleton Config");
+        public static final ResourceCostConfigEntry WITHER_SKELETON = ResourceCostConfigEntry.Unit(200,0,125,40,4, ResourceCosts.WITHER_SKELETON, "Wither Skeleton Config");
         public static final ResourceCostConfigEntry GHAST = ResourceCostConfigEntry.Unit(100,100,250,60,6, ResourceCosts.GHAST, "Ghast Config");
         public static final ResourceCostConfigEntry MAGMA_CUBE = ResourceCostConfigEntry.Unit(40,40,40,25,2, ResourceCosts.MAGMA_CUBE, "Magma Cube Config");
     }
