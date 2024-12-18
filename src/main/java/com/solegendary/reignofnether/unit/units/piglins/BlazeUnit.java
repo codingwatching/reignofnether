@@ -2,6 +2,8 @@ package com.solegendary.reignofnether.unit.units.piglins;
 
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.FirewallShot;
+import com.solegendary.reignofnether.building.BuildingUtils;
+import com.solegendary.reignofnether.building.GarrisonableBuilding;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientboundPacket;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
@@ -101,7 +103,12 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
     @Nullable
     public int getPopCost() {return ResourceCosts.BLAZE.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
-    public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
+    public int getAttackCooldown() {
+        if (GarrisonableBuilding.getGarrison(this) != null)
+            return (int) (10 / (attacksPerSecond));
+        else
+            return (int) (20 / (attacksPerSecond));
+    }
     public float getAttacksPerSecond() {return attacksPerSecond;}
     public float getAggroRange() {return aggroRange;}
     public boolean getAggressiveWhenIdle() {return aggressiveWhenIdle && !isVehicle();}

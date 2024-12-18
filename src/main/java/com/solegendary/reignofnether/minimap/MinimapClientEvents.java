@@ -352,15 +352,14 @@ public class MinimapClientEvents {
         }
 
         // get world position of corners of the screen
-        Vector3d[] corners = new Vector3d[] { MiscUtil.screenPosToWorldPos(MC, 0, 0), MiscUtil.screenPosToWorldPos(
-            MC,
-            0,
-            MC.getWindow().getGuiScaledHeight()
-        ), MiscUtil.screenPosToWorldPos(
-            MC,
-            MC.getWindow().getGuiScaledWidth(),
-            MC.getWindow().getGuiScaledHeight()
-        ), MiscUtil.screenPosToWorldPos(MC, MC.getWindow().getGuiScaledWidth(), 0) };
+        int yOffset = 0;//(int) (MC.player.getY() - 100) * 5;
+
+        Vector3d tl = MiscUtil.screenPosToWorldPos(MC, 0, -yOffset);
+        Vector3d bl = MiscUtil.screenPosToWorldPos(MC, 0, MC.getWindow().getGuiScaledHeight() - yOffset);
+        Vector3d br = MiscUtil.screenPosToWorldPos(MC, MC.getWindow().getGuiScaledWidth(), MC.getWindow().getGuiScaledHeight() - yOffset);
+        Vector3d tr = MiscUtil.screenPosToWorldPos(MC, MC.getWindow().getGuiScaledWidth(), -yOffset);
+
+        Vector3d[] corners = new Vector3d[] { tl, bl, br, tr };
         // adjust corners according to camera angle
         Vector3d lookVector = MiscUtil.getPlayerLookVector(MC);
         corners[0] = MyMath.addVector3d(corners[0], lookVector, 90 - OrthoviewClientEvents.getCamRotY());

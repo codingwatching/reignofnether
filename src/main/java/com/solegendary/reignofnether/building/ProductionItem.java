@@ -122,7 +122,7 @@ public abstract class ProductionItem {
     public boolean tick(Level level) {
         if (this.ticksLeft > 0 && isBelowPopulationSupply()) {
             if ((level.isClientSide() && ResearchClient.hasCheat("warpten")) ||
-                    (!level.isClientSide() && ResearchServerEvents.playerHasCheat(this.building.ownerName, "warpten")))
+                (!level.isClientSide() && ResearchServerEvents.playerHasCheat(this.building.ownerName, "warpten")))
                 this.ticksLeft -= 10;
             else
                 this.ticksLeft -= 1;

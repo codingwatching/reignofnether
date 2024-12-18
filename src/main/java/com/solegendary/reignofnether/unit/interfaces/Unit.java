@@ -178,7 +178,7 @@ public interface Unit {
             unitMob.invulnerableTime = 0;
 
             // enact target-following, and stop followTarget being reset
-            if (unit.getFollowTarget() != null)
+            if (unit.getFollowTarget() != null && unitMob.tickCount % 20 == 0)
                 unit.setMoveTarget(unit.getFollowTarget().blockPosition());
 
             // remove fire from piglin units if they have research

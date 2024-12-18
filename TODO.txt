@@ -41,8 +41,12 @@ Bugfixes
     - Progress clientside prod items using TPS
     - Do the same for cooldowns
 
-[❌] Fix weird pathing when chopping wood
+[🟡] Fix weird pathing when chopping wood
     - happens for all resource types
+
+[🟡] Remove pathfinding cancellations based on finalNodePos
+
+[🟡] Optimised follow pathfinding calcs
 
 [✔] Fixed militia not showing their headgear
 
@@ -53,6 +57,8 @@ Bugfixes
 
 Quality of Life
 ---------------
+[❌] Review performance for follow commands
+
 [🟡] Melee units stop moving once in range of their target so they don't constantly push large mobs
 
 [✔] Changed fire resistance research icon
@@ -68,10 +74,9 @@ Quality of Life
 
 [🟡] /gamerule groundYLevel for mapmakers
     [❌] Include ghasts and bridges
-    [❌] Camera rotation and map view quad seem to assume a specific height
 
 [🟡] /gamerule improvedPathfinding (default true)
-    - Turns off the pathfinding improvements from patch 1.0.11 to improve server CPU usage
+    - Turns off the pathfinding improvements to reduce server CPU usage
 
 [❌] review what config options can be added
     - camera panning speed
@@ -104,7 +109,8 @@ Balancing
 
 **Piglins**
 
-[❌] Nerf garrisoned blazes
+[🟡] Blazes now only fire at half speed while garrisoned
+    - This is because they produce much more fire blocks when garrisoned, massively increasing their damage output
 
 
 
