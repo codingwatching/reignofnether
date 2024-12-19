@@ -131,11 +131,11 @@ Languages
     "units.reignofnether.veteran_hunter": "Veteran Hunter",
 
     "commands.reignofnether.gamerule.player_griefing": "%s - Allow survival players to break terrain blocks",
-    "commands.reignofnether.gamerule.groundYLevel": "%s - Lock the camera, flying unit and bridge Y heights",
-    "commands.reignofnether.gamerule.improvedPathfinding": "%s - Increases pathfinding accuracy, but also CPU usage",
+    "commands.reignofnether.gamerule.ground_y_level": "%s - Lock the camera, flying unit and bridge Y heights",
+    "commands.reignofnether.gamerule.improved_pathfinding": "%s - Increases pathfinding accuracy, but also CPU usage",
 
     **Updated:**
     "units.villagers.reignofnether.villager": "Villager",
     "units.villagers.reignofnether.villager.tooltip1": "A worker that can construct and repair buildings and ",
-    "units.villagers.reignofnether.villager.tooltip2": "gather resources. Villagers learn professions when  ",
-    "units.villagers.reignofnether.villager.tooltip3": "they work for a long enough time.",
+    "units.villagers.reignofnether.villager.tooltip2": "gather resources. Villagers naturally learn and improve ",
+    "units.villagers.reignofnether.villager.tooltip3": "their skills over time.",
