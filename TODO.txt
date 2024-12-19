@@ -18,7 +18,7 @@ Features
     [✔] Set population == size
     [✔] Add size-based abilities
     [✔] Magma upgrade
-    [❌] Jump forward when attacking a unit
+    [❌] Attack when landing from a jump instead of regular melee attack
 
 [✔] Ghast Upgrade: Soul Fireballs
     [✔] Make fire resistance not work against soulfire
@@ -31,15 +31,14 @@ Features
     [❌] Profession arm colours are all wrong
 
 
-
 Bugfixes
 --------
 
-[❌] Fix production queue desync
+[🟡] Fix production queue desync
     - When TPS is < 20, client side may finish too early as it always progresses at the same rate
     - Don't let client complete prod items until it gets a complete packet from the server
     - Progress clientside prod items using TPS
-    - Do the same for cooldowns
+    [❌] Do the same for cooldowns
 
 [🟡] Fix weird pathing when chopping wood
     - happens for all resource types
@@ -55,9 +54,9 @@ Bugfixes
 [❌] can't build on sculk
 
 
+
 Quality of Life
 ---------------
-[❌] Review performance for follow commands
 
 [🟡] Melee units stop moving once in range of their target so they don't constantly push large mobs
 

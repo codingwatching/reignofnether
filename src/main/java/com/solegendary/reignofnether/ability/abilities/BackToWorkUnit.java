@@ -33,9 +33,10 @@ public class BackToWorkUnit extends Ability {
 
     private static final int RANGE = TownCentre.MILITIA_RANGE;
 
-    public BackToWorkUnit() {
+    public BackToWorkUnit(Level level) {
         super(
                 UnitAction.BACK_TO_WORK_UNIT,
+                level,
                 0,
                 RANGE,
                 0,

@@ -59,9 +59,9 @@ public class TownCentre extends ProductionBuilding implements RangeIndicator {
         this.startingBlockTypes.add(Blocks.GRASS_BLOCK);
         this.startingBlockTypes.add(Blocks.POLISHED_ANDESITE_STAIRS);
 
-        Ability callToArms = new CallToArmsBuilding();
+        Ability callToArms = new CallToArmsBuilding(level);
         this.abilities.add(callToArms);
-        BackToWorkBuilding backToWork = new BackToWorkBuilding();
+        BackToWorkBuilding backToWork = new BackToWorkBuilding(this.level);
         this.abilities.add(backToWork);
 
         if (level.isClientSide()) {

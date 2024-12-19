@@ -5,6 +5,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.Resources;
 import com.solegendary.reignofnether.resources.ResourcesServerEvents;
+import com.solegendary.reignofnether.tps.TPSClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import net.minecraft.server.level.ServerLevel;
@@ -22,8 +23,8 @@ public abstract class ProductionItem {
     public int oreCost = 0;
     public int popCost = 0;
 
-    public int ticksToProduce; // build time in ticks
-    public int ticksLeft;
+    public float ticksToProduce; // build time in ticks
+    public float ticksLeft;
     public boolean canDuplicate; // is building allowed to build more than one of these? eg. tech upgrades can't be duplicated
     protected ProductionBuilding building;
     protected Consumer<Level> onComplete;
@@ -122,10 +123,21 @@ public abstract class ProductionItem {
     public boolean tick(Level level) {
         if (this.ticksLeft > 0 && isBelowPopulationSupply()) {
             if ((level.isClientSide() && ResearchClient.hasCheat("warpten")) ||
-                (!level.isClientSide() && ResearchServerEvents.playerHasCheat(this.building.ownerName, "warpten")))
-                this.ticksLeft -= 10;
-            else
-                this.ticksLeft -= 1;
+                (!level.isClientSide() && ResearchServerEvents.playerHasCheat(this.building.ownerName, "warpten"))) {
+                if (level.isClientSide())
+                    this.ticksLeft -= (TPSClientEvents.getCappedTPS() / 20D) * 10;
+                else
+                    this.ticksLeft -= 10;
+            }
+            else {
+                if (level.isClientSide())
+                    this.ticksLeft -= (TPSClientEvents.getCappedTPS() / 20D);
+                else
+                    this.ticksLeft -= 1;
+            }
+
+            if (this.ticksLeft < 0)
+                ticksLeft = 0;
         }
         if (this.ticksLeft <= 0 && isBelowPopulationSupply()) {
             if (!completed) {

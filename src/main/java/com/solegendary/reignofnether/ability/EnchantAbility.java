@@ -25,6 +25,7 @@ public abstract class EnchantAbility extends Ability {
     public EnchantAbility(UnitAction action, Library library, ResourceCost cost) {
         super(
                 action,
+                library.getLevel(),
                 CD_MAX,
                 RANGE,
                 0,

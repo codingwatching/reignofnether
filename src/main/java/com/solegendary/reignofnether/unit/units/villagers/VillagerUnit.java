@@ -274,7 +274,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public VillagerUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
-        CallToArmsUnit callToArms = new CallToArmsUnit();
+        CallToArmsUnit callToArms = new CallToArmsUnit(level);
         this.abilities.add(callToArms);
 
         if (level.isClientSide()) {

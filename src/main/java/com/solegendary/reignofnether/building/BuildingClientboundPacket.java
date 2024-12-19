@@ -135,19 +135,37 @@ public class BuildingClientboundPacket {
 
     public static void clearQueue(BlockPos buildingPos) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-            new BuildingClientboundPacket(BuildingAction.CHANGE_PORTAL,
-                "",
-                buildingPos,
-                Rotation.NONE,
-                "",
-                0,
-                0,
-                false,
-                false,
-                false,
-                Portal.PortalType.BASIC,
-                false
-            )
+                new BuildingClientboundPacket(BuildingAction.CLEAR_PRODUCTION,
+                        "",
+                        buildingPos,
+                        Rotation.NONE,
+                        "",
+                        0,
+                        0,
+                        false,
+                        false,
+                        false,
+                        Portal.PortalType.BASIC,
+                        false
+                )
+        );
+    }
+
+    public static void completeProduction(BlockPos buildingPos) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                new BuildingClientboundPacket(BuildingAction.COMPLETE_PRODUCTION,
+                        "",
+                        buildingPos,
+                        Rotation.NONE,
+                        "",
+                        0,
+                        0,
+                        false,
+                        false,
+                        false,
+                        Portal.PortalType.BASIC,
+                        false
+                )
         );
     }
 
@@ -273,9 +291,23 @@ public class BuildingClientboundPacket {
                         if (building instanceof ProductionBuilding pBuilding) {
                             if (!pBuilding.productionQueue.isEmpty()) {
                                 ProductionItem pItem = pBuilding.productionQueue.get(0);
-                                pItem.completed = true;
-                                pItem.onComplete.accept(pBuilding.level);
+                                if (!pItem.completed) {
+                                    pItem.completed = true;
+                                    pItem.onComplete.accept(pBuilding.level);
+                                }
                                 pBuilding.productionQueue.clear();
+                            }
+                        }
+                    }
+                    case COMPLETE_PRODUCTION -> {
+                        if (building instanceof ProductionBuilding pBuilding) {
+                            if (!pBuilding.productionQueue.isEmpty()) {
+                                ProductionItem pItem = pBuilding.productionQueue.get(0);
+                                if (!pItem.completed) {
+                                    pItem.completed = true;
+                                    pItem.onComplete.accept(pBuilding.level);
+                                }
+                                pBuilding.productionQueue.remove(pItem);
                             }
                         }
                     }

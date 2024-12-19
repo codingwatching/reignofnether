@@ -30,8 +30,8 @@ public class ConsumeMagmaCube extends Ability {
     private static final int CD_MAX = 0;
     private static final int RANGE = 2;
 
-    public ConsumeMagmaCube() {
-        super(UnitAction.CONSUME_MAGMA_CUBE, CD_MAX, RANGE, 0, true, true);
+    public ConsumeMagmaCube(Level level) {
+        super(UnitAction.CONSUME_MAGMA_CUBE, level, CD_MAX, RANGE, 0, true, true);
         canAutocast = true;
     }
 

@@ -31,6 +31,7 @@ public class SonicBoom extends Ability {
 
     public SonicBoom(WardenUnit wardenUnit) {
         super(UnitAction.CAST_SONIC_BOOM,
+            wardenUnit.level,
             CD_MAX_SECONDS * ResourceCost.TICKS_PER_SECOND,
             WardenUnit.SONIC_BOOM_RANGE,
             0,

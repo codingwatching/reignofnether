@@ -311,9 +311,13 @@ public abstract class ProductionBuilding extends Building {
         if (productionQueue.size() >= 1) {
             ProductionItem nextItem = productionQueue.get(0);
             if (nextItem.tick(tickLevel)) {
-                productionQueue.remove(0);
-                if (!tickLevel.isClientSide() && productionQueue.isEmpty())
-                    BuildingClientboundPacket.clearQueue(this.originPos);
+                if (!tickLevel.isClientSide()) {
+                    productionQueue.remove(0);
+                    if (productionQueue.isEmpty())
+                        BuildingClientboundPacket.clearQueue(this.originPos);
+                    else
+                        BuildingClientboundPacket.completeProduction(this.originPos);
+                }
             }
         }
     }

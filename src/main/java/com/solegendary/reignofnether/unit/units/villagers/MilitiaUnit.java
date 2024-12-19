@@ -158,7 +158,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     public MilitiaUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
-        Ability backToWork = new BackToWorkUnit();
+        Ability backToWork = new BackToWorkUnit(level);
         this.abilities.add(backToWork);
 
         if (level.isClientSide()) {

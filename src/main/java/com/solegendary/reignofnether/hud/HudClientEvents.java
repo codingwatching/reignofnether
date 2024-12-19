@@ -444,7 +444,7 @@ public class HudClientEvents {
 
                     // name and progress %
                     ProductionItem firstProdItem = selProdBuilding.productionQueue.get(0);
-                    float percentageDoneInv = (float) firstProdItem.ticksLeft / (float) firstProdItem.ticksToProduce;
+                    float percentageDoneInv = firstProdItem.ticksLeft / firstProdItem.ticksToProduce;
 
                     int colour = 0xFFFFFF;
                     if (!firstProdItem.isBelowPopulationSupply()) {

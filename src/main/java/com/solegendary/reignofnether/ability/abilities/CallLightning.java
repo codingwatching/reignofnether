@@ -33,6 +33,7 @@ public class CallLightning extends Ability {
     public CallLightning(Laboratory lab) {
         super(
             UnitAction.CALL_LIGHTNING,
+            lab.getLevel(),
             CD_MAX,
             RANGE,
             0,

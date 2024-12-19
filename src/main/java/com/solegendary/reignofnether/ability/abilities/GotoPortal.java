@@ -30,6 +30,7 @@ public class GotoPortal extends Ability {
     public GotoPortal(Building building) {
         super(
             UnitAction.GOTO_PORTAL,
+            building.getLevel(),
             CD_MAX,
             RANGE,
             0,

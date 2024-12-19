@@ -55,6 +55,7 @@ public class SpinWebs extends Ability {
     public SpinWebs(Spider spider) {
         super(
             UnitAction.SPIN_WEBS,
+            spider.level,
             CD_MAX_SECONDS * ResourceCost.TICKS_PER_SECOND,
             RANGE,
             0,

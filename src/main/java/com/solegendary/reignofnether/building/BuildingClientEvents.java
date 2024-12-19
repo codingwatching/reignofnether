@@ -148,10 +148,10 @@ public class BuildingClientEvents {
                 b -> b.name.equals(hudSelectedBuilding.name) && b.isBuilt && b.ownerName.equals(MC.player.getName().getString())
         ).toList();
 
-        int prodTicksLeftMax = Integer.MAX_VALUE;
+        float prodTicksLeftMax = Float.MAX_VALUE;
         for (Building building : sameNameBuildings) {
             if (building instanceof ProductionBuilding prodB) {
-                int prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0, Integer::sum);
+                Float prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0F, Float::sum);
                 if (prodTicksLeft < prodTicksLeftMax) {
                     prodTicksLeftMax = prodTicksLeft;
                     idlestBuilding = building;

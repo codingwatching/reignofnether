@@ -190,7 +190,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
         super(entityType, level);
         this.moveControl = new SlimeUnitMoveControl(this);
 
-        ConsumeMagmaCube ab1 = new ConsumeMagmaCube();
+        ConsumeMagmaCube ab1 = new ConsumeMagmaCube(level);
         this.abilities.add(ab1);
         if (level.isClientSide())
             this.abilityButtons.add(ab1.getButton(Keybindings.keyQ));
