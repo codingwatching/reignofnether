@@ -183,12 +183,16 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         UnitSyncClientboundPacket.makeVillagerVeteran(this);
     }
 
+    public boolean hasSpeedCheat() {
+        return !this.level.isClientSide() && ResearchServerEvents.playerHasCheat(getOwnerName(), "operationcwal");
+    }
+
     // equal to 4 full farm clears
     // bonus == plants carrots instead of wheat (+25% food), potatoes for veteran (+50% food)
-    final static public int FARMER_EXP_REQ = 8;//80;
+    final static public int FARMER_EXP_REQ = 80;
     public int farmerExp = 0; // farm food blocks gathered
     public void incrementFarmerExp() {
-        farmerExp += 1;
+        farmerExp += hasSpeedCheat() ? 10 : 1;
         if (farmerExp >= (FARMER_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.FARMER);
         else if (farmerExp >= FARMER_EXP_REQ && !isVeteran && getUnitProfession() == FARMER)
@@ -198,10 +202,10 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     // equal to ~4mins of log chopping, excludes leaves
     final static public float LUMBERJACK_SPEED_MULT = 1.25f;
     final static public float LUMBERJACK_SPEED_MULT_VETERAN = 1.5f;
-    final static public int LUMBERJACK_EXP_REQ = 2;//20;
+    final static public int LUMBERJACK_EXP_REQ = 20;
     public int lumberjackExp = 0;
     public void incrementLumberjackExp() {
-        lumberjackExp += 1; // log blocks gathered
+        lumberjackExp += hasSpeedCheat() ? 10 : 1;
         if (lumberjackExp >= (LUMBERJACK_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.FLETCHER);
         else if (lumberjackExp >= LUMBERJACK_EXP_REQ && !isVeteran && getUnitProfession() == LUMBERJACK)
@@ -211,10 +215,10 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     // ~5mins of gathering
     final static public float MINER_SPEED_MULT = 1.25f;
     final static public float MINER_SPEED_MULT_VETERAN = 1.5f;
-    final static public int MINER_EXP_REQ = 2;//10;
+    final static public int MINER_EXP_REQ = 6;
     public int minerExp = 0; // ore blocks gathered
     public void incrementMinerExp() {
-        minerExp += 1;
+        minerExp += hasSpeedCheat() ? 10 : 1;
         if (minerExp >= (MINER_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.TOOLSMITH);
         else if (minerExp >= MINER_EXP_REQ && !isVeteran && getUnitProfession() == MINER)
@@ -224,10 +228,10 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     // blocks built or repaired, excluding first capitol
     // ~5mins of building
     // counted as +1 worker when building/repairing (+2 for veteran)
-    final static public int MASON_EXP_REQ = 6;//600;
+    final static public int MASON_EXP_REQ = 600;
     public int masonExp = 0;
     public void incrementMasonExp() {
-        masonExp += 1;
+        masonExp += hasSpeedCheat() ? 10 : 1;
         if (masonExp >= (MASON_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.MASON);
         else if (masonExp >= MASON_EXP_REQ && !isVeteran && getUnitProfession() == MASON)
@@ -236,10 +240,10 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
     // chickens only worth 1, other animals worth 2
     // does 2 damage to huntable animals (3 for veteran)
-    final static public int HUNTER_EXP_REQ = 2;//8;
+    final static public int HUNTER_EXP_REQ = 8;
     public int hunterExp = 0;
     public void incrementHunterExp() {
-        hunterExp += 1;
+        hunterExp += hasSpeedCheat() ? 10 : 1;
         if (hunterExp >= (HUNTER_EXP_REQ / 2) && !hasUnitProfession())
             setProfession(VillagerProfession.WEAPONSMITH);
         else if (hunterExp >= HUNTER_EXP_REQ && !isVeteran && getUnitProfession() == HUNTER)

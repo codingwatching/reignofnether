@@ -113,8 +113,8 @@ public class HudClientEvents {
             return;
         }
 
-        List<Pair<LivingEntity, Integer>> pairs = UnitClientEvents.getSelectedUnits().stream().map((le) -> {
-            int totalCd = 0;
+        List<Pair<LivingEntity, Float>> pairs = UnitClientEvents.getSelectedUnits().stream().map((le) -> {
+            float totalCd = 0;
             if (le instanceof Unit unit) {
                 for (Ability ability : unit.getAbilities()) {
                     totalCd += ability.getCooldown();

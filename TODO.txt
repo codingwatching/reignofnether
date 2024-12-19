@@ -66,7 +66,7 @@ Quality of Life
 [✔] Changed fire resistance research icon
 
 [🟡] Spiders now move towards their target before webbing
-    - Test that poison spiders still work correctly
+    - and fixed issues with switching to off-cooldown spiders
 
 [🟡] Added /gamerule survivalGriefing (default true)
     - Allows survival players to break blocks that aren't for resources or part of a building
@@ -117,25 +117,3 @@ Balancing
 Languages
 ---------
 [✔] Added French translations (Thanks to @Ender-Breaker)
-
-    **New:**
-    "units.reignofnether.farmer": "Farmer",
-    "units.reignofnether.lumberjack": "Lumberjack",
-    "units.reignofnether.miner": "Miner",
-    "units.reignofnether.mason": "Mason",
-    "units.reignofnether.hunter": "Hunter",
-    "units.reignofnether.veteran_farmer": "Veteran Farmer",
-    "units.reignofnether.veteran_lumberjack": "Veteran Lumberjack",
-    "units.reignofnether.veteran_miner": "Veteran Miner",
-    "units.reignofnether.veteran_mason": "Veteran Mason",
-    "units.reignofnether.veteran_hunter": "Veteran Hunter",
-
-    "commands.reignofnether.gamerule.player_griefing": "%s - Allow survival players to break terrain blocks",
-    "commands.reignofnether.gamerule.ground_y_level": "%s - Lock the camera, flying unit and bridge Y heights",
-    "commands.reignofnether.gamerule.improved_pathfinding": "%s - Increases pathfinding accuracy, but also CPU usage",
-
-    **Updated:**
-    "units.villagers.reignofnether.villager": "Villager",
-    "units.villagers.reignofnether.villager.tooltip1": "A worker that can construct and repair buildings and ",
-    "units.villagers.reignofnether.villager.tooltip2": "gather resources. Villagers naturally learn and improve ",
-    "units.villagers.reignofnether.villager.tooltip3": "their skills over time.",

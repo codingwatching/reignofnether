@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.ability;
 
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.hud.AbilityButton;
+import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.tps.TPSClientEvents;
 import com.solegendary.reignofnether.unit.UnitAction;
@@ -63,6 +64,9 @@ public class Ability {
     }
 
     public void setCooldown(float cooldown) {
+        if (this.level.isClientSide() && cooldown == cooldownMax) {
+            HudClientEvents.setLowestCdHudEntity();
+        }
         this.cooldown = Math.min(cooldown, cooldownMax);
     }
 
