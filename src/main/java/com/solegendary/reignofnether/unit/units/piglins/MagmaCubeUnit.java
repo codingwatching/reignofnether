@@ -37,6 +37,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -171,7 +172,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
 
     public int maxResources = 0;
 
-    private MeleeAttackUnitGoal attackGoal;
+    private MeleeAttackSlimeUnitGoal attackGoal;
     private MeleeAttackBuildingGoal attackBuildingGoal;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
@@ -297,18 +298,32 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
         }
     }
 
-    // create magma on hitting the ground - for some reason only detected clientside
+    // stop moving if we overshoot our move target
+    double lastDistToMoveTargetSqr = 9999;
+    BlockPos lastMoveTarget = null;
+
     @Override
     protected void checkFallDamage(double pY, boolean pOnGround, BlockState pState, BlockPos pPos) {
-        if (!level.isClientSide() && pOnGround && !wasOnGround)
+        if (!level.isClientSide() && pOnGround && !wasOnGround) {
             createMagma();
+            attackGoal.landedJump();
+
+            BlockPos moveTarget = getMoveGoal().getMoveTarget();
+            if (moveTarget != null) {
+                double distToMoveTargetSqr = distanceToSqr(Vec3.atCenterOf(moveTarget));
+                if (distToMoveTargetSqr > lastDistToMoveTargetSqr && distToMoveTargetSqr < 9)
+                    getMoveGoal().stopMoving();
+                lastDistToMoveTargetSqr = distToMoveTargetSqr;
+                lastMoveTarget = moveTarget;
+            }
+        }
     }
 
     public void initialiseGoals() {
         this.usePortalGoal = new UsePortalGoal(this);
-        this.moveGoal = new MoveToTargetBlockSlimeGoal(this, false, 2);
+        this.moveGoal = new MoveToTargetBlockSlimeGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
-        this.attackGoal = new MeleeAttackUnitGoal(this, false);
+        this.attackGoal = new MeleeAttackSlimeUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
     }
 

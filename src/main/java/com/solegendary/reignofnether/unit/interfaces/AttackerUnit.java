@@ -5,10 +5,7 @@ import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.GarrisonableBuilding;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
-import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
-import com.solegendary.reignofnether.unit.goals.FlyingMoveToTargetGoal;
-import com.solegendary.reignofnether.unit.goals.MeleeAttackUnitGoal;
-import com.solegendary.reignofnether.unit.goals.RangedAttackBuildingGoal;
+import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.util.MiscUtil;
 import com.solegendary.reignofnether.util.MyMath;
 import net.minecraft.core.BlockPos;
@@ -113,7 +110,7 @@ public interface AttackerUnit {
         Unit unit = (Unit) attackerUnit;
 
         if (!unitMob.level.isClientSide) {
-            if (attackerUnit.getAttackGoal() instanceof MeleeAttackUnitGoal meleeAttackUnitGoal)
+            if (attackerUnit.getAttackGoal() instanceof AbstractMeleeAttackUnitGoal meleeAttackUnitGoal)
                 meleeAttackUnitGoal.tickAttackCooldown();
 
             if (attackerUnit.getAttackBuildingGoal() != null && attackerUnit.canAttackBuildings())
@@ -152,7 +149,7 @@ public interface AttackerUnit {
                 boolean isMeleeAttackedByFlyingOrGarrisoned = false;
                 if (lastDSEntity instanceof Unit unitDS &&
                     (unitDS.getMoveGoal() instanceof FlyingMoveToTargetGoal || GarrisonableBuilding.getGarrison(unitDS) != null) &&
-                    attackerUnit.getAttackGoal() instanceof MeleeAttackUnitGoal) {
+                    attackerUnit.getAttackGoal() instanceof AbstractMeleeAttackUnitGoal) {
                     isMeleeAttackedByFlyingOrGarrisoned = true;
                 }
                 Relationship rs = UnitServerEvents.getUnitToEntityRelationship(unit, lastDSEntity);

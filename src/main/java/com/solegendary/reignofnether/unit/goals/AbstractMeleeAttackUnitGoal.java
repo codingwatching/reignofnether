@@ -30,9 +30,9 @@ public abstract class AbstractMeleeAttackUnitGoal extends Goal {
     private double pathedTargetX;
     private double pathedTargetY;
     private double pathedTargetZ;
-    private int ticksUntilNextPathRecalculation;
-    private final int tickPathRecalcMax = 5;
-    private int ticksUntilNextAttack;
+    protected int ticksUntilNextPathRecalculation;
+    protected final int tickPathRecalcMax = 5;
+    protected int ticksUntilNextAttack;
     private long lastCanUseCheck;
 
     public AbstractMeleeAttackUnitGoal(Mob mob, boolean followingTargetEvenIfNotSeen) {
@@ -141,10 +141,12 @@ public abstract class AbstractMeleeAttackUnitGoal extends Goal {
             this.ticksUntilNextAttack = this.adjustedTickDelay(getAttackInterval());
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(target);
+            /*
             if (this.mob instanceof Slime slime && slime.isOnGround()) {
                 slime.setSpeed((float)(slime.getAttributeValue(Attributes.MOVEMENT_SPEED)));
                 slime.getJumpControl().jump();
             }
+             */
         }
     }
 

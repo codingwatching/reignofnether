@@ -14,6 +14,7 @@ import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
+import com.solegendary.reignofnether.unit.goals.AbstractMeleeAttackUnitGoal;
 import com.solegendary.reignofnether.unit.goals.FlyingMoveToTargetGoal;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackUnitGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -223,7 +224,7 @@ public class MiscUtil {
         if (targetEntity instanceof Unit unit &&
                 unit.getMoveGoal() instanceof FlyingMoveToTargetGoal &&
                 unitMob instanceof AttackerUnit attackerUnit &&
-                attackerUnit.getAttackGoal() instanceof MeleeAttackUnitGoal) {
+                attackerUnit.getAttackGoal() instanceof AbstractMeleeAttackUnitGoal) {
             return false;
         }
 

@@ -384,8 +384,8 @@
 
     "hud.map.reignofnether.pan_sensitivity.tooltip1": "Camera sensitivity: %d/%d",
     "hud.map.reignofnether.pan_sensitivity.tooltip2": "(left/right click to adjust)",
-    "hud.map.reignofnether.lock_map.tooltip1.enabled": "Map lock: Enabled",
-    "hud.map.reignofnether.lock_map.tooltip1.disabled": "Map lock: Disabled",
+    "hud.map.reignofnether.lock_map.tooltip1.enabled": "Map centre lock: Enabled",
+    "hud.map.reignofnether.lock_map.tooltip1.disabled": "Map centre lock: Disabled",
     "hud.map.reignofnether.lock_map.tooltip2": "(click to toggle)",
 
     "hud.startbuttons.villagers.reignofnether.first": "Join the game as the Villager Faction.",

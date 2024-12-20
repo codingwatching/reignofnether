@@ -9,13 +9,12 @@
 
 
 
-
 Features
 --------
 
 Magma Cubes:
-    [❌] Attack when landing from a jump instead of regular melee attack logic
-    [✔] Shrink upon taking damage
+    [✔] Attack when landing from a jump instead of regular melee attack logic
+    [✔] Stop moving after overshooting target
 
 Villager Professions
     [❌] Profession arm colours are all wrong
@@ -23,16 +22,13 @@ Villager Professions
 
 Bugfixes
 --------
-[❌] Villager arm colours are wrong with profession skins
-[✔] Fix soul fireballs copying blocks incorrectly
 [❌] setLowestCdHudEntity not working for witches
-[✔] The summon vexes button does it for all selected evokers now
 [❌] Vexes attacking allied players
+
+[❌] villager doesn't stop on stop command when building?
 
 Quality of Life
 ---------------
-[✔] Added a camera sensitivity adjustment button (open large map to show it)
-
 [🟡] Added /gamerule groundYLevel (default -9999)
     - Set to any positive value to lock the camera height to above this level
     [❌] Include ghasts and bridges
@@ -42,8 +38,6 @@ Balancing
 ---------
 [❌] Soulfires created by blazes need to be made temporary
 
-[❌] Blaze fireballs should not create fire blocks
-    - Revert garrison speed penalty
 
 
 Localisation
