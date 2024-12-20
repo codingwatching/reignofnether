@@ -164,13 +164,7 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {
         return attackDamagePerSize * getSize();
     }
-    public float getUnitMaxHealth() {
-        if (getSize() <= 1)
-            return 15;
-        else
-            return 15 + ((getSize() - 1) * 30);
-    }
-
+    public float getUnitMaxHealth() { return getMaxHealthForSize(getSize()); }
     public float getKnockbackResistance() {
         return getSize() * (1.0f / 6);
     }
@@ -216,6 +210,36 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
         this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(getKnockbackResistance());
         if (pResetHealth)
             this.setHealth(this.getMaxHealth());
+    }
+
+    private int getSizeForHealth(float health) {
+        if (health >= getMaxHealthForSize(5))
+            return 6;
+        else if (health > getMaxHealthForSize(4))
+            return 5;
+        else if (health > getMaxHealthForSize(3))
+            return 4;
+        else if (health > getMaxHealthForSize(2))
+            return 3;
+        else if (health > getMaxHealthForSize(1))
+            return 2;
+        else
+            return 1;
+    }
+
+    private int getMaxHealthForSize(int size) {
+        if (size >= 6)
+            return 160;
+        else if (size == 5)
+            return 130;
+        else if (size == 4)
+            return 100;
+        else if (size == 3)
+            return 70;
+        else if (size == 2)
+            return 40;
+        else
+            return 20;
     }
 
     @Override
@@ -312,10 +336,9 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
     @Override
     public boolean doHurtTarget(@NotNull Entity pEntity) {
         boolean result = super.doHurtTarget(pEntity);
-        if (result &&
-                pEntity == consumeTarget) {
+        if (result && pEntity == consumeTarget) {
             this.setSize(Math.min(MAX_SIZE, getSize() + consumeTarget.getSize() / 2), false);
-            this.heal((consumeTarget.getHealth() / 2) + 15);
+            this.heal((consumeTarget.getUnitMaxHealth() / 2) + 10);
             pEntity.kill();
             consumeTarget = null;
             return true;
@@ -335,7 +358,13 @@ public class MagmaCubeUnit extends MagmaCube implements Unit, AttackerUnit {
             pSource == DamageSource.LAVA)
             return false;
 
-        return super.hurt(pSource, pAmount);
+        boolean result = super.hurt(pSource, pAmount);
+
+        int newSize = getSizeForHealth(getHealth());
+        if (newSize != getSize())
+            setSize(newSize, false);
+
+        return result;
     }
 
     private static final int MAGMA_DURATION = 100;

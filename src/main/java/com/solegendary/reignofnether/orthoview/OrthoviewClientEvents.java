@@ -98,6 +98,8 @@ public class OrthoviewClientEvents {
     private static float mouseLeftDownX = 0;
     private static float mouseLeftDownY = 0;
 
+    private static float panSensitivityMult = 1.0f;
+
     // by default orthoview players stay at BASE_Y, but can be raised to as high as MAX_Y if they are clipping terrain
     public static double orthoviewPlayerBaseY = 100;
     public static double orthoviewPlayerMaxY = 160;
@@ -111,7 +113,14 @@ public class OrthoviewClientEvents {
     }
 
     private static float getEdgeCamPanSensitivity() {
-        return (float) (Math.sqrt(getZoom()) / (Math.sqrt(ZOOM_MAX))) * 0.9f;
+        return (float) (Math.sqrt(getZoom()) / (Math.sqrt(ZOOM_MAX))) * panSensitivityMult;
+    }
+    public static float getPanSensitivityMult() { return panSensitivityMult; }
+    public static void adjustPanSensitivityMult(boolean increase) {
+        if (increase && Math.round(panSensitivityMult * 10) < 25)
+            panSensitivityMult += 0.1f;
+        else if (!increase && Math.round(panSensitivityMult * 10) > 1)
+            panSensitivityMult -= 0.1f;
     }
 
     public static boolean checkLockedOrthoviewY(Level level) {
@@ -489,14 +498,14 @@ public class OrthoviewClientEvents {
         if (!isCameraLocked()) {
             // pan camera with keys
             if (Keybindings.panPlusX.isDown()) {
-                panCam(panKeyStep, 0, 0);
+                panCam(getEdgeCamPanSensitivity(), 0, 0);
             } else if (Keybindings.panMinusX.isDown()) {
-                panCam(-panKeyStep, 0, 0);
+                panCam(-getEdgeCamPanSensitivity(), 0, 0);
             }
             if (Keybindings.panPlusZ.isDown()) {
-                panCam(0, 0, panKeyStep);
+                panCam(0, 0, getEdgeCamPanSensitivity());
             } else if (Keybindings.panMinusZ.isDown()) {
-                panCam(0, 0, -panKeyStep);
+                panCam(0, 0, -getEdgeCamPanSensitivity());
             }
         }
         // note that we treat x and y rot as horizontal and vertical, but MC treats it the other way around...

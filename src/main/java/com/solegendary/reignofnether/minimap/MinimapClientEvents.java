@@ -152,21 +152,39 @@ public class MinimapClientEvents {
 
     public static Button getToggleSizeButton() {
         return new Button(largeMap ? "Close" : "Open large map",
-            14,
-            largeMap
-            ? new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/barrier.png")
-            : new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/map.png"),
-            new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
-            Keybindings.keyM,
-            () -> false,
-            () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK),
-            () -> true,
-            () -> shouldToggleSize = true,
-            () -> {
-            },
-            List.of(FormattedCharSequence.forward(largeMap
-                                                  ? I18n.get("hud.map.reignofnether.close")
-                                                  : I18n.get("hud.map.reignofnether.open"), Style.EMPTY))
+                14,
+                largeMap
+                        ? new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/barrier.png")
+                        : new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/map.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
+                Keybindings.keyM,
+                () -> false,
+                () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK),
+                () -> true,
+                () -> shouldToggleSize = true,
+                null,
+                List.of(FormattedCharSequence.forward(largeMap
+                        ? I18n.get("hud.map.reignofnether.close")
+                        : I18n.get("hud.map.reignofnether.open"), Style.EMPTY))
+        );
+    }
+
+    public static Button getCamSensitivityButton() {
+        return new Button("Camera Sensitivity",
+                14,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/map.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
+                null,
+                () -> false,
+                () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK) || !largeMap,
+                () -> true,
+                () -> OrthoviewClientEvents.adjustPanSensitivityMult(true),
+                () -> OrthoviewClientEvents.adjustPanSensitivityMult(false),
+                List.of(
+                    FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip1",
+                            Math.round(OrthoviewClientEvents.getPanSensitivityMult() * 10), 25), Style.EMPTY),
+                    FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip2"), Style.EMPTY)
+                )
         );
     }
 

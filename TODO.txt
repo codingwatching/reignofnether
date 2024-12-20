@@ -13,66 +13,24 @@
 Features
 --------
 
-[🟡] Magma cubes
-    - Produced from Military Portals after building a Basalt Springs
-    - Costs 40 of each resource
-    - Sets enemies on fire when attacking or being attacked by melee
-    - Starts off at size 2, but can be raised to size 6 by eating other cubes
-    - Larger size == higher damage, HP, fire duration and population usage
-    - Upgrade to create temporary magma blocks around it constantly
-    - Does not split in half on death
+Magma Cubes:
     [❌] Attack when landing from a jump instead of regular melee attack logic
+    [✔] Shrink upon taking damage
 
-[✔] Ghast Upgrade: Soul Fireballs
-    - Ghasts create soulsand and soulfires which pierce fire resistance on impact
-
-[🟡] Villager Professions
-    - All villagers now level up into professions when they perform specific activities enough times
-    - Each profession has a standard level and a veteran level
-    - Takes roughly 2-3mins to gain a profession, and another 2-3mins to become a veteran
-    - Professions cannot be changed once gained
-    - **Farmer**: plants crops worth +1/+2 food (carrots and potatoes)
-    - **Lumberjack**: chops logs +25%/+50% faster
-    - **Miner**: mines ores +25%/+50% faster
-    - **Mason**: counts as +1/+2 workers when building or repairing
-    - **Hunter**: deals +1/+2 damage to animals
-
-    [🟡] Save on exit
-    [🟡] Save on militia conversion
-    [🟡] Veteran upgrade (2.5mins to get profession, then 5mins to get veteran)
-        - Show diamond tools when veteran
+Villager Professions
     [❌] Profession arm colours are all wrong
 
 
 Bugfixes
 --------
-
-[🟡] Fixed production queue desyncing with a laggy server (again)
-    - This also hopefully fixes the appearance of being over population cap
-
-[🟡] Fixed ability cooldown desyncing with a laggy server
-
-[🟡] Misc. pathfinding improvements and optimisations including while chopping wood and walking in fire
-
-[✔] Fixed militia not showing their headgear
-
-
+[❌] Villager arm colours are wrong with profession skins
+[✔] Fix soul fireballs copying blocks incorrectly
+[❌] setLowestCdHudEntity not working for witches
+[✔] The summon vexes button does it for all selected evokers now
+[❌] Vexes attacking allied players
 
 Quality of Life
 ---------------
-
-[🟡] Melee units stop moving once in range of their target so they don't constantly push large mobs
-
-[✔] Changed fire resistance research icon
-
-[🟡] Spiders now move towards their target before webbing
-    - and fixed issues with switching to off-cooldown spiders
-
-[🟡] Added /gamerule survivalGriefing (default true)
-    - Allows survival players to break blocks that aren't for resources or part of a building
-
-[🟡] Added /gamerule improvedPathfinding (default true)
-    - Turns off the pathfinding improvements to reduce server CPU usage
 
 [🟡] Added /gamerule groundYLevel (default -9999)
     - Set to any positive value to lock the camera height to above this level
@@ -86,34 +44,14 @@ Quality of Life
 
 Balancing
 ---------
+[❌] Soulfires created by blazes need to be made temporary
 
-[✔] Reworked ore blocks to increase their value, but reduce their speed of gathering
-    - Changed value of ore blocks:
-        - Ore: 40 -> 50 (this means workers drop off after 1 block mined)
-        - Iron/copper: 60 -> 65
-        - Gold/emerald: 80 -> 80 (unchanged)
-        - Diamond: 120 -> 100
-    - Piglin ores still give +20% value when converted
-    - Increased all gather times by 50%
-
-[🟡] All new capitols may now build workers
-
-**Villagers**
-
-[✔] Militia range increased to 60 blocks
-[✔] Militia: +3 move speed (same speed as most melee units)
-
-**Monsters**
-
-[✔] Creeper: -3 move speed (same speed as most ranged units)
-
-**Piglins**
-
-[🟡] Blazes now only fire at half speed while garrisoned
-    - This is because they produce much more fire blocks when garrisoned, massively increasing their damage output
+[❌] Blaze fireballs should not create fire blocks
+    - Revert garrison speed penalty
 
 
-
-Languages
----------
-[✔] Added French translations (Thanks to @Ender-Breaker)
+Localisation
+------------
+New Strings:
+    "hud.map.reignofnether.pan_sensitivity.tooltip1": "Camera sensitivity: %d",
+    "hud.map.reignofnether.pan_sensitivity.tooltip2": "(left/right click to adjust)",

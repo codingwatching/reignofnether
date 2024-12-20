@@ -1126,13 +1126,23 @@ public class HudClientEvents {
         Button toggleMapSizeButton = MinimapClientEvents.getToggleSizeButton();
         if (!toggleMapSizeButton.isHidden.get()) {
             toggleMapSizeButton.render(evt.getPoseStack(),
-                screenWidth - (toggleMapSizeButton.iconSize * 2),
-                screenHeight - (toggleMapSizeButton.iconSize * 2),
-                mouseX,
-                mouseY
+                    screenWidth - (toggleMapSizeButton.iconSize * 2),
+                    screenHeight - (toggleMapSizeButton.iconSize * 2),
+                    mouseX,
+                    mouseY
             );
+            renderedButtons.add(toggleMapSizeButton);
         }
-        renderedButtons.add(toggleMapSizeButton);
+        Button camSensitivityButton = MinimapClientEvents.getCamSensitivityButton();
+        if (!camSensitivityButton.isHidden.get()) {
+            camSensitivityButton.render(evt.getPoseStack(),
+                    screenWidth - (camSensitivityButton.iconSize * 4),
+                    screenHeight - (camSensitivityButton.iconSize * 2),
+                    mouseX,
+                    mouseY
+            );
+            renderedButtons.add(camSensitivityButton);
+        }
 
         // ------------------------------
         // Start buttons (spectator only)

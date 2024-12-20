@@ -1,7 +1,6 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
 import com.solegendary.reignofnether.blocks.BlockServerEvents;
-import com.solegendary.reignofnether.registrars.BlockRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchSoulFireballs;
 import net.minecraft.core.BlockPos;
@@ -13,13 +12,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class GhastUnitFireball extends LargeFireball {
 
-    public static final int SOULSAND_DURATION = 200;
+    public static final int SOULSAND_DURATION = 160;
 
     public GhastUnitFireball(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ, int pExplosionPower) {
         super(pLevel, pShooter, pOffsetX, pOffsetY, pOffsetZ, pExplosionPower);
@@ -47,8 +44,9 @@ public class GhastUnitFireball extends LargeFireball {
                         BlockState bs = level.getBlockState(bp);
                         if (bs.getBlock() == Blocks.FIRE) {
                             for (BlockPos bpAdj : List.of(bp, bp.north(), bp.south(), bp.east(), bp.west())) {
-                                BlockState bsBelow = level.getBlockState(bp.below());
-                                BlockServerEvents.addTempBlock((ServerLevel) level, bpAdj.below(), Blocks.SOUL_SAND.defaultBlockState(), bsBelow, SOULSAND_DURATION);
+                                BlockState bsBelow = level.getBlockState(bpAdj.below());
+                                if (!bsBelow.isAir())
+                                    BlockServerEvents.addTempBlock((ServerLevel) level, bpAdj.below(), Blocks.SOUL_SAND.defaultBlockState(), bsBelow, SOULSAND_DURATION);
                             }
                             for (BlockPos bpAdj : List.of(
                                     bp.north().north(),
@@ -61,8 +59,9 @@ public class GhastUnitFireball extends LargeFireball {
                                     bp.south().east()
                                 )) {
                                 if (random.nextBoolean()) {
-                                    BlockState bsBelow = level.getBlockState(bp.below());
-                                    BlockServerEvents.addTempBlock((ServerLevel) level, bpAdj.below(), Blocks.SOUL_SAND.defaultBlockState(), bsBelow, SOULSAND_DURATION);
+                                    BlockState bsBelow = level.getBlockState(bpAdj.below());
+                                    if (!bsBelow.isAir())
+                                        BlockServerEvents.addTempBlock((ServerLevel) level, bpAdj.below(), Blocks.SOUL_SAND.defaultBlockState(), bsBelow, SOULSAND_DURATION);
                                 }
                             }
                         }

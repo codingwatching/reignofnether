@@ -37,7 +37,7 @@ public class CastSummonVexes extends Ability {
             0,
             0,
             true,
-            true
+            false
         );
         this.evokerUnit = evokerUnit;
     }

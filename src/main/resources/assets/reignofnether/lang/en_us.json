@@ -379,8 +379,11 @@
     "hud.helperbuttons.reignofnether.select_all_military_units": "Select all military units",
     "hud.helperbuttons.reignofnether.cancel": "Cancel",
 
-    "hud.map.reignofnether.open": "Open large map",
+    "hud.map.reignofnether.open": "Open large map/options",
     "hud.map.reignofnether.close": "Close",
+
+    "hud.map.reignofnether.pan_sensitivity.tooltip1": "Camera sensitivity: %d/%d",
+    "hud.map.reignofnether.pan_sensitivity.tooltip2": "(left/right click to adjust)",
 
     "hud.startbuttons.villagers.reignofnether.first": "Join the game as the Villager Faction.",
     "hud.startbuttons.villagers.reignofnether.second": "Spawns 3 villagers at the target location.",

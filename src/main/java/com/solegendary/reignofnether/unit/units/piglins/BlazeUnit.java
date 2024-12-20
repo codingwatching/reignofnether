@@ -103,12 +103,7 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
     @Nullable
     public int getPopCost() {return ResourceCosts.BLAZE.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
-    public int getAttackCooldown() {
-        if (GarrisonableBuilding.getGarrison(this) != null)
-            return (int) (10 / (attacksPerSecond));
-        else
-            return (int) (20 / (attacksPerSecond));
-    }
+    public int getAttackCooldown() { return (int) (20 / (attacksPerSecond)); }
     public float getAttacksPerSecond() {return attacksPerSecond;}
     public float getAggroRange() {return aggroRange;}
     public boolean getAggressiveWhenIdle() {return aggressiveWhenIdle && !isVehicle();}
@@ -125,8 +120,8 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
 
     // endregion
 
-    final static public float attackDamage = 2.0f;
-    final static public float attacksPerSecond = 1.1f;
+    final static public float attackDamage = 1.0f;
+    final static public float attacksPerSecond = 1.0f;
     final static public float attackRange = 14; // only used by ranged units or melee building attackers
     final static public float aggroRange = 14;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
