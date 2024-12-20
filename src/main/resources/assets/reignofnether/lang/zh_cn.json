@@ -718,13 +718,13 @@
 
   "units.reignofnether.farmer": "农夫",
   "units.reignofnether.lumberjack": "伐木工",
-  "units.reignofnether.miner": "矿工",
-  "units.reignofnether.mason": "石匠",
+  "units.reignofnether.miner": "采矿工",
+  "units.reignofnether.mason": "采石匠",
   "units.reignofnether.hunter": "猎人",
   "units.reignofnether.veteran_farmer": "老练农夫",
   "units.reignofnether.veteran_lumberjack": "老练伐木工",
-  "units.reignofnether.veteran_miner": "老练矿工",
-  "units.reignofnether.veteran_mason": "老练石匠",
+  "units.reignofnether.veteran_miner": "老练采矿工",
+  "units.reignofnether.veteran_mason": "老练采石匠",
   "units.reignofnether.veteran_hunter": "老练猎人",
 
   "units.monsters.reignofnether.creeper": "苦力怕",
