@@ -1143,6 +1143,16 @@ public class HudClientEvents {
             );
             renderedButtons.add(camSensitivityButton);
         }
+        Button mapLockButton = MinimapClientEvents.getMapLockButton();
+        if (!mapLockButton.isHidden.get()) {
+            mapLockButton.render(evt.getPoseStack(),
+                    screenWidth - (mapLockButton.iconSize * 6),
+                    screenHeight - (mapLockButton.iconSize * 2),
+                    mouseX,
+                    mouseY
+            );
+            renderedButtons.add(mapLockButton);
+        }
 
         // ------------------------------
         // Start buttons (spectator only)

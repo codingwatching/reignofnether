@@ -31,15 +31,11 @@ Bugfixes
 
 Quality of Life
 ---------------
+[✔] Added a camera sensitivity adjustment button (open large map to show it)
 
 [🟡] Added /gamerule groundYLevel (default -9999)
     - Set to any positive value to lock the camera height to above this level
     [❌] Include ghasts and bridges
-
-[❌] review what config options can be added
-    - camera panning speed
-
-[❌] Right click map button to lock the map location
 
 
 Balancing

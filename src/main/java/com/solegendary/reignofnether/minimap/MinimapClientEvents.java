@@ -95,6 +95,8 @@ public class MinimapClientEvents {
     private static final float DARK = 0.40f;
     private static final float EXTRA_DARK = 0.10f;
 
+    private static boolean lockedMap = false; // does map follow when moving offscreen?
+
     // objects for tracking serverside Units that don't yet exist on clientside
     private static class MinimapUnit {
         public BlockPos pos;
@@ -123,8 +125,10 @@ public class MinimapClientEvents {
     }
 
     public static void setMapCentre(double x, double z) {
-        xc_world = (int) x;
-        zc_world = (int) z;
+        if (!lockedMap) {
+            xc_world = (int) x;
+            zc_world = (int) z;
+        }
     }
 
     public static int getMapGuiRadius() {
@@ -172,7 +176,7 @@ public class MinimapClientEvents {
     public static Button getCamSensitivityButton() {
         return new Button("Camera Sensitivity",
                 14,
-                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/map.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/command_block_front.png"),
                 new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
                 null,
                 () -> false,
@@ -181,9 +185,32 @@ public class MinimapClientEvents {
                 () -> OrthoviewClientEvents.adjustPanSensitivityMult(true),
                 () -> OrthoviewClientEvents.adjustPanSensitivityMult(false),
                 List.of(
-                    FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip1",
-                            Math.round(OrthoviewClientEvents.getPanSensitivityMult() * 10), 25), Style.EMPTY),
-                    FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip2"), Style.EMPTY)
+                        FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip1",
+                                Math.round(OrthoviewClientEvents.getPanSensitivityMult() * 10), 25), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip2"), Style.EMPTY)
+                )
+        );
+    }
+
+    public static Button getMapLockButton() {
+        return new Button("Lock Map",
+                14,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/chain_command_block_front.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
+                null,
+                () -> false,
+                () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK) || !largeMap,
+                () -> true,
+                () -> {
+                    lockedMap = !lockedMap;
+                    if (!lockedMap && MC.player != null)
+                        setMapCentre(MC.player.getX(), MC.player.getZ());
+                },
+                null,
+                List.of(FormattedCharSequence.forward(lockedMap
+                                ? I18n.get("hud.map.reignofnether.lock_map.tooltip1.enabled")
+                                : I18n.get("hud.map.reignofnether.lock_map.tooltip1.disabled"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.lock_map.tooltip2"), Style.EMPTY)
                 )
         );
     }
@@ -197,20 +224,23 @@ public class MinimapClientEvents {
         double xCam = MC.player.getX();
         double zCam = MC.player.getZ();
         double xDiff1 = xCam - (xc_world + worldRadius);
-        if (xDiff1 > 0) {
-            xc_world += xDiff1;
-        }
-        double zDiff1 = zCam - (zc_world + worldRadius);
-        if (zDiff1 > 0) {
-            zc_world += zDiff1;
-        }
-        double xDiff2 = xCam - (xc_world - worldRadius);
-        if (xDiff2 < 0) {
-            xc_world += xDiff2;
-        }
-        double zDiff2 = zCam - (zc_world - worldRadius);
-        if (zDiff2 < 0) {
-            zc_world += zDiff2;
+
+        if (!lockedMap) {
+            if (xDiff1 > 0) {
+                xc_world += xDiff1;
+            }
+            double zDiff1 = zCam - (zc_world + worldRadius);
+            if (zDiff1 > 0) {
+                zc_world += zDiff1;
+            }
+            double xDiff2 = xCam - (xc_world - worldRadius);
+            if (xDiff2 < 0) {
+                xc_world += xDiff2;
+            }
+            double zDiff2 = zCam - (zc_world - worldRadius);
+            if (zDiff2 < 0) {
+                zc_world += zDiff2;
+            }
         }
 
         NativeImage pixels = mapTexture.getPixels();
