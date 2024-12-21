@@ -69,7 +69,7 @@ public class ConsumeSlime extends Ability {
             unit.consumeTarget = unitTarget;
         } else if (level.isClientSide()) {
             if (unitUsing instanceof SlimeUnit unit &&
-                unit.getSize() >= SlimeUnit.MAX_SIZE &&
+                unit.getSize() >= unit.MAX_SIZE &&
                 unit.getHealth() >= unit.getMaxHealth()) {
                 HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.consume.error1"));
             } else

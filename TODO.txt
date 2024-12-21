@@ -15,6 +15,11 @@ Features
 Magma Cubes:
     [✔] Attack when landing from a jump instead of regular melee attack logic
     [✔] Stop moving after overshooting target
+    [❌] Slimes sometimes bounce in midair when attacking each other and miss on landing
+    - reduce knockback based on size
+
+    - test iron golem vs slime
+    - test ravager vs slime
 
 Villager Professions
     [❌] Profession arm colours are all wrong
@@ -25,7 +30,6 @@ Bugfixes
 [❌] setLowestCdHudEntity not working for witches
 [❌] Vexes attacking allied players
 
-[❌] villager doesn't stop on stop command when building?
 
 Quality of Life
 ---------------

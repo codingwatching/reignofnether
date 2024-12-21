@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.research.researchItems.ResearchCubeMagma;
 import com.solegendary.reignofnether.unit.goals.AbstractMeleeAttackUnitGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,10 +28,10 @@ import java.util.Collections;
 
 public class MagmaCubeUnit extends SlimeUnit implements Unit, AttackerUnit {
 
-    final static public int MAX_SIZE = 6;
     final static private int SET_FIRE_TICKS_MAX = 20;
     private int setFireTicks = 0;
-    protected boolean shouldSplitOnDeath = false; // prevent split on death without changing size
+    private static final int FIRE_DURATION_PER_SIZE = 40;
+    private static final int MAGMA_DURATION = 100;
 
     @Override protected ParticleOptions getParticleType() {
         return ParticleTypes.FLAME;
@@ -38,27 +39,10 @@ public class MagmaCubeUnit extends SlimeUnit implements Unit, AttackerUnit {
     @Override public boolean isOnFire() {
         return false;
     }
-
-    public MagmaCubeUnit consumeTarget = null;
+    @Override public Faction getFaction() {return Faction.PIGLINS;}
 
     public MagmaCubeUnit(EntityType<? extends SlimeUnit> entityType, Level level) {
         super(entityType, level);
-    }
-
-    @Override
-    protected int getMaxHealthForSize(int size) {
-        if (size >= 6)
-            return 160;
-        else if (size == 5)
-            return 130;
-        else if (size == 4)
-            return 100;
-        else if (size == 3)
-            return 70;
-        else if (size == 2)
-            return 40;
-        else
-            return 20;
     }
 
     protected SoundEvent getHurtSound(DamageSource pDamageSource) {
@@ -70,6 +54,9 @@ public class MagmaCubeUnit extends SlimeUnit implements Unit, AttackerUnit {
     protected SoundEvent getSquishSound() {
         return this.isTiny() ? SoundEvents.MAGMA_CUBE_SQUISH_SMALL : SoundEvents.MAGMA_CUBE_SQUISH;
     }
+
+    @Override
+    protected void spawnTinySlime() { }
 
     public void tick() {
         super.tick();
@@ -88,8 +75,6 @@ public class MagmaCubeUnit extends SlimeUnit implements Unit, AttackerUnit {
         if (!level.isClientSide() && pOnGround && !wasOnGround)
             createMagma();
     }
-
-    private static final int FIRE_DURATION_PER_SIZE = 40;
 
     @Override
     public boolean doHurtTarget(@NotNull Entity pEntity) {
@@ -110,16 +95,9 @@ public class MagmaCubeUnit extends SlimeUnit implements Unit, AttackerUnit {
             pSource == DamageSource.LAVA)
             return false;
 
-        boolean result = super.hurt(pSource, pAmount);
-
-        int newSize = getSizeForHealth(getHealth());
-        if (newSize != getSize())
-            setSize(newSize, false);
-
-        return result;
+        return super.hurt(pSource, pAmount);
     }
 
-    private static final int MAGMA_DURATION = 100;
 
     public void createMagma() {
         if (getSize() < 4 || level.isClientSide())

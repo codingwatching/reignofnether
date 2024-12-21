@@ -64,7 +64,7 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
     public UsePortalGoal getUsePortalGoal() { return usePortalGoal; }
     public boolean canUsePortal() { return getUsePortalGoal() != null; }
 
-    public Faction getFaction() {return Faction.PIGLINS;}
+    public Faction getFaction() {return Faction.MONSTERS;}
     public List<AbilityButton> getAbilityButtons() {return abilityButtons;};
     public List<Ability> getAbilities() {return abilities;}
     public List<ItemStack> getItems() {return items;};
@@ -122,8 +122,8 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
 
     // endregion
 
-    final static public int STARTING_SIZE = 2;
-    final static public int MAX_SIZE = 6;
+    final public int STARTING_SIZE = 2;
+    final public int MAX_SIZE = 6;
 
     final static public float attackDamagePerSize = 2.0f;
     final static public float attacksPerSecond = 0.5f;
@@ -135,67 +135,6 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
 
     protected boolean forceTiny = false; // prevent split on death temporarily
     public boolean shouldSplitOnDeath = true; // prevent split on death without changing size
-
-    @Override
-    public int getSize() {
-        if (forceTiny)
-            return 1;
-        else
-            return super.getSize();
-    }
-
-    @Override
-    public void kill() {
-        shouldSplitOnDeath = false;
-        super.kill();
-    }
-
-    @Override
-    public void remove(RemovalReason pReason) {
-        int size = this.getSize();
-        if (!this.level.isClientSide && size > 1 && this.isDeadOrDying() && shouldSplitOnDeath) {
-            Component component = this.getCustomName();
-            boolean flag = this.isNoAi();
-            float f = (float)size / 4.0F;
-
-            for(int l = 0; l < 2; ++l) {
-                float f1 = ((float)(l % 2) - 0.5F) * f;
-                float f2 = -0.5F * f;
-                Slime slime = this.getType().create(this.level);
-                if (slime == null)
-                    continue;
-                if (this.isPersistenceRequired())
-                    slime.setPersistenceRequired();
-                slime.setCustomName(component);
-                slime.setNoAi(flag);
-                slime.setInvulnerable(this.isInvulnerable());
-                slime.setSize(size / 2, true);
-                slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5, this.getZ() + (double)f2, this.random.nextFloat() * 360.0F, 0.0F);
-                if (slime instanceof Unit unit)
-                    unit.setOwnerName(getOwnerName());
-                this.level.addFreshEntity(slime);
-            }
-        }
-        // prevent vanilla split logic
-        forceTiny = true;
-        super.remove(pReason);
-        forceTiny = false;
-    }
-
-    public boolean autocastingConsume() {
-        for (Ability ability : abilities)
-            if (ability instanceof ConsumeSlime consume)
-                return consume.autocast;
-        return false;
-    }
-
-    public float getUnitAttackDamage() {
-        return attackDamagePerSize * getSize();
-    }
-    public float getUnitMaxHealth() { return getMaxHealthForSize(getSize()); }
-    public float getKnockbackResistance() {
-        return getSize() * (1.0f / 6);
-    }
 
     public int maxResources = 0;
 
@@ -216,6 +155,75 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         this.abilities.add(ab1);
         if (level.isClientSide())
             this.abilityButtons.add(ab1.getButton(Keybindings.keyQ));
+    }
+
+    // big slimes sometimes bounce off of each other midair
+    private final int AIR_ATTACK_CD_MAX = 20;
+    private int airAttackCd = 0;
+
+    @Override
+    public void push(Entity pEntity) {
+        super.push(pEntity);
+        if (pEntity instanceof SlimeUnit slimeUnit && this.getTargetGoal().getTarget() == pEntity &&
+            !slimeUnit.onGround && !onGround && !level.isClientSide() && airAttackCd <= 0) {
+            this.doHurtTarget(pEntity);
+            airAttackCd = AIR_ATTACK_CD_MAX;
+        }
+    }
+
+    @Override
+    public int getSize() {
+        if (forceTiny)
+            return 1;
+        else
+            return super.getSize();
+    }
+
+    @Override
+    public void kill() {
+        shouldSplitOnDeath = false;
+        super.kill();
+    }
+
+    @Override
+    public void remove(RemovalReason pReason) {
+        // prevent vanilla split logic
+        forceTiny = true;
+        super.remove(pReason);
+        forceTiny = false;
+    }
+
+    protected void spawnTinySlime() {
+        float f = (float) getSize() / 4.0F;
+        float f1 = -0.5F * f;
+        Slime slime = this.getType().create(this.level);
+        if (slime != null) {
+            if (this.isPersistenceRequired())
+                slime.setPersistenceRequired();
+            slime.setCustomName(this.getCustomName());
+            slime.setNoAi(this.isNoAi());
+            slime.setInvulnerable(this.isInvulnerable());
+            slime.setSize(1, true);
+            slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5, this.getZ() + (double)f1, this.random.nextFloat() * 360.0F, 0.0F);
+            if (slime instanceof Unit unit)
+                unit.setOwnerName(getOwnerName());
+            this.level.addFreshEntity(slime);
+        }
+    }
+
+    public boolean autocastingConsume() {
+        for (Ability ability : abilities)
+            if (ability instanceof ConsumeSlime consume)
+                return consume.autocast;
+        return false;
+    }
+
+    public float getUnitAttackDamage() {
+        return attackDamagePerSize * getSize();
+    }
+    public float getUnitMaxHealth() { return getMaxHealthForSize(getSize()); }
+    public float getKnockbackResistance() {
+        return getSize() * (1.0f / 6);
     }
 
     @Override
@@ -257,17 +265,17 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
 
     protected int getMaxHealthForSize(int size) {
         if (size >= 6)
-            return 110;
+            return 160;
         else if (size == 5)
-            return 90;
+            return 130;
         else if (size == 4)
-            return 70;
+            return 100;
         else if (size == 3)
-            return 50;
+            return 70;
         else if (size == 2)
-            return 30;
+            return 40;
         else
-            return 10;
+            return 20;
     }
 
     @Override
@@ -311,6 +319,9 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         Unit.tick(this);
         AttackerUnit.tick(this);
 
+        if (airAttackCd > 0)
+            airAttackCd -= 1;
+
         if (autocastingConsume() && getSize() < MAX_SIZE && getTargetGoal().getTarget() == null) {
 
             Vector3d unitPosition = new Vector3d(position().x, position().y, position().z);
@@ -348,8 +359,10 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
             if (moveTarget != null) {
                 double distToMoveTargetSqr = distanceToSqr(Vec3.atCenterOf(moveTarget));
                 if (distToMoveTargetSqr > lastDistToMoveTargetSqr && distToMoveTargetSqr < 9 &&
-                    moveTarget.equals(lastMoveTarget))
+                    moveTarget.equals(lastMoveTarget)) {
+                    System.out.println("stopped moving");
                     getMoveGoal().stopMoving();
+                }
                 lastDistToMoveTargetSqr = distToMoveTargetSqr;
                 lastMoveTarget = moveTarget;
             }
@@ -393,6 +406,22 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
             consumeTarget = null;
             return true;
         }
+        return result;
+    }
+
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+        boolean result = super.hurt(pSource, pAmount);
+
+        int newSize = getSizeForHealth(getHealth());
+        if (newSize < getSize()) {
+            spawnTinySlime();
+            if (getSize() >= 5)
+                spawnTinySlime();
+        }
+        if (newSize != getSize())
+            setSize(newSize, false);
+
         return result;
     }
 }
