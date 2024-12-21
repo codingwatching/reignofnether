@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.unit.goals;
 
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.units.piglins.SlimeUnit;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.pathfinder.Path;
@@ -46,9 +47,10 @@ public class MeleeAttackSlimeUnitGoal extends AbstractMeleeAttackUnitGoal {
 
     @Override
     protected void checkAndPerformAttack(LivingEntity target, double distSqr) {
-        if (landedJump) {
+        if (landedJump && this.mob instanceof SlimeUnit slimeUnit && slimeUnit.pushAttackCd <= 0) {
             ticksUntilNextAttack = 0;
             super.checkAndPerformAttack(target, distSqr);
+            slimeUnit.pushAttackCd = slimeUnit.PUSH_ATTACK_CD_MAX;
         }
     }
 }

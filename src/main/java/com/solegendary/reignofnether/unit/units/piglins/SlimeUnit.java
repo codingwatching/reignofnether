@@ -13,10 +13,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -135,7 +132,7 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
     final static public boolean aggressiveWhenIdle = true;
 
     protected boolean forceTiny = false; // prevent split on death temporarily
-    public boolean shouldSplitOnDeath = true; // prevent split on death without changing size
+    public boolean shouldSpawnSlimes = true; // prevent split on death without changing size
 
     public int maxResources = 0;
 
@@ -159,16 +156,16 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
     }
 
     // big slimes sometimes bounce off of each other midair
-    private final int AIR_ATTACK_CD_MAX = 20;
-    private int airAttackCd = 0;
+    public final int PUSH_ATTACK_CD_MAX = getAttackCooldown();
+    public int pushAttackCd = 0;
 
     @Override
     public void push(Entity pEntity) {
         super.push(pEntity);
-        if (pEntity instanceof SlimeUnit slimeUnit && this.getTargetGoal().getTarget() == pEntity &&
-            !slimeUnit.onGround && !onGround && !level.isClientSide() && airAttackCd <= 0) {
+        if (this.getTargetGoal().getTarget() == pEntity && !onGround &&
+            !level.isClientSide() && pushAttackCd <= 0) {
             this.doHurtTarget(pEntity);
-            airAttackCd = AIR_ATTACK_CD_MAX;
+            pushAttackCd = PUSH_ATTACK_CD_MAX;
         }
     }
 
@@ -182,7 +179,7 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
 
     @Override
     public void kill() {
-        shouldSplitOnDeath = false;
+        shouldSpawnSlimes = false;
         super.kill();
     }
 
@@ -324,8 +321,8 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         Unit.tick(this);
         AttackerUnit.tick(this);
 
-        if (airAttackCd > 0)
-            airAttackCd -= 1;
+        if (pushAttackCd > 0)
+            pushAttackCd -= 1;
 
         if (autocastingConsume() && getSize() < MAX_SIZE && getTargetGoal().getTarget() == null) {
 
@@ -365,7 +362,6 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
                 double distToMoveTargetSqr = distanceToSqr(Vec3.atCenterOf(moveTarget));
                 if (distToMoveTargetSqr > lastDistToMoveTargetSqr && distToMoveTargetSqr < 9 &&
                     moveTarget.equals(lastMoveTarget)) {
-                    System.out.println("stopped moving");
                     getMoveGoal().stopMoving();
                 }
                 lastDistToMoveTargetSqr = distToMoveTargetSqr;
@@ -415,11 +411,16 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
     }
 
     @Override
+    protected void dealDamage(LivingEntity pLivingEntity) {
+        // use doHurtTarget instead
+    }
+
+    @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
         boolean result = super.hurt(pSource, pAmount);
 
         int newSize = getSizeForHealth(getHealth());
-        if (newSize < getSize()) {
+        if (newSize < getSize() && shouldSpawnSlimes) {
             if (getSize() >= 2)
                 spawnTinySlime();
             if (getSize() >= 4)
