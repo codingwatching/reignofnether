@@ -147,12 +147,12 @@
   "abilities.reignofnether.back_to_work_unit.tooltip1": "将所选民兵转换回普通工人",
   "abilities.reignofnether.back_to_work_unit.tooltip2": "并返回继续执行被转换前的工作。",
 
-  "abilities.reignofnether.consume_magma_cube": "吞噬岩浆怪",
-  "abilities.reignofnether.consume_magma_cube.tooltip1": "献祭一名自己所属的岩浆怪，使所选岩浆怪尺寸增长。",
-  "abilities.reignofnether.consume_magma_cube.tooltip2": "将被献祭岩浆怪的最大生命值、最高攻击力各取一半增加到所选岩浆怪上。",
-  "abilities.reignofnether.consume_magma_cube.tooltip3": "鼠标右击以自动释放",
-  "abilities.reignofnether.consume_magma_cube.error1": "所选岩浆怪以达到最大尺寸！",
-  "abilities.reignofnether.consume_magma_cube.error2": "该技能只能施放于属于你自己的岩浆怪。",
+  "abilities.reignofnether.consume": "吞噬岩浆怪",
+  "abilities.reignofnether.consume.tooltip1": "献祭一名自己所属的岩浆怪，使所选岩浆怪尺寸增长。",
+  "abilities.reignofnether.consume.tooltip2": "将被献祭岩浆怪的最大生命值、最高攻击力各取一半增加到所选岩浆怪上。",
+  "abilities.reignofnether.consume.tooltip3": "鼠标右击以自动释放",
+  "abilities.reignofnether.consume.error1": "所选岩浆怪以达到最大尺寸！",
+  "abilities.reignofnether.consume.error2": "该技能只能施放于属于你自己的岩浆怪。",
 
   "ability.reignofnether.enchant.error1": "附魔台仅能为所属你自己的单位附魔",
   "ability.reignofnether.enchant.error2": "所选单位未在有效范围内",

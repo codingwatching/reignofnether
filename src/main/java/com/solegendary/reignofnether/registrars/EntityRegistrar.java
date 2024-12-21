@@ -202,6 +202,12 @@ public class EntityRegistrar {
                     .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
                     .build(new ResourceLocation(ReignOfNether.MOD_ID, "magma_cube_unit").toString()));
 
+    public static final RegistryObject<EntityType<SlimeUnit>> SLIME_UNIT = ENTITIES.register("slime_unit",
+            () -> EntityType.Builder.of(SlimeUnit::new, MobCategory.CREATURE)
+                    .sized(EntityType.SLIME.getWidth(), EntityType.SLIME.getHeight())
+                    .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
+                    .build(new ResourceLocation(ReignOfNether.MOD_ID, "slime_unit").toString()));
+
     public static void init() {
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }

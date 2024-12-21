@@ -2,9 +2,6 @@ package com.solegendary.reignofnether.ability.abilities;
 
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
-import com.solegendary.reignofnether.building.Building;
-import com.solegendary.reignofnether.building.BuildingUtils;
-import com.solegendary.reignofnether.building.buildings.monsters.SculkCatalyst;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.hud.HudClientEvents;
@@ -12,47 +9,52 @@ import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
-import com.solegendary.reignofnether.util.MyRenderer;
+import com.solegendary.reignofnether.unit.units.piglins.SlimeUnit;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 import static com.solegendary.reignofnether.unit.UnitClientEvents.sendUnitCommand;
 
-public class ConsumeMagmaCube extends Ability {
+public class ConsumeSlime extends Ability {
 
     private static final int CD_MAX = 0;
     private static final int RANGE = 2;
 
-    public ConsumeMagmaCube(Level level) {
-        super(UnitAction.CONSUME_MAGMA_CUBE, level, CD_MAX, RANGE, 0, true, true);
+    private Slime slime;
+
+    public ConsumeSlime(Slime slime) {
+        super(UnitAction.CONSUME_SLIME, slime.level, CD_MAX, RANGE, 0, true, true);
+        this.slime = slime;
         canAutocast = true;
     }
 
     @Override
     public AbilityButton getButton(Keybinding hotkey) {
-        return new AbilityButton("Consume Magma Cube",
-                new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/magma_cube.png"),
+        return new AbilityButton("Consume",
+            this.slime instanceof MagmaCubeUnit ?
+                    new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/magma_cube.png") :
+                    new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/slime.png"),
             hotkey,
-            () -> CursorClientEvents.getLeftClickAction() == UnitAction.CONSUME_MAGMA_CUBE || autocast,
+            () -> CursorClientEvents.getLeftClickAction() == UnitAction.CONSUME_SLIME || autocast,
             () -> false,
             () -> true,
-            () -> CursorClientEvents.setLeftClickAction(UnitAction.CONSUME_MAGMA_CUBE),
+            () -> CursorClientEvents.setLeftClickAction(UnitAction.CONSUME_SLIME),
             () -> sendUnitCommand(UnitAction.AUTOCAST),
-            List.of(FormattedCharSequence.forward(I18n.get("abilities.reignofnether.consume_magma_cube"),
+            List.of(FormattedCharSequence.forward(I18n.get("abilities.reignofnether.consume"),
                     Style.EMPTY.withBold(true)
                 ),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.consume_magma_cube.tooltip1"), Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.consume_magma_cube.tooltip2"), Style.EMPTY),
+                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.consume.tooltip1"), Style.EMPTY),
+                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.consume.tooltip2"), Style.EMPTY),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.consume_magma_cube.tooltip3"), Style.EMPTY)
+                FormattedCharSequence.forward(I18n.get("abilities.reignofnether.consume.tooltip3"), Style.EMPTY)
             ),
             this
         );
@@ -60,18 +62,18 @@ public class ConsumeMagmaCube extends Ability {
 
     @Override
     public void use(Level level, Unit unitUsing, LivingEntity targetEntity) {
-        if (unitUsing instanceof MagmaCubeUnit unit &&
-            targetEntity instanceof MagmaCubeUnit unitTarget &&
+        if (unitUsing instanceof SlimeUnit unit &&
+            targetEntity instanceof SlimeUnit unitTarget &&
             unit.getOwnerName().equals(unitTarget.getOwnerName())) {
             unit.setUnitAttackTargetForced(unitTarget);
             unit.consumeTarget = unitTarget;
         } else if (level.isClientSide()) {
-            if (unitUsing instanceof MagmaCubeUnit unit &&
-                unit.getSize() >= MagmaCubeUnit.MAX_SIZE &&
+            if (unitUsing instanceof SlimeUnit unit &&
+                unit.getSize() >= SlimeUnit.MAX_SIZE &&
                 unit.getHealth() >= unit.getMaxHealth()) {
-                HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.consume_magma_cube.error1"));
+                HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.consume.error1"));
             } else
-                HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.consume_magma_cube.error2"));
+                HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.consume.error2"));
         }
     }
 }

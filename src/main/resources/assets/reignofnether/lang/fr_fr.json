@@ -147,12 +147,12 @@
   "abilities.reignofnether.back_to_work_unit.tooltip1": "Convertit cette milice en villageois ",
   "abilities.reignofnether.back_to_work_unit.tooltip2": "et la fait retourner à son dernier poste de travail.",
 
-  "abilities.reignofnether.consume_magma_cube": "fusioner un Cube de Magma",
-  "abilities.reignofnether.consume_magma_cube.tooltip1": "Tuez un cube de magma allié pour faire grandir ce cube.",
-  "abilities.reignofnether.consume_magma_cube.tooltip2": "Ajoute la moitié de sa santé maximale et de ses dégâts à celui-ci.",
-  "abilities.reignofnether.consume_magma_cube.tooltip3": "Clic droit pour lancer automatiquement.",
-  "abilities.reignofnether.consume_magma_cube.error1": "Taille maximale déjà atteinte !",
-  "abilities.reignofnether.consume_magma_cube.error2": "Ne peut cibler que des Cubes de Magma qui vous appartiennent.",
+  "abilities.reignofnether.consume": "fusioner un Cube de Magma",
+  "abilities.reignofnether.consume.tooltip1": "Tuez un cube de magma allié pour faire grandir ce cube.",
+  "abilities.reignofnether.consume.tooltip2": "Ajoute la moitié de sa santé maximale et de ses dégâts à celui-ci.",
+  "abilities.reignofnether.consume.tooltip3": "Clic droit pour lancer automatiquement.",
+  "abilities.reignofnether.consume.error1": "Taille maximale déjà atteinte !",
+  "abilities.reignofnether.consume.error2": "Ne peut cibler que des Cubes de Magma qui vous appartiennent.",
 
   "ability.reignofnether.enchant.error1": "Vous ne pouvez enchanter que vos propres unités",
   "ability.reignofnether.enchant.error2": "Unité hors de portée",

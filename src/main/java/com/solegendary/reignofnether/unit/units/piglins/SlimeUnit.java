@@ -1,0 +1,398 @@
+package com.solegendary.reignofnether.unit.units.piglins;
+
+import com.mojang.math.Vector3d;
+import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.ConsumeSlime;
+import com.solegendary.reignofnether.hud.AbilityButton;
+import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.unit.UnitClientEvents;
+import com.solegendary.reignofnether.unit.controls.SlimeUnitMoveControl;
+import com.solegendary.reignofnether.unit.goals.*;
+import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
+import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.util.Faction;
+import com.solegendary.reignofnether.util.MiscUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeHooks;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SlimeUnit extends Slime implements Unit, AttackerUnit {
+    // region
+    private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
+    private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
+    public ArrayList<BlockPos> getCheckpoints() { return checkpoints; };
+    public int getCheckpointTicksLeft() { return checkpointTicksLeft; }
+    public void setCheckpointTicksLeft(int ticks) { checkpointTicksLeft = ticks; }
+    private boolean isCheckpointGreen = true;
+    public boolean isCheckpointGreen() { return isCheckpointGreen; };
+    public void setIsCheckpointGreen(boolean green) { isCheckpointGreen = green; };
+    private int entityCheckpointId = -1;
+    public int getEntityCheckpointId() { return entityCheckpointId; };
+    public void setEntityCheckpointId(int id) { entityCheckpointId = id; };
+
+    GarrisonGoal garrisonGoal;
+    public GarrisonGoal getGarrisonGoal() { return garrisonGoal; }
+    public boolean canGarrison() { return getGarrisonGoal() != null; }
+
+    UsePortalGoal usePortalGoal;
+    public UsePortalGoal getUsePortalGoal() { return usePortalGoal; }
+    public boolean canUsePortal() { return getUsePortalGoal() != null; }
+
+    public Faction getFaction() {return Faction.PIGLINS;}
+    public List<AbilityButton> getAbilityButtons() {return abilityButtons;};
+    public List<Ability> getAbilities() {return abilities;}
+    public List<ItemStack> getItems() {return items;};
+    public MoveToTargetBlockGoal getMoveGoal() {return moveGoal;}
+    public SelectedTargetGoal<? extends LivingEntity> getTargetGoal() {return targetGoal;}
+    public Goal getAttackBuildingGoal() {return attackBuildingGoal;}
+    public Goal getAttackGoal() {return attackGoal;}
+    public ReturnResourcesGoal getReturnResourcesGoal() {return returnResourcesGoal;}
+    public int getMaxResources() {return maxResources;}
+
+    protected MoveToTargetBlockGoal moveGoal;
+    protected SelectedTargetGoal<? extends LivingEntity> targetGoal;
+    protected ReturnResourcesGoal returnResourcesGoal;
+
+    public BlockPos getAttackMoveTarget() { return attackMoveTarget; }
+    public LivingEntity getFollowTarget() { return followTarget; }
+    public boolean getHoldPosition() { return holdPosition; }
+    public void setHoldPosition(boolean holdPosition) { this.holdPosition = holdPosition; }
+
+    // if true causes moveGoal and attackGoal to work together to allow attack moving
+    // moves to a block but will chase/attack nearby monsters in range up to a certain distance away
+    private BlockPos attackMoveTarget = null;
+    private LivingEntity followTarget = null; // if nonnull, continuously moves to the target
+    private boolean holdPosition = false;
+
+    // which player owns this unit? this format ensures its synched to client without having to use packets
+    public String getOwnerName() { return this.entityData.get(ownerDataAccessor); }
+    public void setOwnerName(String name) { this.entityData.set(ownerDataAccessor, name); }
+    public static final EntityDataAccessor<String> ownerDataAccessor =
+            SynchedEntityData.defineId(SlimeUnit.class, EntityDataSerializers.STRING);
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(ownerDataAccessor, "");
+    }
+
+    // combat stats
+    public boolean getWillRetaliate() {return willRetaliate;}
+    public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
+    public float getAttacksPerSecond() {return attacksPerSecond;}
+    public float getAggroRange() {return aggroRange;}
+    public boolean getAggressiveWhenIdle() {return aggressiveWhenIdle && !isVehicle();}
+    public float getAttackRange() { return ((getSize() + 1) * 0.5f); }
+    public float getMovementSpeed() {return movementSpeed;}
+    public float getUnitArmorValue() {return armorValue;}
+    @Nullable
+    public int getPopCost() {
+        return getSize();
+    }
+    public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
+
+    public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
+    public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
+
+    // endregion
+
+    final static public int STARTING_SIZE = 2;
+    final static public int MAX_SIZE = 6;
+
+    final static public float attackDamagePerSize = 2.0f;
+    final static public float attacksPerSecond = 0.5f;
+    final static public float armorValue = 0.0f;
+    final static public float movementSpeed = 0.6f; // needs to be 2x other units
+    final static public float aggroRange = 10;
+    final static public boolean willRetaliate = true; // will attack when hurt by an enemy
+    final static public boolean aggressiveWhenIdle = true;
+
+    protected boolean forceTiny = false; // prevent split on death temporarily
+    public boolean shouldSplitOnDeath = true; // prevent split on death without changing size
+
+    @Override
+    public int getSize() {
+        if (forceTiny)
+            return 1;
+        else
+            return super.getSize();
+    }
+
+    @Override
+    public void kill() {
+        shouldSplitOnDeath = false;
+        super.kill();
+    }
+
+    @Override
+    public void remove(RemovalReason pReason) {
+        int size = this.getSize();
+        if (!this.level.isClientSide && size > 1 && this.isDeadOrDying() && shouldSplitOnDeath) {
+            Component component = this.getCustomName();
+            boolean flag = this.isNoAi();
+            float f = (float)size / 4.0F;
+
+            for(int l = 0; l < 2; ++l) {
+                float f1 = ((float)(l % 2) - 0.5F) * f;
+                float f2 = -0.5F * f;
+                Slime slime = this.getType().create(this.level);
+                if (slime == null)
+                    continue;
+                if (this.isPersistenceRequired())
+                    slime.setPersistenceRequired();
+                slime.setCustomName(component);
+                slime.setNoAi(flag);
+                slime.setInvulnerable(this.isInvulnerable());
+                slime.setSize(size / 2, true);
+                slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5, this.getZ() + (double)f2, this.random.nextFloat() * 360.0F, 0.0F);
+                if (slime instanceof Unit unit)
+                    unit.setOwnerName(getOwnerName());
+                this.level.addFreshEntity(slime);
+            }
+        }
+        // prevent vanilla split logic
+        forceTiny = true;
+        super.remove(pReason);
+        forceTiny = false;
+    }
+
+    public boolean autocastingConsume() {
+        for (Ability ability : abilities)
+            if (ability instanceof ConsumeSlime consume)
+                return consume.autocast;
+        return false;
+    }
+
+    public float getUnitAttackDamage() {
+        return attackDamagePerSize * getSize();
+    }
+    public float getUnitMaxHealth() { return getMaxHealthForSize(getSize()); }
+    public float getKnockbackResistance() {
+        return getSize() * (1.0f / 6);
+    }
+
+    public int maxResources = 0;
+
+    private MeleeAttackSlimeUnitGoal attackGoal;
+    private MeleeAttackBuildingGoal attackBuildingGoal;
+
+    private final List<AbilityButton> abilityButtons = new ArrayList<>();
+    private final List<Ability> abilities = new ArrayList<>();
+    private final List<ItemStack> items = new ArrayList<>();
+
+    public SlimeUnit consumeTarget = null;
+
+    public SlimeUnit(EntityType<? extends Slime> entityType, Level level) {
+        super(entityType, level);
+        this.moveControl = new SlimeUnitMoveControl(this);
+
+        ConsumeSlime ab1 = new ConsumeSlime(this);
+        this.abilities.add(ab1);
+        if (level.isClientSide())
+            this.abilityButtons.add(ab1.getButton(Keybindings.keyQ));
+    }
+
+    @Override
+    public void resetBehaviours() {
+        consumeTarget = null;
+        for (Ability ability : abilities)
+            if (ability instanceof ConsumeSlime consume)
+                consume.autocast = false;
+    }
+
+    @Override
+    public void setSize(int pSize, boolean pResetHealth) {
+        int i = Mth.clamp(pSize, 1, MAX_SIZE);
+        this.entityData.set(ID_SIZE, i);
+        this.reapplyPosition();
+        this.refreshDimensions();
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(getUnitMaxHealth());
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(getMovementSpeed());
+        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(getUnitAttackDamage());
+        this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(getKnockbackResistance());
+        if (pResetHealth)
+            this.setHealth(this.getMaxHealth());
+    }
+
+    protected int getSizeForHealth(float health) {
+        if (health >= getMaxHealthForSize(5))
+            return 6;
+        else if (health > getMaxHealthForSize(4))
+            return 5;
+        else if (health > getMaxHealthForSize(3))
+            return 4;
+        else if (health > getMaxHealthForSize(2))
+            return 3;
+        else if (health > getMaxHealthForSize(1))
+            return 2;
+        else
+            return 1;
+    }
+
+    protected int getMaxHealthForSize(int size) {
+        if (size >= 6)
+            return 110;
+        else if (size == 5)
+            return 90;
+        else if (size == 4)
+            return 70;
+        else if (size == 3)
+            return 50;
+        else if (size == 2)
+            return 30;
+        else
+            return 10;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double d) { return false; }
+
+    @Override
+    protected boolean isDealsDamage() {
+        return true;
+    }
+
+    @Override
+    protected int getJumpDelay() {
+        return super.getJumpDelay() * 4;
+    }
+
+    @Override
+    protected void decreaseSquish() {
+        this.targetSquish *= 0.9F;
+    }
+
+    @Override
+    public void jumpFromGround() {
+        Vec3 vec3 = this.getDeltaMovement();
+        this.setDeltaMovement(vec3.x, (double)(this.getJumpPower() + (float)this.getSize() * 0.1F), vec3.z);
+        this.hasImpulse = true;
+        ForgeHooks.onLivingJump(this);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Monster.createMonsterAttributes()
+                .add(Attributes.MOVEMENT_SPEED, SlimeUnit.movementSpeed)
+                .add(Attributes.ATTACK_DAMAGE, SlimeUnit.attackDamagePerSize)
+                .add(Attributes.ARMOR, SlimeUnit.armorValue)
+                .add(Attributes.MAX_HEALTH, 10)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED);
+    }
+
+    public void tick() {
+        this.setCanPickUpLoot(true);
+        super.tick();
+        Unit.tick(this);
+        AttackerUnit.tick(this);
+
+        if (autocastingConsume() && getSize() < MAX_SIZE && getTargetGoal().getTarget() == null) {
+
+            Vector3d unitPosition = new Vector3d(position().x, position().y, position().z);
+            List<SlimeUnit> nearbyEntities = MiscUtil.getEntitiesWithinRange(unitPosition, aggroRange, SlimeUnit.class, level);
+
+            double closestDist = aggroRange;
+            SlimeUnit closestTarget = null;
+
+            for (SlimeUnit cube : nearbyEntities) {
+                if (cube.getOwnerName().equals(getOwnerName()) && cube != this) {
+                    double dist = position().distanceTo(cube.position());
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closestTarget = cube;
+                    }
+                }
+            }
+            if (closestTarget != null) {
+                consumeTarget = closestTarget;
+                setUnitAttackTarget(closestTarget);
+            }
+        }
+    }
+
+    // stop moving if we overshoot our move target
+    private double lastDistToMoveTargetSqr = 9999;
+    private BlockPos lastMoveTarget = null;
+
+    @Override
+    protected void checkFallDamage(double pY, boolean pOnGround, BlockState pState, BlockPos pPos) {
+        if (!level.isClientSide() && pOnGround && !wasOnGround) {
+            attackGoal.landedJump();
+
+            BlockPos moveTarget = getMoveGoal().getMoveTarget();
+            if (moveTarget != null) {
+                double distToMoveTargetSqr = distanceToSqr(Vec3.atCenterOf(moveTarget));
+                if (distToMoveTargetSqr > lastDistToMoveTargetSqr && distToMoveTargetSqr < 9 &&
+                    moveTarget.equals(lastMoveTarget))
+                    getMoveGoal().stopMoving();
+                lastDistToMoveTargetSqr = distToMoveTargetSqr;
+                lastMoveTarget = moveTarget;
+            }
+        }
+    }
+
+    public void initialiseGoals() {
+        this.usePortalGoal = new UsePortalGoal(this);
+        this.moveGoal = new MoveToTargetBlockSlimeGoal(this, false, 0);
+        this.targetGoal = new SelectedTargetGoal<>(this, true, true);
+        this.attackGoal = new MeleeAttackSlimeUnitGoal(this, false);
+        this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
+    }
+
+    @Override
+    protected void registerGoals() {
+        initialiseGoals();
+        this.goalSelector.addGoal(2, usePortalGoal);
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, attackGoal);
+        this.goalSelector.addGoal(2, attackBuildingGoal);
+        this.targetSelector.addGoal(2, targetGoal);
+        this.targetSelector.addGoal(3, moveGoal);
+        this.goalSelector.addGoal(4, new RandomLookAroundUnitGoal(this));
+    }
+
+    @Override
+    @Nullable
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        this.setSize(STARTING_SIZE, true);
+        return pSpawnData;
+    }
+
+    @Override
+    public boolean doHurtTarget(@NotNull Entity pEntity) {
+        boolean result = super.doHurtTarget(pEntity);
+        if (result && pEntity == consumeTarget) {
+            this.setSize(Math.min(MAX_SIZE, getSize() + consumeTarget.getSize() / 2), false);
+            this.heal((consumeTarget.getUnitMaxHealth() / 2) + 10);
+            pEntity.kill();
+            consumeTarget = null;
+            return true;
+        }
+        return result;
+    }
+}
