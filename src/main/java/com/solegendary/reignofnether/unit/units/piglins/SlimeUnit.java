@@ -111,8 +111,9 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
     public float getAttackRange() { return ((getSize() + 1) * 0.5f); }
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitArmorValue() {return armorValue;}
-    @Nullable
     public int getPopCost() {
+        if (getSize() == 1)
+            return 0;
         return getSize();
     }
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
@@ -244,6 +245,10 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(getMovementSpeed());
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(getUnitAttackDamage());
         this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(getKnockbackResistance());
+
+        if (pSize == 1)
+            this.getAttribute(Attributes.ATTACK_KNOCKBACK).setBaseValue(0);
+
         if (pResetHealth)
             this.setHealth(this.getMaxHealth());
     }
@@ -275,7 +280,7 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         else if (size == 2)
             return 40;
         else
-            return 20;
+            return 15;
     }
 
     @Override
@@ -415,8 +420,11 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
 
         int newSize = getSizeForHealth(getHealth());
         if (newSize < getSize()) {
-            spawnTinySlime();
-            if (getSize() >= 5)
+            if (getSize() >= 2)
+                spawnTinySlime();
+            if (getSize() >= 4)
+                spawnTinySlime();
+            if (getSize() >= 6)
                 spawnTinySlime();
         }
         if (newSize != getSize())
