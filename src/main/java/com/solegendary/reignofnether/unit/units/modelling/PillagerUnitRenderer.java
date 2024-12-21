@@ -14,7 +14,7 @@ public class PillagerUnitRenderer extends AbstractVillagerUnitRenderer<PillagerU
     private static final ResourceLocation PILLAGER_UNIT = new ResourceLocation("reignofnether", "textures/entities/pillager_unit.png");
 
     public PillagerUnitRenderer(EntityRendererProvider.Context p_174354_) {
-        super(p_174354_, new VillagerUnitModel<>(p_174354_.bakeLayer(ModelLayers.PILLAGER)), 0.5F);
+        super(p_174354_, new VillagerUnitModel<>(p_174354_.bakeLayer(VillagerUnitModel.LAYER_LOCATION)), 0.5F);
         this.addLayer(new ItemInHandLayer<>(this, p_174354_.getItemInHandRenderer()));
     }
 

@@ -121,14 +121,18 @@ public class CommonModEvents {
         evt.put(EntityRegistrar.WITHER_SKELETON_UNIT.get(), WitherSkeletonUnit.createAttributes().build());
         evt.put(EntityRegistrar.GHAST_UNIT.get(), GhastUnit.createAttributes().build());
         evt.put(EntityRegistrar.MAGMA_CUBE_UNIT.get(), MagmaCubeUnit.createAttributes().build());
-        evt.put(EntityRegistrar.SLIME_UNIT.get(), MagmaCubeUnit.createAttributes().build());
+        evt.put(EntityRegistrar.SLIME_UNIT.get(), SlimeUnit.createAttributes().build());
     }
 
     @SubscribeEvent
     public static void onClientSetupEvent(FMLClientSetupEvent evt) {
         MenuScreens.register(ContainerRegistrar.TOPDOWNGUI_CONTAINER.get(), TopdownGui::new);
         MinecraftForge.EVENT_BUS.register(VoteCommand.class);
+    }
 
+    @SubscribeEvent
+    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(VillagerUnitModel.LAYER_LOCATION, VillagerUnitModel::createBodyLayer);
     }
 }
 

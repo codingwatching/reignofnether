@@ -55,24 +55,40 @@ public class VillagerUnitProfessionLayer<T extends LivingEntity & VillagerDataHo
 
     public void render(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
         if (!pLivingEntity.isInvisible()) {
-            VillagerData $$10 = ((VillagerDataHolder)pLivingEntity).getVillagerData();
-            VillagerType $$11 = $$10.getType();
-            VillagerProfession $$12 = $$10.getProfession();
-            M $$15 = this.getParentModel();
-            ResourceLocation $$16 = this.getResourceLocation("type", Registry.VILLAGER_TYPE.getKey($$11));
-            renderColoredCutoutModel($$15, $$16, pMatrixStack, pBuffer, pPackedLight, pLivingEntity, 1.0F, 1.0F, 1.0F);
-            if ($$12 != VillagerProfession.NONE && !pLivingEntity.isBaby()) {
-                ResourceLocation $$17 = this.getResourceLocation("profession", Registry.VILLAGER_PROFESSION.getKey($$12));
-                renderColoredCutoutModel($$15, $$17, pMatrixStack, pBuffer, pPackedLight, pLivingEntity, 1.0F, 1.0F, 1.0F);
-                if ($$12 != VillagerProfession.NITWIT) {
-                    ResourceLocation $$18 = this.getResourceLocation("profession_level", (ResourceLocation)LEVEL_LOCATIONS.get(Mth.clamp($$10.getLevel(), 1, LEVEL_LOCATIONS.size())));
-                    renderColoredCutoutModel($$15, $$18, pMatrixStack, pBuffer, pPackedLight, pLivingEntity, 1.0F, 1.0F, 1.0F);
+            VillagerData vData = pLivingEntity.getVillagerData();
+            VillagerType biomeType = vData.getType();
+            VillagerProfession profession = vData.getProfession();
+            VillagerMetaDataSection.Hat typeHatData = this.getHatData(this.typeHatCache, "type", Registry.VILLAGER_TYPE, biomeType);
+            VillagerMetaDataSection.Hat profHatData = this.getHatData(this.professionHatCache, "profession", Registry.VILLAGER_PROFESSION, profession);
+            M vHeadModel = this.getParentModel();
+            ((VillagerUnitModel<?>) vHeadModel).hatRimVisible(profession == VillagerProfession.FARMER);
+            ResourceLocation biomeTypeRL = this.getResourceLocation("type", Registry.VILLAGER_TYPE.getKey(biomeType));
+            renderColoredCutoutModel(vHeadModel, biomeTypeRL, pMatrixStack, pBuffer, pPackedLight, pLivingEntity, 1.0F, 1.0F, 1.0F);
+            if (profession != VillagerProfession.NONE && !pLivingEntity.isBaby()) {
+                ResourceLocation profRL = this.getResourceLocation("profession", Registry.VILLAGER_PROFESSION.getKey(profession));
+                renderColoredCutoutModel(vHeadModel, profRL, pMatrixStack, pBuffer, pPackedLight, pLivingEntity, 1.0F, 1.0F, 1.0F);
+                if (profession != VillagerProfession.NITWIT) {
+                    ResourceLocation profLevelRL = this.getResourceLocation("profession_level", LEVEL_LOCATIONS.get(Mth.clamp(vData.getLevel(), 1, LEVEL_LOCATIONS.size())));
+                    renderColoredCutoutModel(vHeadModel, profLevelRL, pMatrixStack, pBuffer, pPackedLight, pLivingEntity, 1.0F, 1.0F, 1.0F);
                 }
             }
+            ((VillagerUnitModel<?>) vHeadModel).hatRimVisible(false);
         }
     }
 
     private ResourceLocation getResourceLocation(String p_117669_, ResourceLocation p_117670_) {
         return new ResourceLocation(p_117670_.getNamespace(), "textures/entity/" + this.path + "/" + p_117669_ + "/" + p_117670_.getPath() + ".png");
+    }
+
+    public <K> VillagerMetaDataSection.Hat getHatData(Object2ObjectMap<K, VillagerMetaDataSection.Hat> p_117659_, String p_117660_, DefaultedRegistry<K> p_117661_, K p_117662_) {
+        return p_117659_.computeIfAbsent(p_117662_, (p_234880_) -> {
+            return this.resourceManager.getResource(this.getResourceLocation(p_117660_, p_117661_.getKey(p_117662_))).flatMap((p_234875_) -> {
+                try {
+                    return p_234875_.metadata().getSection(VillagerMetaDataSection.SERIALIZER).map(VillagerMetaDataSection::getHat);
+                } catch (IOException var2) {
+                    return Optional.empty();
+                }
+            }).orElse(Hat.NONE);
+        });
     }
 }

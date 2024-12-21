@@ -193,8 +193,9 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public int farmerExp = 0; // farm food blocks gathered
     public void incrementFarmerExp() {
         farmerExp += hasSpeedCheat() ? 10 : 1;
-        if (farmerExp >= (FARMER_EXP_REQ / 2) && !hasUnitProfession())
+        if (farmerExp >= (FARMER_EXP_REQ / 2) && !hasUnitProfession()) {
             setProfession(VillagerProfession.FARMER);
+        }
         else if (farmerExp >= FARMER_EXP_REQ && !isVeteran && getUnitProfession() == FARMER)
             makeVeteran();
     }
