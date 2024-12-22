@@ -12,17 +12,15 @@
 Features
 --------
 
-Magma Cubes:
-    [❌] Slimes sometimes bounce in midair when attacking each other and miss on landing
-    - reduce knockback based on size
 Villager Professions
-    [❌] Profession arm colours are all wrong
+    [❌] Farmer arms are using the hat rim texture
+    [✔] Farmer hats fixed
 
 
 Bugfixes
 --------
-[❌] setLowestCdHudEntity not working for witches
 [❌] Vexes attacking allied players
+[❌] Pathfinding weird around 1-block holes and/or dripstone?
 
 
 Quality of Life
@@ -36,10 +34,35 @@ Balancing
 ---------
 [❌] Soulfires created by blazes need to be made temporary
 
+[❌] Drowned now affect convertible enemies with a potion effect - any units that die under this effect will be converted
+    - This same effect is used for slime conversions too
 
+[✔] Dungeons and spider lairs now only require a graveyard instead of a laboratory
+    - But Strongholds now require a laboratory
 
 Localisation
 ------------
 New Strings:
     "hud.map.reignofnether.pan_sensitivity.tooltip1": "Camera sensitivity: %d",
     "hud.map.reignofnether.pan_sensitivity.tooltip2": "(left/right click to adjust)",
+    "hud.map.reignofnether.lock_map.tooltip1.enabled": "Map centre lock: Enabled",
+    "hud.map.reignofnether.lock_map.tooltip1.disabled": "Map centre lock: Disabled",
+    "hud.map.reignofnether.lock_map.tooltip2": "(click to toggle)",
+
+    "units.monsters.reignofnether.slime": "Slime",
+    "units.monsters.reignofnether.slime.tooltip1": "A sentient cube of green slime which can consume",
+    "units.monsters.reignofnether.slime.tooltip2": "other cubes to grow in size, health and damage.",
+    "units.monsters.reignofnether.slime.tooltip3": "Requires a Slimesmith.",
+
+    "buildings.monsters.reignofnether.slimesmith": "Slimesmith",
+    "buildings.monsters.reignofnether.slimesmith.tooltip1": "An towering factory that produces slimes like clockwork.",
+    "buildings.monsters.reignofnether.slimesmith.tooltip3": "Requires a Graveyard",
+
+    "research.reignofnether.slime_conversion": "Slimy Conversion",
+    "research.reignofnether.slime_conversion.tooltip1": "Causes enemies killed by slimes to become slimes.",
+    "research.reignofnether.slime_conversion.tooltip2": "Larger enemies turn into larger slimes.",
+
+Modified:
+    "buildings.monsters.reignofnether.spider_lair.tooltip2": "Requires a Graveyard.",
+    "buildings.monsters.reignofnether.dungeon.tooltip2": "Requires a Graveyard."
+    "buildings.monsters.reignofnether.stronghold.tooltip4": "Requires a Laboratory, Spider Lair and Dungeon.",

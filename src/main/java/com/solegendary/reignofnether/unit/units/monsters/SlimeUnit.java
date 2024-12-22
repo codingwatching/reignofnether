@@ -1,4 +1,4 @@
-package com.solegendary.reignofnether.unit.units.piglins;
+package com.solegendary.reignofnether.unit.units.monsters;
 
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ability.Ability;

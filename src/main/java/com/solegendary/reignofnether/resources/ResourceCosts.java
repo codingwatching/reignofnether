@@ -21,6 +21,7 @@ public class ResourceCosts {
     public static final ResourceCost DROWNED = new ResourceCost(ID, "DROWNED");
     public static final ResourceCost SPIDER = new ResourceCost(ID, "SPIDER");
     public static final ResourceCost POISON_SPIDER = new ResourceCost(ID, "POISON_SPIDER");
+    public static final ResourceCost SLIME = new ResourceCost(ID, "SLIME");
     public static final ResourceCost WARDEN = new ResourceCost(ID, "WARDEN");
     public static final ResourceCost ZOMBIE_PIGLIN = new ResourceCost(ID, "ZOMBIE_PIGLIN");
     public static final ResourceCost ZOGLIN = new ResourceCost(ID, "ZOGLIN");
@@ -57,6 +58,7 @@ public class ResourceCosts {
     public static final ResourceCost DUNGEON = new ResourceCost(ID, "DUNGEON");
     public static final ResourceCost LABORATORY = new ResourceCost(ID, "LABORATORY");
     public static final ResourceCost DARK_WATCHTOWER = new ResourceCost(ID, "DARK_WATCHTOWER");
+    public static final ResourceCost SLIMESMITH = new ResourceCost(ID, "SLIMESMITH");
     public static final ResourceCost STRONGHOLD = new ResourceCost(ID, "STRONGHOLD");
     //Villagers
     public static final ResourceCost TOWN_CENTRE = new ResourceCost(ID, "TOWN_CENTRE");
@@ -91,6 +93,7 @@ public class ResourceCosts {
     public static final ResourceCost RESEARCH_HUSKS = new ResourceCost(ID, "RESEARCH_HUSKS");
     public static final ResourceCost RESEARCH_DROWNED = new ResourceCost(ID, "RESEARCH_DROWNED");
     public static final ResourceCost RESEARCH_STRAYS = new ResourceCost(ID, "RESEARCH_STRAYS");
+    public static final ResourceCost RESEARCH_SLIME_CONVERSION = new ResourceCost(ID, "RESEARCH_SLIME_CONVERSION");
     public static final ResourceCost RESEARCH_LINGERING_POTIONS = new ResourceCost(ID, "RESEARCH_LINGERING_POTIONS");
     public static final ResourceCost RESEARCH_EVOKER_VEXES = new ResourceCost(ID, "RESEARCH_EVOKER_VEXES");
     public static final ResourceCost RESEARCH_CASTLE_FLAG = new ResourceCost(ID, "RESEARCH_CASTLE_FLAG");
@@ -167,6 +170,7 @@ public class ResourceCosts {
         DROWNED.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.DROWNED);
         SPIDER.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.SPIDER);
         POISON_SPIDER.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.POISON_SPIDER);
+        SLIME.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.SLIME);
         WARDEN.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.WARDEN);
         ZOMBIE_PIGLIN.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.ZOMBIE_PIGLIN);
         ZOGLIN.bakeValues(ReignOfNetherCommonConfigs.UnitCosts.ZOGLIN);
@@ -203,6 +207,7 @@ public class ResourceCosts {
         DUNGEON.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.DUNGEON);
         LABORATORY.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.LABORATORY);
         DARK_WATCHTOWER.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.DARK_WATCHTOWER);
+        SLIMESMITH.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.SLIMESMITH);
         STRONGHOLD.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.STRONGHOLD);
         // Villagers
         TOWN_CENTRE.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.TOWN_CENTRE);
@@ -235,6 +240,7 @@ public class ResourceCosts {
         RESEARCH_HUSKS.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_HUSKS);
         RESEARCH_DROWNED.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_DROWNED);
         RESEARCH_STRAYS.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_STRAYS);
+        RESEARCH_SLIME_CONVERSION.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_SLIME_CONVERSION);
         RESEARCH_LINGERING_POTIONS.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_LINGERING_POTIONS);
         RESEARCH_EVOKER_VEXES.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_EVOKER_VEXES);
         RESEARCH_CASTLE_FLAG.bakeValues(ReignOfNetherCommonConfigs.ResearchCosts.RESEARCH_CASTLE_FLAG);

@@ -9,7 +9,7 @@ import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
-import com.solegendary.reignofnether.unit.units.piglins.SlimeUnit;
+import com.solegendary.reignofnether.unit.units.monsters.SlimeUnit;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
