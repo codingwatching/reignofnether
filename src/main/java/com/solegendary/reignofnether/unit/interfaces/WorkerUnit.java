@@ -5,6 +5,7 @@ import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.ZombieVillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnitProfession;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -72,8 +73,11 @@ public interface WorkerUnit {
         } else if (entity instanceof AttackerUnit attackerUnit &&
                 ((Unit) entity).getTargetGoal().getTarget() != null &&
                 !(entity instanceof ZombieVillagerUnit)) {
-            if (!mainHandItem.is(Items.WOODEN_SWORD)) {
-                entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+            if (!mainHandItem.is(Items.WOODEN_SWORD) && !mainHandItem.is(Items.STONE_SWORD)) {
+                if (entity instanceof VillagerUnit vUnit && vUnit.getUnitProfession() == VillagerUnitProfession.HUNTER && vUnit.isVeteran())
+                    entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
+                else
+                    entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
                 if (!entity.level.isClientSide())
                     UnitSyncClientboundPacket.sendSyncAnimationPacket(entity, ((Unit) entity).getTargetGoal().getTarget(), true);
             }

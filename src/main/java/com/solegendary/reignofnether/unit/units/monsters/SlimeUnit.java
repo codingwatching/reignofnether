@@ -5,11 +5,14 @@ import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.ConsumeSlime;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.research.ResearchServerEvents;
+import com.solegendary.reignofnether.research.researchItems.ResearchSlimeConversion;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.controls.SlimeUnitMoveControl;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
@@ -20,6 +23,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -189,6 +194,14 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         forceTiny = true;
         super.remove(pReason);
         forceTiny = false;
+    }
+
+    @Override
+    protected float getDamageAfterMagicAbsorb(DamageSource pSource, float pDamage) {
+        pDamage = super.getDamageAfterMagicAbsorb(pSource, pDamage);
+        if (pSource.isMagic())
+            pDamage *= 0.5F;
+        return pDamage;
     }
 
     protected void spawnTinySlime() {
@@ -397,6 +410,8 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         return pSpawnData;
     }
 
+    private final static int CONVERT_DEBUFF_DURATION_SECONDS = 10;
+
     @Override
     public boolean doHurtTarget(@NotNull Entity pEntity) {
         boolean result = super.doHurtTarget(pEntity);
@@ -407,6 +422,9 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
             consumeTarget = null;
             return true;
         }
+        if (result && getSize() >= 2 && pEntity instanceof LivingEntity && !(this instanceof MagmaCubeUnit) && !this.level.isClientSide())
+            if (ResearchServerEvents.playerHasResearch(getOwnerName(), ResearchSlimeConversion.itemName))
+                ((LivingEntity)pEntity).addEffect(new MobEffectInstance(MobEffects.CONFUSION, CONVERT_DEBUFF_DURATION_SECONDS * 20, 0), this);
         return result;
     }
 

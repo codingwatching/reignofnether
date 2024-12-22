@@ -497,6 +497,7 @@
     "research.reignofnether.slime_conversion": "Slimy Conversion",
     "research.reignofnether.slime_conversion.tooltip1": "Causes enemies killed by slimes to become slimes.",
     "research.reignofnether.slime_conversion.tooltip2": "Larger enemies turn into larger slimes.",
+    "research.reignofnether.slime_conversion.tooltip3": "Does not work for tiny slimes.",
     "research.reignofnether.lingering_potions": "Lingering Potions",
     "research.reignofnether.lingering_potions.tooltip1": "Doubles the duration of witches' potion clouds.",
     "research.reignofnether.pillager_crossbows": "Pillager Crossbows",

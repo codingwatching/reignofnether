@@ -16,6 +16,8 @@ Villager Professions
     [❌] Farmer arms are using the hat rim texture
     [✔] Farmer hats fixed
 
+Slimes
+    [❌] Slime conversion upgrade
 
 Bugfixes
 --------
@@ -36,6 +38,8 @@ Balancing
 
 [❌] Drowned now affect convertible enemies with a potion effect - any units that die under this effect will be converted
     - This same effect is used for slime conversions too
+
+[🟡] Slimes and magma cubes have 50% magic resistance (affects sonic booms and potions)
 
 [✔] Dungeons and spider lairs now only require a graveyard instead of a laboratory
     - But Strongholds now require a laboratory

@@ -62,17 +62,18 @@ public class VillagerUnitModel<T extends AbstractIllager> extends HierarchicalMo
         BOW_AND_ARROW
     }
 
-    public VillagerUnitModel(ModelPart p_170688_) {
-        this.root = p_170688_;
-        this.head = p_170688_.getChild("head");
+    public VillagerUnitModel(ModelPart root) {
+        this.root = root;
+        this.head = root.getChild("head");
         this.hat = this.head.getChild("hat");
         this.hat.visible = true;
         this.hatRim = this.hat.getChild("hat_rim");
-        this.crossedArms = p_170688_.getChild("arms");
-        this.leftLeg = p_170688_.getChild("left_leg");
-        this.rightLeg = p_170688_.getChild("right_leg");
-        this.leftArm = p_170688_.getChild("left_arm");
-        this.rightArm = p_170688_.getChild("right_arm");
+        this.hatRim.visible = false;
+        this.crossedArms = root.getChild("arms");
+        this.leftLeg = root.getChild("left_leg");
+        this.rightLeg = root.getChild("right_leg");
+        this.leftArm = root.getChild("left_arm");
+        this.rightArm = root.getChild("right_arm");
     }
 
     public static LayerDefinition createBodyLayer() {

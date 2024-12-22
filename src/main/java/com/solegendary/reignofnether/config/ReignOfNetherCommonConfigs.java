@@ -25,6 +25,7 @@ public class ReignOfNetherCommonConfigs {
         UnitCosts.DROWNED.define(BUILDER);
         UnitCosts.SPIDER.define(BUILDER);
         UnitCosts.POISON_SPIDER.define(BUILDER);
+        UnitCosts.SLIME.define(BUILDER);
         UnitCosts.WARDEN.define(BUILDER);
         UnitCosts.ZOMBIE_PIGLIN.define(BUILDER);
         UnitCosts.ZOGLIN.define(BUILDER);
@@ -103,6 +104,7 @@ public class ReignOfNetherCommonConfigs {
         ResearchCosts.RESEARCH_HUSKS.define(BUILDER);
         ResearchCosts.RESEARCH_DROWNED.define(BUILDER);
         ResearchCosts.RESEARCH_STRAYS.define(BUILDER);
+        ResearchCosts.RESEARCH_SLIME_CONVERSION.define(BUILDER);
         ResearchCosts.RESEARCH_LINGERING_POTIONS.define(BUILDER);
         ResearchCosts.RESEARCH_EVOKER_VEXES.define(BUILDER);
         ResearchCosts.RESEARCH_CASTLE_FLAG.define(BUILDER);
