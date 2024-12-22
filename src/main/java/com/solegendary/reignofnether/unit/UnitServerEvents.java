@@ -35,6 +35,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.effect.MobEffects;
@@ -457,7 +458,7 @@ public class UnitServerEvents {
                     false
                 );
                 if (entity instanceof SlimeUnit sUnit && evt.getEntity() instanceof Unit originalEntity) {
-                    sUnit.setSize(Math.max(1, originalEntity.getPopCost() - 1), true);
+                    sUnit.setSize(Mth.clamp(originalEntity.getPopCost() - 1, 1, 5), true);
                 }
                 if (entity instanceof Unit convertedUnit) {
                     convertedUnit.setOwnerName(unit.getOwnerName());

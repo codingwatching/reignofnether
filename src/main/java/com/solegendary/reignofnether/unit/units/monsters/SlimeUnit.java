@@ -345,12 +345,12 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
             double closestDist = aggroRange;
             SlimeUnit closestTarget = null;
 
-            for (SlimeUnit cube : nearbyEntities) {
-                if (cube.getOwnerName().equals(getOwnerName()) && cube != this) {
-                    double dist = position().distanceTo(cube.position());
+            for (SlimeUnit slime : nearbyEntities) {
+                if (slime.getOwnerName().equals(getOwnerName()) && slime != this && slime.getSize() <= getSize()) {
+                    double dist = position().distanceTo(slime.position());
                     if (dist < closestDist) {
                         closestDist = dist;
-                        closestTarget = cube;
+                        closestTarget = slime;
                     }
                 }
             }

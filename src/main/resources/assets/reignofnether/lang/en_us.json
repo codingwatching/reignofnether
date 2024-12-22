@@ -153,7 +153,8 @@
     "abilities.reignofnether.consume.tooltip2": "Adds half of its max health and damage to this one.",
     "abilities.reignofnether.consume.tooltip3": "Right-click to autocast",
     "abilities.reignofnether.consume.error1": "Already at max size!",
-    "abilities.reignofnether.consume.error2": "Can only target Magma Cubes or Slimes you own.",
+    "abilities.reignofnether.consume.error2": "Can only target Magma Cubes or Slimes you own",
+    "abilities.reignofnether.consume.error3": "Can only eat equal or smaller Cubes or Slimes",
 
     "ability.reignofnether.enchant.error1": "Can only enchant your own units",
     "ability.reignofnether.enchant.error2": "Unit is out of range",

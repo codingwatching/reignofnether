@@ -64,7 +64,9 @@ public class ConsumeSlime extends Ability {
     public void use(Level level, Unit unitUsing, LivingEntity targetEntity) {
         if (unitUsing instanceof SlimeUnit unit &&
             targetEntity instanceof SlimeUnit unitTarget &&
-            unit.getOwnerName().equals(unitTarget.getOwnerName())) {
+            unit.getOwnerName().equals(unitTarget.getOwnerName()) &&
+            (unit.getSize() < unit.MAX_SIZE || unit.getHealth() < unit.getMaxHealth()) &&
+            unit.getSize() >= unitTarget.getSize()) {
             unit.setUnitAttackTargetForced(unitTarget);
             unit.consumeTarget = unitTarget;
         } else if (level.isClientSide()) {
@@ -72,8 +74,13 @@ public class ConsumeSlime extends Ability {
                 unit.getSize() >= unit.MAX_SIZE &&
                 unit.getHealth() >= unit.getMaxHealth()) {
                 HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.consume.error1"));
-            } else
+            } else if (unitUsing instanceof SlimeUnit unit &&
+                    targetEntity instanceof SlimeUnit unitTarget &&
+                    unit.getSize() < unitTarget.getSize()) {
+                HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.consume.error3"));
+            } else {
                 HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.consume.error2"));
+            }
         }
     }
 }

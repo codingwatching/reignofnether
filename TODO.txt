@@ -7,6 +7,15 @@
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
+- Added Slimesmith building to monsters
+- Added Slimy Conversion upgrade to labs, granting slimes the ability to convert killed enemies to slimes
+- Slimes and cubes have 50% magic resistance (affects sonic booms and potions)
+- Slimes and cubes now cannot consume a target larger than itself
+- Drowned now affect convertible enemies with a potion effect - any units that die under this effect will be converted
+    - This same effect is used for slime conversions too
+- Farmer hats fixed
+- Dungeons and spider lairs now only require a graveyard instead of a laboratory
+    - But Strongholds now require a laboratory
 
 
 Features
@@ -14,10 +23,6 @@ Features
 
 Villager Professions
     [❌] Farmer arms are using the hat rim texture
-    [✔] Farmer hats fixed
-
-Slimes
-    [❌] Slime conversion upgrade
 
 Bugfixes
 --------
@@ -36,13 +41,7 @@ Balancing
 ---------
 [❌] Soulfires created by blazes need to be made temporary
 
-[❌] Drowned now affect convertible enemies with a potion effect - any units that die under this effect will be converted
-    - This same effect is used for slime conversions too
 
-[🟡] Slimes and magma cubes have 50% magic resistance (affects sonic booms and potions)
-
-[✔] Dungeons and spider lairs now only require a graveyard instead of a laboratory
-    - But Strongholds now require a laboratory
 
 Localisation
 ------------
@@ -65,6 +64,8 @@ New Strings:
     "research.reignofnether.slime_conversion": "Slimy Conversion",
     "research.reignofnether.slime_conversion.tooltip1": "Causes enemies killed by slimes to become slimes.",
     "research.reignofnether.slime_conversion.tooltip2": "Larger enemies turn into larger slimes.",
+
+    "abilities.reignofnether.consume.error3": "Can only eat equal or smaller Cubes or Slimes.",
 
 Modified:
     "buildings.monsters.reignofnether.spider_lair.tooltip2": "Requires a Graveyard.",
