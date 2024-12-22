@@ -33,7 +33,7 @@ import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBl
 public class Slimesmith extends ProductionBuilding {
 
     public final static String buildingName = "Slimesmith";
-    public final static String structureName = "slimesmith";
+    public final static String structureName = "basalt_springs";
     public final static ResourceCost cost = ResourceCosts.SLIMESMITH;
 
     public Slimesmith(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
@@ -56,8 +56,7 @@ public class Slimesmith extends ProductionBuilding {
 
         if (level.isClientSide())
             this.productionButtons = Arrays.asList(
-                SlimeProd.getStartButton(this, Keybindings.keyQ),
-                ResearchSlimeConversion.getStartButton(this, Keybindings.keyW)
+                SlimeProd.getStartButton(this, Keybindings.keyQ)
             );
     }
 

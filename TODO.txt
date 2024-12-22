@@ -18,17 +18,18 @@
 - Dungeons and spider lairs now only require a graveyard instead of a laboratory
     - But Strongholds now require a laboratory
 
+Vexes no longer attack allied players
 
 Features
 --------
+
+[❌] slimes with an attack target sometimes stop attacking
 
 Villager Professions
     [❌] Farmer arms are using the hat rim texture
 
 Bugfixes
 --------
-[❌] Vexes attacking allied players
-[❌] Pathfinding weird around 1-block holes and/or dripstone?
 
 
 Quality of Life
