@@ -164,6 +164,10 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
     public final int PUSH_ATTACK_CD_MAX = getAttackCooldown();
     public int pushAttackCd = 0;
 
+    public boolean isPushable() {
+        return this.isAlive() && !this.isSpectator() && !this.onClimbable() && isOnGround();
+    }
+
     @Override
     public void push(Entity pEntity) {
         super.push(pEntity);

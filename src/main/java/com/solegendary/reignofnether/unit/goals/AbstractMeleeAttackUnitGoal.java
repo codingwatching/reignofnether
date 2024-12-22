@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.unit.goals;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.units.monsters.SlimeUnit;
 import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.unit.units.piglins.WitherSkeletonUnit;
 import net.minecraft.core.BlockPos;
@@ -154,11 +155,11 @@ public abstract class AbstractMeleeAttackUnitGoal extends Goal {
 
     protected double getAttackReachSqr(LivingEntity target) {
         float width = mob.getBbWidth();
-        if (mob instanceof MagmaCubeUnit cube)
-            width -= (0.3f * (cube.getSize() - 2));
+        if (mob instanceof SlimeUnit slime)
+            width -= (0.3f * (Math.max(2, slime.getSize()) - 2));
         float targetWidth = target.getBbWidth();
-        if (target instanceof MagmaCubeUnit targetCube)
-            targetWidth += (0.3f * (targetCube.getSize() - 2));
+        if (target instanceof SlimeUnit targetSlime)
+            targetWidth += (0.3f * (Math.max(2, targetSlime.getSize()) - 2));
         return width * 2.0F * width * 2.0F + targetWidth;
     }
 }
