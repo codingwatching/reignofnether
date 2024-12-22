@@ -417,7 +417,10 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         boolean result = super.doHurtTarget(pEntity);
         if (result && pEntity == consumeTarget) {
             this.setSize(Math.min(MAX_SIZE, getSize() + consumeTarget.getSize() / 2), false);
-            this.heal((consumeTarget.getUnitMaxHealth() / 2) + 10);
+            if (consumeTarget.getSize() != 1)
+                this.heal((consumeTarget.getUnitMaxHealth() / 2) + 10);
+            else
+                this.heal((consumeTarget.getUnitMaxHealth() / 2));
             pEntity.kill();
             consumeTarget = null;
             return true;

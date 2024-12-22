@@ -9,8 +9,9 @@
 
 - Added Slimesmith building to monsters
 - Added Slimy Conversion upgrade to labs, granting slimes the ability to convert killed enemies to slimes
-- Slimes and cubes have 50% magic resistance (affects sonic booms and potions)
-- Slimes and cubes now cannot consume a target larger than itself
+- Slimes and cubes now have 50% magic resistance (affects sonic booms, potions and evoker fangs)
+- Slimes and cubes can no longer consume targets larger than themselves
+- Tiny slimes and cubes no longer have a consume ability at all
 - Drowned now affect convertible enemies with a potion effect - any units that die under this effect will be converted
     - This same effect is used for slime conversions too
 - Farmer hats fixed
