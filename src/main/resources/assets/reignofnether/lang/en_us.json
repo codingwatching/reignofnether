@@ -339,6 +339,7 @@
     "commands.reignofnether.gamerule.unit_griefing": "%s - Allow explosive units to break blocks",
     "commands.reignofnether.gamerule.player_griefing": "%s - Allow survival players to break terrain blocks",
     "commands.reignofnether.gamerule.ground_y_level": "%s - Set the minimum height for cameras",
+    "commands.reignofnether.gamerule.flying_max_y_level": "%s - Set the max height for flying units",
     "commands.reignofnether.gamerule.improved_pathfinding": "%s - Increases pathfinding accuracy, but also CPU usage",
 
     "controls.reignofnether.toggle_cam": "F12 - Toggle RTS camera",

@@ -98,6 +98,7 @@ public class PlayerClientEvents {
                 MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.unit_griefing", "/gamerule doUnitGriefing"));
                 MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.player_griefing", "/gamerule doSurvivalGriefing"));
                 MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.ground_y_level", "/gamerule groundYLevel"));
+                MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.flying_max_y_level", "/gamerule flyingMaxYLevel"));
                 MC.player.sendSystemMessage(Component.translatable("commands.reignofnether.gamerule.improved_pathfinding", "/gamerule improvedPathfinding"));
             }
             return 1;

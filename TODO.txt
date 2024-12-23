@@ -1,5 +1,5 @@
 
-1.19.2-1.0.12
+1.19.2-1.0.12a
 -------------
 
 - Done and tested
@@ -24,11 +24,12 @@ Bugfixes
 - Fixed the bloodlust tooltip incorrectly stating a 50% movement speed increase (it's actually 20%)
 - Recoloured tridents to fit the piglin colour scheme
 - changed /gamerule groundYLevel to be the minimum camera height instead of the locked height, and default is now 0
-[🟡] fixed /gamerule improvedPathfinding not working for some new units
+- fixed /gamerule improvedPathfinding not working for some new units
+- added /gamerule flyingMaxYLevel (default 320) to limit the height of flying units like ghasts
 
 Quality of Life
 ---------------
-[🟡] Added /gamerule for ghasts and bridges
+[🟡] Added /gamerule  bridges
 
 
 
