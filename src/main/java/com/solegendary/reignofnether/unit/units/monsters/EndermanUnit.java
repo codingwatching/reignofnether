@@ -151,7 +151,7 @@ public class EndermanUnit extends EnderMan implements Unit, AttackerUnit {
                 .add(Attributes.MOVEMENT_SPEED, EndermanUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, EndermanUnit.attackDamage)
                 .add(Attributes.MAX_HEALTH, EndermanUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED);
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange());
     }
 
     public void tick() {

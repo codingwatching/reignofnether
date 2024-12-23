@@ -175,7 +175,7 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, WardenUnit.attackDamage)
                 .add(Attributes.ARMOR, WardenUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, WardenUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5);
     }

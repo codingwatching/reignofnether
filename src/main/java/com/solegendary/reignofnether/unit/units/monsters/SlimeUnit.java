@@ -326,7 +326,7 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, SlimeUnit.attackDamagePerSize)
                 .add(Attributes.ARMOR, SlimeUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, 10)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED);
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange());
     }
 
     public void tick() {
@@ -347,7 +347,7 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
             SlimeUnit closestTarget = null;
 
             for (SlimeUnit slime : nearbyEntities) {
-                if (slime.getOwnerName().equals(getOwnerName()) && slime != this && slime.getSize() <= getSize()) {
+                if (slime.getOwnerName().equals(getOwnerName()) && slime != this && slime.getSize() <= getSize() && !slime.isTiny()) {
                     double dist = position().distanceTo(slime.position());
                     if (dist < closestDist) {
                         closestDist = dist;

@@ -73,9 +73,9 @@ public class PlayerClientboundPacket {
                 new PlayerClientboundPacket(PlayerAction.SYNC_MAX_POPULATION, "", maxPopulation));
     }
 
-    public static void setOrthoviewBaseY(long orthoviewBaseY) {
+    public static void setOrthoviewMinY(long orthoviewMinY) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-                new PlayerClientboundPacket(PlayerAction.SET_LOCKED_ORTHOVIEW_Y, "", orthoviewBaseY));
+                new PlayerClientboundPacket(PlayerAction.SET_MIN_ORTHOVIEW_Y, "", orthoviewMinY));
     }
 
     public PlayerClientboundPacket(PlayerAction playerAction, String playerName, Long value) {
@@ -115,7 +115,7 @@ public class PlayerClientboundPacket {
                             case ENABLE_START_RTS -> PlayerClientEvents.setCanStartRTS(true);
                             case DISABLE_START_RTS -> PlayerClientEvents.setCanStartRTS(false);
                             case SYNC_MAX_POPULATION -> UnitClientEvents.setMaxPopulation(Math.toIntExact(value));
-                            case SET_LOCKED_ORTHOVIEW_Y -> OrthoviewClientEvents.setLockedOrthoviewY(value);
+                            case SET_MIN_ORTHOVIEW_Y -> OrthoviewClientEvents.setMinOrthoviewY(value);
                         }
                         success.set(true);
                     });

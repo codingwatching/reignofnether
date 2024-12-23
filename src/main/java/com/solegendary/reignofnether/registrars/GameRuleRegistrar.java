@@ -13,6 +13,7 @@ public class GameRuleRegistrar {
     public static GameRules.Key<GameRules.BooleanValue> DO_SURVIVAL_GRIEFING;
     public static GameRules.Key<GameRules.BooleanValue> IMPROVED_PATHFINDING;
     public static GameRules.Key<GameRules.IntegerValue> GROUND_Y_LEVEL;
+    public static GameRules.Key<GameRules.IntegerValue> FLYING_MAX_Y_LEVEL;
 
     public static void init() {
         // do cut trees convert their logs into falling logs?
@@ -45,7 +46,11 @@ public class GameRuleRegistrar {
         );
         // locks the camera to a specific Y level instead of it being calculated dynamically
         GROUND_Y_LEVEL = GameRules.register("groundYLevel", GameRules.Category.PLAYER,
-                GameRules.IntegerValue.create(-9999) // disabled by default
+                GameRules.IntegerValue.create(0)
+        );
+        // locks the camera to a specific Y level instead of it being calculated dynamically
+        FLYING_MAX_Y_LEVEL = GameRules.register("flyingMaxYLevel", GameRules.Category.MOBS,
+                GameRules.IntegerValue.create(320)
         );
     }
 }

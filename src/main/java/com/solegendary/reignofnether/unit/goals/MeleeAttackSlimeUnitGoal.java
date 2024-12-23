@@ -53,7 +53,8 @@ public class MeleeAttackSlimeUnitGoal extends AbstractMeleeAttackUnitGoal {
             slimeUnit.pushAttackCd = slimeUnit.PUSH_ATTACK_CD_MAX;
 
             if (target instanceof SlimeUnit targetSlime)
-                if (targetSlime.getAttackGoal() instanceof MeleeAttackSlimeUnitGoal goal && targetSlime.pushAttackCd <= 0) {
+                if (targetSlime.getAttackGoal() instanceof MeleeAttackSlimeUnitGoal goal &&
+                    targetSlime.pushAttackCd <= 0 && targetSlime.getTarget() == this.mob) {
                     goal.landedJump = true;
                     goal.checkAndPerformAttack(this.mob, distSqr);
                     goal.landedJump = false;

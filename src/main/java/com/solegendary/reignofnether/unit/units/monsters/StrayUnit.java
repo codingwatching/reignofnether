@@ -168,7 +168,7 @@ public class StrayUnit extends Stray implements Unit, AttackerUnit, RangedAttack
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, StrayUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, StrayUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, StrayUnit.armorValue);
     }
 

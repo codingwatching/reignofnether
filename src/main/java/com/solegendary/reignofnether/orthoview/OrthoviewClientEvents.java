@@ -11,7 +11,6 @@ import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.minimap.MinimapClientEvents;
 import com.solegendary.reignofnether.player.PlayerServerboundPacket;
-import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.util.MiscUtil;
@@ -103,12 +102,12 @@ public class OrthoviewClientEvents {
     // by default orthoview players stay at BASE_Y, but can be raised to as high as MAX_Y if they are clipping terrain
     public static double orthoviewPlayerBaseY = 100;
     public static double orthoviewPlayerMaxY = 160;
-    private static double lockedOrthoviewY = -9999;
+    private static double minOrthoviewY = 0;
 
-    public static void setLockedOrthoviewY(double value) {
-        lockedOrthoviewY = value;
-        if (MC.level != null && MC.player != null && checkLockedOrthoviewY(MC.level)) {
-            MC.player.move(MoverType.SELF, new Vec3(0, lockedOrthoviewY - MC.player.getY() + 30, 0));
+    public static void setMinOrthoviewY(double value) {
+        minOrthoviewY = value;
+        if (MC.level != null && MC.player != null && MC.player.getY() < value) {
+            MC.player.move(MoverType.SELF, new Vec3(0, minOrthoviewY - MC.player.getY(), 0));
         }
     }
 
@@ -123,21 +122,8 @@ public class OrthoviewClientEvents {
             panSensitivityMult -= 0.1f;
     }
 
-    public static boolean checkLockedOrthoviewY(Level level) {
-        if (lockedOrthoviewY < 0 || lockedOrthoviewY > level.getHeight()) {
-            return false;
-        } else {
-            orthoviewPlayerBaseY = lockedOrthoviewY + 30;
-            orthoviewPlayerMaxY = lockedOrthoviewY + 30;
-            return true;
-        }
-    }
-
     public static void updateOrthoviewY() {
         if (MC.player != null && MC.level != null) {
-            if (checkLockedOrthoviewY(MC.level))
-                return;
-
             BlockPos playerPos = MC.player.blockPosition();
             int radius = 10; // Defines the area around the player to sample heights
             int sumHeights = 0;
@@ -157,7 +143,7 @@ public class OrthoviewClientEvents {
             int avgHeight = count > 0 ? sumHeights / count : playerPos.getY();
 
             // Update ORTHOVIEW values based on the average height
-            orthoviewPlayerBaseY = Math.max(avgHeight + 40, 0);
+            orthoviewPlayerBaseY = Math.max(avgHeight + 40, minOrthoviewY);
             orthoviewPlayerMaxY = avgHeight + 100;
         }
     }

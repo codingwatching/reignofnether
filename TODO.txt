@@ -18,17 +18,17 @@ Villager Professions
 
 Bugfixes
 --------
-[✔] Fixed the bloodlust tooltip incorrectly stating a 50% movement speed bonus (it's actually 20%)
 
-
+- Fixed slimes/cubes taking damage when consuming other slimes/cubes
+- Autocasting consume no longer looks for tiny slimes (because they won't increase size, only heal slightly)
+- Fixed the bloodlust tooltip incorrectly stating a 50% movement speed increase (it's actually 20%)
+- Recoloured tridents to fit the piglin colour scheme
+- changed /gamerule groundYLevel to be the minimum camera height instead of the locked height, and default is now 0
+[🟡] fixed /gamerule improvedPathfinding not working for some new units
 
 Quality of Life
 ---------------
-[🟡] Added /gamerule groundYLevel (default -9999)
-    - Set to any positive value to lock the camera height to above this level
-    [❌] Include ghasts and bridges
-
-[✔] Recoloured tridents to fit the piglin colour scheme
+[🟡] Added /gamerule for ghasts and bridges
 
 
 
