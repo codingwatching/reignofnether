@@ -7,20 +7,6 @@
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
-- Added Slime Pit building to monsters
-- Added Slimy Conversion upgrade to labs, granting slimes the ability to convert killed enemies to slimes
-- Slimes and cubes now have 50% magic resistance (affects sonic booms, potions and evoker fangs)
-- Slimes and cubes can no longer consume targets larger than themselves
-- Tiny slimes and cubes no longer have a consume ability at all
-- Drowned now affect convertible enemies with a potion effect - any units that die under this effect will be converted
-    - This same effect is used for slime conversions too
-- Farmer hats fixed
-- Dungeons and spider lairs now only require a graveyard instead of a laboratory
-    - But Strongholds now require a laboratory
-
-- Vexes no longer attack allied players
-- Survival/adventure mode players now show on the minimap (larger than regular units)
-- Blazes reduced to 1 dmg 1.0as
 
 Features
 --------
@@ -42,34 +28,3 @@ Quality of Life
 Balancing
 ---------
 [❌] Soulfires created by blazes need to be made temporary
-
-
-
-Localisation
-------------
-New Strings:
-    "hud.map.reignofnether.pan_sensitivity.tooltip1": "Camera sensitivity: %d",
-    "hud.map.reignofnether.pan_sensitivity.tooltip2": "(left/right click to adjust)",
-    "hud.map.reignofnether.lock_map.tooltip1.enabled": "Map centre lock: Enabled",
-    "hud.map.reignofnether.lock_map.tooltip1.disabled": "Map centre lock: Disabled",
-    "hud.map.reignofnether.lock_map.tooltip2": "(click to toggle)",
-
-    "units.monsters.reignofnether.slime": "Slime",
-    "units.monsters.reignofnether.slime.tooltip1": "A sentient cube of green slime which can consume",
-    "units.monsters.reignofnether.slime.tooltip2": "other cubes to grow in size, health and damage.",
-    "units.monsters.reignofnether.slime.tooltip3": "Requires a Slime Pit.",
-
-    "buildings.monsters.reignofnether.slime_pit": "Slime Pit",
-    "buildings.monsters.reignofnether.slime_pit.tooltip1": "A pool of viscous green goop and algae that grows slimes.",
-    "buildings.monsters.reignofnether.slime_pit.tooltip3": "Requires a Graveyard",
-
-    "research.reignofnether.slime_conversion": "Slimy Conversion",
-    "research.reignofnether.slime_conversion.tooltip1": "Causes enemies killed by slimes to become slimes.",
-    "research.reignofnether.slime_conversion.tooltip2": "Larger enemies turn into larger slimes.",
-
-    "abilities.reignofnether.consume.error3": "Can only eat equal or smaller Cubes or Slimes.",
-
-Modified:
-    "buildings.monsters.reignofnether.spider_lair.tooltip2": "Requires a Graveyard.",
-    "buildings.monsters.reignofnether.dungeon.tooltip2": "Requires a Graveyard."
-    "buildings.monsters.reignofnether.stronghold.tooltip4": "Requires a Laboratory, Spider Lair and Dungeon.",

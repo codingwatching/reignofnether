@@ -79,6 +79,9 @@ Quality of Life Features
 
 [❌] /rts-surrender-and-destroy to destroy all your own units and buildings
 
+[❌] Special block to allow spawn location picking
+
+
 Balancing
 ---------
 
