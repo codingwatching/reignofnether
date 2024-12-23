@@ -27,6 +27,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
@@ -46,7 +47,8 @@ public interface Unit {
     static int MONSTER_HEALING_TICKS = 12 * ResourceCost.TICKS_PER_SECOND;
 
     // used for increasing pathfinding calculation range, default is 16 for most mobs
-    static int FOLLOW_RANGE = 64;
+    static int FOLLOW_RANGE_IMPROVED = 64;
+    static int FOLLOW_RANGE = 16;
 
     // list of positions to draw lines between to indicate unit intents - will fade over time unless shift is held
     public ArrayList<BlockPos> getCheckpoints();
@@ -176,7 +178,7 @@ public interface Unit {
             unitMob.invulnerableTime = 0;
 
             // enact target-following, and stop followTarget being reset
-            if (unit.getFollowTarget() != null)
+            if (unit.getFollowTarget() != null && unitMob.tickCount % 20 == 0)
                 unit.setMoveTarget(unit.getFollowTarget().blockPosition());
 
             // remove fire from piglin units if they have research
@@ -200,6 +202,7 @@ public interface Unit {
                 le.heal(1);
             } else if (unit.getFaction() == Faction.PIGLINS &&
                     le.tickCount % PIGLIN_HEALING_TICKS == 0 &&
+                    !(unit instanceof Slime) &&
                     (NetherBlocks.isNetherBlock(le.level, le.getOnPos()) || unit instanceof GhastUnit)) {
                 le.heal(1);
             }

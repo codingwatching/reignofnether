@@ -29,6 +29,5 @@ public class MeleeAttackUnitGoal extends AbstractMeleeAttackUnitGoal {
         } else {
             this.mob.setAggressive(false);
         }
-
     }
 }

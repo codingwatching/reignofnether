@@ -39,6 +39,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,6 +68,8 @@ public class MinimapClientEvents {
 
     private static final int UNIT_RADIUS = 3;
     private static final int UNIT_THICKNESS = 1;
+    private static final int PLAYER_RADIUS = 5;
+    private static final int PLAYER_THICKNESS = 1;
     private static final int BUILDING_RADIUS = 7;
     private static final int BUILDING_THICKNESS = 2;
 
@@ -94,6 +97,8 @@ public class MinimapClientEvents {
 
     private static final float DARK = 0.40f;
     private static final float EXTRA_DARK = 0.10f;
+
+    private static boolean lockedMap = false; // does map follow when moving offscreen?
 
     // objects for tracking serverside Units that don't yet exist on clientside
     private static class MinimapUnit {
@@ -123,8 +128,10 @@ public class MinimapClientEvents {
     }
 
     public static void setMapCentre(double x, double z) {
-        xc_world = (int) x;
-        zc_world = (int) z;
+        if (!lockedMap) {
+            xc_world = (int) x;
+            zc_world = (int) z;
+        }
     }
 
     public static int getMapGuiRadius() {
@@ -152,21 +159,62 @@ public class MinimapClientEvents {
 
     public static Button getToggleSizeButton() {
         return new Button(largeMap ? "Close" : "Open large map",
-            14,
-            largeMap
-            ? new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/barrier.png")
-            : new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/map.png"),
-            new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
-            Keybindings.keyM,
-            () -> false,
-            () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK),
-            () -> true,
-            () -> shouldToggleSize = true,
-            () -> {
-            },
-            List.of(FormattedCharSequence.forward(largeMap
-                                                  ? I18n.get("hud.map.reignofnether.close")
-                                                  : I18n.get("hud.map.reignofnether.open"), Style.EMPTY))
+                14,
+                largeMap
+                        ? new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/barrier.png")
+                        : new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/map.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
+                Keybindings.keyM,
+                () -> false,
+                () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK),
+                () -> true,
+                () -> shouldToggleSize = true,
+                null,
+                List.of(FormattedCharSequence.forward(largeMap
+                        ? I18n.get("hud.map.reignofnether.close")
+                        : I18n.get("hud.map.reignofnether.open"), Style.EMPTY))
+        );
+    }
+
+    public static Button getCamSensitivityButton() {
+        return new Button("Camera Sensitivity",
+                14,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/command_block_front.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
+                null,
+                () -> false,
+                () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK) || !largeMap,
+                () -> true,
+                () -> OrthoviewClientEvents.adjustPanSensitivityMult(true),
+                () -> OrthoviewClientEvents.adjustPanSensitivityMult(false),
+                List.of(
+                        FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip1",
+                                Math.round(OrthoviewClientEvents.getPanSensitivityMult() * 10), 25), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip2"), Style.EMPTY)
+                )
+        );
+    }
+
+    public static Button getMapLockButton() {
+        return new Button("Lock Map",
+                14,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/chain_command_block_front.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
+                null,
+                () -> false,
+                () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK) || !largeMap,
+                () -> true,
+                () -> {
+                    lockedMap = !lockedMap;
+                    if (!lockedMap && MC.player != null)
+                        setMapCentre(MC.player.getX(), MC.player.getZ());
+                },
+                null,
+                List.of(FormattedCharSequence.forward(lockedMap
+                                ? I18n.get("hud.map.reignofnether.lock_map.tooltip1.enabled")
+                                : I18n.get("hud.map.reignofnether.lock_map.tooltip1.disabled"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.lock_map.tooltip2"), Style.EMPTY)
+                )
         );
     }
 
@@ -179,20 +227,23 @@ public class MinimapClientEvents {
         double xCam = MC.player.getX();
         double zCam = MC.player.getZ();
         double xDiff1 = xCam - (xc_world + worldRadius);
-        if (xDiff1 > 0) {
-            xc_world += xDiff1;
-        }
-        double zDiff1 = zCam - (zc_world + worldRadius);
-        if (zDiff1 > 0) {
-            zc_world += zDiff1;
-        }
-        double xDiff2 = xCam - (xc_world - worldRadius);
-        if (xDiff2 < 0) {
-            xc_world += xDiff2;
-        }
-        double zDiff2 = zCam - (zc_world - worldRadius);
-        if (zDiff2 < 0) {
-            zc_world += zDiff2;
+
+        if (!lockedMap) {
+            if (xDiff1 > 0) {
+                xc_world += xDiff1;
+            }
+            double zDiff1 = zCam - (zc_world + worldRadius);
+            if (zDiff1 > 0) {
+                zc_world += zDiff1;
+            }
+            double xDiff2 = xCam - (xc_world - worldRadius);
+            if (xDiff2 < 0) {
+                xc_world += xDiff2;
+            }
+            double zDiff2 = zCam - (zc_world - worldRadius);
+            if (zDiff2 < 0) {
+                zc_world += zDiff2;
+            }
         }
 
         NativeImage pixels = mapTexture.getPixels();
@@ -352,15 +403,14 @@ public class MinimapClientEvents {
         }
 
         // get world position of corners of the screen
-        Vector3d[] corners = new Vector3d[] { MiscUtil.screenPosToWorldPos(MC, 0, 0), MiscUtil.screenPosToWorldPos(
-            MC,
-            0,
-            MC.getWindow().getGuiScaledHeight()
-        ), MiscUtil.screenPosToWorldPos(
-            MC,
-            MC.getWindow().getGuiScaledWidth(),
-            MC.getWindow().getGuiScaledHeight()
-        ), MiscUtil.screenPosToWorldPos(MC, MC.getWindow().getGuiScaledWidth(), 0) };
+        int yOffset = 0;//(int) (MC.player.getY() - 100) * 5;
+
+        Vector3d tl = MiscUtil.screenPosToWorldPos(MC, 0, -yOffset);
+        Vector3d bl = MiscUtil.screenPosToWorldPos(MC, 0, MC.getWindow().getGuiScaledHeight() - yOffset);
+        Vector3d br = MiscUtil.screenPosToWorldPos(MC, MC.getWindow().getGuiScaledWidth(), MC.getWindow().getGuiScaledHeight() - yOffset);
+        Vector3d tr = MiscUtil.screenPosToWorldPos(MC, MC.getWindow().getGuiScaledWidth(), -yOffset);
+
+        Vector3d[] corners = new Vector3d[] { tl, bl, br, tr };
         // adjust corners according to camera angle
         Vector3d lookVector = MiscUtil.getPlayerLookVector(MC);
         corners[0] = MyMath.addVector3d(corners[0], lookVector, 90 - OrthoviewClientEvents.getCamRotY());
@@ -483,6 +533,14 @@ public class MinimapClientEvents {
                 }
             }
         }
+        // draw players
+        if (MC.level != null) {
+            for (Player player : MC.level.players()) {
+                if (!FogOfWarClientEvents.isInBrightChunk(player))
+                    continue;
+                drawPlayerOnMap(player.getOnPos().getX(), player.getOnPos().getZ(), player);
+            }
+        }
 
         // draw units
         for (LivingEntity entity : UnitClientEvents.getAllUnits()) {
@@ -530,8 +588,8 @@ public class MinimapClientEvents {
 
                     // if pixel is on the edge of the square keep it coloured black
                     if (!(
-                        x0 < UNIT_THICKNESS || x0 >= (UNIT_RADIUS * 2) - UNIT_THICKNESS || z0 < UNIT_THICKNESS
-                            || z0 >= (UNIT_RADIUS * 2) - UNIT_THICKNESS
+                        x0 < UNIT_THICKNESS || x0 >= (UNIT_RADIUS * 2) - UNIT_THICKNESS ||
+                        z0 < UNIT_THICKNESS || z0 >= (UNIT_RADIUS * 2) - UNIT_THICKNESS
                     )) {
                         switch (relationship) {
                             case OWNED -> rgb = 0x00FF00;
@@ -539,6 +597,42 @@ public class MinimapClientEvents {
                             case HOSTILE -> rgb = 0xFF0000;
                             case NEUTRAL -> rgb = 0xFFFF00;
                         }
+                    }
+                    int xN = x - xc_world + (mapGuiRadius * 2);
+                    int zN = z - zc_world + (mapGuiRadius * 2);
+
+                    mapColoursOverlays[xN][zN] = MiscUtil.reverseHexRGB(rgb) | (0xFF << 24);
+                }
+            }
+        }
+    }
+
+    private static void drawPlayerOnMap(int xc, int zc, Player player) {
+        if (MC.player == null)
+            return;
+        String thisPlayerName = MC.player.getName().getString();
+        String thatPlayerName = player.getName().getString();
+        if (thisPlayerName.equals(thatPlayerName))
+            return;
+        if (player.isSpectator() || player.isCreative())
+            return;
+
+        for (int x = xc - PLAYER_RADIUS; x < xc + PLAYER_RADIUS; x++) {
+            for (int z = zc - PLAYER_RADIUS; z < zc + PLAYER_RADIUS; z++) {
+                if (isWorldXZinsideMap(x, z)) {
+                    int x0 = x - xc + PLAYER_RADIUS;
+                    int z0 = z - zc + PLAYER_RADIUS;
+                    int rgb = 0x000000;
+
+                    // if pixel is on the edge of the square keep it coloured black
+                    if (!(
+                        x0 < PLAYER_THICKNESS || x0 >= (PLAYER_RADIUS * 2) - PLAYER_THICKNESS ||
+                        z0 < PLAYER_THICKNESS || z0 >= (PLAYER_RADIUS * 2) - PLAYER_THICKNESS
+                    )) {
+                        if (AllianceSystem.isAllied(thisPlayerName, thatPlayerName))
+                            rgb = 0x3232FF;
+                        else
+                            rgb = 0xFF0000;
                     }
                     int xN = x - xc_world + (mapGuiRadius * 2);
                     int zN = z - zc_world + (mapGuiRadius * 2);

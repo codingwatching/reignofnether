@@ -186,8 +186,9 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
             this.abilityButtons.add(Graveyard.getBuildButton(Keybindings.keyY));
             this.abilityButtons.add(Dungeon.getBuildButton(Keybindings.keyU));
             this.abilityButtons.add(SpiderLair.getBuildButton(Keybindings.keyI));
-            this.abilityButtons.add(Laboratory.getBuildButton(Keybindings.keyO));
-            this.abilityButtons.add(Stronghold.getBuildButton(Keybindings.keyP));
+            this.abilityButtons.add(SlimePit.getBuildButton(Keybindings.keyO));
+            this.abilityButtons.add(Laboratory.getBuildButton(Keybindings.keyP));
+            this.abilityButtons.add(Stronghold.getBuildButton(Keybindings.keyL));
             this.abilityButtons.add(SpruceBridge.getBuildButton(Keybindings.keyC));
             this.abilityButtons.add(SculkCatalyst.getBuildButton(Keybindings.keyV));
         }
@@ -206,7 +207,7 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
                 .add(Attributes.ATTACK_DAMAGE, VillagerUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, ZombieVillagerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, ZombieVillagerUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.ARMOR, ZombieVillagerUnit.armorValue);
     }
 

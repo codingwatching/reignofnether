@@ -1,6 +1,5 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
-import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.piglins.*;
 import com.solegendary.reignofnether.building.buildings.piglins.BlackstoneBridge;
 import com.solegendary.reignofnether.hud.AbilityButton;
@@ -175,7 +174,8 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
             this.abilityButtons.add(HoglinStables.getBuildButton(Keybindings.keyT));
             this.abilityButtons.add(FlameSanctuary.getBuildButton(Keybindings.keyY));
             this.abilityButtons.add(WitherShrine.getBuildButton(Keybindings.keyU));
-            this.abilityButtons.add(Fortress.getBuildButton(Keybindings.keyI));
+            this.abilityButtons.add(BasaltSprings.getBuildButton(Keybindings.keyI));
+            this.abilityButtons.add(Fortress.getBuildButton(Keybindings.keyO));
             this.abilityButtons.add(BlackstoneBridge.getBuildButton(Keybindings.keyC));
         }
     }
@@ -193,7 +193,7 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
                 .add(Attributes.ATTACK_DAMAGE, GruntUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, GruntUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, GruntUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.ARMOR, GruntUnit.armorValue);
     }
 

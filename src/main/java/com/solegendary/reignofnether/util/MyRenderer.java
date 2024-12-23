@@ -378,6 +378,8 @@ public class MyRenderer {
     }
 
     public static void renderTooltip(PoseStack poseStack, List<FormattedCharSequence> tooltipLines, int mouseX, int mouseY) {
+        if (!OrthoviewClientEvents.isEnabled())
+            return;
         if (MC.screen != null && tooltipLines != null && tooltipLines.size() > 0) {
             if (mouseY < MC.screen.height / 2)
                 mouseY += (tooltipLines.size() * 10);

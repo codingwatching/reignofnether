@@ -130,7 +130,7 @@ public class Stronghold extends ProductionBuilding implements GarrisonableBuildi
             () -> BuildingClientEvents.getBuildingToPlace() == Stronghold.class,
             () -> false,
             () -> (
-                BuildingClientEvents.hasFinishedBuilding(Graveyard.buildingName)
+                BuildingClientEvents.hasFinishedBuilding(Laboratory.buildingName)
                     && BuildingClientEvents.hasFinishedBuilding(SpiderLair.buildingName)
                     && BuildingClientEvents.hasFinishedBuilding(Dungeon.buildingName)
             ) || ResearchClient.hasCheat("modifythephasevariance"),

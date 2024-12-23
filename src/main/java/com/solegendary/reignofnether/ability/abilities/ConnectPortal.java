@@ -27,7 +27,7 @@ public class ConnectPortal extends Ability {
     Building building;
 
     public ConnectPortal(Building building) {
-        super(UnitAction.CONNECT_PORTAL, CD_MAX, RANGE, 0, true);
+        super(UnitAction.CONNECT_PORTAL, building.getLevel(), CD_MAX, RANGE, 0, true);
         this.building = building;
     }
 

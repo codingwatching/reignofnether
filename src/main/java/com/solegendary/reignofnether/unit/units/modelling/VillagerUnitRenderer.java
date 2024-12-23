@@ -7,6 +7,8 @@ import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.VillagerRenderer;
+import net.minecraft.client.renderer.entity.VindicatorRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.VillagerProfessionLayer;
 import net.minecraft.resources.ResourceLocation;
@@ -19,9 +21,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class VillagerUnitRenderer extends AbstractVillagerUnitRenderer<AbstractIllager> {
     private static final ResourceLocation VILLAGER_UNIT = new ResourceLocation("reignofnether", "textures/entities/villager_unit.png");
 
-    public VillagerUnitRenderer(EntityRendererProvider.Context p_174439_) {
-        super(p_174439_, new VillagerUnitModel<>(p_174439_.bakeLayer(ModelLayers.VINDICATOR)), 0.5F);
-        this.addLayer(new ItemInHandLayer<AbstractIllager, VillagerUnitModel<AbstractIllager>>(this, p_174439_.getItemInHandRenderer()) {
+    public VillagerUnitRenderer(EntityRendererProvider.Context context) {
+        super(context, new VillagerUnitModel<>(context.bakeLayer(VillagerUnitModel.LAYER_LOCATION)), 0.5F);
+        this.addLayer(new ItemInHandLayer<AbstractIllager, VillagerUnitModel<AbstractIllager>>(this, context.getItemInHandRenderer()) {
             public void render(PoseStack pose, MultiBufferSource mbs, int p_116354_, AbstractIllager unit, float p_116356_, float p_116357_, float p_116358_, float p_116359_, float p_116360_, float p_116361_) {
                 if (unit instanceof VillagerUnit vUnit &&
                         (vUnit.getBuildRepairGoal().isBuilding() ||
@@ -36,7 +38,7 @@ public class VillagerUnitRenderer extends AbstractVillagerUnitRenderer<AbstractI
                 }
             }
         });
-        this.addLayer(new VillagerUnitProfessionLayer(this, p_174439_.getResourceManager(), "villager"));
+        this.addLayer(new VillagerUnitProfessionLayer(this, context.getResourceManager(), "villager"));
     }
 
     public ResourceLocation getTextureLocation(AbstractIllager p_116324_) {

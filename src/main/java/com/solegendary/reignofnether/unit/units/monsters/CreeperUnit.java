@@ -121,7 +121,7 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
     final static public float attacksPerSecond = 1f;
     final static public float maxHealth = 20.0f;
     final static public float armorValue = 0.0f;
-    final static public float movementSpeed = 0.28f;
+    final static public float movementSpeed = 0.25f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
@@ -177,7 +177,7 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, CreeperUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, CreeperUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.ARMOR, CreeperUnit.armorValue);
     }
 

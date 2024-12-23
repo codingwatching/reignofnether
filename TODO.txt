@@ -1,5 +1,5 @@
 
-1.19.2-1.0.11b
+1.19.2-1.0.12
 -------------
 
 - Done and tested
@@ -8,46 +8,23 @@
 [❌] Not done, including unmerged PRs
 
 
-
-Wave Survival 0.5a
-------------------
-
-[❌] Fixed a bug where teams would randomly switch
-
-- Update to 1.0.11 full release
-
-- Time now begins at dusk on the first day
-    - This means day 1 is no longer half the length of other days
-- Ranged ground units now target the nearest unit instead of the nearest building
-
-
-
 Features
 --------
 
-
+Villager Professions
+    [❌] Farmer arms are using the hat rim texture
 
 Bugfixes
 --------
 
-[❌] Pathing around fire is weird
 
-[❌] can't build on sculk
+Quality of Life
+---------------
+[🟡] Added /gamerule groundYLevel (default -9999)
+    - Set to any positive value to lock the camera height to above this level
+    [❌] Include ghasts and bridges
 
 
-
-[❌] Clicking tops of trees may make workers idle and mess up pathfinding
-    - If blockPos hasn't changed for 5s, just null gatherTarget and let them look for new nearby resources
-    - Also check out Potato345's tree chop issue
-        - Seed: 1936221877834802093
-
-[✔] If the server host changed any resource cost configs, this is now shown next to the start buttons
-    - These are relative to your own configs
-    - For example, if Zombies officially cost 75 food, you personally changed this to 65, and your server host changed it to 85, the tooltip will show a +20 increase
-    [🟡] check relogging in and out of a change server does what you expect
-
-[✔] Fixed an issue where population was going over maximum on clientside
-
-[✔] Heavy Tridents now shows an enchanted effect on the tridents
-
-[✔] Animals can no longer spawn on barrier blocks
+Balancing
+---------
+[❌] Soulfires created by blazes need to be made temporary

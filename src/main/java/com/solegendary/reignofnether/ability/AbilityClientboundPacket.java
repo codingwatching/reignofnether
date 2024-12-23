@@ -19,9 +19,9 @@ public class AbilityClientboundPacket {
 
     private final int unitId;
     private final UnitAction unitAction;
-    private final int cooldown;
+    private final float cooldown;
 
-    private static void setServersideCooldown(int unitId, UnitAction unitAction, int cooldown) {
+    private static void setServersideCooldown(int unitId, UnitAction unitAction, float cooldown) {
         for (LivingEntity entity : UnitServerEvents.getAllUnits())
             if (entity.getId() == unitId && entity instanceof Unit unit)
                 for (Ability ability : unit.getAbilities())
@@ -31,7 +31,7 @@ public class AbilityClientboundPacket {
                     }
     }
 
-    public static void sendSetCooldownPacket(int unitId, UnitAction unitAction, int cooldown) {
+    public static void sendSetCooldownPacket(int unitId, UnitAction unitAction, float cooldown) {
         setServersideCooldown(unitId, unitAction, cooldown);
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
                 new AbilityClientboundPacket(unitId, unitAction, cooldown)
@@ -41,7 +41,7 @@ public class AbilityClientboundPacket {
     public AbilityClientboundPacket(
         int unitId,
         UnitAction unitAction,
-        int cooldown
+        float cooldown
     ) {
         this.unitId = unitId;
         this.unitAction = unitAction;
@@ -51,13 +51,13 @@ public class AbilityClientboundPacket {
     public AbilityClientboundPacket(FriendlyByteBuf buffer) {
         this.unitId = buffer.readInt();
         this.unitAction = buffer.readEnum(UnitAction.class);
-        this.cooldown = buffer.readInt();
+        this.cooldown = buffer.readFloat();
     }
 
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(this.unitId);
         buffer.writeEnum(this.unitAction);
-        buffer.writeInt(this.cooldown);
+        buffer.writeFloat(this.cooldown);
     }
 
     // client-side packet-consuming functions

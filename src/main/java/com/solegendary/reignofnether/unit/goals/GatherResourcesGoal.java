@@ -11,6 +11,8 @@ import com.solegendary.reignofnether.unit.TargetResourcesSave;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnitProfession;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static com.solegendary.reignofnether.resources.BlockUtils.isFallingLogBlock;
 import static com.solegendary.reignofnether.resources.BlockUtils.isLogBlock;
 
 // Move towards the nearest open resource blocks and start gathering them
@@ -261,20 +264,61 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                     }
                 }
                 else {
+                    int ticksToProgress;
+
                     if (ResearchServerEvents.playerHasCheat(((Unit) mob).getOwnerName(), "operationcwal"))
-                        this.gatherTicksLeft -= (TICK_CD / 2) * 10;
+                        ticksToProgress = (TICK_CD / 2) * 10;
                     else
-                        this.gatherTicksLeft -= (TICK_CD / 2);
+                        ticksToProgress = (TICK_CD / 2);
+
+                    if (mob instanceof VillagerUnit vUnit) {
+                        if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.WOOD &&
+                            vUnit.getUnitProfession() == VillagerUnitProfession.LUMBERJACK) {
+                            if (vUnit.isVeteran())
+                                ticksToProgress *= VillagerUnit.LUMBERJACK_SPEED_MULT_VETERAN;
+                            else
+                                ticksToProgress *= VillagerUnit.LUMBERJACK_SPEED_MULT;
+                        }
+                        else if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.ORE &&
+                                vUnit.getUnitProfession() == VillagerUnitProfession.MINER) {
+                            if (vUnit.isVeteran())
+                                ticksToProgress *= VillagerUnit.MINER_SPEED_MULT_VETERAN;
+                            else
+                                ticksToProgress *= VillagerUnit.MINER_SPEED_MULT;
+                        }
+                    }
+
+                    this.gatherTicksLeft -= ticksToProgress;
 
                     gatherTicksLeft = Math.min(gatherTicksLeft, data.targetResourceSource.ticksToGather);
                     if (gatherTicksLeft <= 0) {
                         gatherTicksLeft = DEFAULT_MAX_GATHER_TICKS;
                         ResourceName resourceName = ResourceSources.getBlockResourceName(this.data.gatherTarget, mob.level);
 
-                        if (isLogBlock(this.mob.level.getBlockState(data.gatherTarget)))
+                        boolean isLogBlock = isLogBlock(this.mob.level.getBlockState(data.gatherTarget));
+                        boolean isFallingLogBlock = isFallingLogBlock(this.mob.level.getBlockState(data.gatherTarget));
+                        if (isLogBlock)
                             ResourcesServerEvents.fellAdjacentLogs(data.gatherTarget, new ArrayList<>(), this.mob.level);
 
+                        ResourceName expName = ResourceName.NONE;
+                        if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.FOOD && isFarming())
+                            expName = ResourceName.FOOD;
+                        else if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.WOOD && (isLogBlock || isFallingLogBlock))
+                            expName = ResourceName.WOOD;
+                        else if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.ORE)
+                            expName = ResourceName.ORE;
+
                         if (mob.level.destroyBlock(data.gatherTarget, false)) {
+
+                            if (mob instanceof VillagerUnit vUnit) {
+                                if (expName == ResourceName.FOOD)
+                                    vUnit.incrementFarmerExp();
+                                else if (expName == ResourceName.WOOD)
+                                    vUnit.incrementLumberjackExp();
+                                else if (expName == ResourceName.ORE)
+                                    vUnit.incrementMinerExp();
+                            }
+
                             // replace workers' mine ores with cobble to prevent creating potholes
                             if (data.targetResourceSource.resourceName == ResourceName.ORE) {
                                 BlockState replaceBs;

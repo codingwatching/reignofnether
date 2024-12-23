@@ -315,18 +315,9 @@ public class UnitClientEvents {
                     Entity entity = MC.level.getEntity(entityId);
                     if (entity instanceof Unit unit &&
                         unit.getMoveGoal() != null) {
-                        /**
-                         *   BlockPos oldFinalPos = unit.getMoveGoal().getFinalNodePos();
-                         *   sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
-                         *   BlockPos newFinalPos = unit.getMoveGoal().getFinalNodePos();
-                         *
-                         *   // if the client didn't calculate a new enough finalNodePos, then don't bother sending the server command
-                         *   if (oldFinalPos != null && newFinalPos != null &&
-                         *       oldFinalPos.distToCenterSqr(newFinalPos.getX(), newFinalPos.getY(), newFinalPos.getZ()) <= 9) {
-                         *       skips += 1;
-                         *       continue;
-                         *   }
-                         */
+
+                        //sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
+
                         sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos);
                     }
                 }
@@ -915,7 +906,11 @@ public class UnitClientEvents {
                 bUnit.isHoldingUpShield = startAnimation;
             } else if (entity instanceof WorkerUnit wUnit && entity instanceof AttackerUnit aUnit && entity.getId() == entityId) {
                 if (startAnimation && MC.level != null) {
-                    entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+                    if (entity instanceof VillagerUnit vUnit && vUnit.getUnitProfession() == VillagerUnitProfession.HUNTER && vUnit.isVeteran())
+                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
+                    else
+                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+
                     aUnit.setUnitAttackTarget((LivingEntity) MC.level.getEntity(targetId)); // set itself as a target just for animation purposes, doesn't tick clientside anyway
                 } else {
                     entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.AIR));
@@ -977,6 +972,12 @@ public class UnitClientEvents {
 
     public static void setMaxPopulation(int value) {
         maxPopulation = value;
+    }
+
+    public static void makeVillagerVeteran(int unitId) {
+        for (LivingEntity entity : getAllUnits())
+            if (entity instanceof VillagerUnit vUnit && unitId == entity.getId())
+                vUnit.isVeteran = true;
     }
 
     /*

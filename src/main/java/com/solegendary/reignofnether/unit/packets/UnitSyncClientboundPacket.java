@@ -108,6 +108,15 @@ public class UnitSyncClientboundPacket {
         );
     }
 
+    public static void makeVillagerVeteran(LivingEntity entity) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                new UnitSyncClientboundPacket(
+                        UnitSyncAction.MAKE_VILLAGER_VETERAN,
+                        entity.getId(), 0,
+                        0, 0,0,0,0,0,0, "")
+        );
+    }
+
     // packet-handler functions
     public UnitSyncClientboundPacket(
         UnitSyncAction syncAction,
@@ -185,6 +194,7 @@ public class UnitSyncClientboundPacket {
                         case START_ANIMATION -> UnitClientEvents.syncUnitAnimation(this.entityId, this.targetId, new BlockPos(this.posX, this.posY, this.posZ), true);
                         case STOP_ANIMATION -> UnitClientEvents.syncUnitAnimation(this.entityId, this.targetId, null, false);
                         case ATTACK_BUILDING_ANIMATION -> UnitClientEvents.playAttackBuildingAnimation(this.entityId);
+                        case MAKE_VILLAGER_VETERAN -> UnitClientEvents.makeVillagerVeteran(this.entityId);
                     }
                 });
         });

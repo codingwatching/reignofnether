@@ -26,6 +26,7 @@ import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.packets.UnitSyncWorkerClientBoundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import com.solegendary.reignofnether.unit.units.monsters.DrownedUnit;
+import com.solegendary.reignofnether.unit.units.monsters.SlimeUnit;
 import com.solegendary.reignofnether.unit.units.piglins.*;
 import com.solegendary.reignofnether.unit.units.villagers.*;
 import com.solegendary.reignofnether.util.Faction;
@@ -34,10 +35,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Fireball;
@@ -289,6 +294,8 @@ public class UnitServerEvents {
         if (evt.getEntity() instanceof Unit && evt.getEntity() instanceof Mob mob) {
             mob.setBaby(false);
             mob.setPathfindingMalus(BlockPathTypes.WATER, -1.0f);
+            mob.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 1.0f);
+            mob.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 1.0f);
             mob.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
             mob.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
             mob.setItemSlot(EquipmentSlot.LEGS, ItemStack.EMPTY);
@@ -418,22 +425,27 @@ public class UnitServerEvents {
             creeperUnit.explodeCreeper();
         }
 
-        if (evt.getEntity().getLastHurtByMob() instanceof Unit unit && (
-            evt.getEntity().getLastHurtByMob() instanceof DrownedUnit
-        )) {
+        boolean drownedInfected = evt.getEntity().getActiveEffectsMap().containsKey(MobEffects.HUNGER);
+        boolean slimeInfected = evt.getEntity().getActiveEffectsMap().containsKey(MobEffects.CONFUSION);
+
+        if (evt.getEntity().getLastHurtByMob() instanceof Unit unit && (drownedInfected || slimeInfected)) {
 
             EntityType<? extends Unit> entityType = null;
 
-            if (evt.getEntity() instanceof GruntUnit || evt.getEntity() instanceof BruteUnit
-                || evt.getEntity() instanceof HeadhunterUnit) {
-                entityType = EntityRegistrar.ZOMBIE_PIGLIN_UNIT.get();
-            } else if (evt.getEntity() instanceof HoglinUnit) {
-                entityType = EntityRegistrar.ZOGLIN_UNIT.get();
-            } else if (evt.getEntity() instanceof VillagerUnit) {
-                entityType = EntityRegistrar.ZOMBIE_VILLAGER_UNIT.get();
-            } else if (evt.getEntity() instanceof VindicatorUnit || evt.getEntity() instanceof PillagerUnit
-                || evt.getEntity() instanceof EvokerUnit || evt.getEntity() instanceof WitchUnit) {
-                entityType = EntityRegistrar.DROWNED_UNIT.get();
+            if (drownedInfected) {
+                if (evt.getEntity() instanceof GruntUnit || evt.getEntity() instanceof BruteUnit
+                        || evt.getEntity() instanceof HeadhunterUnit) {
+                    entityType = EntityRegistrar.ZOMBIE_PIGLIN_UNIT.get();
+                } else if (evt.getEntity() instanceof HoglinUnit) {
+                    entityType = EntityRegistrar.ZOGLIN_UNIT.get();
+                } else if (evt.getEntity() instanceof VillagerUnit) {
+                    entityType = EntityRegistrar.ZOMBIE_VILLAGER_UNIT.get();
+                } else if (evt.getEntity() instanceof VindicatorUnit || evt.getEntity() instanceof PillagerUnit
+                        || evt.getEntity() instanceof EvokerUnit || evt.getEntity() instanceof WitchUnit) {
+                    entityType = EntityRegistrar.DROWNED_UNIT.get();
+                }
+            } else {
+                entityType = EntityRegistrar.SLIME_UNIT.get();
             }
 
             if (entityType != null && evt.getEntity().getLevel() instanceof ServerLevel serverLevel) {
@@ -445,8 +457,11 @@ public class UnitServerEvents {
                     true,
                     false
                 );
-                if (entity instanceof Unit zUnit) {
-                    zUnit.setOwnerName(unit.getOwnerName());
+                if (entity instanceof SlimeUnit sUnit && evt.getEntity() instanceof Unit originalEntity) {
+                    sUnit.setSize(Mth.clamp(originalEntity.getPopCost() - 1, 1, 5), true);
+                }
+                if (entity instanceof Unit convertedUnit) {
+                    convertedUnit.setOwnerName(unit.getOwnerName());
                     entity.setYRot(evt.getEntity().getYRot());
                 }
             }
@@ -466,6 +481,11 @@ public class UnitServerEvents {
 
                 if (res != null) {
                     unit.getItems().add(itemStack);
+                    if (unit instanceof VillagerUnit vUnit) {
+                        vUnit.incrementHunterExp();
+                        if (!(evt.getEntity() instanceof Chicken))
+                            vUnit.incrementHunterExp();
+                    }
                 }
             }
             if (Unit.atThresholdResources(unit)) {
@@ -494,6 +514,8 @@ public class UnitServerEvents {
                 if (entity instanceof Unit unit) {
                     UnitSyncClientboundPacket.sendSyncResourcesPacket(unit);
                     UnitSyncClientboundPacket.sendSyncStatsPacket(entity);
+                    if (entity instanceof VillagerUnit vUnit && vUnit.isVeteran())
+                        UnitSyncClientboundPacket.makeVillagerVeteran(vUnit);
                 }
                 if (entity instanceof WorkerUnit) {
                     UnitSyncWorkerClientBoundPacket.sendSyncWorkerPacket(entity);
@@ -583,13 +605,12 @@ public class UnitServerEvents {
                 ResearchHeavyTridents.itemName
             );
         }
-        if (projectile instanceof Fireball && shooter instanceof BlazeUnit) {
+        if (shooter instanceof SlimeUnit slimeUnit && slimeUnit.isTiny())
             return true;
-        }
-
-        if (projectile instanceof AbstractArrow) {
+        if (projectile instanceof Fireball && shooter instanceof BlazeUnit)
             return true;
-        }
+        if (projectile instanceof AbstractArrow)
+            return true;
 
         return evt.getSource().isMagic() && evt.getSource() instanceof IndirectEntityDamageSource
             && (!(shooter instanceof EvokerUnit));
@@ -644,6 +665,14 @@ public class UnitServerEvents {
             evt.getSource().getEntity() instanceof MilitiaUnit
         )) {
             evt.setAmount(1);
+            return;
+        }
+
+        if (ResourceSources.isHuntableAnimal(evt.getEntity()) && (
+            evt.getSource().getEntity() instanceof VillagerUnit vUnit &&
+            vUnit.getUnitProfession() == VillagerUnitProfession.HUNTER
+        )) {
+            evt.setAmount(2);
             return;
         }
 
@@ -705,18 +734,6 @@ public class UnitServerEvents {
 
         if (evt.getEntity() instanceof Unit && (evt.getSource() == DamageSource.IN_WALL)) {
             evt.setCanceled(true);
-        }
-
-        // piglin fire immunity
-        if (evt.getEntity() instanceof Unit unit && (
-            evt.getSource() == DamageSource.ON_FIRE || evt.getSource() == DamageSource.IN_FIRE
-        )) {
-            boolean hasImmunityResearch = ResearchServerEvents.playerHasResearch(unit.getOwnerName(),
-                ResearchFireResistance.itemName
-            );
-            if (hasImmunityResearch && unit.getFaction() == Faction.PIGLINS) {
-                evt.setCanceled(true);
-            }
         }
 
         // prevent friendly fire damage from ranged units (unless specifically targeted)

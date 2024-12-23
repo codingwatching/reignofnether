@@ -5,9 +5,9 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.SpiderRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.monster.CaveSpider;
+import net.minecraft.world.entity.monster.Spider;
 
-public class PoisonSpiderUnitRenderer extends SpiderRenderer<CaveSpider> {
+public class PoisonSpiderUnitRenderer extends SpiderRenderer<Spider> {
 
     private static final ResourceLocation CAVE_SPIDER_LOCATION = new ResourceLocation("textures/entity/spider/cave_spider.png");
 
@@ -15,11 +15,11 @@ public class PoisonSpiderUnitRenderer extends SpiderRenderer<CaveSpider> {
         super(p_173946_, ModelLayers.CAVE_SPIDER);
     }
 
-    protected void scale(CaveSpider pLivingEntity, PoseStack pMatrixStack, float pPartialTickTime) {
+    protected void scale(Spider pLivingEntity, PoseStack pMatrixStack, float pPartialTickTime) {
         pMatrixStack.scale(1.0f, 1.0f, 1.0f);
     }
 
-    public ResourceLocation getTextureLocation(CaveSpider pEntity) {
+    public ResourceLocation getTextureLocation(Spider pEntity) {
         return CAVE_SPIDER_LOCATION;
     }
 }

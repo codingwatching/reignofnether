@@ -24,6 +24,7 @@ import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.commands.CommandSourceStack;
@@ -31,6 +32,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -42,7 +44,6 @@ import net.minecraft.world.inventory.MenuConstructor;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
@@ -103,21 +104,6 @@ public class PlayerServerEvents {
         data.rtsPlayers.addAll(rtsPlayers);
         data.save();
         serverLevel.getDataStorage().save();
-    }
-
-    @SubscribeEvent
-    public static void onCommandUsed(CommandEvent evt) {
-        List<ParsedCommandNode<CommandSourceStack>> nodes = evt.getParseResults().getContext().getNodes();
-        if (nodes.size() >= 2 &&
-                nodes.get(0).getNode().getName().equals("gamerule") &&
-                nodes.get(1).getNode().getName().equals("maxPopulation")) {
-
-            Map<String, ParsedArgument<CommandSourceStack, ?>> args = evt.getParseResults().getContext().getArguments();
-            if (args.containsKey("value")) {
-                UnitServerEvents.maxPopulation = (int) args.get("value").getResult();
-                PlayerClientboundPacket.syncMaxPopulation(UnitServerEvents.maxPopulation);
-            }
-        }
     }
 
     @SubscribeEvent
@@ -211,11 +197,10 @@ public class PlayerServerEvents {
             }
         }
         if (rtsSyncingEnabled) {
-            for (LivingEntity entity : UnitServerEvents.getAllUnits())
-                if (entity instanceof Unit unit) {
+            for (LivingEntity entity : UnitServerEvents.getAllUnits()) {
+                if (entity instanceof Unit unit)
                     UnitSyncClientboundPacket.sendSyncResourcesPacket(unit);
-                }
-
+            }
             ResearchServerEvents.syncResearch(playerName);
             ResearchServerEvents.syncCheats(playerName);
         }

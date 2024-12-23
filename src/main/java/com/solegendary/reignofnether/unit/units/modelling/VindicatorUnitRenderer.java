@@ -17,7 +17,7 @@ public class VindicatorUnitRenderer extends AbstractVillagerUnitRenderer<Vindica
     private static final ResourceLocation VINDICATOR_UNIT = new ResourceLocation("reignofnether", "textures/entities/vindicator_unit.png");
 
     public VindicatorUnitRenderer(EntityRendererProvider.Context p_174439_) {
-        super(p_174439_, new VillagerUnitModel<>(p_174439_.bakeLayer(ModelLayers.VINDICATOR)), 0.5F);
+        super(p_174439_, new VillagerUnitModel<>(p_174439_.bakeLayer(VillagerUnitModel.LAYER_LOCATION)), 0.5F);
         this.addLayer(new ItemInHandLayer<VindicatorUnit, VillagerUnitModel<VindicatorUnit>>(this, p_174439_.getItemInHandRenderer()) {
             public void render(PoseStack p_116352_, MultiBufferSource p_116353_, int p_116354_, VindicatorUnit unit, float p_116356_, float p_116357_, float p_116358_, float p_116359_, float p_116360_, float p_116361_) {
                 if (unit.getTarget() != null || (unit.getAttackBuildingGoal() instanceof MeleeAttackBuildingGoal mabg && mabg.getBuildingTarget() != null)) {

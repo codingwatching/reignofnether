@@ -4,7 +4,6 @@ import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
-import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -143,7 +142,7 @@ public class ZombiePiglinUnit extends ZombifiedPiglin implements Unit, AttackerU
                 .add(Attributes.ATTACK_DAMAGE, ZombiePiglinUnit.attackDamage)
                 .add(Attributes.ARMOR, ZombiePiglinUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, ZombiePiglinUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0);
     }
 

@@ -38,7 +38,7 @@ public class TownCentre extends ProductionBuilding implements RangeIndicator {
     public final static ResourceCost cost = ResourceCosts.TOWN_CENTRE;
 
     // distance you can move away from a town centre before being turned back into a villager
-    public static final int MILITIA_RANGE = 50;
+    public static final int MILITIA_RANGE = 60;
     private final Set<BlockPos> militiaBorderBps = new HashSet<>();
 
     public TownCentre(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
@@ -59,9 +59,9 @@ public class TownCentre extends ProductionBuilding implements RangeIndicator {
         this.startingBlockTypes.add(Blocks.GRASS_BLOCK);
         this.startingBlockTypes.add(Blocks.POLISHED_ANDESITE_STAIRS);
 
-        Ability callToArms = new CallToArmsBuilding();
+        Ability callToArms = new CallToArmsBuilding(level);
         this.abilities.add(callToArms);
-        BackToWorkBuilding backToWork = new BackToWorkBuilding();
+        BackToWorkBuilding backToWork = new BackToWorkBuilding(this.level);
         this.abilities.add(backToWork);
 
         if (level.isClientSide()) {
@@ -123,9 +123,7 @@ public class TownCentre extends ProductionBuilding implements RangeIndicator {
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedPop(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward(I18n.get("buildings.villagers.reignofnether.town_centre.tooltip1"), Style.EMPTY),
-                        FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward(I18n.get("buildings.villagers.reignofnether.town_centre.tooltip2"), Style.EMPTY)
+                        FormattedCharSequence.forward(I18n.get("buildings.villagers.reignofnether.town_centre.tooltip1"), Style.EMPTY)
                 ),
                 null
         );

@@ -131,6 +131,13 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     // for going back to work as a villager
     public TargetResourcesSave resourcesSaveData = null;
+    public VillagerProfession profession = VillagerProfession.NONE;
+    public boolean isVeteran = false;
+    public int farmerExp = 0;
+    public int lumberjackExp = 0;
+    public int minerExp = 0;
+    public int masonExp = 0;
+    public int hunterExp = 0;
 
     final static public float attackDamage = 3.0f;
     final static public float attacksPerSecond = 0.5f;
@@ -141,7 +148,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     final static public float maxHealth = 35.0f;
     final static public float armorValue = 0.0f;
-    final static public float movementSpeed = 0.25f;
+    final static public float movementSpeed = 0.28f;
     public int maxResources = 100;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
@@ -151,7 +158,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     public MilitiaUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
-        Ability backToWork = new BackToWorkUnit();
+        Ability backToWork = new BackToWorkUnit(level);
         this.abilities.add(backToWork);
 
         if (level.isClientSide()) {
@@ -167,7 +174,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                 .add(Attributes.ATTACK_DAMAGE, MilitiaUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, MilitiaUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, MilitiaUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.ARMOR, MilitiaUnit.armorValue);
     }
 
@@ -212,6 +219,14 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                     vUnit.getGatherResourceGoal().saveData = resourcesSaveData;
                     vUnit.getGatherResourceGoal().loadState();
                 }
+                vUnit.setProfession(this.profession);
+                vUnit.isVeteran = this.isVeteran;
+                vUnit.farmerExp = this.farmerExp;
+                vUnit.lumberjackExp = this.lumberjackExp;
+                vUnit.minerExp = this.minerExp;
+                vUnit.masonExp = this.masonExp;
+                vUnit.hunterExp = this.hunterExp;
+
                 UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newEntity.getId()));
                 converted = true;
             }

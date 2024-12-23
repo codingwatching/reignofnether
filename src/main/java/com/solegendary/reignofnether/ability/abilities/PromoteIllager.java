@@ -45,7 +45,7 @@ public class PromoteIllager extends Ability {
     Building building;
 
     public PromoteIllager(Building building) {
-        super(UnitAction.PROMOTE_ILLAGER, CD_MAX, RANGE, 0, true, true);
+        super(UnitAction.PROMOTE_ILLAGER, building.getLevel(), CD_MAX, RANGE, 0, true, true);
         this.building = building;
     }
 

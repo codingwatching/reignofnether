@@ -7,7 +7,6 @@ import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
-import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -169,7 +168,7 @@ public class StrayUnit extends Stray implements Unit, AttackerUnit, RangedAttack
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, StrayUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, StrayUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
                 .add(Attributes.ARMOR, StrayUnit.armorValue);
     }
 

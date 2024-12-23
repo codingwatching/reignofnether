@@ -28,9 +28,10 @@ import static com.solegendary.reignofnether.unit.UnitClientEvents.sendUnitComman
 
 public class CallToArmsUnit extends Ability {
 
-    public CallToArmsUnit() {
+    public CallToArmsUnit(Level level) {
         super(
                 UnitAction.CALL_TO_ARMS_UNIT,
+                level,
                 0,
                 0,
                 0,

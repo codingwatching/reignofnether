@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Material;
 
@@ -46,6 +47,14 @@ public class ResourceSources {
         for (List<ResourceSource> resourceSources : List.of(FOOD_BLOCKS, WOOD_BLOCKS, ORE_BLOCKS))
             for (ResourceSource resourceSource : resourceSources)
                 if (resourceSource.validBlocks.contains(block))
+                    return resourceSource;
+        return null;
+    }
+
+    public static ResourceSource getFromBlockState(BlockState bs) {
+        for (List<ResourceSource> resourceSources : List.of(FOOD_BLOCKS, WOOD_BLOCKS, ORE_BLOCKS))
+            for (ResourceSource resourceSource : resourceSources)
+                if (resourceSource.validBlocks.contains(bs.getBlock()))
                     return resourceSource;
         return null;
     }
@@ -154,7 +163,7 @@ public class ResourceSources {
                     List.of(Blocks.CARROTS),
                     List.of(Items.CARROT),
                     TICKS_PER_SECOND * 2,
-                    10,
+                    5,
                     ResourceName.FOOD,
                     (bs) -> bs.getValue(BlockStateProperties.AGE_7) == 7
             ),
@@ -162,7 +171,7 @@ public class ResourceSources {
                     List.of(Blocks.POTATOES),
                     List.of(Items.POTATO, Items.BAKED_POTATO),
                     TICKS_PER_SECOND * 2,
-                    10,
+                    6,
                     ResourceName.FOOD,
                     (bs) -> bs.getValue(BlockStateProperties.AGE_7) == 7
             ),
@@ -170,7 +179,7 @@ public class ResourceSources {
                     List.of(Blocks.BEETROOTS),
                     List.of(Items.BEETROOT),
                     TICKS_PER_SECOND * 2,
-                    10,
+                    5,
                     ResourceName.FOOD,
                     (bs) -> bs.getValue(BlockStateProperties.AGE_3) == 3
             ),
@@ -332,57 +341,57 @@ public class ResourceSources {
             new ResourceSource("Tier 1 Nether Ores",
                     List.of(Blocks.NETHER_QUARTZ_ORE),
                     List.of(Items.QUARTZ),
-                    TICKS_PER_SECOND * 30,
-                    48,
+                    TICKS_PER_SECOND * 45,
+                    60,
                     ResourceName.ORE
             ),
             new ResourceSource("Tier 2 Nether Ores",
                     List.of(Blocks.NETHER_GOLD_ORE),
                     List.of(Items.NETHER_GOLD_ORE),
-                    TICKS_PER_SECOND * 30,
-                    72,
+                    TICKS_PER_SECOND * 45,
+                    78,
                     ResourceName.ORE
             ),
             new ResourceSource("Tier 3 Nether Ores",
                     List.of(Blocks.GILDED_BLACKSTONE),
                     List.of(Items.GILDED_BLACKSTONE),
-                    TICKS_PER_SECOND * 30,
+                    TICKS_PER_SECOND * 45,
                     96,
                     ResourceName.ORE
             ),
             new ResourceSource("Tier 4 Nether Ores",
                     List.of(Blocks.ANCIENT_DEBRIS),
                     List.of(Items.ANCIENT_DEBRIS),
-                    TICKS_PER_SECOND * 30,
-                    144,
+                    TICKS_PER_SECOND * 45,
+                    120,
                     ResourceName.ORE
             ),
             new ResourceSource("Tier 1 Ores",
                     List.of(Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE),
                     List.of(Items.COAL),
-                    TICKS_PER_SECOND * 30,
-                    40,
+                    TICKS_PER_SECOND * 45,
+                    50,
                     ResourceName.ORE
             ),
             new ResourceSource("Tier 2 Ores",
                     List.of(Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE, Blocks.IRON_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_LAPIS_ORE, Blocks.DEEPSLATE_REDSTONE_ORE),
                     List.of(Items.RAW_IRON, Items.RAW_COPPER, Items.LAPIS_LAZULI, Items.REDSTONE),
-                    TICKS_PER_SECOND * 30,
-                    60,
+                    TICKS_PER_SECOND * 45,
+                    65,
                     ResourceName.ORE
             ),
             new ResourceSource("Tier 3 Ores",
                     List.of(Blocks.GOLD_ORE, Blocks.EMERALD_ORE, Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_EMERALD_ORE),
                     List.of(Items.RAW_GOLD, Items.EMERALD),
-                    TICKS_PER_SECOND * 30,
+                    TICKS_PER_SECOND * 45,
                     80,
                     ResourceName.ORE
             ),
             new ResourceSource("Tier 4 Ores",
                     List.of(Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE),
                     List.of(Items.DIAMOND),
-                    TICKS_PER_SECOND * 30,
-                    120,
+                    TICKS_PER_SECOND * 45,
+                    100,
                     ResourceName.ORE
             )
     );

@@ -1,10 +1,12 @@
 package com.solegendary.reignofnether.registrars;
 
 import com.solegendary.reignofnether.attackwarnings.AttackWarningServerEvents;
+import com.solegendary.reignofnether.blocks.BlockServerEvents;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.config.ConfigVanillaServerEvents;
 import com.solegendary.reignofnether.fogofwar.FogOfWarServerEvents;
 import com.solegendary.reignofnether.gamemode.GameModeServerEvents;
+import com.solegendary.reignofnether.gamerules.GameruleServerEvents;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourcesServerEvents;
@@ -31,6 +33,8 @@ public class ServerEventRegistrar {
      * is executing code on the server side and not the client.
      */
     public void registerServerEvents() {
+        vanillaEventBus.register(GameruleServerEvents.class);
+        vanillaEventBus.register(BlockServerEvents.class);
         vanillaEventBus.register(PlayerServerEvents.class);
         vanillaEventBus.register(ConfigVanillaServerEvents.class);
         vanillaEventBus.register(UnitServerEvents.class);

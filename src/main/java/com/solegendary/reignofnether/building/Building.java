@@ -28,6 +28,8 @@ import com.solegendary.reignofnether.unit.goals.BuildRepairGoal;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.unit.units.monsters.SilverfishUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnitProfession;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -296,9 +298,8 @@ public abstract class Building {
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
                 BlockPos bp = new BlockPos(x, minY, z);
-                if (!(this instanceof AbstractBridge) && isPosInsideBuilding(bp)) {
+                if (!(this instanceof AbstractBridge) && isPosInsideBuilding(bp))
                     continue;
-                }
 
                 float dist = (float) bpTarget.distToCenterSqr(bp.getX(), bp.getY(), bp.getZ());
 
@@ -717,6 +718,15 @@ public abstract class Building {
     private void handleServerTick(ServerLevel serverLevel, float blocksPlaced, float blocksTotal) {
         ArrayList<WorkerUnit> workerUnits = getBuilders(serverLevel);
         int builderCount = workerUnits.size();
+
+        for (WorkerUnit workerUnit : workerUnits) {
+            if (workerUnit instanceof VillagerUnit vUnit && vUnit.getUnitProfession() == VillagerUnitProfession.MASON) {
+                if (vUnit.isVeteran())
+                    builderCount += 2;
+                else
+                    builderCount += 1;
+            }
+        }
         boolean hasFastBuildCheat = ResearchServerEvents.playerHasCheat(this.ownerName, "warpten");
 
         // place a block if the tick has run down
@@ -762,8 +772,19 @@ public abstract class Building {
 
                 if (msToNextBuild <= 0) {
                     msToNextBuild = msPerBuild;
-                    String builderName = ((Unit) workerUnits.get(new Random().nextInt(builderCount))).getOwnerName();
-                    buildNextBlock(serverLevel, builderName);
+                    Collections.shuffle(workerUnits);
+                    if (!workerUnits.isEmpty()) {
+                        WorkerUnit wUnit = workerUnits.get(0);
+                        String ownerName = ((Unit) wUnit).getOwnerName();
+
+                        int numBuildingsOwned = BuildingServerEvents.getBuildings().stream().filter(
+                                b -> b.ownerName.equals(ownerName)
+                        ).toList().size();
+                        if (wUnit instanceof VillagerUnit vUnit && numBuildingsOwned > 1)
+                            vUnit.incrementMasonExp();
+
+                        buildNextBlock(serverLevel, ownerName);
+                    }
                 }
             } else if ((selfBuilding || hasFastBuildCheat) && !isBuilt) {
                 buildNextBlock(serverLevel, ownerName);

@@ -17,10 +17,12 @@
         "ThrownPotionMixin",
         "VanillaPacketFilterAccessor",
         "WitchMixin",
-        "firedamage.BaseFireBlockMixin",
-        "firedamage.FireBlockMixin",
-        "firedamage.MagmaBlockMixin",
-        "firedamage.WalkNodeEvaluatorMixin"
+        "MobMixin",
+        "fire.BaseFireBlockMixin",
+        "fire.FireBlockMixin",
+        "fire.MagmaBlockMixin",
+        "fire.SoulFireBlockMixin",
+        "fire.WalkNodeEvaluatorMixin"
     ],
     "minVersion": "0.8",
     "client": [
@@ -30,7 +32,6 @@
         "ForgeGuiMixin",
         "FrustumMixin",
         "ItemInHandLayerMixin",
-        "MobMixin",
         "MobRendererMixin",
         "OrthoViewMixin",
         "RenderChunkRegionMixin",

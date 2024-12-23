@@ -16,7 +16,7 @@ public class ZombieVillagerUnitRenderer extends AbstractVillagerUnitRenderer<Zom
     private static final ResourceLocation ZOMBIE_VILLAGER_UNIT = new ResourceLocation("reignofnether", "textures/entities/zombie_villager_unit.png");
 
     public ZombieVillagerUnitRenderer(EntityRendererProvider.Context p_174439_) {
-        super(p_174439_, new VillagerUnitModel<>(p_174439_.bakeLayer(ModelLayers.VINDICATOR)), 0.5F);
+        super(p_174439_, new VillagerUnitModel<>(p_174439_.bakeLayer(VillagerUnitModel.LAYER_LOCATION)), 0.5F);
         this.addLayer(new ItemInHandLayer<ZombieVillagerUnit, VillagerUnitModel<ZombieVillagerUnit>>(this, p_174439_.getItemInHandRenderer()) {
             public void render(PoseStack pose, MultiBufferSource mbs, int p_116354_, ZombieVillagerUnit unit, float p_116356_, float p_116357_, float p_116358_, float p_116359_, float p_116360_, float p_116361_) {
                 if (unit.getBuildRepairGoal().isBuilding() ||

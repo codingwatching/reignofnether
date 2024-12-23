@@ -29,6 +29,7 @@ public class DisconnectPortal extends Ability {
     public DisconnectPortal(Building building) {
         super(
             UnitAction.DISCONNECT_PORTAL,
+            building.getLevel(),
             CD_MAX,
             RANGE,
             0,

@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.unit.units.monsters.SpiderUnit;
 import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
 import com.solegendary.reignofnether.unit.units.monsters.ZoglinUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
+import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.unit.units.villagers.IronGolemUnit;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
@@ -17,6 +18,7 @@ import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.monster.Zombie;
 
 import java.util.Random;
@@ -34,6 +36,9 @@ public class MeleeAttackBuildingGoal extends MoveToTargetBlockGoal {
 
     private Building buildingTarget;
 
+    protected final int RECALC_COOLDOWN_MAX = 10;
+    protected int recalcCooldown = 0; // limit start() used by canContinueToUse
+
     public MeleeAttackBuildingGoal(Mob mob) {
         super(mob, true, 0);
     }
@@ -44,8 +49,14 @@ public class MeleeAttackBuildingGoal extends MoveToTargetBlockGoal {
             // for some reason, isDone() can sometimes be true even when moveTarget is nonnull and
             // we haven't reached the target, esp. for Brutes
             if (this.mob.getNavigation().isDone() && moveTarget != null &&
-                    this.mob.getOnPos().distSqr(moveTarget) > 1)
-                this.start();
+                this.mob.getOnPos().distSqr(moveTarget) > 1 && !isAttacking()) {
+                if (recalcCooldown > 0) {
+                    recalcCooldown -= 1;
+                } else {
+                    recalcCooldown = RECALC_COOLDOWN_MAX;
+                    this.start();
+                }
+            }
 
             calcMoveTarget();
             if (buildingTarget.getBlocksPlaced() <= 0) {
@@ -86,6 +97,9 @@ public class MeleeAttackBuildingGoal extends MoveToTargetBlockGoal {
                     if (new Random().nextDouble(1.0f) < damageFloat - damageFloor)
                         damageInt += 1;
                     buildingTarget.destroyRandomBlocks(damageInt);
+
+                    if (mob instanceof Slime slime && slime.isOnGround())
+                        slime.jumpFromGround();
                 }
             }
         }

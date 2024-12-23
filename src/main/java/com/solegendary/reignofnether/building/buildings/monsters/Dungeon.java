@@ -71,7 +71,7 @@ public class Dungeon extends ProductionBuilding {
             hotkey,
             () -> BuildingClientEvents.getBuildingToPlace() == Dungeon.class,
             () -> false,
-            () -> BuildingClientEvents.hasFinishedBuilding(Laboratory.buildingName) ||
+            () -> BuildingClientEvents.hasFinishedBuilding(Graveyard.buildingName) ||
                     ResearchClient.hasCheat("modifythephasevariance"),
             () -> BuildingClientEvents.setBuildingToPlace(Dungeon.class),
             null,

@@ -213,7 +213,8 @@ public class Portal extends ProductionBuilding implements NetherConvertingBuildi
                         HoglinProd.getStartButton(this, Keybindings.keyE),
                         BlazeProd.getStartButton(this, Keybindings.keyR),
                         WitherSkeletonProd.getStartButton(this, Keybindings.keyT),
-                        GhastProd.getStartButton(this, Keybindings.keyY)
+                        MagmaCubeProd.getStartButton(this, Keybindings.keyY),
+                        GhastProd.getStartButton(this, Keybindings.keyU)
                     );
                 }
             }
