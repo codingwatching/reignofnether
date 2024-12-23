@@ -605,13 +605,12 @@ public class UnitServerEvents {
                 ResearchHeavyTridents.itemName
             );
         }
-        if (projectile instanceof Fireball && shooter instanceof BlazeUnit) {
+        if (shooter instanceof SlimeUnit slimeUnit && slimeUnit.isTiny())
             return true;
-        }
-
-        if (projectile instanceof AbstractArrow) {
+        if (projectile instanceof Fireball && shooter instanceof BlazeUnit)
             return true;
-        }
+        if (projectile instanceof AbstractArrow)
+            return true;
 
         return evt.getSource().isMagic() && evt.getSource() instanceof IndirectEntityDamageSource
             && (!(shooter instanceof EvokerUnit));

@@ -260,9 +260,6 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(getUnitAttackDamage());
         this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(getKnockbackResistance());
 
-        if (pSize == 1)
-            this.getAttribute(Attributes.ATTACK_KNOCKBACK).setBaseValue(0);
-
         if (pResetHealth)
             this.setHealth(this.getMaxHealth());
     }

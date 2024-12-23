@@ -25,8 +25,6 @@
 Features
 --------
 
-[❌] slimes with an attack target sometimes stop attacking
-
 Villager Professions
     [❌] Farmer arms are using the hat rim texture
 
