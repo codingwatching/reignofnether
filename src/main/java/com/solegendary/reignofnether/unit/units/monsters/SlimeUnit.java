@@ -281,13 +281,13 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
 
     protected int getMaxHealthForSize(int size) {
         if (size >= 6)
-            return 160;
+            return 180;
         else if (size == 5)
-            return 130;
+            return 145;
         else if (size == 4)
-            return 100;
+            return 110;
         else if (size == 3)
-            return 70;
+            return 75;
         else if (size == 2)
             return 40;
         else
