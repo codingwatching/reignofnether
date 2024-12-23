@@ -9,7 +9,6 @@ import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.research.ResearchClient;
-import com.solegendary.reignofnether.research.researchItems.ResearchSlimeConversion;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.units.monsters.SlimeProd;
@@ -29,28 +28,30 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
+import static com.solegendary.reignofnether.building.BuildingUtils.getMinCorner;
 
-public class Slimesmith extends ProductionBuilding {
+public class SlimePit extends ProductionBuilding {
 
-    public final static String buildingName = "Slimesmith";
-    public final static String structureName = "basalt_springs";
-    public final static ResourceCost cost = ResourceCosts.SLIMESMITH;
+    public final static String buildingName = "Slime Pit";
+    public final static String structureName = "slime_pit";
+    public final static ResourceCost cost = ResourceCosts.SLIME_PIT;
 
-    public Slimesmith(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
+    public SlimePit(Level level, BlockPos originPos, Rotation rotation, String ownerName) {
         super(level, originPos, rotation, ownerName, getAbsoluteBlockData(getRelativeBlockData(level), level, originPos, rotation), false);
         this.name = buildingName;
         this.ownerName = ownerName;
-        this.portraitBlock = Blocks.POLISHED_BLACKSTONE_BRICKS;
+        this.portraitBlock = Blocks.SLIME_BLOCK;
         this.icon = new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/slime.png");
 
-        this.canSetRallyPoint = false;
+        this.canSetRallyPoint = true;
 
         this.foodCost = cost.food;
         this.woodCost = cost.wood;
         this.oreCost = cost.ore;
         this.popSupply = cost.population;
 
-        this.startingBlockTypes.add(Blocks.POLISHED_BLACKSTONE_BRICKS);
+        this.startingBlockTypes.add(Blocks.POLISHED_DEEPSLATE);
+        this.startingBlockTypes.add(Blocks.COBBLED_DEEPSLATE);
 
         this.explodeChance = 0.2f;
 
@@ -68,24 +69,28 @@ public class Slimesmith extends ProductionBuilding {
 
     public static AbilityButton getBuildButton(Keybinding hotkey) {
         return new AbilityButton(
-            Slimesmith.buildingName,
+            SlimePit.buildingName,
             new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/slime.png"),
             hotkey,
-            () -> BuildingClientEvents.getBuildingToPlace() == Slimesmith.class,
+            () -> BuildingClientEvents.getBuildingToPlace() == SlimePit.class,
             () -> false,
             () -> BuildingClientEvents.hasFinishedBuilding(Graveyard.buildingName) ||
                     ResearchClient.hasCheat("modifythephasevariance"),
-            () -> BuildingClientEvents.setBuildingToPlace(Slimesmith.class),
+            () -> BuildingClientEvents.setBuildingToPlace(SlimePit.class),
             null,
             List.of(
-                FormattedCharSequence.forward(I18n.get("buildings.monsters.reignofnether.slimesmith"), Style.EMPTY.withBold(true)),
+                FormattedCharSequence.forward(I18n.get("buildings.monsters.reignofnether.slime_pit"), Style.EMPTY.withBold(true)),
                 ResourceCosts.getFormattedCost(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("buildings.monsters.reignofnether.slimesmith.tooltip1"), Style.EMPTY),
+                FormattedCharSequence.forward(I18n.get("buildings.monsters.reignofnether.slime_pit.tooltip1"), Style.EMPTY),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("buildings.monsters.reignofnether.slimesmith.tooltip3"), Style.EMPTY)
+                FormattedCharSequence.forward(I18n.get("buildings.monsters.reignofnether.slime_pit.tooltip3"), Style.EMPTY)
             ),
             null
         );
+    }
+
+    public BlockPos getDefaultOutdoorSpawnPoint() {
+        return getMinCorner(this.blocks).offset(-spawnRadiusOffset + 4, 0, -spawnRadiusOffset + 9);
     }
 }

@@ -298,9 +298,8 @@ public abstract class Building {
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
                 BlockPos bp = new BlockPos(x, minY, z);
-                if (!(this instanceof AbstractBridge) && isPosInsideBuilding(bp)) {
+                if (!(this instanceof AbstractBridge) && isPosInsideBuilding(bp))
                     continue;
-                }
 
                 float dist = (float) bpTarget.distToCenterSqr(bp.getX(), bp.getY(), bp.getZ());
 

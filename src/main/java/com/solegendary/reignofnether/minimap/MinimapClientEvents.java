@@ -39,6 +39,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,6 +68,8 @@ public class MinimapClientEvents {
 
     private static final int UNIT_RADIUS = 3;
     private static final int UNIT_THICKNESS = 1;
+    private static final int PLAYER_RADIUS = 5;
+    private static final int PLAYER_THICKNESS = 1;
     private static final int BUILDING_RADIUS = 7;
     private static final int BUILDING_THICKNESS = 2;
 
@@ -530,6 +533,14 @@ public class MinimapClientEvents {
                 }
             }
         }
+        // draw players
+        if (MC.level != null) {
+            for (Player player : MC.level.players()) {
+                if (!FogOfWarClientEvents.isInBrightChunk(player))
+                    continue;
+                drawPlayerOnMap(player.getOnPos().getX(), player.getOnPos().getZ(), player);
+            }
+        }
 
         // draw units
         for (LivingEntity entity : UnitClientEvents.getAllUnits()) {
@@ -577,8 +588,8 @@ public class MinimapClientEvents {
 
                     // if pixel is on the edge of the square keep it coloured black
                     if (!(
-                        x0 < UNIT_THICKNESS || x0 >= (UNIT_RADIUS * 2) - UNIT_THICKNESS || z0 < UNIT_THICKNESS
-                            || z0 >= (UNIT_RADIUS * 2) - UNIT_THICKNESS
+                        x0 < UNIT_THICKNESS || x0 >= (UNIT_RADIUS * 2) - UNIT_THICKNESS ||
+                        z0 < UNIT_THICKNESS || z0 >= (UNIT_RADIUS * 2) - UNIT_THICKNESS
                     )) {
                         switch (relationship) {
                             case OWNED -> rgb = 0x00FF00;
@@ -586,6 +597,42 @@ public class MinimapClientEvents {
                             case HOSTILE -> rgb = 0xFF0000;
                             case NEUTRAL -> rgb = 0xFFFF00;
                         }
+                    }
+                    int xN = x - xc_world + (mapGuiRadius * 2);
+                    int zN = z - zc_world + (mapGuiRadius * 2);
+
+                    mapColoursOverlays[xN][zN] = MiscUtil.reverseHexRGB(rgb) | (0xFF << 24);
+                }
+            }
+        }
+    }
+
+    private static void drawPlayerOnMap(int xc, int zc, Player player) {
+        if (MC.player == null)
+            return;
+        String thisPlayerName = MC.player.getName().getString();
+        String thatPlayerName = player.getName().getString();
+        if (thisPlayerName.equals(thatPlayerName))
+            return;
+        if (player.isSpectator() || player.isCreative())
+            return;
+
+        for (int x = xc - PLAYER_RADIUS; x < xc + PLAYER_RADIUS; x++) {
+            for (int z = zc - PLAYER_RADIUS; z < zc + PLAYER_RADIUS; z++) {
+                if (isWorldXZinsideMap(x, z)) {
+                    int x0 = x - xc + PLAYER_RADIUS;
+                    int z0 = z - zc + PLAYER_RADIUS;
+                    int rgb = 0x000000;
+
+                    // if pixel is on the edge of the square keep it coloured black
+                    if (!(
+                        x0 < PLAYER_THICKNESS || x0 >= (PLAYER_RADIUS * 2) - PLAYER_THICKNESS ||
+                        z0 < PLAYER_THICKNESS || z0 >= (PLAYER_RADIUS * 2) - PLAYER_THICKNESS
+                    )) {
+                        if (AllianceSystem.isAllied(thisPlayerName, thatPlayerName))
+                            rgb = 0x3232FF;
+                        else
+                            rgb = 0xFF0000;
                     }
                     int xN = x - xc_world + (mapGuiRadius * 2);
                     int zN = z - zc_world + (mapGuiRadius * 2);

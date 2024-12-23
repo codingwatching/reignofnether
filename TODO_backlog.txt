@@ -51,6 +51,7 @@ Features
 
 [❌] Shift queueing actions
 
+
 Bugfixes
 --------
 
@@ -58,7 +59,7 @@ Bugfixes
 
 [❌] Cobwebs in a spider lair should not slow down anything
 
-
+[❌] Dying in survival puts you in a bugged survival mode
 
 
 

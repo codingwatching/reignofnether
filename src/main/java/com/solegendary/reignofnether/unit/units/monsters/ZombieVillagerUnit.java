@@ -186,7 +186,7 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
             this.abilityButtons.add(Graveyard.getBuildButton(Keybindings.keyY));
             this.abilityButtons.add(Dungeon.getBuildButton(Keybindings.keyU));
             this.abilityButtons.add(SpiderLair.getBuildButton(Keybindings.keyI));
-            this.abilityButtons.add(Slimesmith.getBuildButton(Keybindings.keyO));
+            this.abilityButtons.add(SlimePit.getBuildButton(Keybindings.keyO));
             this.abilityButtons.add(Laboratory.getBuildButton(Keybindings.keyP));
             this.abilityButtons.add(Stronghold.getBuildButton(Keybindings.keyL));
             this.abilityButtons.add(SpruceBridge.getBuildButton(Keybindings.keyC));

@@ -58,7 +58,7 @@ public class ResourceCosts {
     public static final ResourceCost DUNGEON = new ResourceCost(ID, "DUNGEON");
     public static final ResourceCost LABORATORY = new ResourceCost(ID, "LABORATORY");
     public static final ResourceCost DARK_WATCHTOWER = new ResourceCost(ID, "DARK_WATCHTOWER");
-    public static final ResourceCost SLIMESMITH = new ResourceCost(ID, "SLIMESMITH");
+    public static final ResourceCost SLIME_PIT = new ResourceCost(ID, "SLIME_PIT");
     public static final ResourceCost STRONGHOLD = new ResourceCost(ID, "STRONGHOLD");
     //Villagers
     public static final ResourceCost TOWN_CENTRE = new ResourceCost(ID, "TOWN_CENTRE");
@@ -207,7 +207,7 @@ public class ResourceCosts {
         DUNGEON.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.DUNGEON);
         LABORATORY.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.LABORATORY);
         DARK_WATCHTOWER.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.DARK_WATCHTOWER);
-        SLIMESMITH.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.SLIMESMITH);
+        SLIME_PIT.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.SLIME_PIT);
         STRONGHOLD.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.STRONGHOLD);
         // Villagers
         TOWN_CENTRE.bakeValues(ReignOfNetherCommonConfigs.BuildingCosts.TOWN_CENTRE);

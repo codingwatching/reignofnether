@@ -40,7 +40,7 @@ public abstract class ProductionBuilding extends Building {
     private BlockPos rallyPoint;
     private LivingEntity rallyPointEntity;
     public boolean canSetRallyPoint = true;
-    protected float spawnRadiusOffset = -0.5f;
+    protected float spawnRadiusOffset = 1f;
 
     public ProductionBuilding(Level level, BlockPos originPos, Rotation rotation, String ownerName, ArrayList<BuildingBlock> blocks, boolean isCapitol) {
         super(level, originPos, rotation, ownerName, blocks, isCapitol);
@@ -90,16 +90,26 @@ public abstract class ProductionBuilding extends Building {
         return spawnPoint;
     }
 
+    // start with the centre pos then go down and look at adjacent blocks until we reach a non-solid block
+    public BlockPos getDefaultOutdoorSpawnPoint() {
+        return getMinCorner(this.blocks).offset(-spawnRadiusOffset, 0, -spawnRadiusOffset);
+    }
+
     public Entity produceUnit(ServerLevel level, EntityType<? extends Unit> entityType, String ownerName, boolean spawnIndoors) {
 
+        LivingEntity rallyEntity = getRallyPointEntity();
         BlockPos spawnPoint;
         if (spawnIndoors) {
             spawnPoint = getIndoorSpawnPoint(level);
             if (entityType == EntityRegistrar.GHAST_UNIT.get())
                 spawnPoint = spawnPoint.offset(0,5,0);
         }
+        else if (rallyPoint != null)
+            spawnPoint = getClosestGroundPos(rallyPoint, (int) spawnRadiusOffset);
+        else if (rallyPointEntity != null)
+            spawnPoint = getClosestGroundPos(rallyPointEntity.getOnPos(), (int) spawnRadiusOffset);
         else
-            spawnPoint = getMinCorner(this.blocks).offset(spawnRadiusOffset, 0, spawnRadiusOffset);
+            spawnPoint = getDefaultOutdoorSpawnPoint();
 
         Entity entity = entityType.spawn(level, null,
                 null,
@@ -108,10 +118,7 @@ public abstract class ProductionBuilding extends Building {
                 true,
                 false
         );
-        BlockPos defaultRallyPoint = getMinCorner(this.blocks).offset(
-                spawnRadiusOffset,
-                0.5f,
-                spawnRadiusOffset);
+        BlockPos defaultRallyPoint = getDefaultOutdoorSpawnPoint();
 
         BlockPos rallyPoint = this.rallyPoint == null ? defaultRallyPoint : this.rallyPoint;
 
@@ -119,7 +126,6 @@ public abstract class ProductionBuilding extends Building {
             unit.setOwnerName(ownerName);
             unit.setupEquipmentAndUpgradesServer();
 
-            LivingEntity rallyEntity = getRallyPointEntity();
             if (rallyEntity != null) {
                 if (ResourceSources.isHuntableAnimal(rallyEntity)) {
                     CompletableFuture.delayedExecutor(500, TimeUnit.MILLISECONDS).execute(() -> {
