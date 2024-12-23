@@ -14,8 +14,12 @@ Features
 Villager Professions
     [❌] Farmer arms are using the hat rim texture
 
+
+
 Bugfixes
 --------
+[✔] Fixed the bloodlust tooltip incorrectly stating a 50% movement speed bonus (it's actually 20%)
+
 
 
 Quality of Life
@@ -24,7 +28,14 @@ Quality of Life
     - Set to any positive value to lock the camera height to above this level
     [❌] Include ghasts and bridges
 
+[✔] Recoloured tridents to fit the piglin colour scheme
+
+
 
 Balancing
 ---------
 [❌] Soulfires created by blazes need to be made temporary
+
+
+Languages
+---------

@@ -741,7 +741,7 @@
     "abilities.reignofnether.wither_cloud.tooltip2": "з смертоностним висушенням який буде розпадатися %d секунд.",
     "abilities.reignofnether.bloodlust": "Кровожерливість",
     "abilities.reignofnether.bloodlust.tooltip1": "Заплати %d життя щоб на 50%% швидше атакувати ",
-    "abilities.reignofnether.bloodlust.tooltip2": "та 50%% швидше передвигатися на %d секунд.",
+    "abilities.reignofnether.bloodlust.tooltip2": "та 20%% швидше передвигатися на %d секунд.",
     "research.reignofnether.bloodlust": "Кровожерливість",
     "research.reignofnether.bloodlust.tooltip1": "Відкриває для Брутів та Мисливців на голов у обміні ",
     "research.reignofnether.bloodlust.tooltip2": "життя на тимчасові підвищення швидкості та швидкості атаки.",
