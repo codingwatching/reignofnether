@@ -132,7 +132,7 @@
   "abilities.reignofnether.wither_cloud.tooltip2": "粒子云在持续 %d 秒后会自行消散。",
   "abilities.reignofnether.bloodlust": "嗜血狂暴",
   "abilities.reignofnether.bloodlust.tooltip1": "主动牺牲 %d 生命值，使攻击速度加快 50%%，",
-  "abilities.reignofnether.bloodlust.tooltip2": "使移动速度也加快 50%%，持续 %d 秒。",
+  "abilities.reignofnether.bloodlust.tooltip2": "使移动速度也加快 20%%，持续 %d 秒。",
   "abilities.reignofnether.call_to_arms_building": "召之即战",
   "abilities.reignofnether.call_to_arms_building.tooltip1": "将邻近的所有村民工人转换为民兵以守卫基地。",
   "abilities.reignofnether.call_to_arms_building.tooltip2": "",
@@ -338,7 +338,8 @@
   "commands.reignofnether.gamerule.max_population": "%s - 设置最高可达到的人口上限",
   "commands.reignofnether.gamerule.unit_griefing": "%s - 使造成爆炸伤害的单位能够破坏方块",
   "commands.reignofnether.gamerule.player_griefing": "%s - 使处于原版生存模式下的玩家能够在对局中破坏地形方块",
-  "commands.reignofnether.gamerule.ground_y_level": "%s - 锁定 RTS 视角屏幕高度、飞行单位高度与桥梁高度",
+  "commands.reignofnether.gamerule.ground_y_level": "%s - 为 RTS 视角屏幕设定最低高度",
+  "commands.reignofnether.gamerule.flying_max_y_level": "%s - 为飞行单位设定最高高度",
   "commands.reignofnether.gamerule.improved_pathfinding": "%s - 提升单位寻路算法准确度，但会使 CPU 开销更大",
 
   "controls.reignofnether.toggle_cam": "F12 - 切换原版/RTS 视角",
