@@ -243,7 +243,8 @@ public class SurvivalServerEvents {
     // 1min == 1200, but is applied twice per cycle (dawn and dusk), so effectively 1min == 600
     public static long getDifficultyTimeModifier() {
         return switch (difficulty) {
-            default -> 3000; // 15mins per day
+            default -> 0; // 20mins per day
+            case EASY -> 3000; // 15mins per day
             case MEDIUM -> 4800; // 12mins per day
             case HARD -> 6600; // 9mins per day
             case EXTREME -> 8400; // 6mins per day

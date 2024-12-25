@@ -6,17 +6,20 @@ import com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
+import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 import java.util.Random;
 
 import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
+import static com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner.checkAndApplyArmour;
 import static com.solegendary.reignofnether.survival.spawners.WaveSpawner.getModifiedPopCost;
 
 public class WavePortal {
@@ -72,6 +75,7 @@ public class WavePortal {
         Entity entity = portal.produceUnit(level, mobType, ENEMY_OWNER_NAME, true);
 
         if (entity instanceof Unit unit) {
+            checkAndApplyArmour((LivingEntity) unit, wave.highestUnitTier);
 
             if (wave.highestUnitTier >= 3 && entity instanceof HoglinUnit hoglinUnit) {
                 Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.HEADHUNTER_UNIT.get(),
@@ -82,6 +86,9 @@ public class WavePortal {
                         initialSpawnPop -= getModifiedPopCost(unit);
                 }
             }
+
+            if (unit instanceof MagmaCubeUnit magmaCubeUnit)
+                magmaCubeUnit.setSize(wave.highestUnitTier, true);
 
             List<Unit> enemies = SurvivalServerEvents.getCurrentEnemies().stream().map(e -> e.unit).toList();
             if (!enemies.contains(unit))

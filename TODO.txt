@@ -1,5 +1,5 @@
 
-1.19.2-1.0.12a
+1.19.2-1.1.0
 -------------
 
 - Done and tested
@@ -11,31 +11,53 @@
 Features
 --------
 
-Villager Professions
-    [❌] Farmer arms are using the hat rim texture
+[❌] Add to main game build
 
+[❌] Enemies can use all sorts of abilities, this includes:
+    - Spiders will autocast webs
+    - Evokers summon vexes once in range of enemies
+    - Wardens will sonic boom the first enemy or building that they see
+    - Piglin Brutes will raise their shields while targeting ranged units or buildings
+    - Ravagers will roar when reduced to half HP
+
+[❌] Spiders and spider jockeys now prioritise attacking your workers
+[❌] Wither Skeletons prioritise attacking the highest HP unit that they can see
+
+[✔] Enemy tiers now go up to tier 6, starting at wave 16 (previously capped at tier 5, at wave 13)
+
+[🟡] Enemy units now gain upgrades, enchantments and armor in higher tiers
+
+[🟡] Added magma cubes and slimes - spawning from tier 2 waves onwards
+    - Their size is equal to the current wave tier
+
+[🟡] Added a difficulty below easy called beginner, which has a full vanilla length day/night cycle (20mins)
 
 
 Bugfixes
 --------
+[✔] Ranged ground units now target the nearest unit instead of the nearest building
 
-- Fixed slimes/cubes taking damage when consuming other slimes/cubes
-- Autocasting consume no longer looks for tiny slimes (because they won't increase size, only heal slightly)
-- Fixed the bloodlust tooltip incorrectly stating a 50% movement speed increase (it's actually 20%)
-- Recoloured tridents to fit the piglin colour scheme
-- changed /gamerule groundYLevel to be the minimum camera height instead of the locked height, and default is now 0
-- fixed /gamerule improvedPathfinding not working for some new units
-- added /gamerule flyingMaxYLevel (default 320) to limit the height of flying units like ghasts
+[❌] Fixed a bug where teams would randomly switch
+
+[❌] Disable wave survival and gamemode button on tutorial world
+
+
 
 Quality of Life
 ---------------
-[🟡] Added /gamerule  bridges
+[❌] Added /gamerule for bridges over void
 
-
+[❌] /rts-surrender should issue a stop command to all of that players' units
 
 Balancing
 ---------
+[❌] Ghasts can now use transport portals
+
 [❌] Soulfires created by blazes need to be made temporary
+
+[✔] Time now begins at dusk on the first day
+    - This means day 1 is no longer half the length of other days
+
 
 
 Languages

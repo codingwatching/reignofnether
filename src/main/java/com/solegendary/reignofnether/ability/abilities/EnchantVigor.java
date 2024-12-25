@@ -17,7 +17,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -29,6 +28,7 @@ public class EnchantVigor extends EnchantAbility {
 
     private static final UnitAction ENCHANT_ACTION = UnitAction.ENCHANT_VIGOR;
     public static final Enchantment actualEnchantment = Enchantments.UNBREAKING;
+    public static final int enchantLevel = 1;
     public static final float cooldownMultiplier = 0.70f;
 
     public EnchantVigor(Library library) {
@@ -84,7 +84,9 @@ public class EnchantVigor extends EnchantAbility {
     @Override
     protected void doEnchant(LivingEntity entity) {
         ItemStack item = entity.getItemBySlot(EquipmentSlot.MAINHAND);
-        EnchantmentHelper.setEnchantments(new HashMap<>(), item);
-        item.enchant(actualEnchantment, 1);
+        if (item != ItemStack.EMPTY) {
+            EnchantmentHelper.setEnchantments(new HashMap<>(), item);
+            item.enchant(actualEnchantment, enchantLevel);
+        }
     }
 }

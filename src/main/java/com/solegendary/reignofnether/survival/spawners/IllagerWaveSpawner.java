@@ -1,18 +1,28 @@
 package com.solegendary.reignofnether.survival.spawners;
 
+import com.solegendary.reignofnether.ability.abilities.*;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
+import com.solegendary.reignofnether.research.ResearchServerEvents;
+import com.solegendary.reignofnether.research.researchItems.ResearchEvokerVexes;
+import com.solegendary.reignofnether.research.researchItems.ResearchHeavyTridents;
+import com.solegendary.reignofnether.research.researchItems.ResearchSoulFireballs;
 import com.solegendary.reignofnether.survival.Wave;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VindicatorUnit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.raid.Raid;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.*;
 
@@ -35,8 +45,8 @@ public class IllagerWaveSpawner {
                 EntityRegistrar.VINDICATOR_UNIT.get(),
                 EntityRegistrar.PILLAGER_UNIT.get(),
                 EntityRegistrar.IRON_GOLEM_UNIT.get()
-                //EntityRegistrar.WITCH.get()
                 // + low tier enchants
+                // removes tier 1
         ));
         ILLAGER_UNITS.put(3, List.of(
                 EntityRegistrar.VINDICATOR_UNIT.get(),
@@ -50,11 +60,10 @@ public class IllagerWaveSpawner {
                 // + evokers can use vexes
         ));
         ILLAGER_UNITS.put(5, List.of(
-                EntityRegistrar.VINDICATOR_UNIT.get(),
-                EntityRegistrar.PILLAGER_UNIT.get(),
                 EntityRegistrar.RAVAGER_UNIT.get()
-                // + Illager captain with resistance/strength and enchanted armor
-                // + Ravager Artillery
+        ));
+        ILLAGER_UNITS.put(6, List.of(
+                // + Ravager Artillery with illager captain rider
         ));
     }
 
@@ -63,8 +72,45 @@ public class IllagerWaveSpawner {
         return units.get(random.nextInt(units.size()));
     }
 
+    public static void checkAndApplyUpgrades(int tier) {
+        if (tier >= 6 && !ResearchServerEvents.playerHasResearch(ENEMY_OWNER_NAME, ResearchEvokerVexes.itemName))
+            ResearchServerEvents.addResearch(ENEMY_OWNER_NAME, ResearchEvokerVexes.itemName);
+    }
+
+    public static void checkAndApplyEnchants(LivingEntity entity, int tier) {
+        Enchantment enchantment = null;
+        int enchantLevel = 1;
+        if (entity instanceof VindicatorUnit vUnit && tier == 2) {
+            enchantment = EnchantMaiming.actualEnchantment;
+            enchantLevel = EnchantMaiming.enchantLevel;
+        }
+        else if (entity instanceof PillagerUnit vUnit && tier == 2) {
+            enchantment = EnchantQuickCharge.actualEnchantment;
+            enchantLevel = EnchantQuickCharge.enchantLevel;
+        }
+        else if (entity instanceof VindicatorUnit vUnit && tier >= 3) {
+            enchantment = EnchantSharpness.actualEnchantment;
+            enchantLevel = EnchantSharpness.enchantLevel;
+        }
+        else if (entity instanceof PillagerUnit vUnit && tier >= 3) {
+            enchantment = EnchantMultishot.actualEnchantment;
+            enchantLevel = EnchantMultishot.enchantLevel;
+        }
+        else if (entity instanceof EvokerUnit vUnit && tier >= 4) {
+            enchantment = EnchantVigor.actualEnchantment;
+            enchantLevel = EnchantVigor.enchantLevel;
+        }
+        ItemStack item = entity.getItemBySlot(EquipmentSlot.MAINHAND);
+        if (enchantment != null && item != ItemStack.EMPTY) {
+            EnchantmentHelper.setEnchantments(new HashMap<>(), item);
+            item.enchant(enchantment, enchantLevel);
+        }
+    }
+
     // spawn illagers from one direction
     public static void spawnIllagerWave(ServerLevel level, Wave wave) {
+        checkAndApplyUpgrades(wave.highestUnitTier);
+
         final int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
         List<BlockPos> spawnBps = getValidSpawnPoints(remainingPop, level, true);
@@ -111,21 +157,30 @@ public class IllagerWaveSpawner {
                     }
                 }
 
-                int tier = random.nextInt(wave.highestUnitTier) + 1;
+                int tier;
+                if (wave.highestUnitTier >= 2 && wave.highestUnitTier < 6)
+                    tier = random.nextInt(wave.highestUnitTier - 1) + 2;
+                else if (wave.highestUnitTier >= 6)
+                    tier = random.nextInt(wave.highestUnitTier - 2) + 1;
+                else
+                    tier = random.nextInt(wave.highestUnitTier) + 1;
+
                 EntityType<? extends Mob> mobType = IllagerWaveSpawner.getRandomUnitOfTier(tier);
 
                 Entity entity = UnitServerEvents.spawnMob(mobType, level, bp.above(), ENEMY_OWNER_NAME);
 
-                if (wave.highestUnitTier >= 5 && entity instanceof RavagerUnit ravagerUnit) {
+                if (wave.highestUnitTier >= 6 && entity instanceof RavagerUnit ravagerUnit) {
                     Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.PILLAGER_UNIT.get(),
                             level, bp.above(), ENEMY_OWNER_NAME);
                     if (entityPassenger instanceof Unit unit) {
+                        entityPassenger.setItemSlot(EquipmentSlot.HEAD, Raid.getLeaderBannerInstance());
                         entityPassenger.startRiding(ravagerUnit);
                         remainingPop -= getModifiedPopCost(unit);
                     }
                 }
 
                 if (entity instanceof Unit unit) {
+                    checkAndApplyEnchants((LivingEntity) unit, wave.highestUnitTier);
                     placeIceOrMagma(bp, level);
                     remainingPop -= getModifiedPopCost(unit);
                     spawnsThisDir += 1;

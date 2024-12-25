@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.research.researchItems.ResearchFireResistan
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.time.NightUtils;
+import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.*;
@@ -283,5 +284,12 @@ public interface Unit {
             return 0.5f;
         }
         return 1.0f;
+    }
+
+    public static Ability getAbility(Unit unit, UnitAction abilityAction) {
+        for (Ability ability : unit.getAbilities())
+            if (ability.action.equals(abilityAction))
+                return ability;
+        return null;
     }
 }

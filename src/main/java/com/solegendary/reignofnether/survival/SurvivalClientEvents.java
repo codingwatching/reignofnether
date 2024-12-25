@@ -10,12 +10,13 @@ public class SurvivalClientEvents {
 
     public static int waveNumber = 1;
     public static boolean isEnabled = false;
-    public static WaveDifficulty difficulty = WaveDifficulty.EASY;
+    public static WaveDifficulty difficulty = WaveDifficulty.BEGINNER;
 
     private static Minecraft MC = Minecraft.getInstance();
 
     public static int getMinutesPerDay() {
         return switch (SurvivalClientEvents.difficulty) {
+            case BEGINNER -> 20;
             case EASY -> 15;
             case MEDIUM -> 12;
             case HARD -> 9;

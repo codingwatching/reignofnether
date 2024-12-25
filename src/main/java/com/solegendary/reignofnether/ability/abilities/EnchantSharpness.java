@@ -31,6 +31,7 @@ public class EnchantSharpness extends EnchantAbility {
 
     private static final UnitAction ENCHANT_ACTION = UnitAction.ENCHANT_SHARPNESS;
     public static final Enchantment actualEnchantment = Enchantments.SHARPNESS;
+    public static final int enchantLevel = 2;
 
     public EnchantSharpness(Library library) {
         super(ENCHANT_ACTION, library, ResourceCosts.ENCHANT_SHARPNESS);
@@ -86,7 +87,9 @@ public class EnchantSharpness extends EnchantAbility {
     @Override
     protected void doEnchant(LivingEntity entity) {
         ItemStack item = entity.getItemBySlot(EquipmentSlot.MAINHAND);
-        EnchantmentHelper.setEnchantments(new HashMap<>(), item);
-        item.enchant(actualEnchantment, 2);
+        if (item != ItemStack.EMPTY) {
+            EnchantmentHelper.setEnchantments(new HashMap<>(), item);
+            item.enchant(actualEnchantment, enchantLevel);
+        }
     }
 }
