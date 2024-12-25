@@ -41,6 +41,7 @@ import java.util.Random;
 import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerWave;
 import static com.solegendary.reignofnether.survival.spawners.MonsterWaveSpawner.spawnMonsterWave;
 import static com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner.spawnPiglinWave;
+import static com.solegendary.reignofnether.time.TimeUtils.getWaveSurvivalTimeModifier;
 
 public class SurvivalServerEvents {
 
@@ -62,6 +63,10 @@ public class SurvivalServerEvents {
     private static ArrayList<Building> lastPortals = new ArrayList<>();
 
     private static ServerLevel serverLevel = null;
+
+    public static WaveDifficulty getDifficulty() {
+        return difficulty;
+    }
 
     public static void saveStage(ServerLevel level) {
         SurvivalSaveData survivalData = SurvivalSaveData.getInstance(level);
@@ -124,8 +129,8 @@ public class SurvivalServerEvents {
                 SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
                 setToStartingNightTime();
             }
-            if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 50 &&
-                    normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 50) {
+            if (lastTime <= TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty) + 50 &&
+                    normTime > TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty) + 50) {
                 startNextWave((ServerLevel) evt.level);
             }
             if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
@@ -249,32 +254,22 @@ public class SurvivalServerEvents {
         }
     }
 
-    // standard vanilla length is 20mins for a full day/night cycle (24000)
-    // 1min == 1200, but is applied twice per cycle (dawn and dusk), so effectively 1min == 600
-    public static long getDifficultyTimeModifier() {
-        return switch (difficulty) {
-            default -> 0; // 20mins per day
-            case EASY -> 3000; // 15mins per day
-            case MEDIUM -> 4800; // 12mins per day
-            case HARD -> 6600; // 9mins per day
-            case EXTREME -> 8400; // 6mins per day
-        };
-    }
+
 
     public static long getDayLength() {
-        return 12000 - getDifficultyTimeModifier();
+        return 12000 - getWaveSurvivalTimeModifier(difficulty);
     }
 
     public static void setToStartingDayTime() {
-        serverLevel.setDayTime(TimeUtils.DAWN + getDifficultyTimeModifier());
+        serverLevel.setDayTime(TimeUtils.DAWN + getWaveSurvivalTimeModifier(difficulty));
     }
 
     public static void setToStartingNightTime() {
-        serverLevel.setDayTime(TimeUtils.DUSK + getDifficultyTimeModifier());
+        serverLevel.setDayTime(TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty));
     }
 
     public static void setToGameStartTime() {
-        serverLevel.setDayTime(TimeUtils.DUSK + getDifficultyTimeModifier() + 60);
+        serverLevel.setDayTime(TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty) + 60);
     }
 
     public static boolean isEnabled() { return isEnabled; }

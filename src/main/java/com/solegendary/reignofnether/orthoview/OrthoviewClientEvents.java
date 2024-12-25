@@ -49,6 +49,7 @@ import static net.minecraft.util.Mth.sign;
  */
 public class OrthoviewClientEvents {
 
+
     public enum LeafHideMethod {
         NONE, AROUND_UNITS_AND_CURSOR, // requires threaded video option
         ALL
@@ -98,6 +99,7 @@ public class OrthoviewClientEvents {
     private static float mouseLeftDownY = 0;
 
     private static float panSensitivityMult = 1.0f;
+    public static final float MAX_PAN_SENSITIVITY = 3.0f;
 
     // by default orthoview players stay at BASE_Y, but can be raised to as high as MAX_Y if they are clipping terrain
     public static double orthoviewPlayerBaseY = 100;
@@ -116,7 +118,7 @@ public class OrthoviewClientEvents {
     }
     public static float getPanSensitivityMult() { return panSensitivityMult; }
     public static void adjustPanSensitivityMult(boolean increase) {
-        if (increase && Math.round(panSensitivityMult * 10) < 25)
+        if (increase && Math.round(panSensitivityMult * 10) < (MAX_PAN_SENSITIVITY * 10))
             panSensitivityMult += 0.1f;
         else if (!increase && Math.round(panSensitivityMult * 10) > 1)
             panSensitivityMult -= 0.1f;

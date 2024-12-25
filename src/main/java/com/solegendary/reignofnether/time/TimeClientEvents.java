@@ -169,7 +169,8 @@ public class TimeClientEvents {
             tooltip.add(timeUntilStr);
 
             if (SurvivalClientEvents.isEnabled)
-                tooltip.add(FormattedCharSequence.forward(I18n.get("time.reignofnether.time_until_next_wave", getTimeUntilStr(serverTime, DUSK)), Style.EMPTY));
+                tooltip.add(FormattedCharSequence.forward(I18n.get("time.reignofnether.time_until_next_wave",
+                        getTimeUntilStrWithOffset(serverTime, DUSK, -getWaveSurvivalTimeModifier(SurvivalClientEvents.difficulty))), Style.EMPTY));
 
             tooltip.add(gameLengthOrWaveNumStr);
 

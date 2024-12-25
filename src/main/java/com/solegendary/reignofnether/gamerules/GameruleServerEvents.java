@@ -69,8 +69,7 @@ public class GameruleServerEvents {
         MinecraftServer server = evt.getEntity().getLevel().getServer();
         if (server != null) {
             int groundYLevel = server.getGameRules().getRule(GameRuleRegistrar.GROUND_Y_LEVEL).get();
-            if (groundYLevel >= 0)
-                PlayerClientboundPacket.setOrthoviewMinY(groundYLevel + 30);
+            PlayerClientboundPacket.setOrthoviewMinY(groundYLevel + 30);
         }
     }
 }

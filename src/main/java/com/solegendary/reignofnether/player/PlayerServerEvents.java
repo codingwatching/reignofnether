@@ -55,6 +55,8 @@ import net.minecraftforge.network.NetworkHooks;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.solegendary.reignofnether.time.TimeUtils.getWaveSurvivalTimeModifier;
+
 // this class tracks all available players so that any serverside functions that need to affect the player can be
 // performed here by sending a client->server packet containing MC.player.getId()
 
@@ -321,7 +323,7 @@ public class PlayerServerEvents {
                 }
             }
             if (SurvivalServerEvents.isEnabled()) {
-                level.setDayTime(TimeUtils.DAWN + SurvivalServerEvents.getDifficultyTimeModifier());
+                level.setDayTime(TimeUtils.DAWN + getWaveSurvivalTimeModifier(SurvivalServerEvents.getDifficulty()));
             } else {
                 level.setDayTime(MONSTER_START_TIME_OF_DAY);
             }
