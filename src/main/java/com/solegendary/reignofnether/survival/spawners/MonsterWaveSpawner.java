@@ -135,7 +135,7 @@ public class MonsterWaveSpawner {
             }
 
             if (wave.highestUnitTier >= 4 && entity instanceof PoisonSpiderUnit poisonSpiderUnit) {
-                Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.SKELETON_UNIT.get(),
+                Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.STRAY_UNIT.get(),
                         level, bp.above(), ENEMY_OWNER_NAME);
                 if (entityPassenger instanceof Unit unit) {
                     entityPassenger.startRiding(poisonSpiderUnit);

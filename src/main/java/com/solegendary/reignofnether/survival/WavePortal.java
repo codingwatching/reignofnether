@@ -5,6 +5,7 @@ import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.units.piglins.GhastUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
 import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
@@ -14,6 +15,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Random;
@@ -73,6 +76,9 @@ public class WavePortal {
 
         // produceUnit spawns them before applying the ownerName, meaning they aren't registered as WaveEnemies automatically
         Entity entity = portal.produceUnit(level, mobType, ENEMY_OWNER_NAME, true);
+
+        if (entity instanceof GhastUnit ghastUnit)
+            ghastUnit.move(MoverType.SELF, new Vec3(0,10,0));
 
         if (entity instanceof Unit unit) {
             checkAndApplyArmour((LivingEntity) unit, wave.highestUnitTier);

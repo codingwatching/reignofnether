@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.survival.spawners;
 
 import com.solegendary.reignofnether.building.Building;
+import com.solegendary.reignofnether.building.BuildingBlock;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 
 import java.util.*;
@@ -136,6 +138,9 @@ public class PiglinWaveSpawner {
                         false,
                         false
                 );
+                if (building != null)
+                    for (BuildingBlock bb : building.getBlocks())
+                        building.getLevel().setBlockAndUpdate(bb.getBlockPos(), Blocks.AIR.defaultBlockState());
             } else
                 failedPortalPlacements += 1;
         }

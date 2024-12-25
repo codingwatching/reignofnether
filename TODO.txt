@@ -37,6 +37,9 @@ Bugfixes
 --------
 [✔] Ranged ground units now target the nearest unit instead of the nearest building
 
+[❌] Enemy portals sometimes spawn inside of trees
+    - Portal doesn't ignite and ghasts get stuck on the trees
+
 [❌] Fixed a bug where teams would randomly switch
 
 [❌] Disable wave survival and gamemode button on tutorial world

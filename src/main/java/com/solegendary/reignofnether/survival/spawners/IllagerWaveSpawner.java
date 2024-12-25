@@ -23,6 +23,7 @@ import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.*;
 
@@ -37,30 +38,31 @@ public class IllagerWaveSpawner {
 
     static {
         ILLAGER_UNITS.put(1, List.of(
+                EntityRegistrar.MILITIA_UNIT.get(),
                 EntityRegistrar.VINDICATOR_UNIT.get(),
                 EntityRegistrar.PILLAGER_UNIT.get()
                 // no enchants
         ));
         ILLAGER_UNITS.put(2, List.of(
                 EntityRegistrar.VINDICATOR_UNIT.get(),
-                EntityRegistrar.PILLAGER_UNIT.get(),
-                EntityRegistrar.IRON_GOLEM_UNIT.get()
-                // + low tier enchants
-                // removes tier 1
+                EntityRegistrar.PILLAGER_UNIT.get()
+                // + 50% chance of low tier enchants
         ));
         ILLAGER_UNITS.put(3, List.of(
-                EntityRegistrar.VINDICATOR_UNIT.get(),
-                EntityRegistrar.PILLAGER_UNIT.get(),
-                EntityRegistrar.EVOKER_UNIT.get()
-                // + high tier enchants on vindicators and pillagers
+                EntityRegistrar.IRON_GOLEM_UNIT.get()
+                // + low tier enchants
         ));
         ILLAGER_UNITS.put(4, List.of(
-                EntityRegistrar.EVOKER_UNIT.get(),
-                EntityRegistrar.RAVAGER_UNIT.get()
+                EntityRegistrar.EVOKER_UNIT.get()
                 // + evokers can use vexes
+                // 50% chance of low or high tier enchants
         ));
         ILLAGER_UNITS.put(5, List.of(
+                EntityRegistrar.VINDICATOR_UNIT.get(),
+                EntityRegistrar.PILLAGER_UNIT.get(),
                 EntityRegistrar.RAVAGER_UNIT.get()
+                // + high tier enchants
+                // removes tier 1
         ));
         ILLAGER_UNITS.put(6, List.of(
                 // + Ravager Artillery with illager captain rider
@@ -79,31 +81,48 @@ public class IllagerWaveSpawner {
 
     public static void checkAndApplyEnchants(LivingEntity entity, int tier) {
         Enchantment enchantment = null;
-        int enchantLevel = 1;
+
         if (entity instanceof VindicatorUnit vUnit && tier == 2) {
-            enchantment = EnchantMaiming.actualEnchantment;
-            enchantLevel = EnchantMaiming.enchantLevel;
+            if (random.nextBoolean())
+                enchantment = EnchantMaiming.actualEnchantment;
         }
         else if (entity instanceof PillagerUnit vUnit && tier == 2) {
+            if (random.nextBoolean())
+                enchantment = EnchantQuickCharge.actualEnchantment;
+        }
+        else if (entity instanceof VindicatorUnit vUnit && tier == 3) {
+            enchantment = EnchantMaiming.actualEnchantment;
+        }
+        else if (entity instanceof PillagerUnit vUnit && tier == 3) {
             enchantment = EnchantQuickCharge.actualEnchantment;
-            enchantLevel = EnchantQuickCharge.enchantLevel;
         }
-        else if (entity instanceof VindicatorUnit vUnit && tier >= 3) {
+        else if (entity instanceof VindicatorUnit vUnit && tier == 4) {
+            if (random.nextBoolean())
+                enchantment = EnchantMaiming.actualEnchantment;
+        }
+        else if (entity instanceof PillagerUnit vUnit && tier == 4) {
+            if (random.nextBoolean())
+                enchantment = EnchantQuickCharge.actualEnchantment;
+        }
+        else if (entity instanceof VindicatorUnit vUnit && tier >= 5) {
             enchantment = EnchantSharpness.actualEnchantment;
-            enchantLevel = EnchantSharpness.enchantLevel;
         }
-        else if (entity instanceof PillagerUnit vUnit && tier >= 3) {
+        else if (entity instanceof PillagerUnit vUnit && tier >= 5) {
             enchantment = EnchantMultishot.actualEnchantment;
-            enchantLevel = EnchantMultishot.enchantLevel;
         }
-        else if (entity instanceof EvokerUnit vUnit && tier >= 4) {
+
+        if (entity instanceof EvokerUnit vUnit && tier == 4) {
+            if (random.nextBoolean())
+                enchantment = EnchantVigor.actualEnchantment;
+        }
+        else if (entity instanceof EvokerUnit vUnit && tier >= 5) {
             enchantment = EnchantVigor.actualEnchantment;
-            enchantLevel = EnchantVigor.enchantLevel;
         }
+
         ItemStack item = entity.getItemBySlot(EquipmentSlot.MAINHAND);
         if (enchantment != null && item != ItemStack.EMPTY) {
             EnchantmentHelper.setEnchantments(new HashMap<>(), item);
-            item.enchant(enchantment, enchantLevel);
+            item.enchant(enchantment, enchantment == Enchantments.SHARPNESS ? 2 : 1);
         }
     }
 
@@ -158,8 +177,8 @@ public class IllagerWaveSpawner {
                 }
 
                 int tier;
-                if (wave.highestUnitTier >= 2 && wave.highestUnitTier < 6)
-                    tier = random.nextInt(wave.highestUnitTier - 1) + 2;
+                if (wave.highestUnitTier == 5)
+                    tier = random.nextInt(wave.highestUnitTier - 1) + 1;
                 else if (wave.highestUnitTier >= 6)
                     tier = random.nextInt(wave.highestUnitTier - 2) + 1;
                 else
