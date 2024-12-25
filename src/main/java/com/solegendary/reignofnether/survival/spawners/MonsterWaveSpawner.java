@@ -113,7 +113,7 @@ public class MonsterWaveSpawner {
 
             int tier;
             if (wave.highestUnitTier >= 6)
-                tier = random.nextInt(wave.highestUnitTier - 1) + 1;
+                tier = random.nextInt(2,5 + 1);
             else
                 tier = random.nextInt(wave.highestUnitTier) + 1;
 

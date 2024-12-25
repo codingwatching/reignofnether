@@ -112,11 +112,10 @@ public class TimeClientEvents {
 
     @SubscribeEvent
     public static void onMousePress(ScreenEvent.MouseButtonPressed.Post evt) {
-        if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_1) {
+        if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_1)
             CLOCK_BUTTON.checkClicked((int) evt.getMouseX(), (int) evt.getMouseY(), true);
-        }
-        //else if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_2)
-        //    CLOCK_BUTTON.checkClicked((int) evt.getMouseX(), (int) evt.getMouseY(), false);
+        else if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_2)
+            CLOCK_BUTTON.checkClicked((int) evt.getMouseX(), (int) evt.getMouseY(), false);
     }
 
     @SubscribeEvent

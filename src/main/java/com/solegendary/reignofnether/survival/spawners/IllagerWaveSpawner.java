@@ -177,10 +177,8 @@ public class IllagerWaveSpawner {
                 }
 
                 int tier;
-                if (wave.highestUnitTier == 5)
-                    tier = random.nextInt(wave.highestUnitTier - 1) + 1;
-                else if (wave.highestUnitTier >= 6)
-                    tier = random.nextInt(wave.highestUnitTier - 2) + 1;
+                if (wave.highestUnitTier >= 5)
+                    tier = random.nextInt(2,5 + 1);
                 else
                     tier = random.nextInt(wave.highestUnitTier) + 1;
 

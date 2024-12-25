@@ -69,7 +69,13 @@ public class WavePortal {
 
     public void doSpawn() {
         Random random = new Random();
-        int tier = random.nextInt(wave.highestUnitTier) + 1;
+
+        int tier;
+        if (wave.highestUnitTier >= 6)
+            tier = random.nextInt(1, 5 + 1);
+        else
+            tier = random.nextInt(wave.highestUnitTier) + 1;
+
         EntityType<? extends Unit> mobType = (EntityType<? extends Unit>) PiglinWaveSpawner.getRandomUnitOfTier(tier);
 
         ServerLevel level = (ServerLevel) portal.getLevel();
