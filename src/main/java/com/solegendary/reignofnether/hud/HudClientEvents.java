@@ -1146,12 +1146,22 @@ public class HudClientEvents {
         Button mapLockButton = MinimapClientEvents.getMapLockButton();
         if (!mapLockButton.isHidden.get()) {
             mapLockButton.render(evt.getPoseStack(),
-                    screenWidth - (mapLockButton.iconSize * 6),
-                    screenHeight - (mapLockButton.iconSize * 2),
+                    screenWidth - (mapLockButton.iconSize * 2),
+                    screenHeight - (mapLockButton.iconSize * 4),
                     mouseX,
                     mouseY
             );
             renderedButtons.add(mapLockButton);
+        }
+        Button nightCirclesButton = MinimapClientEvents.getNightCirclesModeButton();
+        if (!nightCirclesButton.isHidden.get()) {
+            nightCirclesButton.render(evt.getPoseStack(),
+                    screenWidth - (nightCirclesButton.iconSize * 4),
+                    screenHeight - (nightCirclesButton.iconSize * 4),
+                    mouseX,
+                    mouseY
+            );
+            renderedButtons.add(nightCirclesButton);
         }
 
         // ------------------------------

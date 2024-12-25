@@ -1,21 +1,30 @@
 package com.solegendary.reignofnether.survival;
 
+import com.mojang.brigadier.context.ParsedArgument;
+import com.mojang.brigadier.context.ParsedCommandNode;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
+import com.solegendary.reignofnether.gamemode.GameModeClientboundPacket;
+import com.solegendary.reignofnether.player.PlayerClientboundPacket;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.player.RTSPlayer;
 import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.time.TimeUtils;
+import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -26,6 +35,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerWave;
@@ -35,7 +45,7 @@ import static com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner.
 public class SurvivalServerEvents {
 
     private static boolean isEnabled = false;
-    public static Wave nextWave = Wave.getWave(0);
+    public static Wave nextWave = Wave.getWave(17);
     private static WaveDifficulty difficulty = WaveDifficulty.EASY;
     private static final ArrayList<WaveEnemy> enemies = new ArrayList<>();
     public static final String ENEMY_OWNER_NAME = "Enemy";
@@ -330,5 +340,10 @@ public class SurvivalServerEvents {
     public static void waveCleared(ServerLevel level) {
         PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.wave_cleared", true);
         SoundClientboundPacket.playSoundForAllPlayers(SoundAction.ALLY);
+    }
+
+    public static void setWaveNumber(int waveNumber) {
+        nextWave = Wave.getWave(waveNumber);
+        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
     }
 }

@@ -33,7 +33,7 @@ public class WaveSpawner {
     private static final Random random = new Random();
 
     public static int getModifiedPopCost(Unit unit) {
-        return Math.max(1, unit.getPopCost());
+        return Math.max(1, unit.getPopCost() - 1);
     }
 
     public static void placeIceOrMagma(BlockPos bp, Level level) {;

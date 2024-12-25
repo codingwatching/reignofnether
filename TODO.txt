@@ -16,7 +16,7 @@ Features
 [❌] Enemies can use all sorts of abilities, this includes:
     - Spiders will autocast webs
     - Evokers summon vexes once in range of enemies
-    - Wardens will sonic boom the first enemy or building that they see
+    - Wardens will sonic boom the first enemy unit that they see
     - Piglin Brutes will raise their shields while targeting ranged units or buildings
     - Ravagers will roar when reduced to half HP
 
@@ -62,3 +62,5 @@ Balancing
 
 Languages
 ---------
+
+"time.reignofnether.time_until_next_wave": "%s until next wave",

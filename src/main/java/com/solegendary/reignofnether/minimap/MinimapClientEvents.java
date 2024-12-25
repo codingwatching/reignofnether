@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingClientEvents;
+import com.solegendary.reignofnether.building.RangeIndicator;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
@@ -53,6 +54,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
+
+import static com.solegendary.reignofnether.time.TimeClientEvents.getNightCircleModeName;
+import static com.solegendary.reignofnether.time.TimeClientEvents.nightCircleMode;
 
 public class MinimapClientEvents {
 
@@ -192,6 +196,32 @@ public class MinimapClientEvents {
                                 Math.round(OrthoviewClientEvents.getPanSensitivityMult() * 10), 25), Style.EMPTY),
                         FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip2"), Style.EMPTY)
                 )
+        );
+    }
+
+    public static Button getNightCirclesModeButton() {
+        return new Button("Camera Sensitivity",
+                14,
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/blocks/repeating_command_block_front.png"),
+                new ResourceLocation(ReignOfNether.MOD_ID, "textures/hud/icon_frame.png"),
+                null,
+                () -> false,
+                () -> !TutorialClientEvents.isAtOrPastStage(TutorialStage.MINIMAP_CLICK) || !largeMap,
+                () -> true,
+                () -> {
+                    if (nightCircleMode == NightCircleMode.ALL) {
+                        nightCircleMode = NightCircleMode.NO_OVERLAPS;
+                    } else if (nightCircleMode == NightCircleMode.NO_OVERLAPS) {
+                        nightCircleMode = NightCircleMode.OFF;
+                    } else if (nightCircleMode == NightCircleMode.OFF) {
+                        nightCircleMode = NightCircleMode.ALL;
+                    }
+                    for (Building building : BuildingClientEvents.getBuildings())
+                        if (building instanceof RangeIndicator ri)
+                            ri.updateBorderBps();
+                },
+                null,
+                List.of(FormattedCharSequence.forward(I18n.get("time.reignofnether.night_circles", getNightCircleModeName()), Style.EMPTY))
         );
     }
 
