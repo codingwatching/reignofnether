@@ -21,24 +21,12 @@ Features
     - Ravagers will roar when reduced to half HP
 
 [❌] Spiders and spider jockeys now prioritise attacking your workers
+
 [❌] Wither Skeletons prioritise attacking the highest HP unit that they can see
-
-[✔] Enemy tiers now go up to tier 6, starting at wave 16 (previously capped at tier 5, at wave 13)
-
-[🟡] Enemy units now gain upgrades, enchantments and armor in higher tiers
-
-[🟡] Added magma cubes and slimes - spawning from tier 2 waves onwards
-    - Their size is equal to the current wave tier
-
-[🟡] Added a difficulty below easy called beginner, which has a full vanilla length day/night cycle (20mins)
 
 
 Bugfixes
 --------
-[✔] Ranged ground units now target the nearest unit instead of the nearest building
-
-[🟡] Enemy portals sometimes spawn inside of trees
-    - Portal doesn't ignite and ghasts get stuck on the trees
 
 [❌] Fixed a bug where teams would randomly switch
 
@@ -57,9 +45,6 @@ Balancing
 [❌] Ghasts can now use transport portals
 
 [❌] Soulfires created by blazes need to be made temporary
-
-[✔] Time now begins at dusk on the first day
-    - This means day 1 is no longer half the length of other days
 
 
 
