@@ -13,6 +13,8 @@ Features
 
 [❌] Add to main game build
 
+[❌] Next wave indicator (shows potential enemies and upgrades, and definite faction)
+
 [❌] Enemies can use all sorts of abilities, this includes:
     - Spiders will autocast webs
     - Evokers summon vexes once in range of enemies
@@ -25,10 +27,15 @@ Features
 [❌] Wither Skeletons prioritise attacking the highest HP unit that they can see
 
 
+
 Bugfixes
 --------
 
-[❌] Fixed a bug where teams would randomly switch
+[❌] Are waves starting at wave 2?
+
+[❌] Portals spawn underwater
+
+[❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
 [❌] Disable wave survival and gamemode button on tutorial world
 

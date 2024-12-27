@@ -46,7 +46,7 @@ import static com.solegendary.reignofnether.time.TimeUtils.getWaveSurvivalTimeMo
 public class SurvivalServerEvents {
 
     private static boolean isEnabled = false;
-    public static Wave nextWave = Wave.getWave(17);
+    public static Wave nextWave = Wave.getWave(1);
     private static WaveDifficulty difficulty = WaveDifficulty.EASY;
     private static final ArrayList<WaveEnemy> enemies = new ArrayList<>();
     public static final String ENEMY_OWNER_NAME = "Enemy";

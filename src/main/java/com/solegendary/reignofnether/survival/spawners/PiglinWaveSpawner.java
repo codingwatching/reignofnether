@@ -55,7 +55,6 @@ public class PiglinWaveSpawner {
                 EntityRegistrar.WITHER_SKELETON_UNIT.get()
                 // + shields and heavy tridents
                 // piglins gain chest gold armour
-
         ));
         PIGLIN_UNITS.put(5, List.of(
                 // piglins gain full gold armour

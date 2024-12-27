@@ -37,6 +37,8 @@ Features
 Bugfixes
 --------
 
+[❌] Fixed a bug where teams would randomly switch
+
 [❌] Central portals sometimes do not ignite (and this somehow makes grunts spawn underground)
 
 [❌] Cobwebs in a spider lair should not slow down anything

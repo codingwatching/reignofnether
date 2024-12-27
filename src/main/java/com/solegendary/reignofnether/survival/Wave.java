@@ -38,7 +38,7 @@ public class Wave {
     }
 
     private static final List<Wave> WAVES = List.of(
-        new Wave(1, 5, 1), // every tier increase, raise rate of population increase by +1
+        new Wave(1, 5, 1),    // every tier increase, raise rate of population increase by +1
         new Wave(2, 10, 1),
         new Wave(3, 15, 1),
         new Wave(4, 21, 2),
@@ -55,7 +55,7 @@ public class Wave {
         new Wave(15, 105, 5),
         new Wave(16, 115, 6),
         new Wave(17, 125, 6),
-        new Wave(18, 135, 6), // after this wave, start raising population geometrically
+        new Wave(18, 135, 6),    // after this wave, start raising population geometrically
         new Wave(19, 150, 6),
         new Wave(20, 170, 6),
         new Wave(21, 195, 6),
