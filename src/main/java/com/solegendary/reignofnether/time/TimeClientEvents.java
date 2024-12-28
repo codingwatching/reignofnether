@@ -57,18 +57,8 @@ public class TimeClientEvents {
         () -> false,
         () -> !OrthoviewClientEvents.isEnabled(),
         () -> true,
-        () -> {
-            if (SurvivalClientEvents.waveNumber < 30) {
-                SurvivalClientEvents.waveNumber += 1;
-                SurvivalServerboundPacket.setWaveNumber(SurvivalClientEvents.waveNumber);
-            }
-        },
-        () -> {
-            if (SurvivalClientEvents.waveNumber > 1) {
-                SurvivalClientEvents.waveNumber -= 1;
-                SurvivalServerboundPacket.setWaveNumber(SurvivalClientEvents.waveNumber);
-            }
-        },
+        null,
+        null,
         null
     );
 

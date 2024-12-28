@@ -4,6 +4,7 @@ import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.player.PlayerClientEvents;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
@@ -82,8 +83,18 @@ public class SurvivalClientEvents {
                 () -> false,
                 () -> false,
                 () -> true,
-                null,
-                null,
+                () -> {
+                    if (SurvivalClientEvents.waveNumber < 30) {
+                        SurvivalClientEvents.waveNumber += 1;
+                        SurvivalServerboundPacket.setWaveNumber(SurvivalClientEvents.waveNumber);
+                    }
+                },
+                () -> {
+                    if (SurvivalClientEvents.waveNumber > 1) {
+                        SurvivalClientEvents.waveNumber -= 1;
+                        SurvivalServerboundPacket.setWaveNumber(SurvivalClientEvents.waveNumber);
+                    }
+                },
                 getWaveTooltip()
         );
     }
@@ -124,28 +135,38 @@ public class SurvivalClientEvents {
     }
 
     private static String research(String string) {
-        return I18n.get("research.reignofnether." + string);
+        return " " + I18n.get("research.reignofnether." + string);
     }
 
     private static String armoured(int plus) {
         Wave wave = Wave.getWave(waveNumber);
-        String str = "(" + I18n.get("hud.units.reignofnether.armoured");
+        String str = " (" + I18n.get("hud.units.reignofnether.armoured");
         str += new String(new char[plus]).replace("\0", "+");
         return str + ")";
     }
 
     private static String enchanted(int plus) {
         Wave wave = Wave.getWave(waveNumber);
-        String str = I18n.get("hud.units.reignofnether.enchanted");
+        String str = " " + I18n.get("hud.units.reignofnether.enchanted");
         str += new String(new char[plus]).replace("\0", "+");
         return str + ")";
+    }
+
+    private static String faction(Faction faction) {
+        return switch (faction) {
+            case VILLAGERS -> I18n.get("hud.units.reignofnether.villager");
+            case MONSTERS -> I18n.get("hud.units.reignofnether.monster");
+            case PIGLINS -> I18n.get("hud.units.reignofnether.piglin");
+            case NONE -> "";
+        };
     }
 
     public static List<FormattedCharSequence> getWaveTooltip() {
         ArrayList<FormattedCharSequence> tooltip = new ArrayList<>();
         Wave wave = Wave.getWave(waveNumber);
 
-        tooltip.add(FormattedCharSequence.forward(I18n.get("survival.reignofnether.next_wave", wave.number, wave.highestUnitTier), Style.EMPTY.withBold(true)));
+        tooltip.add(FormattedCharSequence.forward(I18n.get("survival.reignofnether.next_wave",
+                wave.number, wave.highestUnitTier, wave.faction), Style.EMPTY.withBold(true)));
 
         tooltip.add(FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.survival4",
                 SurvivalClientEvents.difficulty, SurvivalClientEvents.getMinutesPerDay()), Style.EMPTY));
@@ -222,8 +243,8 @@ public class SurvivalClientEvents {
                 tooltip.add(magmaCubeFcs());
             }
             if (wave.highestUnitTier == 4) {
-                tooltip.add(fcs(str("brute") + "(+" + research("brute_shields") + ")" + armoured(0)));
-                tooltip.add(fcs(str("headhunter") + "(+" + research("heavy_tridents") + ")" + armoured(0)));
+                tooltip.add(fcs(str("brute") + "[" + research("brute_shields") + "]" + armoured(0)));
+                tooltip.add(fcs(str("headhunter") + "[" + research("heavy_tridents") + "]" + armoured(0)));
                 tooltip.add(fcs(str("hoglin")));
                 tooltip.add(fcs(str("hoglin_rider")));
                 tooltip.add(fcs(str("blaze")));
@@ -231,8 +252,8 @@ public class SurvivalClientEvents {
                 tooltip.add(magmaCubeFcs());
             }
             if (wave.highestUnitTier == 5) {
-                tooltip.add(fcs(str("brute") + "(+" + research("brute_shields") + ")" + armoured(1)));
-                tooltip.add(fcs(str("headhunter") + "(+" + research("heavy_tridents") + ")" + armoured(1)));
+                tooltip.add(fcs(str("brute") + "[" + research("brute_shields") + "]" + armoured(1)));
+                tooltip.add(fcs(str("headhunter") + "[" + research("heavy_tridents") + "]" + armoured(1)));
                 tooltip.add(fcs(str("hoglin")));
                 tooltip.add(fcs(str("hoglin_rider")));
                 tooltip.add(fcs(str("blaze")));
@@ -241,8 +262,8 @@ public class SurvivalClientEvents {
                 tooltip.add(magmaCubeFcs());
             }
             if (wave.highestUnitTier >= 6) {
-                tooltip.add(fcs(str("brute") + "(+" + research("brute_shields") + ")" + armoured(2)));
-                tooltip.add(fcs(str("headhunter") + "(+" + research("heavy_tridents") + ")" + armoured(2)));
+                tooltip.add(fcs(str("brute") + "[" + research("brute_shields") + "]" + armoured(2)));
+                tooltip.add(fcs(str("headhunter") + "[" + research("heavy_tridents") + "]" + armoured(2)));
                 tooltip.add(fcs(str("hoglin")));
                 tooltip.add(fcs(str("hoglin_rider")));
                 tooltip.add(fcs(str("blaze")));
@@ -292,6 +313,9 @@ public class SurvivalClientEvents {
                 tooltip.add(fcs(str("ravager_artillery") + " + " + str("captain")));
             }
         }
+        tooltip.add(FormattedCharSequence.forward("", Style.EMPTY));
+        tooltip.add(FormattedCharSequence.forward("Left/right-click to change wave number (alpha test only)", Style.EMPTY));
+
         return tooltip;
     }
 }

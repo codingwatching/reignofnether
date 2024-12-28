@@ -424,6 +424,9 @@
 
     "hud.units.reignofnether.armoured": "Armoured",
     "hud.units.reignofnether.enchanted": "Enchanted",
+    "hud.units.reignofnether.villager": "Villager",
+    "hud.units.reignofnether.monster": "Monster",
+    "hud.units.reignofnether.piglin": "Piglin",
 
     "server.reignofnether.is_defeated": "%s has %s and is defeated!",
     "server.reignofnether.lost_buildings": "lost all their buildings",
@@ -862,7 +865,7 @@
     "survival.reignofnether.remaining_enemies_one": "1 enemy remains",
     "survival.reignofnether.remaining_enemies": "%d enemies remain",
 
-    "survival.reignofnether.next_wave": "Next Wave: %d (Tier %d)",
+    "survival.reignofnether.next_wave": "Next Wave: %d (Tier %d %s)",
 
     "block.reignofnether.decayable_nether_wart_block": "Decayable Nether Wart Block",
     "block.reignofnether.decayable_warped_wart_block": "Decayable Warped Wart Block",
