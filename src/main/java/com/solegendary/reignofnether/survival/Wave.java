@@ -91,7 +91,7 @@ public class Wave {
                     }
                 }
             }
-            FACTIONS.add(Faction.PIGLINS);
+            FACTIONS.add(newFaction);
             lastFaction = newFaction;
         }
 

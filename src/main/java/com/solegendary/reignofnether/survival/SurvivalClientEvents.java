@@ -116,17 +116,16 @@ public class SurvivalClientEvents {
 
     private static FormattedCharSequence slimeFcs() {
         Wave wave = Wave.getWave(waveNumber);
-        String research = wave.highestUnitTier >= 6 ? (" (+ " + I18n.get("research.reignofnether.slime_conversion") + ")") : "";
+        String research = wave.highestUnitTier >= 6 ? (" [" + I18n.get("research.reignofnether.slime_conversion") + "]") : "";
         return FormattedCharSequence.forward(
                 I18n.get("units.monsters.reignofnether.slime") + " " +
-                        I18n.get("units.monsters.reignofnether.slime.size", wave.highestUnitTier) +
-                        research,
+                        I18n.get("units.monsters.reignofnether.slime.size", wave.highestUnitTier),
                 Style.EMPTY);
     }
 
     private static FormattedCharSequence magmaCubeFcs() {
         Wave wave = Wave.getWave(waveNumber);
-        String research = wave.highestUnitTier >= 6 ? (" (+ " + I18n.get("research.reignofnether.cube_magma") + ")") : "";
+        String research = wave.highestUnitTier >= 6 ? (" [" + I18n.get("research.reignofnether.cube_magma") + "]") : "";
         return FormattedCharSequence.forward(
                 I18n.get("units.piglins.reignofnether.magma_cube") + " " +
                         I18n.get("units.monsters.reignofnether.slime.size", wave.highestUnitTier) +
@@ -135,7 +134,7 @@ public class SurvivalClientEvents {
     }
 
     private static String research(String string) {
-        return " " + I18n.get("research.reignofnether." + string);
+        return " [" + I18n.get("research.reignofnether." + string) + "]";
     }
 
     private static String armoured(int plus) {
@@ -166,7 +165,7 @@ public class SurvivalClientEvents {
         Wave wave = Wave.getWave(waveNumber);
 
         tooltip.add(FormattedCharSequence.forward(I18n.get("survival.reignofnether.next_wave",
-                wave.number, wave.highestUnitTier, wave.faction), Style.EMPTY.withBold(true)));
+                wave.number, wave.highestUnitTier, faction(wave.faction)), Style.EMPTY.withBold(true)));
 
         tooltip.add(FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.survival4",
                 SurvivalClientEvents.difficulty, SurvivalClientEvents.getMinutesPerDay()), Style.EMPTY));
@@ -243,8 +242,8 @@ public class SurvivalClientEvents {
                 tooltip.add(magmaCubeFcs());
             }
             if (wave.highestUnitTier == 4) {
-                tooltip.add(fcs(str("brute") + "[" + research("brute_shields") + "]" + armoured(0)));
-                tooltip.add(fcs(str("headhunter") + "[" + research("heavy_tridents") + "]" + armoured(0)));
+                tooltip.add(fcs(str("brute") + research("brute_shields") + armoured(0)));
+                tooltip.add(fcs(str("headhunter") + research("heavy_tridents") + armoured(0)));
                 tooltip.add(fcs(str("hoglin")));
                 tooltip.add(fcs(str("hoglin_rider")));
                 tooltip.add(fcs(str("blaze")));
@@ -252,8 +251,8 @@ public class SurvivalClientEvents {
                 tooltip.add(magmaCubeFcs());
             }
             if (wave.highestUnitTier == 5) {
-                tooltip.add(fcs(str("brute") + "[" + research("brute_shields") + "]" + armoured(1)));
-                tooltip.add(fcs(str("headhunter") + "[" + research("heavy_tridents") + "]" + armoured(1)));
+                tooltip.add(fcs(str("brute") + research("brute_shields") + armoured(1)));
+                tooltip.add(fcs(str("headhunter") + research("heavy_tridents") + armoured(1)));
                 tooltip.add(fcs(str("hoglin")));
                 tooltip.add(fcs(str("hoglin_rider")));
                 tooltip.add(fcs(str("blaze")));
@@ -262,8 +261,8 @@ public class SurvivalClientEvents {
                 tooltip.add(magmaCubeFcs());
             }
             if (wave.highestUnitTier >= 6) {
-                tooltip.add(fcs(str("brute") + "[" + research("brute_shields") + "]" + armoured(2)));
-                tooltip.add(fcs(str("headhunter") + "[" + research("heavy_tridents") + "]" + armoured(2)));
+                tooltip.add(fcs(str("brute") + research("brute_shields") + armoured(2)));
+                tooltip.add(fcs(str("headhunter") + research("heavy_tridents") + armoured(2)));
                 tooltip.add(fcs(str("hoglin")));
                 tooltip.add(fcs(str("hoglin_rider")));
                 tooltip.add(fcs(str("blaze")));
