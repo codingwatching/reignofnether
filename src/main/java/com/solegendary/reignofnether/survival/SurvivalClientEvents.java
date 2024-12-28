@@ -119,7 +119,8 @@ public class SurvivalClientEvents {
         String research = wave.highestUnitTier >= 6 ? (" [" + I18n.get("research.reignofnether.slime_conversion") + "]") : "";
         return FormattedCharSequence.forward(
                 I18n.get("units.monsters.reignofnether.slime") + " " +
-                        I18n.get("units.monsters.reignofnether.slime.size", wave.highestUnitTier),
+                        I18n.get("units.monsters.reignofnether.slime.size", wave.highestUnitTier) +
+                        research,
                 Style.EMPTY);
     }
 
@@ -146,7 +147,7 @@ public class SurvivalClientEvents {
 
     private static String enchanted(int plus) {
         Wave wave = Wave.getWave(waveNumber);
-        String str = " " + I18n.get("hud.units.reignofnether.enchanted");
+        String str = I18n.get("hud.units.reignofnether.enchanted");
         str += new String(new char[plus]).replace("\0", "+");
         return str + ")";
     }
@@ -187,7 +188,7 @@ public class SurvivalClientEvents {
             }
             if (wave.highestUnitTier == 3) {
                 tooltip.add(fcs(str("zombie_piglin")));
-                tooltip.add(fcs(str(str("husk") + "/" + str("drowned"))));
+                tooltip.add(fcs(str("husk") + "/" + str("drowned")));
                 tooltip.add(fcs(str("skeleton") + "/" + str("stray")));
                 tooltip.add(fcs(str("poison_spider")));
                 tooltip.add(fcs(str("spider_jockey")));
@@ -280,40 +281,41 @@ public class SurvivalClientEvents {
             }
             if (wave.highestUnitTier == 2) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + "(50% " + enchanted(0)));
-                tooltip.add(fcs(str("pillager") + "(50% " + enchanted(0)));
+                tooltip.add(fcs(str("vindicator") + " (50% " + enchanted(0)));
+                tooltip.add(fcs(str("pillager") + " (50% " + enchanted(0)));
             }
             if (wave.highestUnitTier == 3) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + enchanted(0)));
-                tooltip.add(fcs(str("pillager") + enchanted(0)));
+                tooltip.add(fcs(str("vindicator") + " (" + enchanted(0)));
+                tooltip.add(fcs(str("pillager") + " (" + enchanted(0)));
                 tooltip.add(fcs(str("iron_golem")));
             }
             if (wave.highestUnitTier == 4) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + "(50% " + enchanted(1)));
-                tooltip.add(fcs(str("pillager") + "(50% " + enchanted(1)));
+                tooltip.add(fcs(str("vindicator") + " (50% " + enchanted(1)));
+                tooltip.add(fcs(str("pillager") + " (50% " + enchanted(1)));
                 tooltip.add(fcs(str("iron_golem")));
                 tooltip.add(fcs(str("evoker")));
             }
             if (wave.highestUnitTier == 5) {
-                tooltip.add(fcs(str("vindicator") + enchanted(1)));
-                tooltip.add(fcs(str("pillager") + enchanted(1)));
+                tooltip.add(fcs(str("vindicator") + " (" + enchanted(1)));
+                tooltip.add(fcs(str("pillager") + " (" + enchanted(1)));
                 tooltip.add(fcs(str("iron_golem")));
-                tooltip.add(fcs(str("evoker") + "(50% " + enchanted(0)));
+                tooltip.add(fcs(str("evoker") + " (50% " + enchanted(0)));
                 tooltip.add(fcs(str("ravager")));
             }
             if (wave.highestUnitTier >= 6) {
-                tooltip.add(fcs(str("vindicator") + enchanted(3)));
-                tooltip.add(fcs(str("pillager") + enchanted(3)));
+                tooltip.add(fcs(str("vindicator") + " (" + enchanted(1)));
+                tooltip.add(fcs(str("pillager") + " (" + enchanted(1)));
                 tooltip.add(fcs(str("iron_golem")));
-                tooltip.add(fcs(str("evoker") + enchanted(0)));
+                tooltip.add(fcs(str("evoker") + " (" + enchanted(0)));
                 tooltip.add(fcs(str("ravager")));
                 tooltip.add(fcs(str("ravager_artillery") + " + " + str("captain")));
             }
         }
         tooltip.add(FormattedCharSequence.forward("", Style.EMPTY));
-        tooltip.add(FormattedCharSequence.forward("Left/right-click to change wave number (alpha test only)", Style.EMPTY));
+        tooltip.add(FormattedCharSequence.forward("Left/right-click to change ", Style.EMPTY));
+        tooltip.add(FormattedCharSequence.forward("wave number (alpha test only)", Style.EMPTY));
 
         return tooltip;
     }
