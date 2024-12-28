@@ -872,11 +872,12 @@ public class HudClientEvents {
             resources = ResourcesClientEvents.getResources(selPlayerName);
         }
         boolean alliedWithSelPlayer = MC.player != null && AllianceSystem.isAllied(MC.player.getName().getString(), selPlayerName);
+        boolean isSelPlayer = MC.player != null && MC.player.getName().getString().equals(selPlayerName);
 
         blitX = 0;
         blitY = 0;
 
-        if (!PlayerClientEvents.isRTSPlayer || alliedWithSelPlayer) {
+        if ((!PlayerClientEvents.isRTSPlayer || alliedWithSelPlayer) && !isSelPlayer) {
             if (resources != null) {
                 GuiComponent.drawString(evt.getPoseStack(),
                     MC.font,
@@ -1218,17 +1219,17 @@ public class HudClientEvents {
                 );
                 renderedButtons.add(StartButtons.piglinStartButton);
             }
-        }
-
-        if (SurvivalClientEvents.isEnabled) {
-            if (!SurvivalClientEvents.nextWaveButton.isHidden.get()) {
-                SurvivalClientEvents.nextWaveButton.render(evt.getPoseStack(),
+        } else if (SurvivalClientEvents.isEnabled) {
+            Button nextWaveButton = SurvivalClientEvents.getNextWaveButton();
+            if (!nextWaveButton.isHidden.get()) {
+                nextWaveButton.tooltipOffsetY = 15;
+                nextWaveButton.render(evt.getPoseStack(),
                         screenWidth - (StartButtons.ICON_SIZE * 2),
                         StartButtons.ICON_SIZE / 2,
                         mouseX,
                         mouseY
                 );
-                renderedButtons.add(SurvivalClientEvents.nextWaveButton);
+                renderedButtons.add(nextWaveButton);
             }
         }
 

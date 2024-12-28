@@ -68,18 +68,25 @@ public class SurvivalClientEvents {
         MC.player.sendSystemMessage(Component.literal(""));
     }
 
-    public final static Button nextWaveButton = new Button(
-            "Next Survival Wave",
-            ICON_SIZE,
-            new ResourceLocation(ReignOfNether.MOD_ID, "textures/mobheads/creeper.png"),
-            (Keybinding) null,
-            () -> false,
-            () -> false,
-            null,
-            null,
-            null,
-            getWaveTooltip()
-    );
+    public static Button getNextWaveButton() {
+        return new Button("Next Survival Wave",
+                ICON_SIZE,
+                switch (SurvivalClientEvents.difficulty) {
+                    case BEGINNER -> new ResourceLocation("minecraft", "textures/item/wooden_sword.png");
+                    case EASY -> new ResourceLocation("minecraft", "textures/item/stone_sword.png");
+                    case MEDIUM -> new ResourceLocation("minecraft", "textures/item/iron_sword.png");
+                    case HARD -> new ResourceLocation("minecraft", "textures/item/diamond_sword.png");
+                    case EXTREME -> new ResourceLocation("minecraft", "textures/item/netherite_sword.png");
+                },
+                (Keybinding) null,
+                () -> false,
+                () -> false,
+                () -> true,
+                null,
+                null,
+                getWaveTooltip()
+        );
+    }
 
     private static String str(String string) {
         Wave wave = Wave.getWave(waveNumber);
@@ -129,7 +136,7 @@ public class SurvivalClientEvents {
 
     private static String enchanted(int plus) {
         Wave wave = Wave.getWave(waveNumber);
-        String str = "(" + I18n.get("hud.units.reignofnether.enchanted");
+        String str = I18n.get("hud.units.reignofnether.enchanted");
         str += new String(new char[plus]).replace("\0", "+");
         return str + ")";
     }
@@ -138,7 +145,12 @@ public class SurvivalClientEvents {
         ArrayList<FormattedCharSequence> tooltip = new ArrayList<>();
         Wave wave = Wave.getWave(waveNumber);
 
-        tooltip.add(FormattedCharSequence.forward(I18n.get("survival.reignofnether.next_wave", wave.number, wave.highestUnitTier), Style.EMPTY));
+        tooltip.add(FormattedCharSequence.forward(I18n.get("survival.reignofnether.next_wave", wave.number, wave.highestUnitTier), Style.EMPTY.withBold(true)));
+
+        tooltip.add(FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.survival4",
+                SurvivalClientEvents.difficulty, SurvivalClientEvents.getMinutesPerDay()), Style.EMPTY));
+
+        tooltip.add(FormattedCharSequence.forward("", Style.EMPTY));
 
         if (wave.faction == Faction.MONSTERS) {
             if (wave.highestUnitTier == 1) {
@@ -248,36 +260,36 @@ public class SurvivalClientEvents {
             }
             if (wave.highestUnitTier == 2) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + enchanted(0)));
-                tooltip.add(fcs(str("pillager") + enchanted(0)));
+                tooltip.add(fcs(str("vindicator") + "(50% " + enchanted(0)));
+                tooltip.add(fcs(str("pillager") + "(50% " + enchanted(0)));
             }
             if (wave.highestUnitTier == 3) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + enchanted(1)));
-                tooltip.add(fcs(str("pillager") + enchanted(1)));
+                tooltip.add(fcs(str("vindicator") + enchanted(0)));
+                tooltip.add(fcs(str("pillager") + enchanted(0)));
                 tooltip.add(fcs(str("iron_golem")));
             }
             if (wave.highestUnitTier == 4) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + enchanted(2)));
-                tooltip.add(fcs(str("pillager") + enchanted(2)));
+                tooltip.add(fcs(str("vindicator") + "(50% " + enchanted(1)));
+                tooltip.add(fcs(str("pillager") + "(50% " + enchanted(1)));
                 tooltip.add(fcs(str("iron_golem")));
                 tooltip.add(fcs(str("evoker")));
             }
             if (wave.highestUnitTier == 5) {
-                tooltip.add(fcs(str("vindicator") + enchanted(3)));
-                tooltip.add(fcs(str("pillager") + enchanted(3)));
+                tooltip.add(fcs(str("vindicator") + enchanted(1)));
+                tooltip.add(fcs(str("pillager") + enchanted(1)));
                 tooltip.add(fcs(str("iron_golem")));
-                tooltip.add(fcs(str("evoker") + enchanted(0)));
+                tooltip.add(fcs(str("evoker") + "(50% " + enchanted(0)));
                 tooltip.add(fcs(str("ravager")));
             }
             if (wave.highestUnitTier >= 6) {
                 tooltip.add(fcs(str("vindicator") + enchanted(3)));
                 tooltip.add(fcs(str("pillager") + enchanted(3)));
                 tooltip.add(fcs(str("iron_golem")));
-                tooltip.add(fcs(str("evoker") + enchanted(1)));
+                tooltip.add(fcs(str("evoker") + enchanted(0)));
                 tooltip.add(fcs(str("ravager")));
-                tooltip.add(fcs(str("ravager_artillery") + str("captain")));
+                tooltip.add(fcs(str("ravager_artillery") + " + " + str("captain")));
             }
         }
         return tooltip;

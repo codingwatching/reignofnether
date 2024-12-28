@@ -71,5 +71,5 @@ Languages
 "units.villagers.reignofnether.militia": "Miltia",
 "units.monsters.reignofnether.slime.size": "(size %d)",
 "units.monsters.reignofnether.charged_creeper": "Charged Creeper",
-"units.monsters.reignofnether.charged_creeper": "Charged Creeper",
 "hud.units.reignofnether.armoured": "Armoured",
+"hud.units.reignofnether.enchanted": "Enchanted",

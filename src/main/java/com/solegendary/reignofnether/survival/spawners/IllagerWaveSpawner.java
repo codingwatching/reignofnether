@@ -194,7 +194,7 @@ public class IllagerWaveSpawner {
 
                 Entity entity = UnitServerEvents.spawnMob(mobType, level, bp.above(), ENEMY_OWNER_NAME);
 
-                if (wave.highestUnitTier >= 6 && entity instanceof RavagerUnit ravagerUnit) {
+                if (random.nextBoolean() && wave.highestUnitTier >= 6 && entity instanceof RavagerUnit ravagerUnit) {
                     Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.PILLAGER_UNIT.get(),
                             level, bp.above(), ENEMY_OWNER_NAME);
                     if (entityPassenger instanceof Unit unit) {
