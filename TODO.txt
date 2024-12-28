@@ -26,8 +26,6 @@ Features
 
 [❌] Wither Skeletons prioritise attacking the highest HP unit that they can see
 
-[🟡] Removed endermen from monster waves
-
 Bugfixes
 --------
 
@@ -40,6 +38,8 @@ Bugfixes
 [🟡] Fixed portals spawning enemies one wave ahead
 
 [🟡] Disabled wave survival and gamemode button on the tutorial world
+
+[🟡] Removed zoglins from monster waves
 
 [❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
@@ -56,6 +56,8 @@ Quality of Life
 
 Balancing
 ---------
+[🟡] Massively lowered the distance that endermen teleport when dodging projectiles
+
 [❌] Ghasts can now use transport portals
 
 [❌] Soulfires created by blazes need to be made temporary
@@ -69,6 +71,7 @@ Languages
 "units.monsters.reignofnether.zombie_piglin": "Zombie Piglin",
 "units.monsters.reignofnether.zoglin": "Zoglin",
 "units.villagers.reignofnether.militia": "Miltia",
+"units.monsters.reignofnether.enderman": "Enderman",
 "units.monsters.reignofnether.slime.size": "(size %d)",
 "units.monsters.reignofnether.charged_creeper": "Charged Creeper",
 "hud.units.reignofnether.armoured": "Armoured",

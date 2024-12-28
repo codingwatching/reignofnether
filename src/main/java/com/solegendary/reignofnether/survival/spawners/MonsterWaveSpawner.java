@@ -68,7 +68,7 @@ public class MonsterWaveSpawner {
                 EntityRegistrar.HUSK_UNIT.get(),
                 EntityRegistrar.DROWNED_UNIT.get(),
                 EntityRegistrar.CREEPER_UNIT.get(),
-                EntityRegistrar.ZOGLIN_UNIT.get()
+                EntityRegistrar.ENDERMAN_UNIT.get()
                 // Poison Spider Jockey
                 // zombies and skeletons gain chest iron armor
         ));
@@ -78,6 +78,7 @@ public class MonsterWaveSpawner {
                 EntityRegistrar.SLIME_UNIT.get(),
                 EntityRegistrar.DROWNED_UNIT.get(),
                 EntityRegistrar.CREEPER_UNIT.get(),
+                EntityRegistrar.ENDERMAN_UNIT.get(),
                 EntityRegistrar.WARDEN_UNIT.get()
                 // zombies and skeletons gain full iron armor
         ));
@@ -87,6 +88,7 @@ public class MonsterWaveSpawner {
                 EntityRegistrar.SLIME_UNIT.get(),
                 EntityRegistrar.DROWNED_UNIT.get(),
                 EntityRegistrar.CREEPER_UNIT.get(),
+                EntityRegistrar.ENDERMAN_UNIT.get(),
                 EntityRegistrar.WARDEN_UNIT.get()
                 // zombies and skeletons gain protection-enchanted iron armor
                 // Charged creepers

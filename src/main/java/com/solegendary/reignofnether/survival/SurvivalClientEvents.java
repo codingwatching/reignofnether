@@ -202,7 +202,7 @@ public class SurvivalClientEvents {
                 tooltip.add(fcs(str("poison_spider")));
                 tooltip.add(fcs(str("spider_jockey")));
                 tooltip.add(fcs(str("creeper")));
-                tooltip.add(fcs(str("zoglin")));
+                tooltip.add(fcs(str("enderman")));
                 tooltip.add(slimeFcs());
             }
             if (wave.highestUnitTier == 5) {
@@ -210,7 +210,7 @@ public class SurvivalClientEvents {
                 tooltip.add(fcs(str("stray") + armoured(1)));
                 tooltip.add(fcs(str("poison_spider_jockey")));
                 tooltip.add(fcs(str("creeper")));
-                tooltip.add(fcs(str("zoglin")));
+                tooltip.add(fcs(str("enderman")));
                 tooltip.add(fcs(str("warden")));
                 tooltip.add(slimeFcs());
             }
@@ -219,7 +219,7 @@ public class SurvivalClientEvents {
                 tooltip.add(fcs(str("stray") + armoured(2)));
                 tooltip.add(fcs(str("poison_spider_jockey")));
                 tooltip.add(fcs(str("charged_creeper")));
-                tooltip.add(fcs(str("zoglin")));
+                tooltip.add(fcs(str("enderman")));
                 tooltip.add(fcs(str("warden")));
                 tooltip.add(slimeFcs());
             }
