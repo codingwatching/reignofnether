@@ -13,7 +13,7 @@ Features
 
 [❌] Add to main game build
 
-[❌] Next wave indicator (shows potential enemies and upgrades, and definite faction)
+[🟡] Next wave indicator (shows potential enemies and upgrades, and definite faction)
 
 [❌] Enemies can use all sorts of abilities, this includes:
     - Spiders will autocast webs
@@ -26,23 +26,30 @@ Features
 
 [❌] Wither Skeletons prioritise attacking the highest HP unit that they can see
 
-
+[🟡] Removed endermen from monster waves
 
 Bugfixes
 --------
 
-[❌] Are waves starting at wave 2?
+[🟡] Fixed the first wave sometimes spawning immediately after restarting a game
 
-[❌] Portals spawn underwater
+[🟡] Fixed time until next wave showing negative numbers
+
+[🟡] Fixed portals spawning underwater
+
+[🟡] Fixed portals spawning enemies one wave ahead
+
+[🟡] Disabled wave survival and gamemode button on the tutorial world
 
 [❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
-[❌] Disable wave survival and gamemode button on tutorial world
 
 
 
 Quality of Life
 ---------------
+[🟡] You can now see an ally's resources by selecting any of their buildings or units
+
 [❌] Added /gamerule for bridges over void
 
 [❌] /rts-surrender should issue a stop command to all of that players' units
@@ -59,3 +66,10 @@ Languages
 ---------
 
 "time.reignofnether.time_until_next_wave": "%s until next wave",
+"units.monsters.reignofnether.zombie_piglin": "Zombie Piglin",
+"units.monsters.reignofnether.zoglin": "Zoglin",
+"units.villagers.reignofnether.militia": "Miltia",
+"units.monsters.reignofnether.slime.size": "(size %d)",
+"units.monsters.reignofnether.charged_creeper": "Charged Creeper",
+"units.monsters.reignofnether.charged_creeper": "Charged Creeper",
+"hud.units.reignofnether.armoured": "Armoured",

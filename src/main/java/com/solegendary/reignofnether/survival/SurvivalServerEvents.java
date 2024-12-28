@@ -1,30 +1,22 @@
 package com.solegendary.reignofnether.survival;
 
-import com.mojang.brigadier.context.ParsedArgument;
-import com.mojang.brigadier.context.ParsedCommandNode;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
-import com.solegendary.reignofnether.gamemode.GameModeClientboundPacket;
-import com.solegendary.reignofnether.player.PlayerClientboundPacket;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.player.RTSPlayer;
 import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.time.TimeUtils;
-import com.solegendary.reignofnether.unit.UnitServerEvents;
+import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -33,21 +25,19 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerWave;
-import static com.solegendary.reignofnether.survival.spawners.MonsterWaveSpawner.spawnMonsterWave;
-import static com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner.spawnPiglinWave;
 import static com.solegendary.reignofnether.time.TimeUtils.getWaveSurvivalTimeModifier;
 
 public class SurvivalServerEvents {
 
     private static boolean isEnabled = false;
+    @Nullable public static Wave currentWave = null;
     public static Wave nextWave = Wave.getWave(1);
-    private static WaveDifficulty difficulty = WaveDifficulty.EASY;
+    private static WaveDifficulty difficulty = WaveDifficulty.BEGINNER;
     private static final ArrayList<WaveEnemy> enemies = new ArrayList<>();
     public static final String ENEMY_OWNER_NAME = "Enemy";
     private static final Random random = new Random();
@@ -133,7 +123,7 @@ public class SurvivalServerEvents {
                     normTime > TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty) + 50) {
                 startNextWave((ServerLevel) evt.level);
             }
-            if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
+            if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN) {
                 PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dawn", true);
                 setToStartingDayTime();
             }
@@ -159,7 +149,7 @@ public class SurvivalServerEvents {
 
         for (Building portal : currentPortals)
             if (!lastPortals.contains(portal))
-                SurvivalServerEvents.portals.add(new WavePortal((Portal) portal, nextWave));
+                SurvivalServerEvents.portals.add(new WavePortal((Portal) portal, currentWave != null ? currentWave : nextWave));
         SurvivalServerEvents.portals.removeIf(p -> !currentPortals.contains(p.getPortal()));
 
         lastPortals.clear();
@@ -198,6 +188,8 @@ public class SurvivalServerEvents {
     }
 
     public static void enable(WaveDifficulty diff) {
+        if (TutorialServerEvents.isEnabled())
+            return;
         if (!isEnabled()) {
             reset();
             lastEnemyCount = 0;
@@ -215,7 +207,7 @@ public class SurvivalServerEvents {
         ArrayList<WavePortal> portalsCopy = new ArrayList<>(portals);
         for (WavePortal portal : portalsCopy)
             portal.portal.destroy(serverLevel);
-        nextWave = Wave.getWave(0);
+        nextWave = Wave.getWave(1);
         difficulty = WaveDifficulty.EASY;
         isEnabled = false;
         portals.clear();
@@ -298,43 +290,18 @@ public class SurvivalServerEvents {
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
-        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
         saveStage(level);
-
-        switch (lastFaction) {
-            case VILLAGERS -> {
-                if (random.nextBoolean())
-                    spawnMonsterWave(level, nextWave);
-                else
-                    spawnPiglinWave(level, nextWave);
-            }
-            case MONSTERS -> {
-                if (random.nextBoolean())
-                    spawnIllagerWave(level, nextWave);
-                else
-                    spawnPiglinWave(level, nextWave);
-            }
-            case PIGLINS -> {
-                if (random.nextBoolean())
-                    spawnMonsterWave(level, nextWave);
-                else
-                    spawnIllagerWave(level, nextWave);
-            }
-            case NONE -> {
-                switch (random.nextInt(3)) {
-                    case 0 -> spawnMonsterWave(level, nextWave);
-                    case 1 -> spawnIllagerWave(level, nextWave);
-                    case 2 -> spawnPiglinWave(level, nextWave);
-                }
-            }
-        }
+        currentWave = nextWave;
+        nextWave.start(level);
         nextWave = Wave.getWave(nextWave.number + 1);
+        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
     }
 
     // triggered when last enemy is killed
     public static void waveCleared(ServerLevel level) {
         PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.wave_cleared", true);
         SoundClientboundPacket.playSoundForAllPlayers(SoundAction.ALLY);
+        currentWave = null;
     }
 
     public static void setWaveNumber(int waveNumber) {

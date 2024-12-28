@@ -706,11 +706,11 @@
     "tutorial.reignofnether.good_luck": "Hẹn gặp lại lần sau... Chúc bạn may mắn và chơi vui!",
     "tutorial.reignofnether.tutorial_disabled": "Chế độ hướng dẫn đã tắt.",
 
-    "units.reignofnether.captain": "Chỉ Huy",
-    "units.reignofnether.ravager_artillery": "Xạ Thủ Cưỡi Bò Tót",
-    "units.reignofnether.spider_jockey": "Bộ Xương Cưỡi Nhện",
-    "units.reignofnether.poison_spider_jockey": "Bộ Xương Cưỡi Nhện Độc",
-    "units.reignofnether.hoglin_rider": "Piglin Cưỡi Hoglin",
+    "units.villagers.reignofnether.captain": "Chỉ Huy",
+    "units.villagers.reignofnether.ravager_artillery": "Xạ Thủ Cưỡi Bò Tót",
+    "units.monsters.reignofnether.spider_jockey": "Bộ Xương Cưỡi Nhện",
+    "units.monsters.reignofnether.poison_spider_jockey": "Bộ Xương Cưỡi Nhện Độc",
+    "units.piglins.reignofnether.hoglin_rider": "Piglin Cưỡi Hoglin",
 
     "units.monsters.reignofnether.creeper": "Creeper",
     "units.monsters.reignofnether.creeper.tooltip1": "Một quái vật nổ có thể làm nổ tung các đơn vị và công trình.",

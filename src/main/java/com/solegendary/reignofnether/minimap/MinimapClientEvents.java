@@ -193,7 +193,7 @@ public class MinimapClientEvents {
                 () -> OrthoviewClientEvents.adjustPanSensitivityMult(false),
                 List.of(
                         FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip1",
-                                Math.round(OrthoviewClientEvents.getPanSensitivityMult() * 10), (OrthoviewClientEvents.MAX_PAN_SENSITIVITY * 10)), Style.EMPTY),
+                                Math.round(OrthoviewClientEvents.getPanSensitivityMult() * 10), Math.round(OrthoviewClientEvents.MAX_PAN_SENSITIVITY * 10)), Style.EMPTY),
                         FormattedCharSequence.forward(I18n.get("hud.map.reignofnether.pan_sensitivity.tooltip2"), Style.EMPTY)
                 )
         );

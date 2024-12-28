@@ -710,11 +710,11 @@
     "tutorial.reignofnether.good_luck": "Do następnego... Powodzenia i dobrej zabawy!",
     "tutorial.reignofnether.tutorial_disabled": "Tryb samouczka wyłączony",
 
-    "units.reignofnether.captain": "Kapitan",
-    "units.reignofnether.ravager_artillery": "Dewastatorska artyleria",
-    "units.reignofnether.spider_jockey": "Pajęczy Dżokej",
-    "units.reignofnether.poison_spider_jockey": "Jadowity pajęczy Dżokej",
-    "units.reignofnether.hoglin_rider": "Jeździec Hoglina",
+    "units.villagers.reignofnether.captain": "Kapitan",
+    "units.villagers.reignofnether.ravager_artillery": "Dewastatorska artyleria",
+    "units.monsters.reignofnether.spider_jockey": "Pajęczy Dżokej",
+    "units.monsters.reignofnether.poison_spider_jockey": "Jadowity pajęczy Dżokej",
+    "units.piglins.reignofnether.hoglin_rider": "Jeździec Hoglina",
 
     "units.monsters.reignofnether.creeper": "Creeper",
     "units.monsters.reignofnether.creeper.tooltip1": "Wybuchowy potwór, który może wysadzić jednostki i budynki.",

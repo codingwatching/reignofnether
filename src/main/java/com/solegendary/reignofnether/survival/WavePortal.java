@@ -70,13 +70,7 @@ public class WavePortal {
     public void doSpawn() {
         Random random = new Random();
 
-        int tier;
-        if (wave.highestUnitTier >= 6)
-            tier = random.nextInt(1, 5 + 1);
-        else
-            tier = random.nextInt(wave.highestUnitTier) + 1;
-
-        EntityType<? extends Unit> mobType = (EntityType<? extends Unit>) PiglinWaveSpawner.getRandomUnitOfTier(tier);
+        EntityType<? extends Unit> mobType = (EntityType<? extends Unit>) PiglinWaveSpawner.getRandomUnitOfTier(wave.highestUnitTier);
 
         ServerLevel level = (ServerLevel) portal.getLevel();
 
@@ -89,7 +83,7 @@ public class WavePortal {
         if (entity instanceof Unit unit) {
             checkAndApplyArmour((LivingEntity) unit, wave.highestUnitTier);
 
-            if (wave.highestUnitTier >= 3 && entity instanceof HoglinUnit hoglinUnit) {
+            if (wave.highestUnitTier >= 3 && random.nextBoolean() && entity instanceof HoglinUnit hoglinUnit) {
                 Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.HEADHUNTER_UNIT.get(),
                         level, hoglinUnit.getOnPos(), ENEMY_OWNER_NAME);
                 if (entityPassenger instanceof Unit pUnit) {

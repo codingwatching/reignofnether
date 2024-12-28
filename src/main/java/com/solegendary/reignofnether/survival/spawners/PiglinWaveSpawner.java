@@ -43,24 +43,47 @@ public class PiglinWaveSpawner {
                 EntityRegistrar.HEADHUNTER_UNIT.get()
         ));
         PIGLIN_UNITS.put(2, List.of(
+                EntityRegistrar.BRUTE_UNIT.get(),
+                EntityRegistrar.HEADHUNTER_UNIT.get(),
                 EntityRegistrar.HOGLIN_UNIT.get(),
                 EntityRegistrar.MAGMA_CUBE_UNIT.get()
         ));
         PIGLIN_UNITS.put(3, List.of(
+                EntityRegistrar.BRUTE_UNIT.get(),
+                EntityRegistrar.HEADHUNTER_UNIT.get(),
+                EntityRegistrar.MAGMA_CUBE_UNIT.get(),
                 EntityRegistrar.BLAZE_UNIT.get(),
                 EntityRegistrar.HOGLIN_UNIT.get()
-                // + Hoglin riders
+                // + 50% chance of Hoglin riders
         ));
         PIGLIN_UNITS.put(4, List.of(
+                EntityRegistrar.BRUTE_UNIT.get(),
+                EntityRegistrar.HEADHUNTER_UNIT.get(),
+                EntityRegistrar.MAGMA_CUBE_UNIT.get(),
+                EntityRegistrar.BLAZE_UNIT.get(),
+                EntityRegistrar.HOGLIN_UNIT.get(),
                 EntityRegistrar.WITHER_SKELETON_UNIT.get()
                 // + shields and heavy tridents
                 // piglins gain chest gold armour
         ));
         PIGLIN_UNITS.put(5, List.of(
-                // piglins gain full gold armour
+                EntityRegistrar.BRUTE_UNIT.get(),
+                EntityRegistrar.HEADHUNTER_UNIT.get(),
+                EntityRegistrar.MAGMA_CUBE_UNIT.get(),
+                EntityRegistrar.BLAZE_UNIT.get(),
+                EntityRegistrar.HOGLIN_UNIT.get(),
+                EntityRegistrar.WITHER_SKELETON_UNIT.get(),
                 EntityRegistrar.GHAST_UNIT.get()
+                // piglins gain full gold armour
         ));
         PIGLIN_UNITS.put(6, List.of(
+                EntityRegistrar.BRUTE_UNIT.get(),
+                EntityRegistrar.HEADHUNTER_UNIT.get(),
+                EntityRegistrar.MAGMA_CUBE_UNIT.get(),
+                EntityRegistrar.BLAZE_UNIT.get(),
+                EntityRegistrar.HOGLIN_UNIT.get(),
+                EntityRegistrar.WITHER_SKELETON_UNIT.get(),
+                EntityRegistrar.GHAST_UNIT.get()
                 // piglins gain protection-enchanted gold armour
                 // soul fireballs
                 // cube magma

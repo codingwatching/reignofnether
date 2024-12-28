@@ -143,21 +143,6 @@ public class TimeClientEvents {
                         getTimeUntilStr(serverTime, DAWN)),
                     Style.EMPTY);
 
-            FormattedCharSequence gameLengthOrWaveNumStr = FormattedCharSequence.forward("", Style.EMPTY);
-
-            if (PlayerClientEvents.isRTSPlayer) {
-                if (SurvivalClientEvents.isEnabled) {
-                    gameLengthOrWaveNumStr = FormattedCharSequence.forward(
-                            I18n.get("time.reignofnether.survival_wave", SurvivalClientEvents.waveNumber),
-                            Style.EMPTY
-                    );
-                } else {
-                    gameLengthOrWaveNumStr = FormattedCharSequence.forward(
-                            I18n.get("time.reignofnether.game_time", getTimeStrFromTicks(PlayerClientEvents.rtsGameTicks)),
-                            Style.EMPTY
-                    );
-                }
-            }
             ArrayList<FormattedCharSequence> tooltip = new ArrayList<>();
 
             if (targetClientTime != serverTime) {
@@ -168,12 +153,19 @@ public class TimeClientEvents {
 
             tooltip.add(timeUntilStr);
 
-            if (SurvivalClientEvents.isEnabled)
+            if (SurvivalClientEvents.isEnabled) {
+                long timeOffset = -getWaveSurvivalTimeModifier(SurvivalClientEvents.difficulty);
                 tooltip.add(FormattedCharSequence.forward(I18n.get("time.reignofnether.time_until_next_wave",
-                        getTimeUntilStrWithOffset(serverTime, DUSK, -getWaveSurvivalTimeModifier(SurvivalClientEvents.difficulty))), Style.EMPTY));
+                        getTimeUntilStrWithOffset(serverTime, DUSK, isDay ? 0 : timeOffset)), Style.EMPTY));
+            }
 
-            tooltip.add(gameLengthOrWaveNumStr);
-
+            if (PlayerClientEvents.isRTSPlayer && !SurvivalClientEvents.isEnabled) {
+                FormattedCharSequence gameLengthStr = FormattedCharSequence.forward(
+                        I18n.get("time.reignofnether.game_time", getTimeStrFromTicks(PlayerClientEvents.rtsGameTicks)),
+                        Style.EMPTY
+                );
+                tooltip.add(gameLengthStr);
+            }
             MyRenderer.renderTooltip(evt.getPoseStack(), tooltip, evt.getMouseX(), evt.getMouseY());
         }
     }

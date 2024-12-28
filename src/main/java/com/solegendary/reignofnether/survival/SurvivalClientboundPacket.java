@@ -53,7 +53,7 @@ public class SurvivalClientboundPacket {
                     () -> () -> {
                         switch (action) {
                             case ENABLE_AND_SET_DIFFICULTY -> SurvivalClientEvents.enable(difficulty);
-                            case SET_WAVE_NUMBER -> SurvivalClientEvents.waveNumber = waveNumber;
+                            case SET_WAVE_NUMBER -> SurvivalClientEvents.setWaveNumber(waveNumber);
                         }
                         success.set(true);
                     });

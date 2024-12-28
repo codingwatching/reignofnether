@@ -122,7 +122,7 @@ public class ClientGameModeHelper {
             default -> null;
         };
         if (button != null)
-            button.tooltipOffsetY = 45;
+            button.tooltipOffsetY = 15;
         return button;
     }
 }

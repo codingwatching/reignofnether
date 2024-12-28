@@ -3,24 +3,25 @@ package com.solegendary.reignofnether.survival.spawners;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
-import com.solegendary.reignofnether.research.researchItems.*;
+import com.solegendary.reignofnether.research.researchItems.ResearchCubeMagma;
+import com.solegendary.reignofnether.research.researchItems.ResearchSpiderWebs;
 import com.solegendary.reignofnether.survival.Wave;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.monsters.*;
-import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
-import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
 import static com.solegendary.reignofnether.survival.SurvivalServerEvents.lastFaction;
@@ -40,33 +41,56 @@ public class MonsterWaveSpawner {
                 EntityRegistrar.SKELETON_UNIT.get()
         ));
         MONSTER_UNITS.put(2, List.of(
+                EntityRegistrar.ZOMBIE_UNIT.get(),
+                EntityRegistrar.SKELETON_UNIT.get(),
                 EntityRegistrar.HUSK_UNIT.get(),
                 EntityRegistrar.STRAY_UNIT.get(),
                 EntityRegistrar.SPIDER_UNIT.get(),
                 EntityRegistrar.SLIME_UNIT.get()
         ));
         MONSTER_UNITS.put(3, List.of(
-                EntityRegistrar.DROWNED_UNIT.get(),
+                EntityRegistrar.SKELETON_UNIT.get(),
+                EntityRegistrar.HUSK_UNIT.get(),
+                EntityRegistrar.STRAY_UNIT.get(),
+                EntityRegistrar.SPIDER_UNIT.get(),
                 EntityRegistrar.POISON_SPIDER_UNIT.get(),
-                EntityRegistrar.CREEPER_UNIT.get(),
-                EntityRegistrar.SPIDER_UNIT.get() // Spider Jockey
+                EntityRegistrar.SLIME_UNIT.get(),
+                EntityRegistrar.DROWNED_UNIT.get(),
+                EntityRegistrar.CREEPER_UNIT.get()
+                // Spider Jockey
                 // spider webs
         ));
         MONSTER_UNITS.put(4, List.of(
-                EntityRegistrar.ZOGLIN_UNIT.get(),
-                EntityRegistrar.ENDERMAN_UNIT.get(),
-                EntityRegistrar.POISON_SPIDER_UNIT.get() // Poison Spider Jockey
+                EntityRegistrar.STRAY_UNIT.get(),
+                EntityRegistrar.SPIDER_UNIT.get(),
+                EntityRegistrar.POISON_SPIDER_UNIT.get(),
+                EntityRegistrar.SLIME_UNIT.get(),
+                EntityRegistrar.HUSK_UNIT.get(),
+                EntityRegistrar.DROWNED_UNIT.get(),
+                EntityRegistrar.CREEPER_UNIT.get(),
+                EntityRegistrar.ZOGLIN_UNIT.get()
+                // Poison Spider Jockey
                 // zombies and skeletons gain chest iron armor
         ));
         MONSTER_UNITS.put(5, List.of(
+                EntityRegistrar.STRAY_UNIT.get(),
+                EntityRegistrar.POISON_SPIDER_UNIT.get(),
+                EntityRegistrar.SLIME_UNIT.get(),
+                EntityRegistrar.DROWNED_UNIT.get(),
+                EntityRegistrar.CREEPER_UNIT.get(),
                 EntityRegistrar.WARDEN_UNIT.get()
                 // zombies and skeletons gain full iron armor
-                // + Charged creepers
         ));
         MONSTER_UNITS.put(6, List.of(
-            // zombies and skeletons gain protection-enchanted iron armor
-            // removes tier 1
-            // slime conversion
+                EntityRegistrar.STRAY_UNIT.get(),
+                EntityRegistrar.POISON_SPIDER_UNIT.get(),
+                EntityRegistrar.SLIME_UNIT.get(),
+                EntityRegistrar.DROWNED_UNIT.get(),
+                EntityRegistrar.CREEPER_UNIT.get(),
+                EntityRegistrar.WARDEN_UNIT.get()
+                // zombies and skeletons gain protection-enchanted iron armor
+                // Charged creepers
+                // slime conversion
         ));
     }
 
@@ -111,13 +135,7 @@ public class MonsterWaveSpawner {
         for (BlockPos bp : bps) {
             BlockState bs = level.getBlockState(bp);
 
-            int tier;
-            if (wave.highestUnitTier >= 6)
-                tier = random.nextInt(2,5 + 1);
-            else
-                tier = random.nextInt(wave.highestUnitTier) + 1;
-
-            EntityType<? extends Mob> mobType = MonsterWaveSpawner.getRandomUnitOfTier(tier);
+            EntityType<? extends Mob> mobType = MonsterWaveSpawner.getRandomUnitOfTier(wave.highestUnitTier);
 
             bp = bp.offset(0,2,0);
 
@@ -125,7 +143,7 @@ public class MonsterWaveSpawner {
                     mobType.getDescription().getString().contains("spider") ? bp.above(): bp,
                     ENEMY_OWNER_NAME);
 
-            if (wave.highestUnitTier >= 3 && entity instanceof SpiderUnit spiderUnit) {
+            if (wave.highestUnitTier >= 4 && entity instanceof SpiderUnit spiderUnit) {
                 Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.SKELETON_UNIT.get(),
                         level, bp.above(), ENEMY_OWNER_NAME);
                 if (entityPassenger instanceof Unit unit) {
@@ -134,7 +152,7 @@ public class MonsterWaveSpawner {
                 }
             }
 
-            if (wave.highestUnitTier >= 4 && entity instanceof PoisonSpiderUnit poisonSpiderUnit) {
+            if (wave.highestUnitTier >= 5 && entity instanceof PoisonSpiderUnit poisonSpiderUnit) {
                 Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.STRAY_UNIT.get(),
                         level, bp.above(), ENEMY_OWNER_NAME);
                 if (entityPassenger instanceof Unit unit) {
@@ -143,7 +161,7 @@ public class MonsterWaveSpawner {
                 }
             }
 
-            if (wave.highestUnitTier >= 5 && entity instanceof CreeperUnit creeperUnit && random.nextBoolean())
+            if (random.nextBoolean() && entity instanceof CreeperUnit creeperUnit)
                 creeperUnit.getEntityData().set(DATA_IS_POWERED, true);
 
             if (entity instanceof SlimeUnit slimeUnit)
