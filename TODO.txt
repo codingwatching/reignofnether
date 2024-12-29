@@ -15,16 +15,17 @@ Features
 
 [🟡] Next wave indicator (shows potential enemies and upgrades, and definite faction)
 
-[❌] Enemies can use all sorts of abilities, this includes:
-    - Spiders will autocast webs
-    - Evokers summon vexes once in range of enemies
-    - Wardens will sonic boom the first enemy unit that they see
-    - Piglin Brutes will raise their shields while targeting ranged units or buildings
-    - Ravagers will roar when reduced to half HP
+[❌] Test on server with coop
 
-[❌] Spiders and spider jockeys now prioritise attacking your workers
+[🟡] Enemies can use all sorts of abilities, this includes:
+    [🟡] - Spiders will autocast webs
+    [🟡] - Evokers summon vexes once in range of enemies
+    [🟡] - Wardens will sonic boom the first enemy unit that they see
+    [🟡] - Piglin Brutes will raise their shields while targeting ranged units or buildings
+    [🟡] - Ravagers will roar off cooldown when below half hp
+    [🟡] - Wither Skeletons activate death cloud if they have no non-wither allies near them
 
-[❌] Wither Skeletons prioritise attacking the highest HP unit that they can see
+[🟡] Spiders and spider jockeys now prioritise attacking your workers
 
 Bugfixes
 --------
@@ -39,15 +40,13 @@ Bugfixes
 
 [🟡] Disabled wave survival and gamemode button on the tutorial world
 
-[🟡] Removed zoglins from monster waves
-
 [❌] Workers on a building that is still auto-building the foundation layer actually slows down building
-
 
 
 
 Quality of Life
 ---------------
+
 [🟡] You can now see an ally's resources by selecting any of their buildings or units
 
 [❌] Added /gamerule for bridges over void
@@ -56,6 +55,10 @@ Quality of Life
 
 Balancing
 ---------
+[🟡] Removed zoglins from monster waves
+
+[🟡] Adjusted upgrades on each tier
+
 [🟡] Massively lowered the distance that endermen teleport when dodging projectiles
 
 [❌] Ghasts can now use transport portals
@@ -75,4 +78,8 @@ Languages
 "units.monsters.reignofnether.slime.size": "(size %d)",
 "units.monsters.reignofnether.charged_creeper": "Charged Creeper",
 "hud.units.reignofnether.armoured": "Armoured",
-"hud.units.reignofnether.enchanted": "Enchanted",
+"hud.enchant.reignofnether.maiming": "Maiming",
+"hud.enchant.reignofnether.sharpness": "Sharpness",
+"hud.enchant.reignofnether.multishot": "Multishot",
+"hud.enchant.reignofnether.quickshot": "Quickshot",
+"hud.enchant.reignofnether.vigor": "Vigor",

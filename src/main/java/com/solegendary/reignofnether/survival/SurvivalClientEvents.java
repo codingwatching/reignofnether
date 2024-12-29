@@ -145,11 +145,8 @@ public class SurvivalClientEvents {
         return str + ")";
     }
 
-    private static String enchanted(int plus) {
-        Wave wave = Wave.getWave(waveNumber);
-        String str = I18n.get("hud.units.reignofnether.enchanted");
-        str += new String(new char[plus]).replace("\0", "+");
-        return str + ")";
+    private static String enchant(String string) {
+        return " [" + I18n.get("hud.enchant.reignofnether." + string) + "]";
     }
 
     private static String faction(Faction faction) {
@@ -194,7 +191,6 @@ public class SurvivalClientEvents {
                 tooltip.add(fcs(str("spider_jockey")));
                 tooltip.add(fcs(str("creeper")));
                 tooltip.add(slimeFcs());
-                // spider webs
             }
             if (wave.highestUnitTier == 4) {
                 tooltip.add(fcs(str("husk") + "/" + str("drowned") + armoured(0)));
@@ -204,6 +200,7 @@ public class SurvivalClientEvents {
                 tooltip.add(fcs(str("creeper")));
                 tooltip.add(fcs(str("enderman")));
                 tooltip.add(slimeFcs());
+                // spider webs
             }
             if (wave.highestUnitTier == 5) {
                 tooltip.add(fcs(str("drowned") + armoured(1)));
@@ -281,34 +278,34 @@ public class SurvivalClientEvents {
             }
             if (wave.highestUnitTier == 2) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + " (50% " + enchanted(0)));
-                tooltip.add(fcs(str("pillager") + " (50% " + enchanted(0)));
+                tooltip.add(fcs(str("vindicator") + enchant("maiming")));
+                tooltip.add(fcs(str("pillager")));
             }
             if (wave.highestUnitTier == 3) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + " (" + enchanted(0)));
-                tooltip.add(fcs(str("pillager") + " (" + enchanted(0)));
+                tooltip.add(fcs(str("vindicator") + enchant("maiming")));
+                tooltip.add(fcs(str("pillager") + enchant("quickshot")));
                 tooltip.add(fcs(str("iron_golem")));
             }
             if (wave.highestUnitTier == 4) {
                 tooltip.add(fcs(str("militia")));
-                tooltip.add(fcs(str("vindicator") + " (50% " + enchanted(1)));
-                tooltip.add(fcs(str("pillager") + " (50% " + enchanted(1)));
+                tooltip.add(fcs(str("vindicator") + enchant("sharpness")));
+                tooltip.add(fcs(str("pillager") + enchant("quickshot")));
                 tooltip.add(fcs(str("iron_golem")));
                 tooltip.add(fcs(str("evoker")));
             }
             if (wave.highestUnitTier == 5) {
-                tooltip.add(fcs(str("vindicator") + " (" + enchanted(1)));
-                tooltip.add(fcs(str("pillager") + " (" + enchanted(1)));
+                tooltip.add(fcs(str("vindicator") + enchant("sharpness")));
+                tooltip.add(fcs(str("pillager") + enchant("multishot")));
                 tooltip.add(fcs(str("iron_golem")));
-                tooltip.add(fcs(str("evoker") + " (50% " + enchanted(0)));
+                tooltip.add(fcs(str("evoker")));
                 tooltip.add(fcs(str("ravager")));
             }
             if (wave.highestUnitTier >= 6) {
-                tooltip.add(fcs(str("vindicator") + " (" + enchanted(1)));
-                tooltip.add(fcs(str("pillager") + " (" + enchanted(1)));
+                tooltip.add(fcs(str("vindicator") + enchant("sharpness")));
+                tooltip.add(fcs(str("pillager") + enchant("multishot")));
                 tooltip.add(fcs(str("iron_golem")));
-                tooltip.add(fcs(str("evoker") + " (" + enchanted(0)));
+                tooltip.add(fcs(str("evoker") + enchant("vigor")));
                 tooltip.add(fcs(str("ravager")));
                 tooltip.add(fcs(str("ravager_artillery") + " + " + str("captain")));
             }

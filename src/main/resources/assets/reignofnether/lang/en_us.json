@@ -423,7 +423,11 @@
     "hud.reignofnether.no_destination": "That portal has no destination!",
 
     "hud.units.reignofnether.armoured": "Armoured",
-    "hud.units.reignofnether.enchanted": "Enchanted",
+    "hud.enchant.reignofnether.maiming": "Maiming",
+    "hud.enchant.reignofnether.sharpness": "Sharpness",
+    "hud.enchant.reignofnether.multishot": "Multishot",
+    "hud.enchant.reignofnether.quickshot": "Quickshot",
+    "hud.enchant.reignofnether.vigor": "Vigor",
     "hud.units.reignofnether.villager": "Villager",
     "hud.units.reignofnether.monster": "Monster",
     "hud.units.reignofnether.piglin": "Piglin",

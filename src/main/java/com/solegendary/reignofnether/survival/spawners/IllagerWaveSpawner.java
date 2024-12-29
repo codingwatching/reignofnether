@@ -96,38 +96,17 @@ public class IllagerWaveSpawner {
     public static void checkAndApplyEnchants(LivingEntity entity, int tier) {
         Enchantment enchantment = null;
 
-        if (entity instanceof VindicatorUnit vUnit && tier == 2) {
-            if (random.nextBoolean())
-                enchantment = EnchantMaiming.actualEnchantment;
-        }
-        else if (entity instanceof PillagerUnit vUnit && tier == 2) {
-            if (random.nextBoolean())
-                enchantment = EnchantQuickCharge.actualEnchantment;
-        }
-        else if (entity instanceof VindicatorUnit vUnit && tier == 3) {
+        if (entity instanceof VindicatorUnit vUnit && (tier == 2 || tier == 3)) {
             enchantment = EnchantMaiming.actualEnchantment;
         }
-        else if (entity instanceof PillagerUnit vUnit && tier == 3) {
-            enchantment = EnchantQuickCharge.actualEnchantment;
-        }
-        else if (entity instanceof VindicatorUnit vUnit && tier == 4) {
-            if (random.nextBoolean())
-                enchantment = EnchantMaiming.actualEnchantment;
-        }
-        else if (entity instanceof PillagerUnit vUnit && tier == 4) {
-            if (random.nextBoolean())
-                enchantment = EnchantQuickCharge.actualEnchantment;
-        }
-        else if (entity instanceof VindicatorUnit vUnit && tier >= 5) {
+        else if (entity instanceof VindicatorUnit vUnit && (tier == 4 || tier == 5)) {
             enchantment = EnchantSharpness.actualEnchantment;
         }
-        else if (entity instanceof PillagerUnit vUnit && tier >= 5) {
-            enchantment = EnchantMultishot.actualEnchantment;
+        else if (entity instanceof PillagerUnit vUnit && (tier == 3 || tier == 4)) {
+            enchantment = EnchantQuickCharge.actualEnchantment;
         }
-
-        if (entity instanceof EvokerUnit vUnit && tier == 5) {
-            if (random.nextBoolean())
-                enchantment = EnchantVigor.actualEnchantment;
+        else if (entity instanceof PillagerUnit vUnit && (tier == 5 || tier == 6)) {
+            enchantment = EnchantMultishot.actualEnchantment;
         }
         else if (entity instanceof EvokerUnit vUnit && tier >= 6) {
             enchantment = EnchantVigor.actualEnchantment;
