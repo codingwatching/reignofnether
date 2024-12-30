@@ -221,6 +221,7 @@ public class SurvivalServerEvents {
         if (isEnabled()) {
             SurvivalClientboundPacket.enableAndSetDifficulty(difficulty);
             SurvivalClientboundPacket.setWaveNumber(nextWave.number);
+            SurvivalClientboundPacket.setWaveRandomSeed(Wave.randomSeed);
         }
     }
 

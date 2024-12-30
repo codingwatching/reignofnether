@@ -15,7 +15,7 @@ Features
 
 [🟡] Next wave indicator (shows potential enemies and upgrades, and definite faction)
 
-[❌] Test on server with coop
+[❌] Sync and save faction order using random(seed)
 
 [🟡] Enemies can use all sorts of abilities, this includes:
     [🟡] - Spiders will autocast webs
@@ -42,6 +42,7 @@ Bugfixes
 
 [❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
+[❌] Hunters are levelling too fast
 
 
 Quality of Life
@@ -60,6 +61,12 @@ Balancing
 [🟡] Adjusted upgrades on each tier
 
 [🟡] Massively lowered the distance that endermen teleport when dodging projectiles
+
+[❌] New Town Centres no longer spawn animals around them
+
+[❌] Make lumberjacks level up more slowly
+
+[❌] Prevent new capitols producing animals
 
 [❌] Ghasts can now use transport portals
 

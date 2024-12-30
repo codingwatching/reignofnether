@@ -1,14 +1,7 @@
 package com.solegendary.reignofnether.survival;
 
-import com.solegendary.reignofnether.ReignOfNether;
-import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
-import com.solegendary.reignofnether.keybinds.Keybindings;
-import com.solegendary.reignofnether.player.PlayerClientEvents;
-import com.solegendary.reignofnether.registrars.EntityRegistrar;
-import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
-import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -41,9 +34,14 @@ public class SurvivalClientEvents {
         };
     }
 
-    public static void setWaveNumber(int number) {
+    public static void setWaveNumber(long number) {
         lastWaveNumber = waveNumber;
-        waveNumber = number;
+        waveNumber = (int) number;
+    }
+
+    public static void setRandomSeed(long number) {
+        Wave.randomSeed = number;
+        Wave.reseedWaves();
     }
 
     public static void reset() {
@@ -151,10 +149,10 @@ public class SurvivalClientEvents {
 
     private static String faction(Faction faction) {
         return switch (faction) {
-            case VILLAGERS -> I18n.get("hud.units.reignofnether.villager");
-            case MONSTERS -> I18n.get("hud.units.reignofnether.monster");
-            case PIGLINS -> I18n.get("hud.units.reignofnether.piglin");
-            case NONE -> "";
+            case VILLAGERS -> I18n.get("hud.faction.reignofnether.villager");
+            case MONSTERS -> I18n.get("hud.faction.reignofnether.monster");
+            case PIGLINS -> I18n.get("hud.faction.reignofnether.piglin");
+            case NONE -> I18n.get("hud.faction.reignofnether.random");
         };
     }
 
@@ -221,7 +219,7 @@ public class SurvivalClientEvents {
                 tooltip.add(slimeFcs());
             }
         }
-        if (wave.faction == Faction.PIGLINS) {
+        else if (wave.faction == Faction.PIGLINS) {
             if (wave.highestUnitTier == 1) {
                 tooltip.add(fcs(str("brute")));
                 tooltip.add(fcs(str("headhunter")));
@@ -269,8 +267,7 @@ public class SurvivalClientEvents {
                 tooltip.add(magmaCubeFcs());
             }
         }
-
-        if (wave.faction == Faction.VILLAGERS) {
+        else if (wave.faction == Faction.VILLAGERS) {
             if (wave.highestUnitTier == 1) {
                 tooltip.add(fcs(str("militia")));
                 tooltip.add(fcs(str("vindicator")));
@@ -309,6 +306,9 @@ public class SurvivalClientEvents {
                 tooltip.add(fcs(str("ravager")));
                 tooltip.add(fcs(str("ravager_artillery") + " + " + str("captain")));
             }
+        }
+        else if (wave.faction == Faction.NONE) {
+            tooltip.add(FormattedCharSequence.forward("???", Style.EMPTY));
         }
         tooltip.add(FormattedCharSequence.forward("", Style.EMPTY));
         tooltip.add(FormattedCharSequence.forward("Left/right-click to change ", Style.EMPTY));
