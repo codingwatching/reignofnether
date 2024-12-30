@@ -136,12 +136,12 @@ public class WaveEnemy {
             }
         }
         if (unit instanceof BruteUnit bruteUnit) {
-            LivingEntity target = bruteUnit.getTarget();
             for (Ability ability : bruteUnit.getAbilities()) {
-                if (ability instanceof ToggleShield shield && target != null && target.equals(bruteUnit.getTarget()) &&
-                        ResearchServerEvents.playerHasResearch(bruteUnit.getOwnerName(), ResearchBruteShields.itemName)) {
+                if (ability instanceof ToggleShield shield &&
+                    ResearchServerEvents.playerHasResearch(bruteUnit.getOwnerName(), ResearchBruteShields.itemName)) {
 
-                    boolean shouldRaiseShield = (bruteUnit.getTarget() instanceof RangedAttackerUnit && bruteUnit.distanceToSqr(target) <= 225) ||
+                    boolean shouldRaiseShield =
+                            (bruteUnit.getTarget() instanceof RangedAttackerUnit rTarget && bruteUnit.distanceToSqr((Entity) rTarget) <= 64) ||
                             (bruteUnit.getAttackBuildingGoal() instanceof MeleeAttackBuildingGoal mabg && mabg.isAttacking());
 
                     if ((!bruteUnit.isHoldingUpShield && shouldRaiseShield) ||

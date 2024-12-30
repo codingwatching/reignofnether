@@ -58,7 +58,7 @@ public class SurvivalServerEvents {
         return difficulty;
     }
 
-    public static void saveStage(ServerLevel level) {
+    public static void saveData(ServerLevel level) {
         SurvivalSaveData survivalData = SurvivalSaveData.getInstance(level);
         survivalData.isEnabled = isEnabled;
         survivalData.waveNumber = nextWave.number;
@@ -200,7 +200,7 @@ public class SurvivalServerEvents {
             isEnabled = true;
             SurvivalClientboundPacket.enableAndSetDifficulty(difficulty);
             if (serverLevel != null)
-                saveStage(serverLevel);
+                saveData(serverLevel);
         }
     }
 
@@ -215,9 +215,11 @@ public class SurvivalServerEvents {
         isEnabled = false;
         portals.clear();
         enemies.clear();
-        if (serverLevel != null)
-            saveStage(serverLevel);
         Wave.randomSeed = System.currentTimeMillis();
+        Wave.reseedWaves();
+        SurvivalClientboundPacket.setWaveRandomSeed(Wave.randomSeed);
+        if (serverLevel != null)
+            saveData(serverLevel);
     }
 
     @SubscribeEvent
@@ -295,7 +297,7 @@ public class SurvivalServerEvents {
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
-        saveStage(level);
+        saveData(level);
         currentWave = nextWave;
         nextWave.start(level);
         nextWave = Wave.getWave(nextWave.number + 1);
