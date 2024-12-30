@@ -63,6 +63,7 @@ public class SurvivalServerEvents {
         survivalData.isEnabled = isEnabled;
         survivalData.waveNumber = nextWave.number;
         survivalData.difficulty = difficulty;
+        survivalData.randomSeed = Wave.randomSeed;
         survivalData.save();
         level.getDataStorage().save();
         ReignOfNether.LOGGER.info("saved survival data in serverevents");
@@ -75,6 +76,8 @@ public class SurvivalServerEvents {
             SurvivalSaveData survivalData = SurvivalSaveData.getInstance(level);
             isEnabled = survivalData.isEnabled;
             nextWave = Wave.getWave(survivalData.waveNumber);
+            Wave.randomSeed = survivalData.randomSeed;
+            Wave.reseedWaves();
             difficulty = survivalData.difficulty;
 
             if (isEnabled()) {
@@ -214,6 +217,7 @@ public class SurvivalServerEvents {
         enemies.clear();
         if (serverLevel != null)
             saveStage(serverLevel);
+        Wave.randomSeed = System.currentTimeMillis();
     }
 
     @SubscribeEvent
