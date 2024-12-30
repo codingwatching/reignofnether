@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
+import com.solegendary.reignofnether.research.researchItems.ResearchBruteShields;
 import com.solegendary.reignofnether.research.researchItems.ResearchCubeMagma;
 import com.solegendary.reignofnether.research.researchItems.ResearchHeavyTridents;
 import com.solegendary.reignofnether.research.researchItems.ResearchSoulFireballs;
@@ -114,6 +115,8 @@ public class PiglinWaveSpawner {
     }
 
     public static void checkAndApplyUpgrades(int tier) {
+        if (tier >= 1 && !ResearchServerEvents.playerHasResearch(ENEMY_OWNER_NAME, ResearchBruteShields.itemName))
+            ResearchServerEvents.addResearch(ENEMY_OWNER_NAME, ResearchBruteShields.itemName);
         if (tier >= 4 && !ResearchServerEvents.playerHasResearch(ENEMY_OWNER_NAME, ResearchHeavyTridents.itemName))
             ResearchServerEvents.addResearch(ENEMY_OWNER_NAME, ResearchHeavyTridents.itemName);
         if (tier >= 6 && !ResearchServerEvents.playerHasResearch(ENEMY_OWNER_NAME, ResearchSoulFireballs.itemName))
