@@ -136,7 +136,7 @@ public class WaveEnemy {
             }
         }
         if (unit instanceof BruteUnit bruteUnit) {
-            LivingEntity target = getNearestAttackableUnit();
+            LivingEntity target = bruteUnit.getTarget();
             for (Ability ability : bruteUnit.getAbilities()) {
                 if (ability instanceof ToggleShield shield && target != null && target.equals(bruteUnit.getTarget()) &&
                         ResearchServerEvents.playerHasResearch(bruteUnit.getOwnerName(), ResearchBruteShields.itemName)) {
@@ -145,19 +145,19 @@ public class WaveEnemy {
                             (bruteUnit.getAttackBuildingGoal() instanceof MeleeAttackBuildingGoal mabg && mabg.isAttacking());
 
                     if ((!bruteUnit.isHoldingUpShield && shouldRaiseShield) ||
-                            ((bruteUnit.isHoldingUpShield && !shouldRaiseShield))) {
-                        shield.use(getEntity().level, unit, target);
+                        ((bruteUnit.isHoldingUpShield && !shouldRaiseShield))) {
+                        shield.use(getEntity().level, unit, (BlockPos) null);
                     }
                 }
             }
         }
         if (unit instanceof WitherSkeletonUnit wsUnit) {
-            LivingEntity target = getNearestAttackableUnit();
+            LivingEntity target = wsUnit.getTarget();
             for (Ability ability : wsUnit.getAbilities()) {
                 LivingEntity nearestAlly = getNearestNonWitherAllyUnit();
                 if (ability instanceof WitherCloud cloud && cloud.isOffCooldown() && target != null &&
-                        wsUnit.distanceToSqr(target) <= 16 && (nearestAlly == null || wsUnit.distanceToSqr(nearestAlly) > 16)) {
-                    cloud.use(getEntity().level, unit, target);
+                    wsUnit.distanceToSqr(target) <= 16 && (nearestAlly == null || wsUnit.distanceToSqr(nearestAlly) > 16)) {
+                    cloud.use(getEntity().level, unit, (BlockPos) null);
                 }
             }
         }

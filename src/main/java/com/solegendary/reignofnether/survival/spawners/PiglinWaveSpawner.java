@@ -40,9 +40,7 @@ public class PiglinWaveSpawner {
 
     static {
         PIGLIN_UNITS.put(1, List.of(
-                EntityRegistrar.BRUTE_UNIT.get(),
-                EntityRegistrar.WITHER_SKELETON_UNIT.get()
-                //EntityRegistrar.BRUTE_UNIT.get(),
+                EntityRegistrar.BRUTE_UNIT.get()
                 //EntityRegistrar.HEADHUNTER_UNIT.get()
         ));
         PIGLIN_UNITS.put(2, List.of(
