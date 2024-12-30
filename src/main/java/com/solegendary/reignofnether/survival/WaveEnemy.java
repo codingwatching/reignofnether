@@ -35,7 +35,7 @@ import java.util.List;
 
 public class WaveEnemy {
 
-    private static final int PERIODIC_COMMAND_INTERVAL = 60;
+    private static final int PERIODIC_COMMAND_INTERVAL = 40;
     private static final int IDLE_COMMAND_INTERVAL = 100;
 
     public final Unit unit;
@@ -141,7 +141,7 @@ public class WaveEnemy {
                     ResearchServerEvents.playerHasResearch(bruteUnit.getOwnerName(), ResearchBruteShields.itemName)) {
 
                     boolean shouldRaiseShield =
-                            (bruteUnit.getTarget() instanceof RangedAttackerUnit rTarget && bruteUnit.distanceToSqr((Entity) rTarget) <= 64) ||
+                            (bruteUnit.getTarget() instanceof RangedAttackerUnit rTarget && bruteUnit.distanceToSqr((Entity) rTarget) <= 36) ||
                             (bruteUnit.getAttackBuildingGoal() instanceof MeleeAttackBuildingGoal mabg && mabg.isAttacking());
 
                     if ((!bruteUnit.isHoldingUpShield && shouldRaiseShield) ||
