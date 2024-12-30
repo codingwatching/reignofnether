@@ -41,7 +41,7 @@ public class PiglinWaveSpawner {
     static {
         PIGLIN_UNITS.put(1, List.of(
                 EntityRegistrar.BRUTE_UNIT.get()
-                //EntityRegistrar.HEADHUNTER_UNIT.get()
+                EntityRegistrar.HEADHUNTER_UNIT.get()
         ));
         PIGLIN_UNITS.put(2, List.of(
                 EntityRegistrar.BRUTE_UNIT.get(),
@@ -113,7 +113,7 @@ public class PiglinWaveSpawner {
     }
 
     public static void checkAndApplyUpgrades(int tier) {
-        if (tier >= 1 && !ResearchServerEvents.playerHasResearch(ENEMY_OWNER_NAME, ResearchBruteShields.itemName))
+        if (tier >= 4 && !ResearchServerEvents.playerHasResearch(ENEMY_OWNER_NAME, ResearchBruteShields.itemName))
             ResearchServerEvents.addResearch(ENEMY_OWNER_NAME, ResearchBruteShields.itemName);
         if (tier >= 4 && !ResearchServerEvents.playerHasResearch(ENEMY_OWNER_NAME, ResearchHeavyTridents.itemName))
             ResearchServerEvents.addResearch(ENEMY_OWNER_NAME, ResearchHeavyTridents.itemName);
