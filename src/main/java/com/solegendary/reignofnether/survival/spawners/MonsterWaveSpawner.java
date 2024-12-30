@@ -36,9 +36,11 @@ public class MonsterWaveSpawner {
 
     static {
         MONSTER_UNITS.put(1, List.of(
-                EntityRegistrar.ZOMBIE_PIGLIN_UNIT.get(),
-                EntityRegistrar.ZOMBIE_UNIT.get(),
-                EntityRegistrar.SKELETON_UNIT.get()
+                EntityRegistrar.WARDEN_UNIT.get(),
+                EntityRegistrar.SPIDER_UNIT.get()
+                //EntityRegistrar.ZOMBIE_PIGLIN_UNIT.get(),
+                //EntityRegistrar.ZOMBIE_UNIT.get(),
+                //EntityRegistrar.SKELETON_UNIT.get()
         ));
         MONSTER_UNITS.put(2, List.of(
                 EntityRegistrar.ZOMBIE_UNIT.get(),

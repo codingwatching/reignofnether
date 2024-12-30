@@ -9,6 +9,7 @@ import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchBruteShields;
 import com.solegendary.reignofnether.research.researchItems.ResearchSpiderWebs;
 import com.solegendary.reignofnether.unit.UnitAction;
+import com.solegendary.reignofnether.unit.UnitActionItem;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -106,24 +107,33 @@ public class WaveEnemy {
     // done every X ticks
     public void periodicCommand() {
         if (unit instanceof RavagerUnit ravagerUnit) {
-            for (Ability ability : ravagerUnit.getAbilities())
+            for (Ability ability : ravagerUnit.getAbilities()) {
                 if (ability instanceof Roar roar && roar.isOffCooldown() &&
-                        ravagerUnit.getHealth() < ravagerUnit.getMaxHealth() / 2)
+                        ravagerUnit.getHealth() < ravagerUnit.getMaxHealth() / 2) {
+                    UnitActionItem.resetBehaviours(ravagerUnit);
                     roar.use(getEntity().level, unit, (BlockPos) null);
+                }
+            }
         }
         if (unit instanceof WardenUnit wardenUnit) {
             LivingEntity target = getNearestAttackableUnit();
-            for (Ability ability : wardenUnit.getAbilities())
+            for (Ability ability : wardenUnit.getAbilities()) {
                 if (ability instanceof SonicBoom boom && boom.isOffCooldown() && target != null &&
-                        wardenUnit.distanceToSqr(target) <= (boom.range * boom.range))
+                        wardenUnit.distanceToSqr(target) <= (boom.range * boom.range)) {
+                    UnitActionItem.resetBehaviours(wardenUnit);
                     boom.use(getEntity().level, unit, target);
+                }
+            }
         }
         if (unit instanceof EvokerUnit evokerUnit) {
             LivingEntity target = getNearestAttackableUnit();
-            for (Ability ability : evokerUnit.getAbilities())
+            for (Ability ability : evokerUnit.getAbilities()) {
                 if (ability instanceof CastSummonVexes summon && summon.isOffCooldown() && target != null &&
-                        evokerUnit.distanceToSqr(target) <= (evokerUnit.getAttackRange() * evokerUnit.getAttackRange()))
+                        evokerUnit.distanceToSqr(target) <= (evokerUnit.getAttackRange() * evokerUnit.getAttackRange())) {
+                    UnitActionItem.resetBehaviours(evokerUnit);
                     summon.use(getEntity().level, unit, target);
+                }
+            }
         }
         if (unit instanceof BruteUnit bruteUnit) {
             LivingEntity target = getNearestAttackableUnit();
@@ -146,8 +156,9 @@ public class WaveEnemy {
             for (Ability ability : wsUnit.getAbilities()) {
                 LivingEntity nearestAlly = getNearestNonWitherAllyUnit();
                 if (ability instanceof WitherCloud cloud && cloud.isOffCooldown() && target != null &&
-                        wsUnit.distanceToSqr(target) <= 16 && (nearestAlly == null || wsUnit.distanceToSqr(nearestAlly) > 16))
+                        wsUnit.distanceToSqr(target) <= 16 && (nearestAlly == null || wsUnit.distanceToSqr(nearestAlly) > 16)) {
                     cloud.use(getEntity().level, unit, target);
+                }
             }
         }
     }

@@ -18,12 +18,13 @@ Features
 [❌] Sync and save faction order using random(seed)
 
 [🟡] Enemies can use all sorts of abilities, this includes:
-    [🟡] - Spiders will autocast webs
-    [🟡] - Evokers summon vexes once in range of enemies
-    [🟡] - Wardens will sonic boom the first enemy unit that they see
-    [🟡] - Piglin Brutes will raise their shields while targeting ranged units or buildings
-    [🟡] - Ravagers will roar off cooldown when below half hp
+    [🟡] - Spiders web on their first attack
+    [🟡] - Wardens sonic boom the first enemy unit that they see
+    [🟡] - Piglin Brutes raise their shields while targeting ranged units or buildings
     [🟡] - Wither Skeletons activate death cloud if they have no non-wither allies near them
+    [🟡] - Evokers summon vexes once in range of enemies
+    [🟡] - Ravagers roar whenever off cooldown when below half hp
+
 
 [🟡] Spiders and spider jockeys now prioritise attacking your workers
 

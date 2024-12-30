@@ -38,9 +38,11 @@ public class IllagerWaveSpawner {
 
     static {
         ILLAGER_UNITS.put(1, List.of(
-                EntityRegistrar.MILITIA_UNIT.get(),
-                EntityRegistrar.VINDICATOR_UNIT.get(),
-                EntityRegistrar.PILLAGER_UNIT.get()
+                EntityRegistrar.RAVAGER_UNIT.get(),
+                EntityRegistrar.EVOKER_UNIT.get()
+                //EntityRegistrar.MILITIA_UNIT.get(),
+                //EntityRegistrar.VINDICATOR_UNIT.get(),
+                //EntityRegistrar.PILLAGER_UNIT.get()
                 // no enchants
         ));
         ILLAGER_UNITS.put(2, List.of(
