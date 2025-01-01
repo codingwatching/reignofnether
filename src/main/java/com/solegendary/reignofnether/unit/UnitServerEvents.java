@@ -79,6 +79,8 @@ import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_
 
 public class UnitServerEvents {
 
+    public static boolean IMPROVED_PATHFINDING = true;
+
     private static final int UNIT_SYNC_TICKS_MAX = 20; // how often we send out unit syncing packets
     private static int unitSyncTicks = UNIT_SYNC_TICKS_MAX;
 

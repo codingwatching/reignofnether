@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.player.RTSPlayer;
 import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.time.TimeUtils;
+import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.commands.Commands;
@@ -24,19 +25,19 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerWave;
-import static com.solegendary.reignofnether.survival.spawners.MonsterWaveSpawner.spawnMonsterWave;
-import static com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner.spawnPiglinWave;
+import static com.solegendary.reignofnether.time.TimeUtils.getWaveSurvivalTimeModifier;
 
 public class SurvivalServerEvents {
 
     private static boolean isEnabled = false;
-    public static Wave nextWave = Wave.getWave(0);
-    private static WaveDifficulty difficulty = WaveDifficulty.EASY;
+    @Nullable public static Wave currentWave = null;
+    public static Wave nextWave = Wave.getWave(1);
+    private static WaveDifficulty difficulty = WaveDifficulty.BEGINNER;
     private static final ArrayList<WaveEnemy> enemies = new ArrayList<>();
     public static final String ENEMY_OWNER_NAME = "Enemy";
     private static final Random random = new Random();
@@ -53,11 +54,16 @@ public class SurvivalServerEvents {
 
     private static ServerLevel serverLevel = null;
 
-    public static void saveStage(ServerLevel level) {
+    public static WaveDifficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public static void saveData(ServerLevel level) {
         SurvivalSaveData survivalData = SurvivalSaveData.getInstance(level);
         survivalData.isEnabled = isEnabled;
         survivalData.waveNumber = nextWave.number;
         survivalData.difficulty = difficulty;
+        survivalData.randomSeed = Wave.randomSeed;
         survivalData.save();
         level.getDataStorage().save();
         ReignOfNether.LOGGER.info("saved survival data in serverevents");
@@ -70,6 +76,8 @@ public class SurvivalServerEvents {
             SurvivalSaveData survivalData = SurvivalSaveData.getInstance(level);
             isEnabled = survivalData.isEnabled;
             nextWave = Wave.getWave(survivalData.waveNumber);
+            Wave.randomSeed = survivalData.randomSeed;
+            Wave.reseedWaves();
             difficulty = survivalData.difficulty;
 
             if (isEnabled()) {
@@ -114,11 +122,11 @@ public class SurvivalServerEvents {
                 SoundClientboundPacket.playSoundForAllPlayers(SoundAction.RANDOM_CAVE_AMBIENCE);
                 setToStartingNightTime();
             }
-            if (lastTime <= TimeUtils.DUSK + getDifficultyTimeModifier() + 50 &&
-                    normTime > TimeUtils.DUSK + getDifficultyTimeModifier() + 50) {
+            if (lastTime <= TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty) + 50 &&
+                    normTime > TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty) + 50) {
                 startNextWave((ServerLevel) evt.level);
             }
-            if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN && nextWave.number > 1) {
+            if (lastTime <= TimeUtils.DAWN && normTime > TimeUtils.DAWN) {
                 PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.dawn", true);
                 setToStartingDayTime();
             }
@@ -144,7 +152,7 @@ public class SurvivalServerEvents {
 
         for (Building portal : currentPortals)
             if (!lastPortals.contains(portal))
-                SurvivalServerEvents.portals.add(new WavePortal((Portal) portal, nextWave));
+                SurvivalServerEvents.portals.add(new WavePortal((Portal) portal, currentWave != null ? currentWave : nextWave));
         SurvivalServerEvents.portals.removeIf(p -> !currentPortals.contains(p.getPortal()));
 
         lastPortals.clear();
@@ -183,6 +191,8 @@ public class SurvivalServerEvents {
     }
 
     public static void enable(WaveDifficulty diff) {
+        if (TutorialServerEvents.isEnabled())
+            return;
         if (!isEnabled()) {
             reset();
             lastEnemyCount = 0;
@@ -190,7 +200,7 @@ public class SurvivalServerEvents {
             isEnabled = true;
             SurvivalClientboundPacket.enableAndSetDifficulty(difficulty);
             if (serverLevel != null)
-                saveStage(serverLevel);
+                saveData(serverLevel);
         }
     }
 
@@ -200,13 +210,16 @@ public class SurvivalServerEvents {
         ArrayList<WavePortal> portalsCopy = new ArrayList<>(portals);
         for (WavePortal portal : portalsCopy)
             portal.portal.destroy(serverLevel);
-        nextWave = Wave.getWave(0);
+        nextWave = Wave.getWave(1);
         difficulty = WaveDifficulty.EASY;
         isEnabled = false;
         portals.clear();
         enemies.clear();
+        Wave.randomSeed = System.currentTimeMillis();
+        Wave.reseedWaves();
+        SurvivalClientboundPacket.setWaveRandomSeed(Wave.randomSeed);
         if (serverLevel != null)
-            saveStage(serverLevel);
+            saveData(serverLevel);
     }
 
     @SubscribeEvent
@@ -214,6 +227,7 @@ public class SurvivalServerEvents {
         if (isEnabled()) {
             SurvivalClientboundPacket.enableAndSetDifficulty(difficulty);
             SurvivalClientboundPacket.setWaveNumber(nextWave.number);
+            SurvivalClientboundPacket.setWaveRandomSeed(Wave.randomSeed);
         }
     }
 
@@ -239,31 +253,22 @@ public class SurvivalServerEvents {
         }
     }
 
-    // standard vanilla length is 20mins for a full day/night cycle (24000)
-    // 1min == 1200, but is applied twice per cycle (dawn and dusk), so effectively 1min == 600
-    public static long getDifficultyTimeModifier() {
-        return switch (difficulty) {
-            default -> 3000; // 15mins per day
-            case MEDIUM -> 4800; // 12mins per day
-            case HARD -> 6600; // 9mins per day
-            case EXTREME -> 8400; // 6mins per day
-        };
-    }
+
 
     public static long getDayLength() {
-        return 12000 - getDifficultyTimeModifier();
+        return 12000 - getWaveSurvivalTimeModifier(difficulty);
     }
 
     public static void setToStartingDayTime() {
-        serverLevel.setDayTime(TimeUtils.DAWN + getDifficultyTimeModifier());
+        serverLevel.setDayTime(TimeUtils.DAWN + getWaveSurvivalTimeModifier(difficulty));
     }
 
     public static void setToStartingNightTime() {
-        serverLevel.setDayTime(TimeUtils.DUSK + getDifficultyTimeModifier());
+        serverLevel.setDayTime(TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty));
     }
 
     public static void setToGameStartTime() {
-        serverLevel.setDayTime(TimeUtils.DUSK + getDifficultyTimeModifier() + 60);
+        serverLevel.setDayTime(TimeUtils.DUSK + getWaveSurvivalTimeModifier(difficulty) + 60);
     }
 
     public static boolean isEnabled() { return isEnabled; }
@@ -292,42 +297,22 @@ public class SurvivalServerEvents {
 
     // triggered at nightfall
     public static void startNextWave(ServerLevel level) {
-        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
-        saveStage(level);
-
-        switch (lastFaction) {
-            case VILLAGERS -> {
-                if (random.nextBoolean())
-                    spawnMonsterWave(level, nextWave);
-                else
-                    spawnPiglinWave(level, nextWave);
-            }
-            case MONSTERS -> {
-                if (random.nextBoolean())
-                    spawnIllagerWave(level, nextWave);
-                else
-                    spawnPiglinWave(level, nextWave);
-            }
-            case PIGLINS -> {
-                if (random.nextBoolean())
-                    spawnMonsterWave(level, nextWave);
-                else
-                    spawnIllagerWave(level, nextWave);
-            }
-            case NONE -> {
-                switch (random.nextInt(3)) {
-                    case 0 -> spawnMonsterWave(level, nextWave);
-                    case 1 -> spawnIllagerWave(level, nextWave);
-                    case 2 -> spawnPiglinWave(level, nextWave);
-                }
-            }
-        }
+        saveData(level);
+        currentWave = nextWave;
+        nextWave.start(level);
         nextWave = Wave.getWave(nextWave.number + 1);
+        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
     }
 
     // triggered when last enemy is killed
     public static void waveCleared(ServerLevel level) {
         PlayerServerEvents.sendMessageToAllPlayers("survival.reignofnether.wave_cleared", true);
         SoundClientboundPacket.playSoundForAllPlayers(SoundAction.ALLY);
+        currentWave = null;
+    }
+
+    public static void setWaveNumber(int waveNumber) {
+        nextWave = Wave.getWave(waveNumber);
+        SurvivalClientboundPacket.setWaveNumber(nextWave.number);
     }
 }

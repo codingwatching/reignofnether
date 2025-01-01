@@ -166,7 +166,7 @@ public class WitchUnit extends Witch implements Unit {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, WitchUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, WitchUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, WitchUnit.armorValue);
     }
 

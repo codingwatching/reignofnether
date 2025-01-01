@@ -132,7 +132,7 @@
     "abilities.reignofnether.wither_cloud.tooltip2": "of deadly wither around it for the next %d seconds.",
     "abilities.reignofnether.bloodlust": "Bloodlust",
     "abilities.reignofnether.bloodlust.tooltip1": "Pay %d life to gain 50%% faster attack speed ",
-    "abilities.reignofnether.bloodlust.tooltip2": "and 50%% faster movement for %d seconds.",
+    "abilities.reignofnether.bloodlust.tooltip2": "and 20%% faster movement for %d seconds.",
     "abilities.reignofnether.call_to_arms_building": "Call to Arms",
     "abilities.reignofnether.call_to_arms_building.tooltip1": "Calls all nearby villagers to be converted into a ",
     "abilities.reignofnether.call_to_arms_building.tooltip2": "militia to defend your base. Militia turn back into ",
@@ -338,7 +338,8 @@
     "commands.reignofnether.gamerule.max_population": "%s - Set the highest possible population limit",
     "commands.reignofnether.gamerule.unit_griefing": "%s - Allow explosive units to break blocks",
     "commands.reignofnether.gamerule.player_griefing": "%s - Allow survival players to break terrain blocks",
-    "commands.reignofnether.gamerule.ground_y_level": "%s - Lock the camera, flying unit and bridge Y heights",
+    "commands.reignofnether.gamerule.ground_y_level": "%s - Set the minimum height for cameras",
+    "commands.reignofnether.gamerule.flying_max_y_level": "%s - Set the max height for flying units",
     "commands.reignofnether.gamerule.improved_pathfinding": "%s - Increases pathfinding accuracy, but also CPU usage",
 
     "controls.reignofnether.toggle_cam": "F12 - Toggle RTS camera",
@@ -386,7 +387,6 @@
 
     "hud.map.reignofnether.open": "Open large map/options",
     "hud.map.reignofnether.close": "Close",
-
     "hud.map.reignofnether.pan_sensitivity.tooltip1": "Camera sensitivity: %d/%d",
     "hud.map.reignofnether.pan_sensitivity.tooltip2": "(left/right click to adjust)",
     "hud.map.reignofnether.lock_map.tooltip1.enabled": "Map centre lock: Enabled",
@@ -421,6 +421,17 @@
     "hud.reignofnether.building_full": "That building is full!",
     "hud.reignofnether.not_garrisonable": "That building is not garrisonable",
     "hud.reignofnether.no_destination": "That portal has no destination!",
+
+    "hud.units.reignofnether.armoured": "Armoured",
+    "hud.enchant.reignofnether.maiming": "Maiming",
+    "hud.enchant.reignofnether.sharpness": "Sharpness",
+    "hud.enchant.reignofnether.multishot": "Multishot",
+    "hud.enchant.reignofnether.quickshot": "Quickshot",
+    "hud.enchant.reignofnether.vigor": "Vigor",
+    "hud.faction.reignofnether.villager": "Villager",
+    "hud.faction.reignofnether.monster": "Monster",
+    "hud.faction.reignofnether.piglin": "Piglin",
+    "hud.faction.reignofnether.random": "Random",
 
     "server.reignofnether.is_defeated": "%s has %s and is defeated!",
     "server.reignofnether.lost_buildings": "lost all their buildings",
@@ -578,7 +589,7 @@
     "time.reignofnether.night_circle_mode_all": "All",
     "time.reignofnether.night_circle_mode_no_overlaps": "No overlaps",
     "time.reignofnether.night_circle_mode_off": "Off",
-    "time.reignofnether.survival_wave": "Survival Wave: %s",
+    "time.reignofnether.time_until_next_wave": "%s until next wave",
 
     "tutorial.reignofnether.tutorial_help": "Tutorial Help",
     "tutorial.reignofnether.welcome": "Welcome to Reign of Nether",
@@ -725,11 +736,11 @@
     "tutorial.reignofnether.good_luck": "Until next time... Good luck and have fun!",
     "tutorial.reignofnether.tutorial_disabled": "Tutorial mode disabled",
 
-    "units.reignofnether.captain": "Captain",
-    "units.reignofnether.ravager_artillery": "Ravager Artillery",
-    "units.reignofnether.spider_jockey": "Spider Jockey",
-    "units.reignofnether.poison_spider_jockey": "Poison Spider Jockey",
-    "units.reignofnether.hoglin_rider": "Hoglin Rider",
+    "units.villagers.reignofnether.captain": "Captain",
+    "units.villagers.reignofnether.ravager_artillery": "Ravager Artillery",
+    "units.monsters.reignofnether.spider_jockey": "Spider Jockey",
+    "units.monsters.reignofnether.poison_spider_jockey": "Poison Spider Jockey",
+    "units.piglins.reignofnether.hoglin_rider": "Hoglin Rider",
 
     "units.reignofnether.farmer": "Farmer",
     "units.reignofnether.lumberjack": "Lumberjack",
@@ -742,6 +753,7 @@
     "units.reignofnether.veteran_mason": "Veteran Mason",
     "units.reignofnether.veteran_hunter": "Veteran Hunter",
 
+    "units.monsters.reignofnether.charged_creeper": "Charged Creeper",
     "units.monsters.reignofnether.creeper": "Creeper",
     "units.monsters.reignofnether.creeper.tooltip1": "An explosive monster that can blow up units and buildings.",
     "units.monsters.reignofnether.creeper.tooltip2": "Deals less damage to capitol buildings.",
@@ -774,6 +786,7 @@
     "units.monsters.reignofnether.slime.tooltip1": "A sentient cube of green slime which can consume",
     "units.monsters.reignofnether.slime.tooltip2": "other cubes to grow in size, health and damage.",
     "units.monsters.reignofnether.slime.tooltip3": "Requires a Slime Pit.",
+    "units.monsters.reignofnether.slime.size": "(size %d)",
     "units.monsters.reignofnether.warden": "Warden",
     "units.monsters.reignofnether.warden.tooltip1": "A powerful but blind monster that can fire sonic booms.",
     "units.monsters.reignofnether.zombie": "Zombie",
@@ -783,6 +796,9 @@
     "units.monsters.reignofnether.zombie_villager.tooltip1": "An undead worker that can construct and",
     "units.monsters.reignofnether.zombie_villager.tooltip2": "repair buildings and gather resources.",
     "units.monsters.reignofnether.zombie_villager.tooltip3": "Zombie villagers are slowed under sunlight.",
+    "units.monsters.reignofnether.zombie_piglin": "Zombie Piglin",
+    "units.monsters.reignofnether.zoglin": "Zoglin",
+    "units.monsters.reignofnether.enderman": "Enderman",
 
     "units.piglins.reignofnether.blaze": "Blaze",
     "units.piglins.reignofnether.blaze.tooltip1": "A fiery elemental that shoots fireballs from afar.",
@@ -835,6 +851,7 @@
     "units.villagers.reignofnether.vindicator.tooltip2": "Upgraded with diamond axes that deal +2 damage",
     "units.villagers.reignofnether.witch": "Witch",
     "units.villagers.reignofnether.witch.tooltip1": "A devious hag who can heal and harm with potions.",
+    "units.villagers.reignofnether.militia": "Miltia",
 
     "alliance.reignofnether.sent_request": "\nAlliance request sent to %s.\n",
     "alliance.reignofnether.ally_self": "\nYou can't ally with yourself!\n",
@@ -853,6 +870,8 @@
     "survival.reignofnether.wave_cleared": "Your enemies have been defeated... for now.",
     "survival.reignofnether.remaining_enemies_one": "1 enemy remains",
     "survival.reignofnether.remaining_enemies": "%d enemies remain",
+
+    "survival.reignofnether.next_wave": "Next Wave: %d (Tier %d %s)",
 
     "block.reignofnether.decayable_nether_wart_block": "Decayable Nether Wart Block",
     "block.reignofnether.decayable_warped_wart_block": "Decayable Warped Wart Block",

@@ -180,7 +180,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
                 .add(Attributes.MOVEMENT_SPEED, SpiderUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, SpiderUnit.attackDamage)
                 .add(Attributes.ARMOR, SpiderUnit.armorValue)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.MAX_HEALTH, SpiderUnit.maxHealth);
     }
 

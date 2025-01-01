@@ -82,7 +82,7 @@ public class UnitActionItem {
         this.selectedBuildingPos = selectedBuildingPos;
     }
 
-    public void resetBehaviours(Unit unit) {
+    public static void resetBehaviours(Unit unit) {
         unit.getCheckpoints().clear();
         unit.setEntityCheckpointId(-1);
         unit.resetBehaviours();

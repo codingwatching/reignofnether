@@ -34,7 +34,8 @@ import java.util.List;
 public class EnchantMultishot extends EnchantAbility {
 
     private static final UnitAction ENCHANT_ACTION = UnitAction.ENCHANT_MULTISHOT;
-    private static final Enchantment actualEnchantment = Enchantments.MULTISHOT;
+    public static final Enchantment actualEnchantment = Enchantments.MULTISHOT;
+    public static final int enchantLevel = 1;
 
     public EnchantMultishot(Library library) {
         super(ENCHANT_ACTION, library, ResourceCosts.ENCHANT_MULTISHOT);
@@ -90,7 +91,9 @@ public class EnchantMultishot extends EnchantAbility {
     @Override
     protected void doEnchant(LivingEntity entity) {
         ItemStack item = entity.getItemBySlot(EquipmentSlot.MAINHAND);
-        EnchantmentHelper.setEnchantments(new HashMap<>(), item);
-        item.enchant(actualEnchantment, 1);
+        if (item != ItemStack.EMPTY) {
+            EnchantmentHelper.setEnchantments(new HashMap<>(), item);
+            item.enchant(actualEnchantment, enchantLevel);
+        }
     }
 }

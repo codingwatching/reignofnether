@@ -148,7 +148,7 @@ public class ZombieUnit extends Zombie implements Unit, AttackerUnit, Convertabl
                 .add(Attributes.ATTACK_DAMAGE, ZombieUnit.attackDamage)
                 .add(Attributes.ARMOR, ZombieUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, ZombieUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 

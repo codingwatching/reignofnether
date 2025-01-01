@@ -171,7 +171,7 @@ public class SkeletonUnit extends Skeleton implements Unit, AttackerUnit, Ranged
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, SkeletonUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, SkeletonUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, SkeletonUnit.armorValue);
     }
 

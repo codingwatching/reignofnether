@@ -726,11 +726,11 @@
   "tutorial.reignofnether.good_luck": "好好玩耍吧！我们下次再见！",
   "tutorial.reignofnether.tutorial_disabled": "教程模式已结束",
 
-  "units.reignofnether.captain": "队长",
-  "units.reignofnether.ravager_artillery": "劫掠兽炮兵",
-  "units.reignofnether.spider_jockey": "蜘蛛骑士",
-  "units.reignofnether.poison_spider_jockey": "洞穴蜘蛛骑士",
-  "units.reignofnether.hoglin_rider": "疣猪兽骑士",
+  "units.villagers.reignofnether.captain": "队长",
+  "units.villagers.reignofnether.ravager_artillery": "劫掠兽炮兵",
+  "units.monsters.reignofnether.spider_jockey": "蜘蛛骑士",
+  "units.monsters.reignofnether.poison_spider_jockey": "洞穴蜘蛛骑士",
+  "units.piglins.reignofnether.hoglin_rider": "疣猪兽骑士",
 
   "units.reignofnether.farmer": "农夫",
   "units.reignofnether.lumberjack": "伐木工",

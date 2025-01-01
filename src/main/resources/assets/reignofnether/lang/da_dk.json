@@ -637,11 +637,11 @@
   "tutorial.reignofnether.good_luck": "Indtil næste gang... Held og lykke og hav det sjovt!",
   "tutorial.reignofnether.tutorial_disabled": "Tutorial-tilstand deaktiveret.",
 
-  "units.reignofnether.captain": "Kaptajn",
-  "units.reignofnether.ravager_artillery": "Ravager Artilleri",
-  "units.reignofnether.spider_jockey": "Spider Jockey",
-  "units.reignofnether.poison_spider_jockey": "Gift Spider Jockey",
-  "units.reignofnether.hoglin_rider": "Hoglin Rytter",
+  "units.villagers.reignofnether.captain": "Kaptajn",
+  "units.villagers.reignofnether.ravager_artillery": "Ravager Artilleri",
+  "units.monsters.reignofnether.spider_jockey": "Spider Jockey",
+  "units.monsters.reignofnether.poison_spider_jockey": "Gift Spider Jockey",
+  "units.piglins.reignofnether.hoglin_rider": "Hoglin Rytter",
 
   "units.monsters.reignofnether.creeper": "Creeper",
   "units.monsters.reignofnether.creeper.tooltip1": "En eksplosiv monster, der kan sprænge enheder og bygninger.",

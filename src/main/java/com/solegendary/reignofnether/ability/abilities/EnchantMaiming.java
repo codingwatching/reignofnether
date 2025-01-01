@@ -30,6 +30,7 @@ public class EnchantMaiming extends EnchantAbility {
     private static final UnitAction ENCHANT_ACTION = UnitAction.ENCHANT_MAIMING;
     public static final Enchantment actualEnchantment = Enchantments.UNBREAKING;
     public static final int SLOWNESS_DURATION = 5 * ResourceCost.TICKS_PER_SECOND;
+    public static final int enchantLevel = 1;
 
     public EnchantMaiming(Library library) {
         super(ENCHANT_ACTION, library, ResourceCosts.ENCHANT_MAIMING);
@@ -85,7 +86,9 @@ public class EnchantMaiming extends EnchantAbility {
     @Override
     protected void doEnchant(LivingEntity entity) {
         ItemStack item = entity.getItemBySlot(EquipmentSlot.MAINHAND);
-        EnchantmentHelper.setEnchantments(new HashMap<>(), item);
-        item.enchant(actualEnchantment, 1);
+        if (item != ItemStack.EMPTY) {
+            EnchantmentHelper.setEnchantments(new HashMap<>(), item);
+            item.enchant(actualEnchantment, enchantLevel);
+        }
     }
 }

@@ -147,7 +147,7 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, HuskUnit.attackDamage)
                 .add(Attributes.ARMOR, HuskUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, HuskUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 

@@ -313,7 +313,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
                 .add(Attributes.ATTACK_DAMAGE, VillagerUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, VillagerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, VillagerUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, VillagerUnit.armorValue);
     }
 

@@ -47,6 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
+
 public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, VillagerDataHolder, ConvertableUnit {
     // region
     private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
@@ -174,7 +176,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                 .add(Attributes.ATTACK_DAMAGE, MilitiaUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, MilitiaUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, MilitiaUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE_IMPROVED)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, MilitiaUnit.armorValue);
     }
 
@@ -198,7 +200,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
             Unit.tick(this);
             AttackerUnit.tick(this);
 
-            if (this.tickCount > 100 && this.tickCount % 10 == 0 && !converted && !level.isClientSide()) {
+            if (this.tickCount > 100 && this.tickCount % 10 == 0 && !converted && !level.isClientSide() && !getOwnerName().equals(ENEMY_OWNER_NAME)) {
                 Building building = BuildingUtils.findClosestBuilding(level.isClientSide(), this.getEyePosition(),
                         (b) -> b.isBuilt && b.ownerName.equals(getOwnerName()) && b instanceof TownCentre);
 

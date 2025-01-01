@@ -11,7 +11,9 @@ import com.solegendary.reignofnether.research.researchItems.ResearchFireResistan
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.time.NightUtils;
+import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
+import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.ability.Ability;
@@ -49,6 +51,10 @@ public interface Unit {
     // used for increasing pathfinding calculation range, default is 16 for most mobs
     static int FOLLOW_RANGE_IMPROVED = 64;
     static int FOLLOW_RANGE = 16;
+
+    public static int getFollowRange() {
+        return UnitServerEvents.IMPROVED_PATHFINDING ? FOLLOW_RANGE_IMPROVED : FOLLOW_RANGE;
+    }
 
     // list of positions to draw lines between to indicate unit intents - will fade over time unless shift is held
     public ArrayList<BlockPos> getCheckpoints();
@@ -278,5 +284,12 @@ public interface Unit {
             return 0.5f;
         }
         return 1.0f;
+    }
+
+    public static Ability getAbility(Unit unit, UnitAction abilityAction) {
+        for (Ability ability : unit.getAbilities())
+            if (ability.action.equals(abilityAction))
+                return ability;
+        return null;
     }
 }

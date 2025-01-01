@@ -9,7 +9,6 @@ import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -49,24 +48,17 @@ public class GameruleServerEvents {
             Map<String, ParsedArgument<CommandSourceStack, ?>> args = evt.getParseResults().getContext().getArguments();
             if (args.containsKey("value")) {
                 double groundYLevel = ((Integer) args.get("value").getResult()).doubleValue();
-                PlayerClientboundPacket.setOrthoviewBaseY((long) groundYLevel);
+                PlayerClientboundPacket.setOrthoviewMinY((long) groundYLevel + 30);
             }
         } else if (nodes.get(1).getNode().getName().equals("improvedPathfinding")) {
             Map<String, ParsedArgument<CommandSourceStack, ?>> args = evt.getParseResults().getContext().getArguments();
             if (args.containsKey("value")) {
                 boolean value = (boolean) args.get("value").getResult();
-                if (value) {
-                    for (LivingEntity le : UnitServerEvents.getAllUnits()) {
-                        AttributeInstance ai = le.getAttribute(Attributes.FOLLOW_RANGE);
-                        if (ai != null)
-                            ai.setBaseValue(Unit.FOLLOW_RANGE_IMPROVED);
-                    }
-                } else {
-                    for (LivingEntity le : UnitServerEvents.getAllUnits()) {
-                        AttributeInstance ai = le.getAttribute(Attributes.FOLLOW_RANGE);
-                        if (ai != null)
-                            ai.setBaseValue(Unit.FOLLOW_RANGE);
-                    }
+                for (LivingEntity le : UnitServerEvents.getAllUnits()) {
+                    UnitServerEvents.IMPROVED_PATHFINDING = value;
+                    AttributeInstance ai = le.getAttribute(Attributes.FOLLOW_RANGE);
+                    if (ai != null)
+                        ai.setBaseValue(Unit.getFollowRange());
                 }
             }
         }
@@ -77,8 +69,7 @@ public class GameruleServerEvents {
         MinecraftServer server = evt.getEntity().getLevel().getServer();
         if (server != null) {
             int groundYLevel = server.getGameRules().getRule(GameRuleRegistrar.GROUND_Y_LEVEL).get();
-            if (groundYLevel >= 0)
-                PlayerClientboundPacket.setOrthoviewBaseY(groundYLevel);
+            PlayerClientboundPacket.setOrthoviewMinY(groundYLevel + 30);
         }
     }
 }

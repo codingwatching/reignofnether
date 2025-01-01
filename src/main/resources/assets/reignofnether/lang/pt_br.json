@@ -637,11 +637,11 @@
     "tutorial.reignofnether.good_luck": "Até a próxima... Boa sorte e divirta-se!",
     "tutorial.reignofnether.tutorial_disabled": "Modo tutorial desativado.",
 
-    "units.reignofnether.captain": "Capitão",
-    "units.reignofnether.ravager_artillery": "Artilharia Ravager",
-    "units.reignofnether.spider_jockey": "Cavaleiro de Aranha",
-    "units.reignofnether.poison_spider_jockey": "Cavaleiro de Aranha Venenosa",
-    "units.reignofnether.hoglin_rider": "Cavaleiro Hoglin",
+    "units.villagers.reignofnether.captain": "Capitão",
+    "units.villagers.reignofnether.ravager_artillery": "Artilharia Ravager",
+    "units.monsters.reignofnether.spider_jockey": "Cavaleiro de Aranha",
+    "units.monsters.reignofnether.poison_spider_jockey": "Cavaleiro de Aranha Venenosa",
+    "units.piglins.reignofnether.hoglin_rider": "Cavaleiro Hoglin",
 
     "units.monsters.reignofnether.creeper": "Creeper",
     "units.monsters.reignofnether.creeper.tooltip1": "Um monstro explosivo que pode destruir unidades e edifícios.",
