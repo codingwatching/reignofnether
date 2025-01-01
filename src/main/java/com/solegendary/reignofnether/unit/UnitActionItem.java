@@ -8,9 +8,7 @@ import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
-import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
-import com.solegendary.reignofnether.unit.goals.MoveToTargetBlockGoal;
-import com.solegendary.reignofnether.unit.goals.ReturnResourcesGoal;
+import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
@@ -211,7 +209,10 @@ public class UnitActionItem {
                         }
                     } else if (buildingAtPos instanceof Portal portal
                         && portal.portalType == Portal.PortalType.TRANSPORT && unit.canUsePortal()) {
-                        unit.getUsePortalGoal().setBuildingTarget(preselectedBlockPos);
+                        if (unit.getUsePortalGoal() instanceof FlyingUsePortalGoal flyingUsePortalGoal)
+                            flyingUsePortalGoal.setBuildingTarget(preselectedBlockPos);
+                        if (unit.getUsePortalGoal() instanceof UsePortalGoal usePortalGoal)
+                            usePortalGoal.setBuildingTarget(preselectedBlockPos);
                     } else {
                         unit.setMoveTarget(preselectedBlockPos);
                     }

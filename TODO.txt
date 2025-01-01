@@ -13,63 +13,32 @@ Features
 
 [❌] Add to main game build
 
-[🟡] Next wave indicator (shows potential enemies and upgrades, and definite faction)
-
-[❌] Sync and save faction order using random(seed)
-
-[🟡] Enemies can use all sorts of abilities, this includes:
-    [🟡] - Spiders web on their first attack
-    [🟡] - Wardens sonic boom the first enemy unit that they see
-    [🟡] - Piglin Brutes raise their shields while targeting ranged units or buildings
-    [🟡] - Wither Skeletons activate death cloud if they have no non-wither allies near them
-    [🟡] - Evokers summon vexes once in range of enemies
-    [🟡] - Ravagers roar whenever off cooldown when below half hp
-
-
-[🟡] Spiders and spider jockeys now prioritise attacking your workers
 
 Bugfixes
 --------
 
-[🟡] Fixed the first wave sometimes spawning immediately after restarting a game
-
-[🟡] Fixed time until next wave showing negative numbers
-
-[🟡] Fixed portals spawning underwater
-
-[🟡] Fixed portals spawning enemies one wave ahead
-
-[🟡] Disabled wave survival and gamemode button on the tutorial world
+[🟡] Fixed a bug causing villagers to become hunters too quickly
 
 [❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
-[❌] Hunters are levelling too fast
+
 
 
 Quality of Life
 ---------------
 
-[🟡] You can now see an ally's resources by selecting any of their buildings or units
-
 [❌] Added /gamerule for bridges over void
 
-[❌] /rts-surrender should issue a stop command to all of that players' units
+[🟡] When a player is defeated or surrenders, all of their units are issued a stop command
 
 Balancing
 ---------
-[🟡] Removed zoglins from monster waves
 
-[🟡] Adjusted upgrades on each tier
+[🟡] New capitols no longer spawn animals around them upon completion
 
-[🟡] Massively lowered the distance that endermen teleport when dodging projectiles
+[🟡] Villagers now require 50% more logs chopped to become regular and veteran lumberjacks
 
-[❌] New Town Centres no longer spawn animals around them
-
-[❌] Make lumberjacks level up more slowly
-
-[❌] Prevent new capitols producing animals
-
-[❌] Ghasts can now use transport portals
+[🟡] Ghasts can now use transport portals
 
 [❌] Soulfires created by blazes need to be made temporary
 

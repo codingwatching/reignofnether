@@ -203,7 +203,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     // equal to ~4mins of log chopping, excludes leaves
     final static public float LUMBERJACK_SPEED_MULT = 1.25f;
     final static public float LUMBERJACK_SPEED_MULT_VETERAN = 1.5f;
-    final static public int LUMBERJACK_EXP_REQ = 20;
+    final static public int LUMBERJACK_EXP_REQ = 30;
     public int lumberjackExp = 0;
     public void incrementLumberjackExp() {
         lumberjackExp += hasSpeedCheat() ? 10 : 1;

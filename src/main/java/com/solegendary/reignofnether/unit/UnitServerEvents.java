@@ -468,6 +468,13 @@ public class UnitServerEvents {
                 }
             }
         }
+
+        if (evt.getSource().getEntity() instanceof VillagerUnit vUnit &&
+            ResourceSources.isHuntableAnimal(evt.getEntity())) {
+            vUnit.incrementHunterExp();
+            if (!(evt.getEntity() instanceof Chicken))
+                vUnit.incrementHunterExp();
+        }
     }
 
     // animal hunting
@@ -480,15 +487,8 @@ public class UnitServerEvents {
             evt.setCanceled(true);
             for (ItemStack itemStack : ResourceSources.getFoodItemsFromAnimal((Animal) evt.getEntity())) {
                 ResourceSource res = ResourceSources.getFromItem(itemStack.getItem());
-
-                if (res != null) {
+                if (res != null)
                     unit.getItems().add(itemStack);
-                    if (unit instanceof VillagerUnit vUnit) {
-                        vUnit.incrementHunterExp();
-                        if (!(evt.getEntity() instanceof Chicken))
-                            vUnit.incrementHunterExp();
-                    }
-                }
             }
             if (Unit.atThresholdResources(unit)) {
                 unit.getReturnResourcesGoal().returnToClosestBuilding();

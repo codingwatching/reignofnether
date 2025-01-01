@@ -21,7 +21,9 @@ import com.solegendary.reignofnether.survival.SurvivalServerEvents;
 import com.solegendary.reignofnether.time.TimeUtils;
 import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
+import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
@@ -571,10 +573,17 @@ public class PlayerServerEvents {
                     PlayerClientboundPacket.defeat(playerName);
 
                     // Remove ownership from all units and buildings of the defeated player
-                    for (LivingEntity entity : UnitServerEvents.getAllUnits())
-                        if (entity instanceof Unit unit && unit.getOwnerName().equals(playerName))
+                    for (LivingEntity entity : UnitServerEvents.getAllUnits()) {
+                        if (entity instanceof Unit unit && unit.getOwnerName().equals(playerName)) {
+                            unit.resetBehaviours();
+                            Unit.resetBehaviours(unit);
+                            if (unit instanceof AttackerUnit aUnit)
+                                AttackerUnit.resetBehaviours(aUnit);
+                            if (unit instanceof WorkerUnit wUnit)
+                                WorkerUnit.resetBehaviours(wUnit);
                             unit.setOwnerName("");
-
+                        }
+                    }
                     for (Building building : BuildingServerEvents.getBuildings())
                         if (building.ownerName.equals(playerName))
                             building.ownerName = "";

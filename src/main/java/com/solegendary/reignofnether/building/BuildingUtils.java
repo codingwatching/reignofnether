@@ -43,18 +43,6 @@ public class BuildingUtils {
                     building.getBlocksPlaced() < building.getBlocksTotal();
     }
 
-    public static boolean anyOtherCapitolProducingWorkers(boolean isClientSide, Building building) {
-        List<Building> buildings = isClientSide ? BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
-        List<Building> capitols = buildings.stream().filter(
-                b -> b.isCapitol && b.ownerName.equals(building.ownerName) &&
-                        !b.originPos.equals(building.originPos)).toList();
-        for (Building capitol : capitols)
-            if (capitol instanceof ProductionBuilding pb &&
-                !pb.productionQueue.isEmpty())
-                return true;
-        return false;
-    }
-
     // returns a list of BPs that may reside in unique chunks for fog of war calcs
     public static ArrayList<BlockPos> getUniqueChunkBps(Building building) {
         AABB aabb = new AABB(

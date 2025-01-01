@@ -68,7 +68,7 @@ public interface Unit {
     public GarrisonGoal getGarrisonGoal();
     public boolean canGarrison();
 
-    public UsePortalGoal getUsePortalGoal();
+    public MoveToTargetBlockGoal getUsePortalGoal();
     public boolean canUsePortal();
 
     public Faction getFaction();
@@ -254,8 +254,12 @@ public interface Unit {
         unit.setHoldPosition(false);
         if (unit.canGarrison())
             unit.getGarrisonGoal().stopGarrisoning();
-        if (unit.canUsePortal())
-            unit.getUsePortalGoal().stopUsingPortal();
+        if (unit.canUsePortal()) {
+            if (unit.getUsePortalGoal() instanceof FlyingUsePortalGoal flyingUsePortalGoal)
+                flyingUsePortalGoal.stopUsingPortal();
+            if (unit.getUsePortalGoal() instanceof UsePortalGoal usePortalGoal)
+                usePortalGoal.stopUsingPortal();
+        }
     }
 
     // can be overridden in the Unit's class to do additional logic on a reset
