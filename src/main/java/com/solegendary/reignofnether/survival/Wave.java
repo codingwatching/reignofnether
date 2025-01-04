@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerBase;
 import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerWave;
 import static com.solegendary.reignofnether.survival.spawners.MonsterWaveSpawner.spawnMonsterWave;
 import static com.solegendary.reignofnether.survival.spawners.PiglinWaveSpawner.spawnPiglinWave;
@@ -34,12 +35,12 @@ public class Wave {
 
     public void start(ServerLevel level) {
         switch (faction) {
-            case VILLAGERS -> spawnIllagerWave(level, this);
+            case VILLAGERS -> spawnIllagerBase(level, this);
             case MONSTERS -> spawnMonsterWave(level, this);
             case PIGLINS -> spawnPiglinWave(level, this);
             case NONE -> {
                 switch (new Random().nextInt(3)) {
-                    case 0 -> spawnIllagerWave(level, this);
+                    case 0 -> spawnIllagerBase(level, this);
                     case 1 -> spawnMonsterWave(level, this);
                     case 2 -> spawnPiglinWave(level, this);
                 }

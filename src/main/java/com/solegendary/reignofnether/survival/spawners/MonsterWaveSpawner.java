@@ -132,7 +132,7 @@ public class MonsterWaveSpawner {
         final int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
 
-        List<BlockPos> bps = getValidSpawnPoints(remainingPop, level, true);
+        List<BlockPos> bps = getValidSpawnPoints(remainingPop, level, true, 4);
 
         for (BlockPos bp : bps) {
             BlockState bs = level.getBlockState(bp);

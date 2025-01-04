@@ -1,6 +1,12 @@
 package com.solegendary.reignofnether.survival.spawners;
 
 import com.solegendary.reignofnether.ability.abilities.*;
+import com.solegendary.reignofnether.building.Building;
+import com.solegendary.reignofnether.building.BuildingServerEvents;
+import com.solegendary.reignofnether.building.GarrisonableBuilding;
+import com.solegendary.reignofnether.building.buildings.piglins.Portal;
+import com.solegendary.reignofnether.building.buildings.villagers.Barracks;
+import com.solegendary.reignofnether.building.buildings.villagers.Watchtower;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
@@ -18,12 +24,14 @@ import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Rotation;
 
 import java.util.*;
 
@@ -119,13 +127,30 @@ public class IllagerWaveSpawner {
         }
     }
 
+    public static void spawnIllagerBase(ServerLevel level, Wave wave) {
+        List<BlockPos> spawnBps = getValidSpawnPoints(1, level, false, 16);
+        if (spawnBps.isEmpty())
+            spawnIllagerWave(level, wave);
+
+        boolean flipCoords = random.nextBoolean();
+
+        for (BlockPos bp : spawnBps) {
+            Building building = WaveSpawner.spawnBuilding(Barracks.buildingName, bp.above());
+            if (building != null) {
+                BlockPos bp2 = new BlockPos(building.centrePos.getX() - 2, building.minCorner.getY(), building.centrePos.getZ());
+                WaveSpawner.spawnBuilding(Watchtower.buildingName, bp2.offset(new BlockPos(flipCoords ? 10 : -0,-1, flipCoords ? 0 : 10)));
+                WaveSpawner.spawnBuilding(Watchtower.buildingName, bp2.offset(new BlockPos(flipCoords ? -10 : 0,-1, flipCoords ? 0 : -10)));
+            }
+        }
+    }
+
     // spawn illagers from one direction
     public static void spawnIllagerWave(ServerLevel level, Wave wave) {
         checkAndApplyUpgrades(wave.highestUnitTier);
 
         final int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
-        List<BlockPos> spawnBps = getValidSpawnPoints(remainingPop, level, true);
+        List<BlockPos> spawnBps = getValidSpawnPoints(remainingPop, level, true, 6);
         int spawnsThisDir = 0;
         int spawnUntilNextTurn = -2;
 

@@ -104,6 +104,26 @@ public class MiscUtil {
         unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
     }
 
+    // excludes trees and buildings
+    public static BlockPos getHighestGroundBlock(Level level, BlockPos blockPos) {
+        int y = level.getHeight();
+        BlockState bs;
+        BlockPos bp;
+        do {
+            bp = new BlockPos(blockPos.getX(), y, blockPos.getZ());
+            bs = level.getBlockState(bp);
+            y -= 1;
+        } while((bs.isAir() ||
+                BuildingUtils.isPosInsideAnyBuilding(level.isClientSide, bp) ||
+                bs.getBlock() == Blocks.LIGHT ||
+                bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (!bs.getMaterial().isSolidBlocking() &&
+                !bs.getMaterial().isLiquid()) ||
+                bs.getMaterial() == Material.LEAVES ||
+                bs.getMaterial() == Material.WOOD) && y > -63);
+        return new BlockPos(blockPos.getX(), y, blockPos.getZ());
+    }
+
     public static BlockPos getHighestNonAirBlock(Level level, BlockPos blockPos, boolean ignoreLeaves) {
         int y = level.getHeight();
         BlockState bs;

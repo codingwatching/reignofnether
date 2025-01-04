@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.Material;
@@ -22,8 +23,8 @@ import static com.solegendary.reignofnether.survival.SurvivalServerEvents.*;
 
 public class WaveSpawner {
 
-    public static final int MAX_SPAWN_RANGE = 80;
-    public static final int MIN_SPAWN_RANGE = 60;
+    public static final int MAX_SPAWN_RANGE = 100;
+    public static final int MIN_SPAWN_RANGE = 70;
     public static final int SAMPLE_POINTS_PER_BUILDING = 100;
     public static final int MAX_FAILED_BUILDINGS = 10;
 
@@ -36,7 +37,43 @@ public class WaveSpawner {
         return Math.max(1, unit.getPopCost() - 1);
     }
 
-    public static void placeIceOrMagma(BlockPos bp, Level level) {;
+    public static void clearBuildingArea(Building building) {
+        if (building != null) {
+            for (int x = building.minCorner.getX() - 1; x < building.maxCorner.getX() + 2; x++)
+                for (int y = building.minCorner.getY(); y < building.maxCorner.getY() + 2; y++)
+                    for (int z = building.minCorner.getZ() - 1; z < building.maxCorner.getZ() + 2; z++)
+                        building.getLevel().setBlockAndUpdate(new BlockPos(x,y,z), Blocks.AIR.defaultBlockState());
+        }
+    }
+
+    // used to determine how flat an area is
+    public static double getYVariance(Level level, BlockPos bp, int radius) {
+        ArrayList<BlockPos> bps = new ArrayList<>();
+
+        for (int x = -radius; x < radius; x++)
+            for (int z = -radius; z < radius; z++)
+                bps.add(MiscUtil.getHighestGroundBlock(level, bp.offset(x, 0, z)));
+
+        int n = bps.size();
+        if (n == 0)
+            return 0;
+
+        // Calculate mean Y value
+        double sumY = 0.0;
+        for (BlockPos bp1 : bps)
+            sumY += bp1.getY();
+
+        double meanY = sumY / n;
+
+        // Calculate variance
+        double variance = 0.0;
+        for (BlockPos bp1 : bps)
+            variance += Math.pow(bp1.getY() - meanY, 2);
+
+        return variance / n;
+    }
+
+    public static void placeIceOrMagma(BlockPos bp, Level level) {
 
         BlockPos bpLiquid = null;
         for (int i = 0; i < 10; i++) {
@@ -76,7 +113,7 @@ public class WaveSpawner {
         }
     }
 
-    public static List<BlockPos> getValidSpawnPoints(int amount, Level level, boolean allowLiquid) {
+    public static List<BlockPos> getValidSpawnPoints(int amount, Level level, boolean allowLiquid, int flatnessRadius) {
         List<Building> buildings = BuildingServerEvents.getBuildings()
                 .stream().filter(b -> !ENEMY_OWNER_NAME.equals(b.ownerName) && !b.ownerName.isBlank())
                 .toList();
@@ -105,7 +142,7 @@ public class WaveSpawner {
         BlockState spawnBs;
         BlockPos spawnBp;
         double distSqrToNearestBuilding = 999999;
-        double distSqrToNearestPortal = 999999;
+        double distSqrToNearestEnemyBuilding = 999999;
         int failedBuildings = 0;
         ArrayList<BlockPos> validSpawns = new ArrayList<>();
 
@@ -118,7 +155,7 @@ public class WaveSpawner {
                 int z = building.centrePos.getZ() + random.nextInt(-MAX_SPAWN_RANGE, MAX_SPAWN_RANGE);
                 int y = level.getChunkAt(new BlockPos(x, 0, z)).getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
 
-                spawnBp = MiscUtil.getHighestNonAirBlock(level, new BlockPos(x, y, z), true);
+                spawnBp = MiscUtil.getHighestGroundBlock(level, new BlockPos(x, y, z));
                 spawnBs = level.getBlockState(spawnBp);
                 spawnAttemptsThisBuilding += 1;
                 if (spawnAttemptsThisBuilding > 100) {
@@ -131,20 +168,21 @@ public class WaveSpawner {
                 }
                 Vec3 vec3 = new Vec3(x, y, z);
                 Building b = BuildingUtils.findClosestBuilding(false, vec3, (b1) -> !b1.ownerName.equals(ENEMY_OWNER_NAME));
-                Building p = BuildingUtils.findClosestBuilding(false, vec3, (b1) -> b1.ownerName.equals(ENEMY_OWNER_NAME));
+                Building eb = BuildingUtils.findClosestBuilding(false, vec3, (b1) -> b1.ownerName.equals(ENEMY_OWNER_NAME));
 
                 if (b != null)
                     distSqrToNearestBuilding = b.centrePos.distToCenterSqr(vec3);
-                if (p != null)
-                    distSqrToNearestPortal = p.centrePos.distToCenterSqr(vec3);
+                if (eb != null)
+                    distSqrToNearestEnemyBuilding = eb.centrePos.distToCenterSqr(vec3);
 
             } while (spawnBs.getMaterial() == Material.LEAVES
                     || spawnBs.getMaterial() == Material.WOOD
                     || distSqrToNearestBuilding < (MIN_SPAWN_RANGE * MIN_SPAWN_RANGE)
-                    || distSqrToNearestPortal < (10 * 10)
+                    || distSqrToNearestEnemyBuilding < (10 * 10)
                     || (spawnBs.getMaterial().isLiquid() && !allowLiquid)
                     || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp)
-                    || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp.above()));
+                    || BuildingUtils.isPosInsideAnyBuilding(level.isClientSide(), spawnBp.above())
+                    || (flatnessRadius > 0 && getYVariance(level, spawnBp, flatnessRadius) >= flatnessRadius / 2f));
 
             validSpawns.add(spawnBp);
             amount -= 1;
@@ -157,5 +195,20 @@ public class WaveSpawner {
             PlayerServerEvents.sendMessageToAllPlayers("WARNING: could not find any valid spawn locations!");
 
         return validSpawns;
+    }
+
+    public static Building spawnBuilding(String buildingName, BlockPos bp) {
+        Building building = BuildingServerEvents.placeBuilding(
+                buildingName, bp,
+                Rotation.NONE,
+                ENEMY_OWNER_NAME,
+                new int[] {},
+                false,
+                false
+        );
+        if (building != null)
+            building.selfBuilding = true;
+        clearBuildingArea(building);
+        return building;
     }
 }

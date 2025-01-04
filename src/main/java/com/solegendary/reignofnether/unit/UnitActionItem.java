@@ -8,6 +8,8 @@ import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
+import com.solegendary.reignofnether.survival.Wave;
+import com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
@@ -17,6 +19,7 @@ import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -218,6 +221,9 @@ public class UnitActionItem {
                     }
                 }
                 case ATTACK_MOVE -> {
+                    if (!level.isClientSide())
+                        IllagerWaveSpawner.spawnIllagerBase((ServerLevel) level, Wave.getWave(0));
+
                     // if the unit can't actually attack just treat this as a move action
                     if (unit instanceof AttackerUnit attackerUnit) {
                         MiscUtil.addUnitCheckpoint(unit, preselectedBlockPos);
