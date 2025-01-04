@@ -423,6 +423,17 @@
   "hud.reignofnether.not_garrisonable": "所选建筑无法进驻！",
   "hud.reignofnether.no_destination": "所选传送门没有通往任一目标！",
 
+  "hud.units.reignofnether.armoured": "装甲的",
+  "hud.enchant.reignofnether.maiming": "致残",
+  "hud.enchant.reignofnether.sharpness": "锋利",
+  "hud.enchant.reignofnether.multishot": "多重射击",
+  "hud.enchant.reignofnether.quickshot": "快速装填",
+  "hud.enchant.reignofnether.vigor": "活力",
+  "hud.faction.reignofnether.villager": "村民",
+  "hud.faction.reignofnether.monster": "怪物",
+  "hud.faction.reignofnether.piglin": "猪灵",
+  "hud.faction.reignofnether.random": "随机",
+
   "server.reignofnether.is_defeated": "%s%s，遗憾落败！",
   "server.reignofnether.lost_buildings": "失去了所有建筑",
   "server.reignofnether.lost_capitol": "%s已失去了他们的首府建筑，若在 %d 秒前未能成功重建，将在地图上暴露行迹！",
@@ -579,7 +590,7 @@
   "time.reignofnether.night_circle_mode_all": "显示所有",
   "time.reignofnether.night_circle_mode_no_overlaps": "显示不重叠",
   "time.reignofnether.night_circle_mode_off": "不显示",
-  "time.reignofnether.survival_wave": "生存波次：%s",
+  "time.reignofnether.time_until_next_wave": "距下一波次还有 %s",
 
   "tutorial.reignofnether.tutorial_help": "教程帮助",
   "tutorial.reignofnether.welcome": "欢迎来到下界之治",
@@ -743,6 +754,7 @@
   "units.reignofnether.veteran_mason": "老练采石匠",
   "units.reignofnether.veteran_hunter": "老练猎人",
 
+  "units.monsters.reignofnether.charged_creeper": "闪电苦力怕",
   "units.monsters.reignofnether.creeper": "苦力怕",
   "units.monsters.reignofnether.creeper.tooltip1": "苦力怕是一种会爆炸的怪物，能够将敌方单位和建筑炸得灰飞烟灭。",
   "units.monsters.reignofnether.creeper.tooltip2": "苦力怕对首府建筑造成的伤害降低。",
@@ -775,6 +787,7 @@
   "units.monsters.reignofnether.slime.tooltip1": "史莱姆是有生命的绿色粘液块，能够吞噬其它史莱姆",
   "units.monsters.reignofnether.slime.tooltip2": "以增加自己的尺寸、生命值与攻击力。",
   "units.monsters.reignofnether.slime.tooltip3": "需要史莱姆坑以生产。",
+  "units.monsters.reignofnether.slime.size": "（尺寸 %d）",
   "units.monsters.reignofnether.warden": "监守者",
   "units.monsters.reignofnether.warden.tooltip1": "监守者是一种没有视觉的强大怪物，能够发射音波冲击。",
   "units.monsters.reignofnether.zombie": "僵尸",
@@ -784,6 +797,9 @@
   "units.monsters.reignofnether.zombie_villager.tooltip1": "僵尸村民是一种可以建造和",
   "units.monsters.reignofnether.zombie_villager.tooltip2": "修理建筑并收集资源的不死工人。",
   "units.monsters.reignofnether.zombie_villager.tooltip3": "僵尸村民不会在阳光下燃烧。",
+  "units.monsters.reignofnether.zombie_piglin": "僵尸猪灵",
+  "units.monsters.reignofnether.zoglin": "僵尸疣猪兽",
+  "units.monsters.reignofnether.enderman": "末影人",
   
   "units.piglins.reignofnether.blaze": "烈焰人",
   "units.piglins.reignofnether.blaze.tooltip1": "烈焰人是一种凶猛的火焰怪物，能够远程发射火球攻击敌人。",
@@ -836,6 +852,7 @@
   "units.villagers.reignofnether.vindicator.tooltip2": "研究了钻石斧后，卫道士能够提升 2 点攻击力。",
   "units.villagers.reignofnether.witch": "女巫",
   "units.villagers.reignofnether.witch.tooltip1": "女巫是狡诈的老巫婆，使用药水治疗己方，伤害敌人",
+  "units.villagers.reignofnether.militia": "民兵",
 
   "alliance.reignofnether.sent_request": "\n结盟请求已发送至%s。\n",
   "alliance.reignofnether.ally_self": "\n你没法和自己结盟！\n",
@@ -854,6 +871,8 @@
   "survival.reignofnether.wave_cleared": "你的敌人已被击退……仅限当下片刻。",
   "survival.reignofnether.remaining_enemies_one": "还剩下 1 名敌人",
   "survival.reignofnether.remaining_enemies": "还剩下 %d 名敌人",
+
+  "survival.reignofnether.next_wave": "下一波次：%d（等级 %d 的 %s）",
 
   "block.reignofnether.decayable_nether_wart_block": "腐化的下界疣块",
   "block.reignofnether.decayable_warped_wart_block": "腐化的扭曲疣块",
