@@ -446,7 +446,8 @@ public class UnitServerEvents {
                         || evt.getEntity() instanceof EvokerUnit || evt.getEntity() instanceof WitchUnit) {
                     entityType = EntityRegistrar.DROWNED_UNIT.get();
                 }
-            } else {
+            }
+            if (slimeInfected && entityType == null) {
                 entityType = EntityRegistrar.SLIME_UNIT.get();
             }
 
@@ -460,7 +461,7 @@ public class UnitServerEvents {
                     false
                 );
                 if (entity instanceof SlimeUnit sUnit && evt.getEntity() instanceof Unit originalEntity) {
-                    sUnit.setSize(Mth.clamp(originalEntity.getPopCost() - 1, 1, 4), true);
+                    sUnit.setSize(Mth.clamp(originalEntity.getPopCost() - 1, 1, 5), true);
                 }
                 if (entity instanceof Unit convertedUnit) {
                     convertedUnit.setOwnerName(unit.getOwnerName());

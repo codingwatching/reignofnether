@@ -221,9 +221,6 @@ public class UnitActionItem {
                     }
                 }
                 case ATTACK_MOVE -> {
-                    if (!level.isClientSide())
-                        IllagerWaveSpawner.spawnIllagerBase((ServerLevel) level, Wave.getWave(0));
-
                     // if the unit can't actually attack just treat this as a move action
                     if (unit instanceof AttackerUnit attackerUnit) {
                         MiscUtil.addUnitCheckpoint(unit, preselectedBlockPos);

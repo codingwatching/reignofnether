@@ -33,6 +33,20 @@ Features
 
 [❌] Shift queueing actions
 
+[❌] Wave Survival: Groups of buildings on some nights
+    [❌] Add to a new class like WavePortal
+    [❌] Scale according to wave tier
+        Tier 1: cannot spawn
+        Tier 2: production building + ground units + 1 garrison
+        Tier 3: production building + ground units
+        Tier 4: production building + ground units + 2 garrisons
+        Tier 5: castle building
+        Tier 6: castle building + 2 garrisons
+
+    [❌] Instead of replacing a wave, spawn alongside a wave, but reduce the wave size
+    [❌] If left until the next night, raises the population value by the same amount that it reduced it by
+
+
 
 Bugfixes
 --------

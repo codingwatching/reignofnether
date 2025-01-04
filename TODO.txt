@@ -13,9 +13,6 @@ Features
 
 [❌] Add to main game build
 
-[❌] Groups of buildings on some nights
-    - Have to implement a flatness calculator
-
 
 Bugfixes
 --------
@@ -50,8 +47,6 @@ Quality of Life
 
 Balancing
 ---------
-
-[🟡] Slime conversion can now only make slimes of max size 4
 
 [🟡] Enemy portal spawn rate is now scaled to the number of players in the game
     - The total of number of portals remains unchanged
