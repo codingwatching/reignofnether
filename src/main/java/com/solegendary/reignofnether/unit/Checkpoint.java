@@ -7,14 +7,13 @@ import net.minecraft.world.phys.Vec3;
 // lines and boxes drawn to entities and blocks to indicate unit intent like movement
 public class Checkpoint {
 
-    public static final int CHECKPOINT_TICKS_MAX = 200;
     public static final int CHECKPOINT_TICKS_FADE = 15; // ticks left at which the lines start to fade
 
     public final BlockPos bp;
     public final Entity entity;
     public final boolean isGreen;
     private boolean isFading = false;
-    public int ticksLeft = CHECKPOINT_TICKS_MAX;
+    public int ticksLeft = CHECKPOINT_TICKS_FADE;
 
     public Checkpoint(BlockPos bp, boolean isGreen) {
         this.bp = bp;

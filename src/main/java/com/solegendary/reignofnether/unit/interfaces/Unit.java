@@ -1,5 +1,6 @@
 package com.solegendary.reignofnether.unit.interfaces;
 
+import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
 import com.solegendary.reignofnether.hud.AbilityButton;
@@ -110,11 +111,19 @@ public interface Unit {
 
         // ------------- CHECKPOINT LOGIC ------------- //
         if (unitMob.level.isClientSide()) {
-            unit.getCheckpoints().removeIf(c -> (c.isForEntity() && !c.entity.isAlive()) || c.ticksLeft <= 0);
-            for (Checkpoint checkpoint : unit.getCheckpoints()) {
-                checkpoint.tick();
-                if (((Mob) unit).getOnPos().distToCenterSqr(checkpoint.getPos()) < 4f)
-                    checkpoint.startFading();
+
+            unit.getCheckpoints().removeIf(c -> c.isForEntity() && !c.entity.isAlive() || c.ticksLeft <= 0);
+
+            for (Checkpoint cp : unit.getCheckpoints()) {
+                cp.tick();
+                boolean buildingIsDone = false;
+                if (unit instanceof WorkerUnit workerUnit && !cp.isForEntity()) {
+                    Building building = BuildingUtils.findBuilding(false, cp.bp);
+                    if (building != null && building.isBuilt && building.getHealth() >= building.getMaxHealth())
+                        buildingIsDone = true;
+                }
+                if (((Mob) unit).getOnPos().distToCenterSqr(cp.getPos()) < 4f || buildingIsDone)
+                    cp.startFading();
             }
         } else {
             int totalRes = Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue();

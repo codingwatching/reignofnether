@@ -45,7 +45,6 @@ Quality of Life
     [🟡] add clientside checkpoints
     [🟡] if !queued, clear that unit's slowQueue
     [❌] ensure queueing farms still works correctly and a worker begins farming the last farm to be built if their slowQueue is empty
-    [❌] If queued and slowQueue does NOT contain any items for that user, reset the unit's behaviours first
 
 [❌] Added /gamerule for bridges over void
 

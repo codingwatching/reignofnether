@@ -765,7 +765,7 @@ public class BuildingClientEvents {
                             unit.getCheckpoints().removeIf(c -> !BuildingUtils.isPosInsideAnyBuilding(true, c.bp));
                             MiscUtil.addUnitCheckpoint(unit,
                                 CursorClientEvents.getPreselectedBlockPos().above(),
-                                false
+                                true
                             );
                             if (unit instanceof WorkerUnit workerUnit) {
                                 workerUnit.getBuildRepairGoal().ignoreNextCheckpoint = true;
