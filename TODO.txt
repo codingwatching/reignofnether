@@ -29,7 +29,7 @@ Bugfixes
 [❌] Slime pathing is really bad
     - Let them pass through and break leaves
 
-[❌] Warden sonic booms are invisible
+[✔] Fixed Warden sonic booms being invisible
 
 [❌] Have too-fast mod be built-in
 
