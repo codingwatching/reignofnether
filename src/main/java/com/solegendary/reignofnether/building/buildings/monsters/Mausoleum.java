@@ -32,7 +32,7 @@ public class Mausoleum extends ProductionBuilding implements NightSource, RangeI
     public final static String buildingName = "Mausoleum";
     public final static String structureName = "mausoleum";
     public final static ResourceCost cost = ResourceCosts.MAUSOLEUM;
-    public final static int nightRange = 80;
+    public final static int nightRange = 70;
 
     private final Set<BlockPos> nightBorderBps = new HashSet<>();
 

@@ -117,9 +117,9 @@ public class BuildRepairGoal extends MoveToTargetBlockGoal {
                 MiscUtil.addUnitCheckpoint((Unit) mob, new BlockPos(
                         target.centrePos.getX(),
                         target.originPos.getY() + 1,
-                        target.centrePos.getZ())
+                        target.centrePos.getZ()),
+                        true
                 );
-                ((Unit) mob).setIsCheckpointGreen(true);
             }
         }
         this.buildingTarget = target;

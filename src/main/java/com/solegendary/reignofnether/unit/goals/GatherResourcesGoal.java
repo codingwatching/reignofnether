@@ -57,7 +57,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     public static final int NO_TARGET_TIMEOUT = 50; // if we reach this time without progressing a gather tick while having navigation done, then switch a new target
     public static final int IDLE_TIMEOUT = 200; // ticks spent without a target to be considered idle
     private int ticksWithoutTarget = 0; // ticks spent without an active gather target (only increments serverside)
-    private int ticksIdle = 0; // ticksWithoutTarget but never reset unless we've reacquired a target - used for idle checks
+    private int ticksIdle = IDLE_TIMEOUT; // ticksWithoutTarget but never reset unless we've reacquired a target - used for idle checks
     private int ticksStationaryWithTarget = 0; // ticks that the worker hasn't moved and gatherTarget != null
     public static final int TICKS_STATIONARY_TIMEOUT = 100; // ticks that the worker hasn't moved and gatherTarget != null
     private BlockPos lastOnPos = null;
@@ -435,8 +435,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     @Override
     public void setMoveTarget(@Nullable BlockPos bp) {
         if (bp != null) {
-            MiscUtil.addUnitCheckpoint((Unit) mob, bp);
-            ((Unit) mob).setIsCheckpointGreen(true);
+            MiscUtil.addUnitCheckpoint((Unit) mob, bp, true);
         }
         super.setMoveTarget(bp);
         if (BLOCK_CONDITION.test(bp)) {
@@ -452,8 +451,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     // locks the worker to only gather from this specific building
     public void setTargetFarm(Building building) {
         if (building != null) {
-            MiscUtil.addUnitCheckpoint((Unit) mob, building.centrePos);
-            ((Unit) mob).setIsCheckpointGreen(true);
+            MiscUtil.addUnitCheckpoint((Unit) mob, building.centrePos, true);
         }
         this.data.targetFarm = building;
     }
@@ -469,6 +467,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
     // stop gathering and searching entirely, and remove saved data for
     public void stopGathering() {
+        ticksIdle = IDLE_TIMEOUT;
         failedSearches = 0;
         this.savePermState();
         this.mob.level.destroyBlockProgress(this.mob.getId(), new BlockPos(0,0,0), 0);

@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.resources;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.solegendary.reignofnether.hud.HudClientEvents;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.MyRenderer;
@@ -13,6 +14,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -85,9 +87,9 @@ public class ResourcesClientEvents {
             // remove checkpoints from a failed building placement since the client has no knowledge of resource costs
             if (loc.contains("You don't have enough")) {
                 for (LivingEntity entity : getSelectedUnits())
-                    if (entity instanceof Unit unit) {
-                        unit.getCheckpoints().clear();
-                    }
+                    if (entity instanceof Unit unit)
+                        if (((Entity) unit).getLevel().isClientSide() && !Keybindings.shiftMod.isDown())
+                            unit.getCheckpoints().clear();
             }
         }
     }

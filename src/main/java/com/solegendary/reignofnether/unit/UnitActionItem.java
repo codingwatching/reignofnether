@@ -6,6 +6,7 @@ import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.GarrisonableBuilding;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.hud.HudClientEvents;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.survival.Wave;
@@ -36,6 +37,10 @@ public class UnitActionItem {
     private final int[] unitIds; // selected unit(s)
     private final BlockPos preselectedBlockPos;
     private final BlockPos selectedBuildingPos;
+
+    public final UnitAction getAction() { return action; }
+    public final int[] getUnitIds() { return unitIds; }
+    public final BlockPos getPreselectedBlockPos() { return preselectedBlockPos; }
 
     public boolean equals(UnitActionItem unitActionItem) {
         if (unitActionItem == null)
@@ -84,8 +89,8 @@ public class UnitActionItem {
     }
 
     public static void resetBehaviours(Unit unit) {
-        unit.getCheckpoints().clear();
-        unit.setEntityCheckpointId(-1);
+        if (((Entity) unit).getLevel().isClientSide() && !Keybindings.shiftMod.isDown())
+            unit.getCheckpoints().clear();
         unit.resetBehaviours();
         Unit.resetBehaviours(unit);
         if (unit instanceof WorkerUnit workerUnit) {
@@ -94,6 +99,7 @@ public class UnitActionItem {
         if (unit instanceof AttackerUnit attackerUnit) {
             AttackerUnit.resetBehaviours(attackerUnit);
         }
+
     }
 
     // can be done server or clientside - but only serverside will have an effect on the world
@@ -223,8 +229,7 @@ public class UnitActionItem {
                 case ATTACK_MOVE -> {
                     // if the unit can't actually attack just treat this as a move action
                     if (unit instanceof AttackerUnit attackerUnit) {
-                        MiscUtil.addUnitCheckpoint(unit, preselectedBlockPos);
-                        unit.setIsCheckpointGreen(false);
+                        MiscUtil.addUnitCheckpoint(unit, preselectedBlockPos, false);
                         attackerUnit.setAttackMoveTarget(preselectedBlockPos);
                     } else {
                         unit.setMoveTarget(preselectedBlockPos);
@@ -237,8 +242,7 @@ public class UnitActionItem {
                     } else {
                         LivingEntity livingEntity = (LivingEntity) level.getEntity(unitId);
                         if (livingEntity != null) {
-                            MiscUtil.addUnitCheckpoint(unit, unitId);
-                            unit.setIsCheckpointGreen(true);
+                            MiscUtil.addUnitCheckpoint(unit, unitId, true);
                         }
                         unit.setFollowTarget(livingEntity);
                     }
@@ -254,8 +258,7 @@ public class UnitActionItem {
                 case FOLLOW -> {
                     LivingEntity livingEntity = (LivingEntity) level.getEntity(unitId);
                     if (livingEntity != null) {
-                        MiscUtil.addUnitCheckpoint(unit, unitId);
-                        unit.setIsCheckpointGreen(true);
+                        MiscUtil.addUnitCheckpoint(unit, unitId, true);
                     }
                     unit.setFollowTarget(livingEntity);
                 }

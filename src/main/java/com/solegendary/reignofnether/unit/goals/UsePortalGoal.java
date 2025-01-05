@@ -64,8 +64,7 @@ public class UsePortalGoal extends MoveToTargetBlockGoal {
                             buildingTarget.centrePos.getX(),
                             buildingTarget.originPos.getY() + 1,
                             buildingTarget.centrePos.getZ()
-                        ));
-                        ((Unit) mob).setIsCheckpointGreen(true);
+                        ), true);
                     } else {
                         HudClientEvents.showTemporaryMessage(I18n.get("hud.reignofnether.no_destination"));
                     }

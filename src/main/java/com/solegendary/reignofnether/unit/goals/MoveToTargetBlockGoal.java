@@ -108,8 +108,7 @@ public class MoveToTargetBlockGoal extends Goal {
 
     public void setMoveTarget(@Nullable BlockPos bp) {
         if (bp != null) {
-            MiscUtil.addUnitCheckpoint((Unit) mob, bp);
-            ((Unit) mob).setIsCheckpointGreen(true);
+            MiscUtil.addUnitCheckpoint((Unit) mob, bp, true);
         }
         this.moveTarget = bp;
 

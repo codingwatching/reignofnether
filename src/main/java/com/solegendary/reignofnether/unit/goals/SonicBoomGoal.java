@@ -1,9 +1,11 @@
 package com.solegendary.reignofnether.unit.goals;
 
 import com.solegendary.reignofnether.building.Building;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.util.MyMath;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 
@@ -28,7 +30,8 @@ public class SonicBoomGoal extends AbstractCastTargetedSpellGoal {
         if (!this.mob.level.isClientSide() && ticksCasting < channelTicks)
             UnitSyncClientboundPacket.sendSyncAnimationPacket(this.mob, false);
         super.stopCasting();
-        ((Unit) this.mob).getCheckpoints().clear();
+        if (this.mob.level.isClientSide() && !Keybindings.shiftMod.isDown())
+            ((Unit) this.mob).getCheckpoints().clear();
     }
 
     @Override
