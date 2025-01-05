@@ -41,7 +41,7 @@ Quality of Life
 
 [❌] Added /gamerule for bridges over void
 
-[🟡] When a player is defeated or surrenders, all of their units are issued a stop command
+[✔] When a player is defeated or surrenders, all of their units are issued a stop command
 
 
 

@@ -16,6 +16,7 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.nether.NetherBlocks;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.research.ResearchClient;
+import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
@@ -104,7 +105,8 @@ public class BuildingClientEvents {
     // can only be one preselected building as you can't box-select them like units
     public static Building getPreselectedBuilding() {
         for (Building building : buildings)
-            if (building.isPosInsideBuilding(CursorClientEvents.getPreselectedBlockPos())) {
+            if (building.isPosInsideBuilding(CursorClientEvents.getPreselectedBlockPos()) &&
+                ResourceSources.getFromBlockPos(CursorClientEvents.getPreselectedBlockPos()) == null) {
                 return building;
             }
         return null;
