@@ -110,31 +110,11 @@ public interface Unit {
 
         // ------------- CHECKPOINT LOGIC ------------- //
         if (unitMob.level.isClientSide()) {
-            if (Keybindings.shiftMod.isDown()) {
-                unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
-            }
-            else if (unit.getCheckpointTicksLeft() > 0) {
-                unit.setCheckpointTicksLeft(unit.getCheckpointTicksLeft() - 1);
-                if (unit.getCheckpointTicksLeft() <= 0) {
-                    unit.getCheckpoints().clear();
-                } else if (unit.getEntityCheckpointId() > -1 && unit.getCheckpointTicksLeft() > UnitClientEvents.CHECKPOINT_TICKS_FADE) {
-                    // remove an entity checkpoint if the given entity no longer exists
-                    if (Minecraft.getInstance().level != null) {
-                        Entity entity = Minecraft.getInstance().level.getEntity(unit.getEntityCheckpointId());
-                        if (entity == null)
-                            unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_FADE);
-                    }
-                }
-                // remove any BlockPos checkpoints if we're already close enough to them
-                if (unit.getCheckpoints().size() > 1) {
-                    unit.getCheckpoints().removeIf(cp -> ((Mob) unit).getOnPos().distToCenterSqr(new Vec3(bp.getX(), bp.getY(), bp.getZ())) < 4f);
-                } // if we only have one checkpoint, fade it out instead of removing it
-                else if (unit.getCheckpoints().size() == 1 && unit.getCheckpointTicksLeft() > UnitClientEvents.CHECKPOINT_TICKS_FADE) {
-                    BlockPos bp = unit.getCheckpoints().get(0);
-                    if (((Mob) unit).position().distanceToSqr(new Vec3(bp.getX(), bp.getY(), bp.getZ())) < 4f)
-                        unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_FADE);
-                }
-
+            unit.getCheckpoints().removeIf(c -> (c.isForEntity() && !c.entity.isAlive()) || c.ticksLeft <= 0);
+            for (Checkpoint checkpoint : unit.getCheckpoints()) {
+                checkpoint.tick();
+                if (((Mob) unit).getOnPos().distToCenterSqr(checkpoint.getPos()) < 4f)
+                    checkpoint.startFading();
             }
         } else {
             int totalRes = Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue();

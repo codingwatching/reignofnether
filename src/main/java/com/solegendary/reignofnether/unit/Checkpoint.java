@@ -8,13 +8,13 @@ import net.minecraft.world.phys.Vec3;
 public class Checkpoint {
 
     public static final int CHECKPOINT_TICKS_MAX = 200;
-    public static final int CHECKPOINT_TICKS_FADE = 15;
+    public static final int CHECKPOINT_TICKS_FADE = 15; // ticks left at which the lines start to fade
 
-    public BlockPos bp;
-    public Entity entity;
-    public boolean isGreen;
-
-    int ticksLeft = CHECKPOINT_TICKS_MAX;
+    public final BlockPos bp;
+    public final Entity entity;
+    public final boolean isGreen;
+    private boolean isFading = false;
+    public int ticksLeft = CHECKPOINT_TICKS_MAX;
 
     public Checkpoint(BlockPos bp, boolean isGreen) {
         this.bp = bp;
@@ -28,19 +28,23 @@ public class Checkpoint {
         this.isGreen = isGreen;
     }
 
+    public void startFading() {
+        isFading = true;
+    }
+
     public void tick() {
-        if (ticksLeft > 0)
+        if (isFading && ticksLeft > 0)
             ticksLeft -= 1;
     }
 
     public boolean isForEntity() {
-        return entity == null;
+        return entity != null;
     }
 
     public Vec3 getPos() {
         if (isForEntity())
-            return entity.position();
+            return entity.getEyePosition().add(0, 1.74f - entity.getEyeHeight() - 1, 0);
         else
-            return Vec3.atCenterOf(bp);
+            return new Vec3(bp.getX() + 0.5f, bp.getY() + 1.0f, bp.getZ() + 0.5f);
     }
 }
