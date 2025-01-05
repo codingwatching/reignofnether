@@ -11,6 +11,7 @@ import com.solegendary.reignofnether.research.researchItems.ResearchFireResistan
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.time.NightUtils;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
@@ -57,13 +58,7 @@ public interface Unit {
     }
 
     // list of positions to draw lines between to indicate unit intents - will fade over time unless shift is held
-    public ArrayList<BlockPos> getCheckpoints();
-    public int getCheckpointTicksLeft();
-    public void setCheckpointTicksLeft(int ticks);
-    public boolean isCheckpointGreen();
-    public void setIsCheckpointGreen(boolean green);
-    public int getEntityCheckpointId();
-    public void setEntityCheckpointId(int id);
+    public ArrayList<Checkpoint> getCheckpoints();
 
     public GarrisonGoal getGarrisonGoal();
     public boolean canGarrison();
@@ -122,7 +117,6 @@ public interface Unit {
                 unit.setCheckpointTicksLeft(unit.getCheckpointTicksLeft() - 1);
                 if (unit.getCheckpointTicksLeft() <= 0) {
                     unit.getCheckpoints().clear();
-                    unit.setEntityCheckpointId(-1);
                 } else if (unit.getEntityCheckpointId() > -1 && unit.getCheckpointTicksLeft() > UnitClientEvents.CHECKPOINT_TICKS_FADE) {
                     // remove an entity checkpoint if the given entity no longer exists
                     if (Minecraft.getInstance().level != null) {
@@ -133,7 +127,7 @@ public interface Unit {
                 }
                 // remove any BlockPos checkpoints if we're already close enough to them
                 if (unit.getCheckpoints().size() > 1) {
-                    unit.getCheckpoints().removeIf(bp -> ((Mob) unit).getOnPos().distToCenterSqr(new Vec3(bp.getX(), bp.getY(), bp.getZ())) < 4f);
+                    unit.getCheckpoints().removeIf(cp -> ((Mob) unit).getOnPos().distToCenterSqr(new Vec3(bp.getX(), bp.getY(), bp.getZ())) < 4f);
                 } // if we only have one checkpoint, fade it out instead of removing it
                 else if (unit.getCheckpoints().size() == 1 && unit.getCheckpointTicksLeft() > UnitClientEvents.CHECKPOINT_TICKS_FADE) {
                     BlockPos bp = unit.getCheckpoints().get(0);

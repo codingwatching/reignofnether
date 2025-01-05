@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.time.NightCircleMode;
 import com.solegendary.reignofnether.time.TimeClientEvents;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
@@ -88,25 +89,19 @@ public class MiscUtil {
         return true;
     }
 
-    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos) {
+    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos, boolean green) {
         boolean clearExisting = true;
         if (((Entity) unit).getLevel().isClientSide())
             clearExisting = !Keybindings.shiftMod.isDown();
-        addUnitCheckpoint(unit, blockPos, clearExisting);
-    }
-    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos, boolean clearExisting) {
-        if (clearExisting) {
+        if (clearExisting)
             unit.getCheckpoints().clear();
-            unit.setEntityCheckpointId(-1);
-        }
-        unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
-        unit.getCheckpoints().add(blockPos);
+        unit.getCheckpoints().add(new Checkpoint(blockPos, green));
     }
-    public static void addUnitCheckpoint(Unit unit, int id) {
-        if (((Entity) unit).getLevel().isClientSide() && !Keybindings.shiftMod.isDown())
+    public static void addUnitCheckpoint(Unit unit, int id, boolean green) {
+        Level level = ((Entity) unit).getLevel();
+        if (level.isClientSide() && !Keybindings.shiftMod.isDown())
             unit.getCheckpoints().clear();
-        unit.setEntityCheckpointId(id);
-        unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
+        unit.getCheckpoints().add(new Checkpoint(level.getEntity(id), green));
     }
 
     // excludes trees and buildings

@@ -59,9 +59,9 @@ public class RangedAttackBuildingGoal<T extends net.minecraft.world.entity.Mob> 
                     MiscUtil.addUnitCheckpoint(((Unit) mob), new BlockPos(
                             buildingTarget.centrePos.getX(),
                             buildingTarget.originPos.getY() + 1,
-                            buildingTarget.centrePos.getZ())
+                            buildingTarget.centrePos.getZ()),
+                            true
                     );
-                    ((Unit) mob).setIsCheckpointGreen(false);
                 }
             }
             else {

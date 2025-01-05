@@ -13,6 +13,7 @@ Features
 
 [❌] Add to main game build
 
+[❌] Add menu music theme
 
 
 Bugfixes
@@ -43,7 +44,6 @@ Quality of Life
     [🟡] Queue is popped whenever the unit is idle
     [🟡] add clientside checkpoints
     [🟡] if !queued, clear that unit's slowQueue
-    [🟡] Dont allow shift queueing for direct attacks (ie. attacks should always be enacted immediately)
     [❌] ensure queueing farms still works correctly and a worker begins farming the last farm to be built if their slowQueue is empty
     [❌] If queued and slowQueue does NOT contain any items for that user, reset the unit's behaviours first
 

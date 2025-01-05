@@ -38,8 +38,7 @@ public interface AttackerUnit {
     // chase and attack the target ignoring all else until it is dead or out of sight
     public default void setUnitAttackTarget(@Nullable LivingEntity target) {
         if (target != null) {
-            MiscUtil.addUnitCheckpoint(((Unit) this), target.getId());
-            ((Unit) this).setIsCheckpointGreen(false);
+            MiscUtil.addUnitCheckpoint(((Unit) this), target.getId(), false);
         }
         ((Unit) this).getTargetGoal().setTarget(target);
     }
@@ -75,7 +74,7 @@ public interface AttackerUnit {
 
                 ((Unit) this).setMoveTarget(targetPos);
                 if (((LivingEntity) this).getLevel().isClientSide)
-                    MiscUtil.addUnitCheckpoint((Unit) this, groundCentrePos);
+                    MiscUtil.addUnitCheckpoint((Unit) this, groundCentrePos, true);
             }
         }
     }

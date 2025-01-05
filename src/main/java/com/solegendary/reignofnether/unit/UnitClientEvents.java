@@ -756,7 +756,6 @@ public class UnitClientEvents {
                                 MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, green ? 0 : 1, green ? 1 : 0, 0, a);
                             }
                         }
-
                         // draw path nodes
                         /*
                         if (unit instanceof Mob mob && mob.getNavigation().getPath() != null) {

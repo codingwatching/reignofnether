@@ -91,7 +91,6 @@ public class UnitActionItem {
     public static void resetBehaviours(Unit unit) {
         if (((Entity) unit).getLevel().isClientSide() && !Keybindings.shiftMod.isDown())
             unit.getCheckpoints().clear();
-        unit.setEntityCheckpointId(-1);
         unit.resetBehaviours();
         Unit.resetBehaviours(unit);
         if (unit instanceof WorkerUnit workerUnit) {
@@ -230,8 +229,7 @@ public class UnitActionItem {
                 case ATTACK_MOVE -> {
                     // if the unit can't actually attack just treat this as a move action
                     if (unit instanceof AttackerUnit attackerUnit) {
-                        MiscUtil.addUnitCheckpoint(unit, preselectedBlockPos);
-                        unit.setIsCheckpointGreen(false);
+                        MiscUtil.addUnitCheckpoint(unit, preselectedBlockPos, false);
                         attackerUnit.setAttackMoveTarget(preselectedBlockPos);
                     } else {
                         unit.setMoveTarget(preselectedBlockPos);
@@ -244,8 +242,7 @@ public class UnitActionItem {
                     } else {
                         LivingEntity livingEntity = (LivingEntity) level.getEntity(unitId);
                         if (livingEntity != null) {
-                            MiscUtil.addUnitCheckpoint(unit, unitId);
-                            unit.setIsCheckpointGreen(true);
+                            MiscUtil.addUnitCheckpoint(unit, unitId, true);
                         }
                         unit.setFollowTarget(livingEntity);
                     }
@@ -261,8 +258,7 @@ public class UnitActionItem {
                 case FOLLOW -> {
                     LivingEntity livingEntity = (LivingEntity) level.getEntity(unitId);
                     if (livingEntity != null) {
-                        MiscUtil.addUnitCheckpoint(unit, unitId);
-                        unit.setIsCheckpointGreen(true);
+                        MiscUtil.addUnitCheckpoint(unit, unitId, true);
                     }
                     unit.setFollowTarget(livingEntity);
                 }
