@@ -189,7 +189,7 @@ public class ReignOfNetherCommonConfigs {
         public static final ResourceCostConfigEntry DUNGEON = ResourceCostConfigEntry.Building(0,150,75, 0, ResourceCosts.DUNGEON, "Dungeon Config");
         public static final ResourceCostConfigEntry LABORATORY = ResourceCostConfigEntry.Building(0,250,150, 0, ResourceCosts.LABORATORY, "Laboratory Config");
         public static final ResourceCostConfigEntry DARK_WATCHTOWER = ResourceCostConfigEntry.Building(0,100,75, 0, ResourceCosts.DARK_WATCHTOWER, "Dark Watchtower Config");
-        public static final ResourceCostConfigEntry SLIME_PIT = ResourceCostConfigEntry.Building(0,200, 200, 0, ResourceCosts.SLIME_PIT, "Slime Pit Config");
+        public static final ResourceCostConfigEntry SLIME_PIT = ResourceCostConfigEntry.Building(0,200, 125, 0, ResourceCosts.SLIME_PIT, "Slime Pit Config");
         public static final ResourceCostConfigEntry STRONGHOLD = ResourceCostConfigEntry.Building(0,400,300, 0, ResourceCosts.STRONGHOLD, "Stronghold Config");
 
         // Villagers

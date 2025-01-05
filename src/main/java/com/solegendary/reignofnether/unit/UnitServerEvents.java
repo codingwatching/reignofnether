@@ -497,7 +497,7 @@ public class UnitServerEvents {
                     false
                 );
                 if (entity instanceof SlimeUnit sUnit && evt.getEntity() instanceof Unit originalEntity) {
-                    sUnit.setSize(Mth.clamp(originalEntity.getPopCost() - 1, 1, 5), true);
+                    sUnit.setSize(Mth.clamp(originalEntity.getPopCost() - 1, 1, 4), true);
                 }
                 if (entity instanceof Unit convertedUnit) {
                     convertedUnit.setOwnerName(unit.getOwnerName());

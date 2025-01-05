@@ -8,6 +8,15 @@
 [❌] Not done, including unmerged PRs
 
 
+Wave Survival changes (post separately to alpha channel)
+---------------------
+[🟡] Enemy portal spawn rate is now scaled to the number of players in the game
+    - The total of number of portals remains unchanged
+[🟡] Enemy portals remove more surrounding blocks when placed
+[🟡] Raised the range and area at which enemies spawn
+[🟡] Enemy portals and units prefer to spawn on flatter ground
+
+
 Features
 --------
 
@@ -27,6 +36,8 @@ Bugfixes
 
 [✔] Fixed Warden sonic booms being invisible
 
+[❌] Fix ravager artillery targeting and movement issues
+
 [❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
 [❌] Slime pathing is really bad
@@ -40,11 +51,10 @@ Bugfixes
 Quality of Life
 ---------------
 
-- Shift queue actions:
-    [🟡] Queue is popped whenever the unit is idle
-    [🟡] add clientside checkpoints
-    [🟡] if !queued, clear that unit's slowQueue
-    [❌] ensure queueing farms still works correctly and a worker begins farming the last farm to be built if their slowQueue is empty
+[✔] All units can now queue actions by holding shift
+    - This applies to all types of actions and all units
+    - The next queued action is started whenever the unit becomes idle
+    - Issuing a stop command or any command without holding shift will wipe the queue
 
 [❌] Added /gamerule for bridges over void
 
@@ -55,16 +65,25 @@ Quality of Life
 Balancing
 ---------
 
-[🟡] Enemy portal spawn rate is now scaled to the number of players in the game
-    - The total of number of portals remains unchanged
-[🟡] Enemy portals remove more surrounding blocks when placed
-[🟡] Raised the range and area at which enemies spawn
-
 [🟡] New capitols no longer spawn animals around them upon completion
 
+Villagers
+---------
 [🟡] Villagers now require 50% more logs chopped to become regular and veteran lumberjacks
 
+Piglins
+-------
 [🟡] Ghasts can now use transport portals
+
+Monsters
+--------
+[🟡] Mausoleum night radius reduced by 10
+[🟡] Slime Conversion can now only make slimes of max size 4
+[❌] Slime are now slowed in sunlight, but only by half as much as other monster units
+[🟡] Slime Pit: -75 ore cost
+
+
+
 
 [❌] Soulfires created by blazes need to be made temporary
 
