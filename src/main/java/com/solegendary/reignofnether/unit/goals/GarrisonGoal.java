@@ -72,8 +72,7 @@ public class GarrisonGoal extends MoveToTargetBlockGoal {
                             building.centrePos.getX(),
                             building.originPos.getY() + 1,
                             building.centrePos.getZ()
-                    ));
-                    ((Unit) mob).setIsCheckpointGreen(true);
+                    ), true);
                 }
                 this.buildingTarget = building;
                 calcMoveTarget();
