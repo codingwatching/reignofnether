@@ -1,12 +1,16 @@
 package com.solegendary.reignofnether.registrars;
 
 import com.solegendary.reignofnether.attackwarnings.AttackWarningServerEvents;
+import com.solegendary.reignofnether.blocks.BlockServerEvents;
 import com.solegendary.reignofnether.building.BuildingClientEvents;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
+import com.solegendary.reignofnether.config.ConfigClientEvents;
+import com.solegendary.reignofnether.config.ConfigVanillaServerEvents;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientEvents;
 import com.solegendary.reignofnether.fogofwar.FogOfWarServerEvents;
 import com.solegendary.reignofnether.gamemode.GameModeServerEvents;
+import com.solegendary.reignofnether.gamerules.GameruleServerEvents;
 import com.solegendary.reignofnether.guiscreen.TopdownGuiClientEvents;
 import com.solegendary.reignofnether.healthbars.HealthBarClientEvents;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientEvents;
@@ -45,6 +49,7 @@ public class ClientEventRegistrar {
     public void registerClientEvents() {
         vanillaEventBus.register(OrthoviewClientEvents.class);
         vanillaEventBus.register(TopdownGuiClientEvents.class);
+        vanillaEventBus.register(ConfigClientEvents.class);
         vanillaEventBus.register(BuildingClientEvents.class); // being first fixes a bug with drawBuildingToPlace()
         vanillaEventBus.register(UnitClientEvents.class);
         vanillaEventBus.register(HealthBarClientEvents.class);
@@ -63,8 +68,11 @@ public class ClientEventRegistrar {
         vanillaEventBus.register(SurvivalClientEvents.class);
 
         // to allow singleplayer integrated server to work
+        vanillaEventBus.register(GameruleServerEvents.class);
+        vanillaEventBus.register(BlockServerEvents.class);
         vanillaEventBus.register(TutorialServerEvents.class);
         vanillaEventBus.register(PlayerServerEvents.class);
+        vanillaEventBus.register(ConfigVanillaServerEvents.class);
         vanillaEventBus.register(UnitServerEvents.class);
         vanillaEventBus.register(BuildingServerEvents.class);
         vanillaEventBus.register(AttackWarningServerEvents.class);

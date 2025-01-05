@@ -1,7 +1,6 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
 import com.solegendary.reignofnether.ability.Ability;
-import com.solegendary.reignofnether.ability.abilities.SpinWebs;
 import com.solegendary.reignofnether.ability.abilities.WitherCloud;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
@@ -17,7 +16,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -103,7 +101,8 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.WITHER_SKELETON.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -130,7 +129,6 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     final static public float maxHealth = 90.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.28f;
-    final static public int popCost = ResourceCosts.WITHER_SKELETON.population;
     public int maxResources = 100;
 
     public int deathCloudTicks = 0;
@@ -164,7 +162,7 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
                 .add(Attributes.ATTACK_DAMAGE, WitherSkeletonUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, WitherSkeletonUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, WitherSkeletonUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, WitherSkeletonUnit.armorValue);
     }
 

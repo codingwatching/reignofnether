@@ -99,7 +99,8 @@ public class WitchUnit extends Witch implements Unit {
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.WITCH.population;}
 
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
 
@@ -113,7 +114,6 @@ public class WitchUnit extends Witch implements Unit {
     final static public float maxHealth = 40.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
-    final static public int popCost = ResourceCosts.WITCH.population;
     public int maxResources = 100;
 
     final static public int LINGERING_POTION_DURATION = 5 * ResourceCost.TICKS_PER_SECOND;
@@ -166,7 +166,7 @@ public class WitchUnit extends Witch implements Unit {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, WitchUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, WitchUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, WitchUnit.armorValue);
     }
 

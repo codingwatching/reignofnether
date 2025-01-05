@@ -103,7 +103,8 @@ public class EndermanUnit extends EnderMan implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.ENDERMAN.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -120,7 +121,6 @@ public class EndermanUnit extends EnderMan implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.ENDERMAN.population;
 
     public int maxResources = 100;
 
@@ -151,7 +151,7 @@ public class EndermanUnit extends EnderMan implements Unit, AttackerUnit {
                 .add(Attributes.MOVEMENT_SPEED, EndermanUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, EndermanUnit.attackDamage)
                 .add(Attributes.MAX_HEALTH, EndermanUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange());
     }
 
     public void tick() {
@@ -174,6 +174,18 @@ public class EndermanUnit extends EnderMan implements Unit, AttackerUnit {
 
     @Override
     protected void customServerAiStep() { }
+
+    @Override
+    protected boolean teleport() {
+        if (!this.level.isClientSide() && this.isAlive()) {
+            double d0 = this.getX() + (this.random.nextDouble() - 0.5) * 16.0;
+            double d1 = this.getY() + (double)(this.random.nextInt(16) - 8);
+            double d2 = this.getZ() + (this.random.nextDouble() - 0.5) * 16.0;
+            return this.teleport(d0, d1, d2);
+        } else {
+            return false;
+        }
+    }
 
     @Override
     protected void registerGoals() {

@@ -27,6 +27,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -47,6 +48,7 @@ import static net.minecraft.util.Mth.sign;
  * @author SoLegendary, adapted from Mineshot by Nico Bergemann <barracuda415 at yahoo.de>
  */
 public class OrthoviewClientEvents {
+
 
     public enum LeafHideMethod {
         NONE, AROUND_UNITS_AND_CURSOR, // requires threaded video option
@@ -96,12 +98,30 @@ public class OrthoviewClientEvents {
     private static float mouseLeftDownX = 0;
     private static float mouseLeftDownY = 0;
 
+    private static float panSensitivityMult = 1.0f;
+    public static final float MAX_PAN_SENSITIVITY = 3.0f;
+
     // by default orthoview players stay at BASE_Y, but can be raised to as high as MAX_Y if they are clipping terrain
-    public static double ORTHOVIEW_PLAYER_BASE_Y = 100;
-    public static double ORTHOVIEW_PLAYER_MAX_Y = 160;
+    public static double orthoviewPlayerBaseY = 100;
+    public static double orthoviewPlayerMaxY = 160;
+    private static double minOrthoviewY = 0;
+
+    public static void setMinOrthoviewY(double value) {
+        minOrthoviewY = value;
+        if (MC.level != null && MC.player != null && MC.player.getY() < value) {
+            MC.player.move(MoverType.SELF, new Vec3(0, minOrthoviewY - MC.player.getY(), 0));
+        }
+    }
 
     private static float getEdgeCamPanSensitivity() {
-        return (float) (Math.sqrt(getZoom()) / (Math.sqrt(ZOOM_MAX))) * 0.9f;
+        return (float) (Math.sqrt(getZoom()) / (Math.sqrt(ZOOM_MAX))) * panSensitivityMult;
+    }
+    public static float getPanSensitivityMult() { return panSensitivityMult; }
+    public static void adjustPanSensitivityMult(boolean increase) {
+        if (increase && Math.round(panSensitivityMult * 10) < (MAX_PAN_SENSITIVITY * 10))
+            panSensitivityMult += 0.1f;
+        else if (!increase && Math.round(panSensitivityMult * 10) > 1)
+            panSensitivityMult -= 0.1f;
     }
 
     public static void updateOrthoviewY() {
@@ -125,8 +145,8 @@ public class OrthoviewClientEvents {
             int avgHeight = count > 0 ? sumHeights / count : playerPos.getY();
 
             // Update ORTHOVIEW values based on the average height
-            ORTHOVIEW_PLAYER_BASE_Y = Math.max(avgHeight + 40, 0);
-            ORTHOVIEW_PLAYER_MAX_Y = avgHeight + 100;
+            orthoviewPlayerBaseY = Math.max(avgHeight + 40, minOrthoviewY);
+            orthoviewPlayerMaxY = avgHeight + 100;
         }
     }
 
@@ -248,11 +268,11 @@ public class OrthoviewClientEvents {
         }
 
         if (MiscUtil.isGroundBlock(MC.level, MC.player.getOnPos().offset(0, -5, 0))
-            && MC.player.getOnPos().getY() <= ORTHOVIEW_PLAYER_MAX_Y) {
+            && MC.player.getOnPos().getY() <= orthoviewPlayerMaxY) {
             panCam(0, 1f, 0);
         }
         if (!MiscUtil.isGroundBlock(MC.level, MC.player.getOnPos().offset(0, -6, 0))
-            && MC.player.getOnPos().getY() >= ORTHOVIEW_PLAYER_BASE_Y) {
+            && MC.player.getOnPos().getY() >= orthoviewPlayerBaseY) {
             panCam(0, -1f, 0);
         }
 
@@ -286,7 +306,7 @@ public class OrthoviewClientEvents {
             enabledCount += 1;
             PlayerServerboundPacket.enableOrthoview();
             MinimapClientEvents.setMapCentre(MC.player.getX(), MC.player.getZ());
-            PlayerServerboundPacket.teleportPlayer(MC.player.getX(), ORTHOVIEW_PLAYER_BASE_Y, MC.player.getZ());
+            PlayerServerboundPacket.teleportPlayer(MC.player.getX(), orthoviewPlayerBaseY, MC.player.getZ());
             TopdownGuiServerboundPacket.openTopdownGui(MC.player.getId());
             MC.options.cloudStatus().set(CloudStatus.OFF);
             MC.options.hideGui = false; // for some reason, when gui is hidden, shape rendering goes whack
@@ -466,14 +486,14 @@ public class OrthoviewClientEvents {
         if (!isCameraLocked()) {
             // pan camera with keys
             if (Keybindings.panPlusX.isDown()) {
-                panCam(panKeyStep, 0, 0);
+                panCam(getEdgeCamPanSensitivity(), 0, 0);
             } else if (Keybindings.panMinusX.isDown()) {
-                panCam(-panKeyStep, 0, 0);
+                panCam(-getEdgeCamPanSensitivity(), 0, 0);
             }
             if (Keybindings.panPlusZ.isDown()) {
-                panCam(0, 0, panKeyStep);
+                panCam(0, 0, getEdgeCamPanSensitivity());
             } else if (Keybindings.panMinusZ.isDown()) {
-                panCam(0, 0, -panKeyStep);
+                panCam(0, 0, -getEdgeCamPanSensitivity());
             }
         }
         // note that we treat x and y rot as horizontal and vertical, but MC treats it the other way around...

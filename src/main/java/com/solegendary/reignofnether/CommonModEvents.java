@@ -14,7 +14,6 @@ import com.solegendary.reignofnether.unit.units.villagers.*;
 import com.solegendary.reignofnether.votesystem.VoteCommand;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.*;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -86,6 +85,8 @@ public class CommonModEvents {
         evt.registerEntityRenderer(EntityRegistrar.BLAZE_UNIT.get(), BlazeRenderer::new);
         evt.registerEntityRenderer(EntityRegistrar.WITHER_SKELETON_UNIT.get(), WitherSkeletonRenderer::new);
         evt.registerEntityRenderer(EntityRegistrar.GHAST_UNIT.get(), GhastUnitRenderer::new);
+        evt.registerEntityRenderer(EntityRegistrar.MAGMA_CUBE_UNIT.get(), MagmaCubeUnitRenderer::new);
+        evt.registerEntityRenderer(EntityRegistrar.SLIME_UNIT.get(), SlimeRenderer::new);
     }
 
     @SubscribeEvent
@@ -119,13 +120,19 @@ public class CommonModEvents {
         evt.put(EntityRegistrar.BLAZE_UNIT.get(), BlazeUnit.createAttributes().build());
         evt.put(EntityRegistrar.WITHER_SKELETON_UNIT.get(), WitherSkeletonUnit.createAttributes().build());
         evt.put(EntityRegistrar.GHAST_UNIT.get(), GhastUnit.createAttributes().build());
+        evt.put(EntityRegistrar.MAGMA_CUBE_UNIT.get(), MagmaCubeUnit.createAttributes().build());
+        evt.put(EntityRegistrar.SLIME_UNIT.get(), SlimeUnit.createAttributes().build());
     }
 
     @SubscribeEvent
     public static void onClientSetupEvent(FMLClientSetupEvent evt) {
         MenuScreens.register(ContainerRegistrar.TOPDOWNGUI_CONTAINER.get(), TopdownGui::new);
         MinecraftForge.EVENT_BUS.register(VoteCommand.class);
+    }
 
+    @SubscribeEvent
+    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(VillagerUnitModel.LAYER_LOCATION, VillagerUnitModel::createBodyLayer);
     }
 }
 

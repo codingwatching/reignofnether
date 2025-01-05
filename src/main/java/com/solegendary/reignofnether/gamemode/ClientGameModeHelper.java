@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ClientGameModeHelper {
 
-    public static GameMode DEFAULT_GAMEMODE = GameMode.STANDARD;
+    public static GameMode DEFAULT_GAMEMODE = GameMode.SURVIVAL;
     public static GameMode gameMode = DEFAULT_GAMEMODE;
     public static boolean gameModeLocked = false; // locked with startRTS() in any gamemode, unlocked with /rts-reset
     public static boolean disallowSurvival = false;
@@ -33,10 +33,11 @@ public class ClientGameModeHelper {
 
     public static void cycleWaveDifficulty() {
         switch (SurvivalClientEvents.difficulty) {
+            case BEGINNER -> SurvivalClientEvents.difficulty = WaveDifficulty.EASY;
             case EASY -> SurvivalClientEvents.difficulty = WaveDifficulty.MEDIUM;
             case MEDIUM -> SurvivalClientEvents.difficulty = WaveDifficulty.HARD;
             case HARD -> SurvivalClientEvents.difficulty = WaveDifficulty.EXTREME;
-            case EXTREME -> SurvivalClientEvents.difficulty = WaveDifficulty.EASY;
+            case EXTREME -> SurvivalClientEvents.difficulty = WaveDifficulty.BEGINNER;
         }
     }
 
@@ -72,7 +73,8 @@ public class ClientGameModeHelper {
                     "Survival",
                     Button.itemIconSize,
                     switch (SurvivalClientEvents.difficulty) {
-                        case EASY -> new ResourceLocation("minecraft", "textures/item/wooden_sword.png");
+                        case BEGINNER -> new ResourceLocation("minecraft", "textures/item/wooden_sword.png");
+                        case EASY -> new ResourceLocation("minecraft", "textures/item/stone_sword.png");
                         case MEDIUM -> new ResourceLocation("minecraft", "textures/item/iron_sword.png");
                         case HARD -> new ResourceLocation("minecraft", "textures/item/diamond_sword.png");
                         case EXTREME -> new ResourceLocation("minecraft", "textures/item/netherite_sword.png");
@@ -120,7 +122,7 @@ public class ClientGameModeHelper {
             default -> null;
         };
         if (button != null)
-            button.tooltipOffsetY = 45;
+            button.tooltipOffsetY = 15;
         return button;
     }
 }

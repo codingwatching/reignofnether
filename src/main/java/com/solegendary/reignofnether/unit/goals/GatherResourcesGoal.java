@@ -11,6 +11,8 @@ import com.solegendary.reignofnether.unit.TargetResourcesSave;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnitProfession;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static com.solegendary.reignofnether.resources.BlockUtils.isFallingLogBlock;
 import static com.solegendary.reignofnether.resources.BlockUtils.isLogBlock;
 
 // Move towards the nearest open resource blocks and start gathering them
@@ -48,13 +51,16 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
     private static final int MAX_SEARCH_CD_TICKS = 40; // while idle, worker will look for a new block once every this number of ticks (searching is expensive!)
     private int searchCdTicksLeft = 0;
     private int failedSearches = 0; // number of times we've failed to search for a new block - as this increases slow down or stop searching entirely to prevent lag
-    private static final int MAX_FAILED_SEARCHES = 3;
+    private static final int MAX_FAILED_SEARCHES = 4;
     private static final int TICK_CD = 20; // only tick down gather time once this many ticks to reduce processing requirements
     private int cdTicksLeft = TICK_CD;
     public static final int NO_TARGET_TIMEOUT = 50; // if we reach this time without progressing a gather tick while having navigation done, then switch a new target
-    public static final int IDLE_TIMEOUT = 300; // ticks spent without a target to be considered idle
+    public static final int IDLE_TIMEOUT = 200; // ticks spent without a target to be considered idle
     private int ticksWithoutTarget = 0; // ticks spent without an active gather target (only increments serverside)
     private int ticksIdle = 0; // ticksWithoutTarget but never reset unless we've reacquired a target - used for idle checks
+    private int ticksStationaryWithTarget = 0; // ticks that the worker hasn't moved and gatherTarget != null
+    public static final int TICKS_STATIONARY_TIMEOUT = 100; // ticks that the worker hasn't moved and gatherTarget != null
+    private BlockPos lastOnPos = null;
     private BlockPos altSearchPos = null; // block search origin that may be used instead of the mob position
 
     // whenever we attempt to assign a block as a target it must pass this test
@@ -180,8 +186,11 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                     else {
                         // increase search range until we've maxed out (to prevent idle workers using up too much CPU)
                         int range = REACH_RANGE * (failedSearches + 1);
-                        if (failedSearches == MAX_FAILED_SEARCHES)
-                            range = REACH_RANGE;
+                        if (failedSearches > MAX_FAILED_SEARCHES) {
+                            //System.out.println("Failed too many searches.");
+                            stopGathering();
+                            ticksIdle += 200;
+                        }
 
                         bpOpt = BlockPos.findClosestMatch(
                             new BlockPos(
@@ -198,12 +207,11 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                             failedSearches = 0;
                         },
                         () -> {
-                            if (failedSearches < MAX_FAILED_SEARCHES)
-                                failedSearches += 1;
+                            failedSearches += 1;
                         }
                     );
                 }
-                searchCdTicksLeft = MAX_SEARCH_CD_TICKS * (failedSearches + 1);
+                searchCdTicksLeft = MAX_SEARCH_CD_TICKS;
             }
             if (data.gatherTarget != null)
                 data.targetResourceSource = ResourceSources.getFromBlockPos(data.gatherTarget, mob.level);
@@ -211,11 +219,25 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
         if (data.gatherTarget != null) {
 
+            // if the mob is not gathering and not moving, it's likely trying to reach a block out of reach
+            // so remove the target and start looking passively after a timeout
+            if (this.mob.getOnPos().equals(lastOnPos) && !isGathering())
+                ticksStationaryWithTarget += TICK_CD;
+            else
+                ticksStationaryWithTarget = 0;
+
+            if (ticksStationaryWithTarget >= TICKS_STATIONARY_TIMEOUT) {
+                ticksStationaryWithTarget = 0;
+                data.gatherTarget = null;
+                return;
+            }
+            lastOnPos = this.mob.getOnPos();
+
             // if the block is no longer valid (destroyed or somehow badly targeted)
             if (!BLOCK_CONDITION.test(this.data.gatherTarget))
                 removeGatherTarget();
             else // keep persistently moving towards the target
-                this.setMoveTarget(data.gatherTarget);
+                super.setMoveTarget(data.gatherTarget);
 
             if (isGathering()) {
                 ticksIdle = 0;
@@ -242,20 +264,61 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
                     }
                 }
                 else {
+                    int ticksToProgress;
+
                     if (ResearchServerEvents.playerHasCheat(((Unit) mob).getOwnerName(), "operationcwal"))
-                        this.gatherTicksLeft -= (TICK_CD / 2) * 10;
+                        ticksToProgress = (TICK_CD / 2) * 10;
                     else
-                        this.gatherTicksLeft -= (TICK_CD / 2);
+                        ticksToProgress = (TICK_CD / 2);
+
+                    if (mob instanceof VillagerUnit vUnit) {
+                        if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.WOOD &&
+                            vUnit.getUnitProfession() == VillagerUnitProfession.LUMBERJACK) {
+                            if (vUnit.isVeteran())
+                                ticksToProgress *= VillagerUnit.LUMBERJACK_SPEED_MULT_VETERAN;
+                            else
+                                ticksToProgress *= VillagerUnit.LUMBERJACK_SPEED_MULT;
+                        }
+                        else if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.ORE &&
+                                vUnit.getUnitProfession() == VillagerUnitProfession.MINER) {
+                            if (vUnit.isVeteran())
+                                ticksToProgress *= VillagerUnit.MINER_SPEED_MULT_VETERAN;
+                            else
+                                ticksToProgress *= VillagerUnit.MINER_SPEED_MULT;
+                        }
+                    }
+
+                    this.gatherTicksLeft -= ticksToProgress;
 
                     gatherTicksLeft = Math.min(gatherTicksLeft, data.targetResourceSource.ticksToGather);
                     if (gatherTicksLeft <= 0) {
                         gatherTicksLeft = DEFAULT_MAX_GATHER_TICKS;
                         ResourceName resourceName = ResourceSources.getBlockResourceName(this.data.gatherTarget, mob.level);
 
-                        if (isLogBlock(this.mob.level.getBlockState(data.gatherTarget)))
+                        boolean isLogBlock = isLogBlock(this.mob.level.getBlockState(data.gatherTarget));
+                        boolean isFallingLogBlock = isFallingLogBlock(this.mob.level.getBlockState(data.gatherTarget));
+                        if (isLogBlock)
                             ResourcesServerEvents.fellAdjacentLogs(data.gatherTarget, new ArrayList<>(), this.mob.level);
 
+                        ResourceName expName = ResourceName.NONE;
+                        if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.FOOD && isFarming())
+                            expName = ResourceName.FOOD;
+                        else if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.WOOD && (isLogBlock || isFallingLogBlock))
+                            expName = ResourceName.WOOD;
+                        else if (ResourceSources.getBlockResourceName(getGatherTarget(), mob.level) == ResourceName.ORE)
+                            expName = ResourceName.ORE;
+
                         if (mob.level.destroyBlock(data.gatherTarget, false)) {
+
+                            if (mob instanceof VillagerUnit vUnit) {
+                                if (expName == ResourceName.FOOD)
+                                    vUnit.incrementFarmerExp();
+                                else if (expName == ResourceName.WOOD)
+                                    vUnit.incrementLumberjackExp();
+                                else if (expName == ResourceName.ORE)
+                                    vUnit.incrementMinerExp();
+                            }
+
                             // replace workers' mine ores with cobble to prevent creating potholes
                             if (data.targetResourceSource.resourceName == ResourceName.ORE) {
                                 BlockState replaceBs;
@@ -406,6 +469,7 @@ public class GatherResourcesGoal extends MoveToTargetBlockGoal {
 
     // stop gathering and searching entirely, and remove saved data for
     public void stopGathering() {
+        failedSearches = 0;
         this.savePermState();
         this.mob.level.destroyBlockProgress(this.mob.getId(), new BlockPos(0,0,0), 0);
         data.todoGatherTargets.clear();

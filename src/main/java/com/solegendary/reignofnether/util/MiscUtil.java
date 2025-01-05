@@ -14,6 +14,7 @@ import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
+import com.solegendary.reignofnether.unit.goals.AbstractMeleeAttackUnitGoal;
 import com.solegendary.reignofnether.unit.goals.FlyingMoveToTargetGoal;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackUnitGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -103,6 +104,26 @@ public class MiscUtil {
         unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
     }
 
+    // excludes trees and buildings
+    public static BlockPos getHighestGroundBlock(Level level, BlockPos blockPos) {
+        int y = level.getHeight();
+        BlockState bs;
+        BlockPos bp;
+        do {
+            bp = new BlockPos(blockPos.getX(), y, blockPos.getZ());
+            bs = level.getBlockState(bp);
+            y -= 1;
+        } while((bs.isAir() ||
+                BuildingUtils.isPosInsideAnyBuilding(level.isClientSide, bp) ||
+                bs.getBlock() == Blocks.LIGHT ||
+                bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (!bs.getMaterial().isSolidBlocking() &&
+                !bs.getMaterial().isLiquid()) ||
+                bs.getMaterial() == Material.LEAVES ||
+                bs.getMaterial() == Material.WOOD) && y > -63);
+        return new BlockPos(blockPos.getX(), y, blockPos.getZ());
+    }
+
     public static BlockPos getHighestNonAirBlock(Level level, BlockPos blockPos, boolean ignoreLeaves) {
         int y = level.getHeight();
         BlockState bs;
@@ -112,6 +133,7 @@ public class MiscUtil {
         } while((bs.isAir() ||
                 bs.getBlock() == Blocks.LIGHT ||
                 bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (!bs.getMaterial().isSolidBlocking() && !bs.getMaterial().isLiquid()) ||
                 (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
         return new BlockPos(blockPos.getX(), y, blockPos.getZ());
     }
@@ -222,7 +244,7 @@ public class MiscUtil {
         if (targetEntity instanceof Unit unit &&
                 unit.getMoveGoal() instanceof FlyingMoveToTargetGoal &&
                 unitMob instanceof AttackerUnit attackerUnit &&
-                attackerUnit.getAttackGoal() instanceof MeleeAttackUnitGoal) {
+                attackerUnit.getAttackGoal() instanceof AbstractMeleeAttackUnitGoal) {
             return false;
         }
 

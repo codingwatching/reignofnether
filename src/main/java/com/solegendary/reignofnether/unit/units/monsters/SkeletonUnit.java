@@ -7,7 +7,6 @@ import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
-import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -113,7 +112,8 @@ public class SkeletonUnit extends Skeleton implements Unit, AttackerUnit, Ranged
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.SKELETON.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -135,7 +135,6 @@ public class SkeletonUnit extends Skeleton implements Unit, AttackerUnit, Ranged
     final static public float aggroRange = 12;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.SKELETON.population;
     public int maxResources = 100;
 
     public int fogRevealDuration = 0; // set > 0 for the client who is attacked by this unit
@@ -172,7 +171,7 @@ public class SkeletonUnit extends Skeleton implements Unit, AttackerUnit, Ranged
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, SkeletonUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, SkeletonUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, SkeletonUnit.armorValue);
     }
 

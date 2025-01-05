@@ -21,9 +21,12 @@ import com.solegendary.reignofnether.survival.SurvivalServerEvents;
 import com.solegendary.reignofnether.time.TimeUtils;
 import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
+import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
+import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.commands.CommandSourceStack;
@@ -31,6 +34,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -42,7 +46,6 @@ import net.minecraft.world.inventory.MenuConstructor;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
@@ -53,6 +56,8 @@ import net.minecraftforge.network.NetworkHooks;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.solegendary.reignofnether.time.TimeUtils.getWaveSurvivalTimeModifier;
 
 // this class tracks all available players so that any serverside functions that need to affect the player can be
 // performed here by sending a client->server packet containing MC.player.getId()
@@ -103,21 +108,6 @@ public class PlayerServerEvents {
         data.rtsPlayers.addAll(rtsPlayers);
         data.save();
         serverLevel.getDataStorage().save();
-    }
-
-    @SubscribeEvent
-    public static void onCommandUsed(CommandEvent evt) {
-        List<ParsedCommandNode<CommandSourceStack>> nodes = evt.getParseResults().getContext().getNodes();
-        if (nodes.size() >= 2 &&
-                nodes.get(0).getNode().getName().equals("gamerule") &&
-                nodes.get(1).getNode().getName().equals("maxPopulation")) {
-
-            Map<String, ParsedArgument<CommandSourceStack, ?>> args = evt.getParseResults().getContext().getArguments();
-            if (args.containsKey("value")) {
-                UnitServerEvents.maxPopulation = (int) args.get("value").getResult();
-                PlayerClientboundPacket.syncMaxPopulation(UnitServerEvents.maxPopulation);
-            }
-        }
     }
 
     @SubscribeEvent
@@ -211,11 +201,10 @@ public class PlayerServerEvents {
             }
         }
         if (rtsSyncingEnabled) {
-            for (LivingEntity entity : UnitServerEvents.getAllUnits())
-                if (entity instanceof Unit unit) {
+            for (LivingEntity entity : UnitServerEvents.getAllUnits()) {
+                if (entity instanceof Unit unit)
                     UnitSyncClientboundPacket.sendSyncResourcesPacket(unit);
-                }
-
+            }
             ResearchServerEvents.syncResearch(playerName);
             ResearchServerEvents.syncCheats(playerName);
         }
@@ -336,7 +325,7 @@ public class PlayerServerEvents {
                 }
             }
             if (SurvivalServerEvents.isEnabled()) {
-                level.setDayTime(TimeUtils.DAWN + SurvivalServerEvents.getDifficultyTimeModifier());
+                level.setDayTime(TimeUtils.DAWN + getWaveSurvivalTimeModifier(SurvivalServerEvents.getDifficulty()));
             } else {
                 level.setDayTime(MONSTER_START_TIME_OF_DAY);
             }
@@ -584,10 +573,17 @@ public class PlayerServerEvents {
                     PlayerClientboundPacket.defeat(playerName);
 
                     // Remove ownership from all units and buildings of the defeated player
-                    for (LivingEntity entity : UnitServerEvents.getAllUnits())
-                        if (entity instanceof Unit unit && unit.getOwnerName().equals(playerName))
+                    for (LivingEntity entity : UnitServerEvents.getAllUnits()) {
+                        if (entity instanceof Unit unit && unit.getOwnerName().equals(playerName)) {
+                            unit.resetBehaviours();
+                            Unit.resetBehaviours(unit);
+                            if (unit instanceof AttackerUnit aUnit)
+                                AttackerUnit.resetBehaviours(aUnit);
+                            if (unit instanceof WorkerUnit wUnit)
+                                WorkerUnit.resetBehaviours(wUnit);
                             unit.setOwnerName("");
-
+                        }
+                    }
                     for (Building building : BuildingServerEvents.getBuildings())
                         if (building.ownerName.equals(playerName))
                             building.ownerName = "";
@@ -680,9 +676,7 @@ public class PlayerServerEvents {
             if (rtsLocked)
                 setRTSLock(false);
             AllianceSystem.resetAllAlliances();
-            if (SurvivalServerEvents.isEnabled()) {
-                SurvivalServerEvents.reset();
-            }
+            SurvivalServerEvents.reset();
         }
     }
 

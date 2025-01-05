@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.ability.EnchantAbilityServerboundPacket;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientboundPacket;
 import com.solegendary.reignofnether.building.BuildingClientboundPacket;
 import com.solegendary.reignofnether.building.BuildingServerboundPacket;
+import com.solegendary.reignofnether.config.ClientboundSyncResourceCostPacket;
 import com.solegendary.reignofnether.fogofwar.FogOfWarServerboundPacket;
 import com.solegendary.reignofnether.fogofwar.FrozenChunkClientboundPacket;
 import com.solegendary.reignofnether.fogofwar.FrozenChunkServerboundPacket;
@@ -197,6 +198,12 @@ public final class PacketHandler {
                 .encoder(ClientboundOpenVotenScreenPacket::encode)
                 .decoder(ClientboundOpenVotenScreenPacket::decode)
                 .consumer(ClientboundOpenVotenScreenPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(ClientboundSyncResourceCostPacket.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(ClientboundSyncResourceCostPacket::encode)
+                .decoder(ClientboundSyncResourceCostPacket::decode)
+                .consumer(ClientboundSyncResourceCostPacket::handle)
                 .add();
     }
 }

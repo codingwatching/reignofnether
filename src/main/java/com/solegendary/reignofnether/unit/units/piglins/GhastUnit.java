@@ -65,7 +65,8 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     public GarrisonGoal getGarrisonGoal() { return null; }
     public boolean canGarrison() { return getGarrisonGoal() != null; }
 
-    public UsePortalGoal getUsePortalGoal() { return null; }
+    MoveToTargetBlockGoal usePortalGoal;
+    public MoveToTargetBlockGoal getUsePortalGoal() { return usePortalGoal; }
     public boolean canUsePortal() { return getUsePortalGoal() != null; }
 
     public Faction getFaction() {return Faction.PIGLINS;}
@@ -109,7 +110,8 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.GHAST.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -138,7 +140,6 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     final static public float maxHealth = 50.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.22f;
-    final static public int popCost = ResourceCosts.GHAST.population;
     public int maxResources = 100;
 
     public int fogRevealDuration = 0; // set > 0 for the client who is attacked by this unit
@@ -259,6 +260,7 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     }
 
     public void initialiseGoals() {
+        this.usePortalGoal = new FlyingUsePortalGoal(this);
         this.moveGoal = new FlyingMoveToTargetGoal(this, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.attackGoal = new UnitBowAttackGoal<>(this);
@@ -269,6 +271,7 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     @Override
     protected void registerGoals() {
         initialiseGoals();
+        this.goalSelector.addGoal(2, usePortalGoal);
         this.goalSelector.addGoal(2, attackBuildingGoal);
         this.goalSelector.addGoal(2, attackGroundGoal);
         this.goalSelector.addGoal(2, attackGoal);

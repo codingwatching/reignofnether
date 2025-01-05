@@ -132,11 +132,7 @@ public class Mausoleum extends ProductionBuilding implements NightSource, RangeI
                     "buildings.monsters.reignofnether.mausoleum.tooltip2",
                     nightRange
                 ), Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(
-                    I18n.get("buildings.monsters.reignofnether.mausoleum.tooltip3"),
-                    Style.EMPTY
-                )
+                FormattedCharSequence.forward("", Style.EMPTY)
             ),
             null
         );

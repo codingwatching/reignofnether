@@ -50,12 +50,7 @@ public class ZombieVillagerProd extends ProductionItem {
             () -> false,
             () -> false,
             () -> true,
-            () -> {
-                if (!BuildingUtils.anyOtherCapitolProducingWorkers(true, prodBuilding))
-                    BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName);
-                else
-                    HudClientEvents.showTemporaryMessage("Only one capitol may build workers at a time.");
-            },
+            () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
                 FormattedCharSequence.forward(I18n.get("units.monsters.reignofnether.zombie_villager"), Style.EMPTY.withBold(true)),

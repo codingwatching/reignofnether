@@ -29,6 +29,7 @@ public class ThrowHarmingPotion extends Ability {
 
     public ThrowHarmingPotion(WitchUnit witchUnit) {
         super(UnitAction.THROW_HARMING_POTION,
+            witchUnit.level,
             CD_MAX_SECONDS * ResourceCost.TICKS_PER_SECOND,
             witchUnit.getPotionThrowRange(),
             0,

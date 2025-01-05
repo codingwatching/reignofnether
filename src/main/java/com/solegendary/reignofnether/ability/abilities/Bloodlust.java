@@ -21,6 +21,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
@@ -36,6 +37,7 @@ public class Bloodlust extends Ability {
     public Bloodlust(Unit unit) {
         super(
                 UnitAction.BLOOD_LUST,
+                ((Entity) unit).level,
                 0,
                 0,
                 0,

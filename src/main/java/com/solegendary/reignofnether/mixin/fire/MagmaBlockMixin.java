@@ -1,9 +1,6 @@
-package com.solegendary.reignofnether.mixin.firedamage;
+package com.solegendary.reignofnether.mixin.fire;
 
 import com.solegendary.reignofnether.blocks.WalkableMagmaBlock;
-import com.solegendary.reignofnether.research.ResearchClient;
-import com.solegendary.reignofnether.research.ResearchServerEvents;
-import com.solegendary.reignofnether.research.researchItems.ResearchFireResistance;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.piglins.GruntUnit;
 import com.solegendary.reignofnether.util.Faction;
@@ -13,7 +10,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MagmaBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;

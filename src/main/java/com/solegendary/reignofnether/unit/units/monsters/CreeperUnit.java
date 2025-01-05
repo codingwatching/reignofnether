@@ -108,7 +108,8 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable //Defined after CommonSetup, as this value is loaded from configuration
+    public int getPopCost() {return ResourceCosts.CREEPER.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -120,12 +121,11 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
     final static public float attacksPerSecond = 1f;
     final static public float maxHealth = 20.0f;
     final static public float armorValue = 0.0f;
-    final static public float movementSpeed = 0.28f;
+    final static public float movementSpeed = 0.25f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = false;
-    final static public int popCost = ResourceCosts.CREEPER.population;
 
     final static public float EXPLOSION_RADIUS = 3;
     final static public float CHARGED_EXPLOSION_RADIUS = 5;
@@ -177,7 +177,7 @@ public class CreeperUnit extends Creeper implements Unit, AttackerUnit {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, CreeperUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, CreeperUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, CreeperUnit.armorValue);
     }
 

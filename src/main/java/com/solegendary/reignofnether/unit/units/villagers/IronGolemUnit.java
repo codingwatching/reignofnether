@@ -12,8 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -99,7 +97,8 @@ public class IronGolemUnit extends IronGolem implements Unit, AttackerUnit {
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.IRON_GOLEM.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -116,7 +115,6 @@ public class IronGolemUnit extends IronGolem implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.IRON_GOLEM.population;
 
     final static public float BUILDING_DAMAGE_MULTIPLIER = 2.0f;
 
@@ -142,7 +140,7 @@ public class IronGolemUnit extends IronGolem implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, IronGolemUnit.attackDamage)
                 .add(Attributes.ARMOR, IronGolemUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, IronGolemUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
     }
 

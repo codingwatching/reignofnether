@@ -35,7 +35,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -104,7 +103,8 @@ public class HoglinUnit extends Hoglin implements Unit, AttackerUnit {
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.HOGLIN.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -131,7 +131,6 @@ public class HoglinUnit extends Hoglin implements Unit, AttackerUnit {
     final static public float maxHealth = 70.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.30f;
-    final static public int popCost = ResourceCosts.HOGLIN.population;
     public int maxResources = 100;
 
     final static public float BUILDING_DAMAGE_MULTIPLIER = 1.5f;
@@ -184,7 +183,7 @@ public class HoglinUnit extends Hoglin implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, HoglinUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, HoglinUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, HoglinUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, HoglinUnit.armorValue);
     }
 

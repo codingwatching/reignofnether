@@ -121,7 +121,8 @@ public class RavagerUnit extends Ravager implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.RAVAGER.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -138,7 +139,6 @@ public class RavagerUnit extends Ravager implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.RAVAGER.population;
 
     public int maxResources = 100;
 
@@ -184,7 +184,7 @@ public class RavagerUnit extends Ravager implements Unit, AttackerUnit {
                 .add(Attributes.ARMOR, RavagerUnit.armorValue)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE);
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange());
     }
 
     // prevent shield blocks from stunning and triggering a roar

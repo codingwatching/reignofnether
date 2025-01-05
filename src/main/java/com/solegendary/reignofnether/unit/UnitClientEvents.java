@@ -17,6 +17,9 @@ import com.solegendary.reignofnether.player.PlayerServerboundPacket;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import com.solegendary.reignofnether.resources.*;
+import com.solegendary.reignofnether.survival.Wave;
+import com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner;
+import com.solegendary.reignofnether.survival.spawners.WaveSpawner;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -54,6 +57,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
@@ -318,18 +322,9 @@ public class UnitClientEvents {
                     Entity entity = MC.level.getEntity(entityId);
                     if (entity instanceof Unit unit &&
                         unit.getMoveGoal() != null) {
-                        /**
-                         *   BlockPos oldFinalPos = unit.getMoveGoal().getFinalNodePos();
-                         *   sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
-                         *   BlockPos newFinalPos = unit.getMoveGoal().getFinalNodePos();
-                         *
-                         *   // if the client didn't calculate a new enough finalNodePos, then don't bother sending the server command
-                         *   if (oldFinalPos != null && newFinalPos != null &&
-                         *       oldFinalPos.distToCenterSqr(newFinalPos.getX(), newFinalPos.getY(), newFinalPos.getZ()) <= 9) {
-                         *       skips += 1;
-                         *       continue;
-                         *   }
-                         */
+
+                        //sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
+
                         sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos);
                     }
                 }
@@ -398,6 +393,13 @@ public class UnitClientEvents {
         }
     }
 
+    private static double variance = 0;
+    @SubscribeEvent
+    public static void onRenderOverLay(RenderGuiOverlayEvent.Pre evt) {
+        MiscUtil.drawDebugStrings(evt.getPoseStack(), MC.font, new String[] {
+                "var: " + variance,
+        });
+    }
 
     private static final int VIS_CHECK_TICKS_MAX = 10;
     private static int ticksToNextVisCheck = VIS_CHECK_TICKS_MAX;
@@ -405,6 +407,9 @@ public class UnitClientEvents {
     public static void onClientTick(TickEvent.ClientTickEvent evt) {
         if (evt.phase != TickEvent.Phase.END)
             return;
+
+        if (MC.level != null)
+            variance = WaveSpawner.getYVariance(MC.level, getPreselectedBlockPos(), 8);
 
         ticksToNextVisCheck -= 1;
 
@@ -431,7 +436,8 @@ public class UnitClientEvents {
                 synchronized (unitWindowVecs) {
                     unitWindowVecs.clear();
                     windowPositions.forEach(bp -> {
-                        if (bp.distSqr(MC.player.getOnPos()) < Math.pow(OrthoviewClientEvents.getZoom() + 10, 2))
+                        float dist = OrthoviewClientEvents.getZoom() * 2;
+                        if (bp.distSqr(MC.player.getOnPos()) < (dist * dist))
                             unitWindowVecs.add(MyMath.prepIsPointInsideRect3d(Minecraft.getInstance(),
                                     new Vector3d(bp.getX() - WINDOW_RADIUS, bp.getY(), bp.getZ() - WINDOW_RADIUS), // tl
                                     new Vector3d(bp.getX() - WINDOW_RADIUS, bp.getY(), bp.getZ() + WINDOW_RADIUS), // bl
@@ -918,7 +924,11 @@ public class UnitClientEvents {
                 bUnit.isHoldingUpShield = startAnimation;
             } else if (entity instanceof WorkerUnit wUnit && entity instanceof AttackerUnit aUnit && entity.getId() == entityId) {
                 if (startAnimation && MC.level != null) {
-                    entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+                    if (entity instanceof VillagerUnit vUnit && vUnit.getUnitProfession() == VillagerUnitProfession.HUNTER && vUnit.isVeteran())
+                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
+                    else
+                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+
                     aUnit.setUnitAttackTarget((LivingEntity) MC.level.getEntity(targetId)); // set itself as a target just for animation purposes, doesn't tick clientside anyway
                 } else {
                     entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.AIR));
@@ -980,6 +990,12 @@ public class UnitClientEvents {
 
     public static void setMaxPopulation(int value) {
         maxPopulation = value;
+    }
+
+    public static void makeVillagerVeteran(int unitId) {
+        for (LivingEntity entity : getAllUnits())
+            if (entity instanceof VillagerUnit vUnit && unitId == entity.getId())
+                vUnit.isVeteran = true;
     }
 
     /*

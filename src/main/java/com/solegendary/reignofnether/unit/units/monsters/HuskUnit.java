@@ -28,7 +28,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -107,7 +106,8 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.HUSK.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -124,7 +124,6 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.HUSK.population;
 
     public int maxResources = 100;
 
@@ -148,7 +147,7 @@ public class HuskUnit extends Husk implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, HuskUnit.attackDamage)
                 .add(Attributes.ARMOR, HuskUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, HuskUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 

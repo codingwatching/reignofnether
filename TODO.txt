@@ -1,5 +1,5 @@
 
-1.19.2-1.0.11
+1.19.2-1.1.0
 -------------
 
 - Done and tested
@@ -8,30 +8,11 @@
 [❌] Not done, including unmerged PRs
 
 
-
-Wave Survival 0.5a
-------------------
-
-[❌] Update to 1.0.11 full release
-[❌] Fixed a bug where teams would randomly switch
-[🟡] Time now begins at dusk on the first day
-    - This means day 1 is no longer half the length of other days
-[❌] Ranged ground units should target the nearest unit
-
-
 Features
 --------
-[❌] Configurable Unit Costs (Thanks to @DoodleNoodles)
-    - Includes all costs, population values and build times
-    - Modify the files generated at configs/reignofnether-config.toml to adjust them
-    - If the server config is adjusted, this will be enforced for all players joining the match
 
-[❌] Shift queueing movements and buildings (not just placement)
-    - Add index to sendCommand packets
-    - Add recursive field to UnitActionItem: nextActionItem
-        - OR just add a list queue to each unit
-    - Add end detections in goals for when to move to nextActionItem
-    - Add clientside checkpoints
+[❌] Add to main game build
+
 
     [❌] Only apply to build/repair and move
     [❌] Detect idle attackers
@@ -43,4 +24,51 @@ Features
 
 Bugfixes
 --------
-[✔] Fixed issue of your units sometimes showing other players' movement indicators
+
+[🟡] Fixed a bug causing villagers to become hunters too quickly
+
+[🟡] Fixed issues with the F6 option Hiding Leaves around Units and Cursors
+
+[❌] Fixed issue of not being able to target a resource if a building border overlaps it
+    - Just don't allow building selection if preselectedBlock is a resource block
+
+[❌] Workers on a building that is still auto-building the foundation layer actually slows down building
+
+[❌] Slime pathing is really bad
+    - Let them pass through and break leaves
+
+[✔] Fixed Warden sonic booms being invisible
+
+[❌] Have too-fast mod be built-in
+
+[❌] Don't kick players for sending too many packets if they drag-move the map
+
+
+Quality of Life
+---------------
+
+[❌] Added /gamerule for bridges over void
+
+[✔] When a player is defeated or surrenders, all of their units are issued a stop command
+
+
+
+Balancing
+---------
+
+[🟡] Enemy portal spawn rate is now scaled to the number of players in the game
+    - The total of number of portals remains unchanged
+
+[🟡] Enemy portals remove more surrounding blocks when placed
+
+[🟡] Raised the range and area at which enemies spawn
+
+[🟡] New capitols no longer spawn animals around them upon completion
+
+[🟡] Villagers now require 50% more logs chopped to become regular and veteran lumberjacks
+
+[🟡] Ghasts can now use transport portals
+
+[❌] Soulfires created by blazes need to be made temporary
+
+

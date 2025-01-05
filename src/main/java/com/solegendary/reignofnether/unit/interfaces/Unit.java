@@ -11,7 +11,9 @@ import com.solegendary.reignofnether.research.researchItems.ResearchFireResistan
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.time.NightUtils;
+import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
+import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.ability.Ability;
@@ -27,6 +29,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
@@ -46,7 +49,12 @@ public interface Unit {
     static int MONSTER_HEALING_TICKS = 12 * ResourceCost.TICKS_PER_SECOND;
 
     // used for increasing pathfinding calculation range, default is 16 for most mobs
-    static int FOLLOW_RANGE = 64;
+    static int FOLLOW_RANGE_IMPROVED = 64;
+    static int FOLLOW_RANGE = 16;
+
+    public static int getFollowRange() {
+        return UnitServerEvents.IMPROVED_PATHFINDING ? FOLLOW_RANGE_IMPROVED : FOLLOW_RANGE;
+    }
 
     // list of positions to draw lines between to indicate unit intents - will fade over time unless shift is held
     public ArrayList<BlockPos> getCheckpoints();
@@ -60,7 +68,7 @@ public interface Unit {
     public GarrisonGoal getGarrisonGoal();
     public boolean canGarrison();
 
-    public UsePortalGoal getUsePortalGoal();
+    public MoveToTargetBlockGoal getUsePortalGoal();
     public boolean canUsePortal();
 
     public Faction getFaction();
@@ -176,7 +184,7 @@ public interface Unit {
             unitMob.invulnerableTime = 0;
 
             // enact target-following, and stop followTarget being reset
-            if (unit.getFollowTarget() != null)
+            if (unit.getFollowTarget() != null && unitMob.tickCount % 20 == 0)
                 unit.setMoveTarget(unit.getFollowTarget().blockPosition());
 
             // remove fire from piglin units if they have research
@@ -200,6 +208,7 @@ public interface Unit {
                 le.heal(1);
             } else if (unit.getFaction() == Faction.PIGLINS &&
                     le.tickCount % PIGLIN_HEALING_TICKS == 0 &&
+                    !(unit instanceof Slime) &&
                     (NetherBlocks.isNetherBlock(le.level, le.getOnPos()) || unit instanceof GhastUnit)) {
                 le.heal(1);
             }
@@ -245,8 +254,12 @@ public interface Unit {
         unit.setHoldPosition(false);
         if (unit.canGarrison())
             unit.getGarrisonGoal().stopGarrisoning();
-        if (unit.canUsePortal())
-            unit.getUsePortalGoal().stopUsingPortal();
+        if (unit.canUsePortal()) {
+            if (unit.getUsePortalGoal() instanceof FlyingUsePortalGoal flyingUsePortalGoal)
+                flyingUsePortalGoal.stopUsingPortal();
+            if (unit.getUsePortalGoal() instanceof UsePortalGoal usePortalGoal)
+                usePortalGoal.stopUsingPortal();
+        }
     }
 
     // can be overridden in the Unit's class to do additional logic on a reset
@@ -275,5 +288,12 @@ public interface Unit {
             return 0.5f;
         }
         return 1.0f;
+    }
+
+    public static Ability getAbility(Unit unit, UnitAction abilityAction) {
+        for (Ability ability : unit.getAbilities())
+            if (ability.action.equals(abilityAction))
+                return ability;
+        return null;
     }
 }

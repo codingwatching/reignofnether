@@ -35,9 +35,10 @@ public class CallToArmsBuilding extends Ability {
 
     private static final int RANGE = TownCentre.MILITIA_RANGE;
 
-    public CallToArmsBuilding() {
+    public CallToArmsBuilding(Level level) {
         super(
                 UnitAction.CALL_TO_ARMS_BUILDING,
+                level,
                 0,
                 RANGE,
                 0,

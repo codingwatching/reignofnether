@@ -144,7 +144,7 @@ public class SilverfishUnit extends Silverfish implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, SilverfishUnit.attackDamage)
                 .add(Attributes.ARMOR, SilverfishUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, SilverfishUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ATTACK_KNOCKBACK, 0.05d);
     }
 

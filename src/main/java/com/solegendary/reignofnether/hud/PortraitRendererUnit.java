@@ -41,6 +41,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
@@ -288,8 +289,9 @@ public class PortraitRendererUnit<T extends LivingEntity, M extends EntityModel<
         AttributeInstance ms = ((LivingEntity) unit).getAttribute(Attributes.MOVEMENT_SPEED);
 
         int msInt = ms != null ? (int) (ms.getValue() * 101) : 0;
-        if (unit instanceof BruteUnit pbUnit && pbUnit.isHoldingUpShield) {
-            msInt *= 0.5f;
+        if ((unit instanceof BruteUnit pbUnit && pbUnit.isHoldingUpShield) ||
+            unit instanceof Slime) {
+            msInt *= 0.45f;
         }
         statStrings.add(String.valueOf(msInt)); // prevent rounding errors
 

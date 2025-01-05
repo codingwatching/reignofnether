@@ -2,6 +2,8 @@ package com.solegendary.reignofnether.unit.units.piglins;
 
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.FirewallShot;
+import com.solegendary.reignofnether.building.BuildingUtils;
+import com.solegendary.reignofnether.building.GarrisonableBuilding;
 import com.solegendary.reignofnether.fogofwar.FogOfWarClientboundPacket;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
@@ -98,9 +100,10 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.BLAZE.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
-    public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
+    public int getAttackCooldown() { return (int) (20 / (attacksPerSecond)); }
     public float getAttacksPerSecond() {return attacksPerSecond;}
     public float getAggroRange() {return aggroRange;}
     public boolean getAggressiveWhenIdle() {return aggressiveWhenIdle && !isVehicle();}
@@ -117,8 +120,8 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
 
     // endregion
 
-    final static public float attackDamage = 2.0f;
-    final static public float attacksPerSecond = 1.1f;
+    final static public float attackDamage = 1.0f;
+    final static public float attacksPerSecond = 1.0f;
     final static public float attackRange = 14; // only used by ranged units or melee building attackers
     final static public float aggroRange = 14;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
@@ -127,7 +130,6 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
     final static public float maxHealth = 35.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
-    final static public int popCost = ResourceCosts.BLAZE.population;
     public int maxResources = 100;
 
     public int fogRevealDuration = 0; // set > 0 for the client who is attacked by this unit
@@ -157,7 +159,7 @@ public class BlazeUnit extends Blaze implements Unit, AttackerUnit, RangedAttack
                 .add(Attributes.ATTACK_DAMAGE, BlazeUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, BlazeUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, BlazeUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, BlazeUnit.armorValue);
     }
 

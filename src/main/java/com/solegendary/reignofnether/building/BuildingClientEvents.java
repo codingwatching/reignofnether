@@ -16,6 +16,7 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.nether.NetherBlocks;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.research.ResearchClient;
+import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
@@ -104,7 +105,8 @@ public class BuildingClientEvents {
     // can only be one preselected building as you can't box-select them like units
     public static Building getPreselectedBuilding() {
         for (Building building : buildings)
-            if (building.isPosInsideBuilding(CursorClientEvents.getPreselectedBlockPos())) {
+            if (building.isPosInsideBuilding(CursorClientEvents.getPreselectedBlockPos()) &&
+                ResourceSources.getFromBlockPos(CursorClientEvents.getPreselectedBlockPos()) == null) {
                 return building;
             }
         return null;
@@ -140,18 +142,18 @@ public class BuildingClientEvents {
 
     // switch to the building with the least production, so we can spread out production items
     public static void switchHudToIdlestBuilding() {
-        if (hudSelectedBuilding == null)
+        if (hudSelectedBuilding == null || MC.player == null)
             return;
         Building idlestBuilding = null;
 
         List<Building> sameNameBuildings = selectedBuildings.stream().filter(
-                b -> b.name.equals(hudSelectedBuilding.name)
+                b -> b.name.equals(hudSelectedBuilding.name) && b.isBuilt && b.ownerName.equals(MC.player.getName().getString())
         ).toList();
 
-        int prodTicksLeftMax = Integer.MAX_VALUE;
+        float prodTicksLeftMax = Float.MAX_VALUE;
         for (Building building : sameNameBuildings) {
             if (building instanceof ProductionBuilding prodB) {
-                int prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0, Integer::sum);
+                Float prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0F, Float::sum);
                 if (prodTicksLeft < prodTicksLeftMax) {
                     prodTicksLeftMax = prodTicksLeft;
                     idlestBuilding = building;

@@ -43,18 +43,6 @@ public class BuildingUtils {
                     building.getBlocksPlaced() < building.getBlocksTotal();
     }
 
-    public static boolean anyOtherCapitolProducingWorkers(boolean isClientSide, Building building) {
-        List<Building> buildings = isClientSide ? BuildingClientEvents.getBuildings() : BuildingServerEvents.getBuildings();
-        List<Building> capitols = buildings.stream().filter(
-                b -> b.isCapitol && b.ownerName.equals(building.ownerName) &&
-                        !b.originPos.equals(building.originPos)).toList();
-        for (Building capitol : capitols)
-            if (capitol instanceof ProductionBuilding pb &&
-                !pb.productionQueue.isEmpty())
-                return true;
-        return false;
-    }
-
     // returns a list of BPs that may reside in unique chunks for fog of war calcs
     public static ArrayList<BlockPos> getUniqueChunkBps(Building building) {
         AABB aabb = new AABB(
@@ -111,6 +99,7 @@ public class BuildingUtils {
             case Mausoleum.buildingName -> building = new Mausoleum(level, pos, rotation, ownerName);
             case SculkCatalyst.buildingName -> building = new SculkCatalyst(level, pos, rotation, ownerName);
             case SpiderLair.buildingName -> building = new SpiderLair(level, pos, rotation, ownerName);
+            case SlimePit.buildingName -> building = new SlimePit(level, pos, rotation, ownerName);
             case ArcaneTower.buildingName -> building = new ArcaneTower(level, pos, rotation, ownerName);
             case Library.buildingName -> building = new Library(level, pos, rotation, ownerName);
             case Dungeon.buildingName -> building = new Dungeon(level, pos, rotation, ownerName);
@@ -128,6 +117,7 @@ public class BuildingUtils {
             case HoglinStables.buildingName -> building = new HoglinStables(level, pos, rotation, ownerName);
             case FlameSanctuary.buildingName -> building = new FlameSanctuary(level, pos, rotation, ownerName);
             case WitherShrine.buildingName -> building = new WitherShrine(level, pos, rotation, ownerName);
+            case BasaltSprings.buildingName -> building = new BasaltSprings(level, pos, rotation, ownerName);
             case Fortress.buildingName -> building = new Fortress(level, pos, rotation, ownerName);
         }
         if (building != null)

@@ -1,6 +1,5 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
-import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.piglins.*;
 import com.solegendary.reignofnether.building.buildings.piglins.BlackstoneBridge;
 import com.solegendary.reignofnether.hud.AbilityButton;
@@ -104,7 +103,8 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.GRUNT.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -135,7 +135,6 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
     final static public float maxHealth = 25.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
-    final static public int popCost = ResourceCosts.GRUNT.population;
     public int maxResources = 100;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
@@ -175,7 +174,8 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
             this.abilityButtons.add(HoglinStables.getBuildButton(Keybindings.keyT));
             this.abilityButtons.add(FlameSanctuary.getBuildButton(Keybindings.keyY));
             this.abilityButtons.add(WitherShrine.getBuildButton(Keybindings.keyU));
-            this.abilityButtons.add(Fortress.getBuildButton(Keybindings.keyI));
+            this.abilityButtons.add(BasaltSprings.getBuildButton(Keybindings.keyI));
+            this.abilityButtons.add(Fortress.getBuildButton(Keybindings.keyO));
             this.abilityButtons.add(BlackstoneBridge.getBuildButton(Keybindings.keyC));
         }
     }
@@ -193,7 +193,7 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
                 .add(Attributes.ATTACK_DAMAGE, GruntUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, GruntUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, GruntUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, GruntUnit.armorValue);
     }
 
@@ -232,9 +232,8 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
     @Override
     protected void registerGoals() {
         initialiseGoals();
-        this.goalSelector.addGoal(2, usePortalGoal);
-
         this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, usePortalGoal);
         this.goalSelector.addGoal(2, attackGoal);
         this.goalSelector.addGoal(2, buildRepairGoal);
         this.goalSelector.addGoal(2, gatherResourcesGoal);

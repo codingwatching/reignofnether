@@ -66,9 +66,10 @@ public class Laboratory extends ProductionBuilding implements RangeIndicator {
                 ResearchSpiderJockeys.getStartButton(this, Keybindings.keyR),
                 ResearchPoisonSpiders.getStartButton(this, Keybindings.keyT),
                 ResearchSpiderWebs.getStartButton(this, Keybindings.keyY),
-                ResearchLabLightningRod.getStartButton(this, Keybindings.keyU),
-                ResearchSilverfish.getStartButton(this, Keybindings.keyI),
-                ResearchSculkAmplifiers.getStartButton(this, Keybindings.keyO)
+                ResearchSlimeConversion.getStartButton(this, Keybindings.keyU),
+                ResearchLabLightningRod.getStartButton(this, Keybindings.keyI),
+                ResearchSilverfish.getStartButton(this, Keybindings.keyO),
+                ResearchSculkAmplifiers.getStartButton(this, Keybindings.keyP)
             );
             this.abilityButtons.add(callLightning.getButton(Keybindings.keyL));
         }

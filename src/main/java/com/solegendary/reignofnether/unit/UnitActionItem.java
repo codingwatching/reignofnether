@@ -8,16 +8,18 @@ import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
-import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
-import com.solegendary.reignofnether.unit.goals.MoveToTargetBlockGoal;
-import com.solegendary.reignofnether.unit.goals.ReturnResourcesGoal;
+import com.solegendary.reignofnether.survival.Wave;
+import com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner;
+import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
+import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -85,7 +87,7 @@ public class UnitActionItem {
         this.selectedBuildingPos = selectedBuildingPos;
     }
 
-    public void resetBehaviours(Unit unit) {
+    public static void resetBehaviours(Unit unit) {
         unit.getCheckpoints().clear();
         unit.setEntityCheckpointId(-1);
         unit.resetBehaviours();
@@ -163,6 +165,10 @@ public class UnitActionItem {
                             break;
                         }
                     }
+                    //if (unit instanceof MagmaCubeUnit && unit.getMoveGoal().getMoveTarget() != null) {
+                    //    shouldResetBehaviours = false;
+                    //}
+
                     if (shouldResetBehaviours && (nonAbilityActions.contains(action) || foundAbility)) {
                         resetBehaviours(unit);
                     }
@@ -210,7 +216,10 @@ public class UnitActionItem {
                         }
                     } else if (buildingAtPos instanceof Portal portal
                         && portal.portalType == Portal.PortalType.TRANSPORT && unit.canUsePortal()) {
-                        unit.getUsePortalGoal().setBuildingTarget(preselectedBlockPos);
+                        if (unit.getUsePortalGoal() instanceof FlyingUsePortalGoal flyingUsePortalGoal)
+                            flyingUsePortalGoal.setBuildingTarget(preselectedBlockPos);
+                        if (unit.getUsePortalGoal() instanceof UsePortalGoal usePortalGoal)
+                            usePortalGoal.setBuildingTarget(preselectedBlockPos);
                     } else {
                         unit.setMoveTarget(preselectedBlockPos);
                     }

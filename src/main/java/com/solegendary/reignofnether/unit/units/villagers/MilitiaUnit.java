@@ -47,6 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
+
 public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, VillagerDataHolder, ConvertableUnit {
     // region
     private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
@@ -106,7 +108,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    public int getPopCost() {return ResourceCosts.MILITIA.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -131,6 +133,13 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     // for going back to work as a villager
     public TargetResourcesSave resourcesSaveData = null;
+    public VillagerProfession profession = VillagerProfession.NONE;
+    public boolean isVeteran = false;
+    public int farmerExp = 0;
+    public int lumberjackExp = 0;
+    public int minerExp = 0;
+    public int masonExp = 0;
+    public int hunterExp = 0;
 
     final static public float attackDamage = 3.0f;
     final static public float attacksPerSecond = 0.5f;
@@ -141,8 +150,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
 
     final static public float maxHealth = 35.0f;
     final static public float armorValue = 0.0f;
-    final static public float movementSpeed = 0.25f;
-    final static public int popCost = ResourceCosts.MILITIA.population;
+    final static public float movementSpeed = 0.28f;
     public int maxResources = 100;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
@@ -152,7 +160,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
     public MilitiaUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
-        Ability backToWork = new BackToWorkUnit();
+        Ability backToWork = new BackToWorkUnit(level);
         this.abilities.add(backToWork);
 
         if (level.isClientSide()) {
@@ -168,7 +176,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                 .add(Attributes.ATTACK_DAMAGE, MilitiaUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, MilitiaUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, MilitiaUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, MilitiaUnit.armorValue);
     }
 
@@ -192,7 +200,7 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
             Unit.tick(this);
             AttackerUnit.tick(this);
 
-            if (this.tickCount > 100 && this.tickCount % 10 == 0 && !converted && !level.isClientSide()) {
+            if (this.tickCount > 100 && this.tickCount % 10 == 0 && !converted && !level.isClientSide() && !getOwnerName().equals(ENEMY_OWNER_NAME)) {
                 Building building = BuildingUtils.findClosestBuilding(level.isClientSide(), this.getEyePosition(),
                         (b) -> b.isBuilt && b.ownerName.equals(getOwnerName()) && b instanceof TownCentre);
 
@@ -213,6 +221,14 @@ public class MilitiaUnit extends Vindicator implements Unit, AttackerUnit, Villa
                     vUnit.getGatherResourceGoal().saveData = resourcesSaveData;
                     vUnit.getGatherResourceGoal().loadState();
                 }
+                vUnit.setProfession(this.profession);
+                vUnit.isVeteran = this.isVeteran;
+                vUnit.farmerExp = this.farmerExp;
+                vUnit.lumberjackExp = this.lumberjackExp;
+                vUnit.minerExp = this.minerExp;
+                vUnit.masonExp = this.masonExp;
+                vUnit.hunterExp = this.hunterExp;
+
                 UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newEntity.getId()));
                 converted = true;
             }

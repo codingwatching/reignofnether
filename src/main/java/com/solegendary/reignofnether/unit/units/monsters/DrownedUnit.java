@@ -1,10 +1,10 @@
 package com.solegendary.reignofnether.unit.units.monsters;
 
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.SpinWebs;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
-import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -16,6 +16,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -27,6 +29,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -103,7 +106,8 @@ public class DrownedUnit extends Drowned implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.DROWNED.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -120,7 +124,6 @@ public class DrownedUnit extends Drowned implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.DROWNED.population;
 
     public int maxResources = 100;
 
@@ -144,7 +147,7 @@ public class DrownedUnit extends Drowned implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, DrownedUnit.attackDamage)
                 .add(Attributes.ARMOR, DrownedUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, DrownedUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0); // needs to be added for parent to work
     }
 
@@ -207,5 +210,18 @@ public class DrownedUnit extends Drowned implements Unit, AttackerUnit {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
         return pSpawnData;
+    }
+
+    private final static int CONVERT_DEBUFF_DURATION_SECONDS = 10;
+
+    @Override
+    public boolean doHurtTarget(@NotNull Entity pEntity) {
+        if (super.doHurtTarget(pEntity)) {
+            if (pEntity instanceof LivingEntity)
+                ((LivingEntity)pEntity).addEffect(new MobEffectInstance(MobEffects.HUNGER, CONVERT_DEBUFF_DURATION_SECONDS * 20, 0), this);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

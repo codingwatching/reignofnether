@@ -50,12 +50,7 @@ public class VillagerProd extends ProductionItem {
             () -> false,
             () -> false,
             () -> true,
-            () -> {
-                if (!BuildingUtils.anyOtherCapitolProducingWorkers(true, prodBuilding))
-                    BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName);
-                else
-                    HudClientEvents.showTemporaryMessage("Only one capitol may build workers at a time.");
-            },
+            () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
                 FormattedCharSequence.forward(I18n.get("units.villagers.reignofnether.villager"), Style.EMPTY.withBold(true)),
@@ -63,7 +58,8 @@ public class VillagerProd extends ProductionItem {
                 ResourceCosts.getFormattedPopAndTime(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
                 FormattedCharSequence.forward(I18n.get("units.villagers.reignofnether.villager.tooltip1"), Style.EMPTY),
-                FormattedCharSequence.forward(I18n.get("units.villagers.reignofnether.villager.tooltip2"), Style.EMPTY)
+                FormattedCharSequence.forward(I18n.get("units.villagers.reignofnether.villager.tooltip2"), Style.EMPTY),
+                FormattedCharSequence.forward(I18n.get("units.villagers.reignofnether.villager.tooltip3"), Style.EMPTY)
             )
         );
     }

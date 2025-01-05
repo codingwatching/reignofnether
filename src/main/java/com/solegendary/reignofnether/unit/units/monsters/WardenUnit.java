@@ -121,7 +121,8 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.WARDEN.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -138,7 +139,6 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.WARDEN.population;
 
     public int maxResources = 100;
 
@@ -175,7 +175,7 @@ public class WardenUnit extends Warden implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, WardenUnit.attackDamage)
                 .add(Attributes.ARMOR, WardenUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, WardenUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5);
     }

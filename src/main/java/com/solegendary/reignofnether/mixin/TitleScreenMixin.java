@@ -3,6 +3,7 @@ package com.solegendary.reignofnether.mixin;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
+import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.hud.TitleClientEvents;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -44,8 +45,6 @@ public class TitleScreenMixin extends Screen {
             new ResourceLocation( "textures/gui/title/discord.png");
     private static final ResourceLocation LILYPAD_TEXTURE =
             new ResourceLocation( "textures/gui/title/lilypad.png");
-
-    private static final String VERSION_STRING = "1.0.11-alpha-7";
 
     @Shadow @Final private PanoramaRenderer panorama;
     @Shadow @Final private boolean fading;
@@ -219,7 +218,7 @@ public class TitleScreenMixin extends Screen {
             // Render branding lines
             BrandingControl.forEachLine(true, true, (line, text) -> {
                 if (line == 1) {
-                    text = "Reign of Nether " + VERSION_STRING;
+                    text = "Reign of Nether " + ReignOfNether.VERSION_STRING;
                 }
                 drawString(pPoseStack, this.font, text, 2, this.height - (10 + line * (9 + 1)), 16777215 | alphaMask);
             });

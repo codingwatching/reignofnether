@@ -4,7 +4,6 @@ import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
-import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -102,7 +101,8 @@ public class ZombiePiglinUnit extends ZombifiedPiglin implements Unit, AttackerU
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.ZOMBIE.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -119,7 +119,6 @@ public class ZombiePiglinUnit extends ZombifiedPiglin implements Unit, AttackerU
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.ZOMBIE.population;
 
     public int maxResources = 100;
 
@@ -143,7 +142,7 @@ public class ZombiePiglinUnit extends ZombifiedPiglin implements Unit, AttackerU
                 .add(Attributes.ATTACK_DAMAGE, ZombiePiglinUnit.attackDamage)
                 .add(Attributes.ARMOR, ZombiePiglinUnit.armorValue)
                 .add(Attributes.MAX_HEALTH, ZombiePiglinUnit.maxHealth)
-                .add(Attributes.FOLLOW_RANGE, Unit.FOLLOW_RANGE)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0);
     }
 

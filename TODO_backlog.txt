@@ -1,4 +1,8 @@
 
+
+
+
+
 Features
 --------
 
@@ -27,18 +31,36 @@ Features
     - When built, can be exploded manaully (or set to autoexplode on nearby enemies approaching)
     - Explodes into combination of soulsand and magma
 
-[❌] Magma cubes
-    - See discord post
+[❌] Shift queueing actions
+
+[❌] Wave Survival: Groups of buildings on some nights
+    [❌] Add to a new class like WavePortal
+    [❌] Scale according to wave tier
+        Tier 1: cannot spawn
+        Tier 2: production building + ground units + 1 garrison
+        Tier 3: production building + ground units
+        Tier 4: production building + ground units + 2 garrisons
+        Tier 5: castle building
+        Tier 6: castle building + 2 garrisons
+
+    [❌] Instead of replacing a wave, spawn alongside a wave, but reduce the wave size
+    [❌] If left until the next night, raises the population value by the same amount that it reduced it by
+
 
 
 Bugfixes
 --------
 
+[❌] Fixed a bug where teams would randomly switch
+
 [❌] Central portals sometimes do not ignite (and this somehow makes grunts spawn underground)
 
 [❌] Cobwebs in a spider lair should not slow down anything
 
+[❌] Dying in survival puts you in a bugged survival mode
 
+Villager Professions
+    [❌] Farmer arms are using the hat rim texture
 
 
 
@@ -53,15 +75,11 @@ Quality of Life Features
 
 [❌] Cast spells with the closest unit first
 
-[❌] Spiders should move towards the target before webbing
-
-[❌] /gamerule groundYLevel for mapmakers
-    - Maybe separate for ghasts and bridges?
-
 [❌] restore ores on /rts-reset
     - Have to track each ore block when it is mined or converted into nether terrain
 
-[❌] /rts-surrender-and-destroy to destroy all your own units and buildings
+[❌] Special block to allow spawn location picking
+
 
 Balancing
 ---------

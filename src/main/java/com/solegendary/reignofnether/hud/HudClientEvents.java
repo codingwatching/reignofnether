@@ -5,8 +5,10 @@ import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
 import com.solegendary.reignofnether.ability.abilities.SonicBoom;
+import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientEvents;
 import com.solegendary.reignofnether.building.*;
+import com.solegendary.reignofnether.config.ConfigClientEvents;
 import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
 import com.solegendary.reignofnether.guiscreen.TopdownGui;
 import com.solegendary.reignofnether.hud.buttons.ActionButtons;
@@ -20,6 +22,7 @@ import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.resources.Resources;
 import com.solegendary.reignofnether.resources.ResourcesClientEvents;
+import com.solegendary.reignofnether.survival.SurvivalClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialStage;
 import com.solegendary.reignofnether.unit.Relationship;
@@ -50,6 +53,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.*;
@@ -111,8 +115,8 @@ public class HudClientEvents {
             return;
         }
 
-        List<Pair<LivingEntity, Integer>> pairs = UnitClientEvents.getSelectedUnits().stream().map((le) -> {
-            int totalCd = 0;
+        List<Pair<LivingEntity, Float>> pairs = UnitClientEvents.getSelectedUnits().stream().map((le) -> {
+            float totalCd = 0;
             if (le instanceof Unit unit) {
                 for (Ability ability : unit.getAbilities()) {
                     totalCd += ability.getCooldown();
@@ -166,27 +170,65 @@ public class HudClientEvents {
         ItemStack itemStack = ((LivingEntity) entity).getItemBySlot(EquipmentSlot.HEAD);
 
         if (itemStack.getItem() instanceof BannerItem) {
-            name += " " + I18n.get("units.reignofnether.captain");
+            name += " " + I18n.get("units.villagers.reignofnether.captain");
         }
         if (entity.getPassengers().size() == 1) {
             Entity passenger = entity.getPassengers().get(0);
             if (entity instanceof RavagerUnit && passenger instanceof PillagerUnit) {
-                name = I18n.get("units.reignofnether.ravager_artillery");
+                name = I18n.get("units.villagers.reignofnether.ravager_artillery");
+            } else if (entity instanceof PoisonSpiderUnit && (
+                    passenger instanceof SkeletonUnit || passenger instanceof StrayUnit
+            )) {
+                name = I18n.get("units.monsters.reignofnether.poison_spider_jockey");
             } else if (entity instanceof SpiderUnit && (
                 passenger instanceof SkeletonUnit || passenger instanceof StrayUnit
             )) {
-                name = I18n.get("units.reignofnether.spider_jockey");
-            } else if (entity instanceof PoisonSpiderUnit && (
-                passenger instanceof SkeletonUnit || passenger instanceof StrayUnit
-            )) {
-                name = I18n.get("units.reignofnether.poison_spider_jockey");
-            } else if (entity instanceof HoglinUnit && passenger instanceof HeadhunterUnit) {
-                name = I18n.get("units.reignofnether.hoglin_rider");
+                name = I18n.get("units.monsters.reignofnether.spider_jockey");
+            }else if (entity instanceof HoglinUnit && passenger instanceof HeadhunterUnit) {
+                name = I18n.get("units.piglins.reignofnether.hoglin_rider");
             } else {
                 String pName = getSimpleEntityName(entity.getPassengers().get(0)).replace("_", " ");
                 String nameCap = pName.substring(0, 1).toUpperCase() + pName.substring(1);
                 name += " & " + nameCap;
             }
+        }
+        if (entity instanceof VillagerUnit vUnit) {
+            switch (vUnit.getUnitProfession()) {
+                case FARMER -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.veteran_farmer");
+                    else
+                        name = I18n.get("units.reignofnether.farmer");
+                }
+                case LUMBERJACK -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.veteran_lumberjack");
+                    else
+                        name = I18n.get("units.reignofnether.lumberjack");
+                }
+                case MINER -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.veteran_miner");
+                    else
+                        name = I18n.get("units.reignofnether.miner");
+                }
+                case MASON -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.veteran_mason");
+                    else
+                        name = I18n.get("units.reignofnether.mason");
+                }
+                case HUNTER -> {
+                    if (vUnit.isVeteran())
+                        name = I18n.get("units.reignofnether.veteran_hunter");
+                    else
+                        name = I18n.get("units.reignofnether.hunter");
+                }
+                default -> name = I18n.get("units.villagers.reignofnether.villager");
+            }
+        }
+        if (entity instanceof CreeperUnit cUnit && cUnit.isPowered()) {
+            name = I18n.get("units.monsters.reignofnether.charged_creeper");
         }
         return name;
     }
@@ -407,7 +449,7 @@ public class HudClientEvents {
 
                     // name and progress %
                     ProductionItem firstProdItem = selProdBuilding.productionQueue.get(0);
-                    float percentageDoneInv = (float) firstProdItem.ticksLeft / (float) firstProdItem.ticksToProduce;
+                    float percentageDoneInv = firstProdItem.ticksLeft / firstProdItem.ticksToProduce;
 
                     int colour = 0xFFFFFF;
                     if (!firstProdItem.isBelowPopulationSupply()) {
@@ -814,32 +856,28 @@ public class HudClientEvents {
         // ---------------------------
         // Resources icons and amounts
         // ---------------------------
-
         Resources resources = null;
         String selPlayerName = null;
 
-        if (MC.player != null && PlayerClientEvents.isRTSPlayer) {
-            selPlayerName = MC.player.getName().getString();
-            resources = ResourcesClientEvents.getOwnResources();
-        } else { // if not an RTS player, show the selected unit/building owner's resources instead
-            if (!UnitClientEvents.getSelectedUnits().isEmpty()) {
-                if (UnitClientEvents.getSelectedUnits().get(0) instanceof Unit unit) {
-                    selPlayerName = unit.getOwnerName();
-                }
-            }
-            if (!BuildingClientEvents.getSelectedBuildings().isEmpty()) {
-                selPlayerName = BuildingClientEvents.getSelectedBuildings().get(0).ownerName;
-            }
-
-            if (selPlayerName != null) {
-                resources = ResourcesClientEvents.getResources(selPlayerName);
+        if (!UnitClientEvents.getSelectedUnits().isEmpty()) {
+            if (UnitClientEvents.getSelectedUnits().get(0) instanceof Unit unit) {
+                selPlayerName = unit.getOwnerName();
             }
         }
+        if (!BuildingClientEvents.getSelectedBuildings().isEmpty()) {
+            selPlayerName = BuildingClientEvents.getSelectedBuildings().get(0).ownerName;
+        }
+
+        if (selPlayerName != null) {
+            resources = ResourcesClientEvents.getResources(selPlayerName);
+        }
+        boolean alliedWithSelPlayer = MC.player != null && AllianceSystem.isAllied(MC.player.getName().getString(), selPlayerName);
+        boolean isSelPlayer = MC.player != null && MC.player.getName().getString().equals(selPlayerName);
 
         blitX = 0;
         blitY = 0;
 
-        if (!PlayerClientEvents.isRTSPlayer) {
+        if ((!PlayerClientEvents.isRTSPlayer || alliedWithSelPlayer) && !isSelPlayer) {
             if (resources != null) {
                 GuiComponent.drawString(evt.getPoseStack(),
                     MC.font,
@@ -1089,20 +1127,60 @@ public class HudClientEvents {
         Button toggleMapSizeButton = MinimapClientEvents.getToggleSizeButton();
         if (!toggleMapSizeButton.isHidden.get()) {
             toggleMapSizeButton.render(evt.getPoseStack(),
-                screenWidth - (toggleMapSizeButton.iconSize * 2),
-                screenHeight - (toggleMapSizeButton.iconSize * 2),
-                mouseX,
-                mouseY
+                    screenWidth - (toggleMapSizeButton.iconSize * 2),
+                    screenHeight - (toggleMapSizeButton.iconSize * 2),
+                    mouseX,
+                    mouseY
             );
+            renderedButtons.add(toggleMapSizeButton);
         }
-        renderedButtons.add(toggleMapSizeButton);
+        Button camSensitivityButton = MinimapClientEvents.getCamSensitivityButton();
+        if (!camSensitivityButton.isHidden.get()) {
+            camSensitivityButton.render(evt.getPoseStack(),
+                    screenWidth - (camSensitivityButton.iconSize * 4),
+                    screenHeight - (camSensitivityButton.iconSize * 2),
+                    mouseX,
+                    mouseY
+            );
+            renderedButtons.add(camSensitivityButton);
+        }
+        Button mapLockButton = MinimapClientEvents.getMapLockButton();
+        if (!mapLockButton.isHidden.get()) {
+            mapLockButton.render(evt.getPoseStack(),
+                    screenWidth - (mapLockButton.iconSize * 2),
+                    screenHeight - (mapLockButton.iconSize * 4),
+                    mouseX,
+                    mouseY
+            );
+            renderedButtons.add(mapLockButton);
+        }
+        Button nightCirclesButton = MinimapClientEvents.getNightCirclesModeButton();
+        if (!nightCirclesButton.isHidden.get()) {
+            nightCirclesButton.render(evt.getPoseStack(),
+                    screenWidth - (nightCirclesButton.iconSize * 4),
+                    screenHeight - (nightCirclesButton.iconSize * 4),
+                    mouseX,
+                    mouseY
+            );
+            renderedButtons.add(nightCirclesButton);
+        }
 
         // ------------------------------
         // Start buttons (spectator only)
         // ------------------------------
         if (!PlayerClientEvents.isRTSPlayer && !PlayerClientEvents.rtsLocked) {
 
-            /*
+            Button diffsButton = ConfigClientEvents.getDiffsButton();
+            if (!diffsButton.isHidden.get()) {
+                diffsButton.render(evt.getPoseStack(),
+                        screenWidth - (StartButtons.ICON_SIZE * 10),
+                        StartButtons.ICON_SIZE / 2,
+                        mouseX,
+                        mouseY
+                );
+                renderedButtons.add(diffsButton);
+            }
+
             Button gamemodeButton = ClientGameModeHelper.getButton();
             if (gamemodeButton != null && !gamemodeButton.isHidden.get() && !TutorialClientEvents.isEnabled()) {
                 gamemodeButton.render(evt.getPoseStack(),
@@ -1113,7 +1191,6 @@ public class HudClientEvents {
                 );
                 renderedButtons.add(gamemodeButton);
             }
-             */
 
             if (!StartButtons.villagerStartButton.isHidden.get()) {
                 StartButtons.villagerStartButton.render(evt.getPoseStack(),
@@ -1141,6 +1218,18 @@ public class HudClientEvents {
                     mouseY
                 );
                 renderedButtons.add(StartButtons.piglinStartButton);
+            }
+        } else if (SurvivalClientEvents.isEnabled) {
+            Button nextWaveButton = SurvivalClientEvents.getNextWaveButton();
+            if (!nextWaveButton.isHidden.get()) {
+                nextWaveButton.tooltipOffsetY = 15;
+                nextWaveButton.render(evt.getPoseStack(),
+                        screenWidth - (StartButtons.ICON_SIZE * 2),
+                        StartButtons.ICON_SIZE / 2,
+                        mouseX,
+                        mouseY
+                );
+                renderedButtons.add(nextWaveButton);
             }
         }
 

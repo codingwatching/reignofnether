@@ -13,6 +13,7 @@ public class SurvivalSaveData extends SavedData {
     public boolean isEnabled;
     public int waveNumber;
     public WaveDifficulty difficulty;
+    public long randomSeed;
 
     private static SurvivalSaveData create() {
         return new SurvivalSaveData();
@@ -34,6 +35,7 @@ public class SurvivalSaveData extends SavedData {
         data.isEnabled = tag.getBoolean("isEnabled");
         data.waveNumber = tag.getInt("waveNumber");
         data.difficulty = WaveDifficulty.valueOf(tag.getString("difficulty"));
+        data.randomSeed = tag.getLong("randomSeed");
         ReignOfNether.LOGGER.info("SurvivalSaveData.load: wave number: " + data.waveNumber);
         return data;
     }
@@ -44,6 +46,7 @@ public class SurvivalSaveData extends SavedData {
         tag.putBoolean("isEnabled", this.isEnabled);
         tag.putInt("waveNumber", this.waveNumber);
         tag.putString("difficulty", this.difficulty.name());
+        tag.putLong("randomSeed", this.randomSeed);
         return tag;
     }
 
