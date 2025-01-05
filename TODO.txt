@@ -14,13 +14,6 @@ Features
 [❌] Add to main game build
 
 
-    [❌] Only apply to build/repair and move
-    [❌] Detect idle attackers
-    [❌] Detect workers as idle faster
-    [❌] add clientside checkpoints
-    [❌] If queued and slowQueue does NOT contain any items for that user, reset the unit's behaviours first
-    [❌] if !queued, clear that unit's slowQueue
-    [❌] ensure queueing farms still works correctly and a worker begins farming the last farm to be built if their slowQueue is empty
 
 Bugfixes
 --------
@@ -38,8 +31,6 @@ Bugfixes
 [❌] Slime pathing is really bad
     - Let them pass through and break leaves
 
-
-
 [❌] Have too-fast mod be built-in
 
 [❌] Don't kick players for sending too many packets if they drag-move the map
@@ -47,6 +38,13 @@ Bugfixes
 
 Quality of Life
 ---------------
+
+- Shift queue actions:
+    [❌] Only apply to build/repair and move
+    [❌] add clientside checkpoints
+    [❌] If queued and slowQueue does NOT contain any items for that user, reset the unit's behaviours first
+    [❌] if !queued, clear that unit's slowQueue
+    [❌] ensure queueing farms still works correctly and a worker begins farming the last farm to be built if their slowQueue is empty
 
 [❌] Added /gamerule for bridges over void
 
