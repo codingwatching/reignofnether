@@ -105,8 +105,7 @@ public class BuildingClientEvents {
     // can only be one preselected building as you can't box-select them like units
     public static Building getPreselectedBuilding() {
         for (Building building : buildings)
-            if (building.isPosInsideBuilding(CursorClientEvents.getPreselectedBlockPos()) &&
-                ResourceSources.getFromBlockPos(CursorClientEvents.getPreselectedBlockPos()) == null) {
+            if (building.isPosInsideBuilding(CursorClientEvents.getPreselectedBlockPos())) {
                 return building;
             }
         return null;
