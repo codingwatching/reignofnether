@@ -250,9 +250,9 @@ public class UnitServerEvents {
         int[] unitIds,
         BlockPos preselectedBlockPos,
         BlockPos selectedBuildingPos,
-        boolean queue
+        boolean shiftQueue
     ) {
-        if (queue) {
+        if (shiftQueue) {
             synchronized(unitActionSlowQueue) {
                 for (int actionableUnitId : unitIds) {
                     unitActionSlowQueue.add(
@@ -264,10 +264,15 @@ public class UnitServerEvents {
                                 selectedBuildingPos
                         )
                     );
-                    System.out.println("added item to queue: " + action.name() + "|" + actionableUnitId + "|" + preselectedBlockPos);
+                    System.out.println("added item to shiftQueue: " + action.name() + "|" + actionableUnitId + "|" + preselectedBlockPos);
                 }
             }
         } else {
+            synchronized(unitActionSlowQueue) {
+                for (int actionableUnitId : unitIds)
+                    if (unitActionSlowQueue.removeIf(uai -> uai.getUnitIds().length > 0 && uai.getUnitIds()[0] == actionableUnitId))
+                        System.out.println("removed item from shiftQueue: " + action.name() + "|" + actionableUnitId + "|" + preselectedBlockPos);
+            }
             synchronized (unitActionFastQueue) {
                 UnitActionItem uai = new UnitActionItem(ownerName,
                         action,
@@ -598,7 +603,7 @@ public class UnitServerEvents {
             for (UnitActionItem uai : unitActionSlowQueue) {
                 if (uai.getUnitIds().length > 0) {
                     Entity entity = evt.level.getEntity(uai.getUnitIds()[0]);
-                    if (entity instanceof WorkerUnit wUnit && WorkerUnit.isIdle(wUnit)) {
+                    if (entity instanceof Unit unit && unit.isIdle()) {
                         uai.action(evt.level);
                         actionedItem = uai;
                         System.out.println("actioned item from queue: " + uai.getAction().name() + "|" + uai.getUnitIds()[0] + "|" + uai.getPreselectedBlockPos());

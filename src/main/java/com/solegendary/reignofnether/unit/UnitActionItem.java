@@ -6,6 +6,7 @@ import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.GarrisonableBuilding;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.hud.HudClientEvents;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.survival.Wave;
@@ -88,7 +89,8 @@ public class UnitActionItem {
     }
 
     public static void resetBehaviours(Unit unit) {
-        unit.getCheckpoints().clear();
+        if (((Entity) unit).getLevel().isClientSide() && !Keybindings.shiftMod.isDown())
+            unit.getCheckpoints().clear();
         unit.setEntityCheckpointId(-1);
         unit.resetBehaviours();
         Unit.resetBehaviours(unit);
@@ -98,6 +100,7 @@ public class UnitActionItem {
         if (unit instanceof AttackerUnit attackerUnit) {
             AttackerUnit.resetBehaviours(attackerUnit);
         }
+
     }
 
     // can be done server or clientside - but only serverside will have an effect on the world

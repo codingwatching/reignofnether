@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.resources.ResourceSources;
@@ -88,7 +89,10 @@ public class MiscUtil {
     }
 
     public static void addUnitCheckpoint(Unit unit, BlockPos blockPos) {
-        addUnitCheckpoint(unit, blockPos, true);
+        boolean clearExisting = true;
+        if (((Entity) unit).getLevel().isClientSide())
+            clearExisting = !Keybindings.shiftMod.isDown();
+        addUnitCheckpoint(unit, blockPos, clearExisting);
     }
     public static void addUnitCheckpoint(Unit unit, BlockPos blockPos, boolean clearExisting) {
         if (clearExisting) {
@@ -99,7 +103,8 @@ public class MiscUtil {
         unit.getCheckpoints().add(blockPos);
     }
     public static void addUnitCheckpoint(Unit unit, int id) {
-        unit.getCheckpoints().clear();
+        if (((Entity) unit).getLevel().isClientSide() && !Keybindings.shiftMod.isDown())
+            unit.getCheckpoints().clear();
         unit.setEntityCheckpointId(id);
         unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
     }

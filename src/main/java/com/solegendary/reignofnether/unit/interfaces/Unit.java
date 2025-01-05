@@ -296,4 +296,19 @@ public interface Unit {
                 return ability;
         return null;
     }
+
+    public default boolean isIdle() {
+        boolean idleAttacker = true;
+        if (this instanceof AttackerUnit attackerUnit)
+            idleAttacker = attackerUnit.getAttackMoveTarget() == null &&
+                            !((Unit) attackerUnit).hasLivingTarget();
+        boolean idleWorker = true;
+        if (this instanceof WorkerUnit)
+            idleWorker = WorkerUnit.isIdle((WorkerUnit) this);
+
+        return this.getMoveGoal().getMoveTarget() == null &&
+                this.getFollowTarget() == null &&
+                idleAttacker &&
+                idleWorker;
+    }
 }

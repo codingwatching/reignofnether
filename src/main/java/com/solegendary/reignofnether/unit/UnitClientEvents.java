@@ -393,6 +393,7 @@ public class UnitClientEvents {
         }
     }
 
+    /*
     private static double variance = 0;
     @SubscribeEvent
     public static void onRenderOverLay(RenderGuiOverlayEvent.Pre evt) {
@@ -400,6 +401,7 @@ public class UnitClientEvents {
                 "var: " + variance,
         });
     }
+     */
 
     private static final int VIS_CHECK_TICKS_MAX = 10;
     private static int ticksToNextVisCheck = VIS_CHECK_TICKS_MAX;
@@ -408,8 +410,8 @@ public class UnitClientEvents {
         if (evt.phase != TickEvent.Phase.END)
             return;
 
-        if (MC.level != null)
-            variance = WaveSpawner.getYVariance(MC.level, getPreselectedBlockPos(), 8);
+        //if (MC.level != null)
+        //    variance = WaveSpawner.getYVariance(MC.level, getPreselectedBlockPos(), 8);
 
         ticksToNextVisCheck -= 1;
 
