@@ -584,10 +584,13 @@ public class PlayerServerEvents {
                             unit.setOwnerName("");
                         }
                     }
-                    for (Building building : BuildingServerEvents.getBuildings())
-                        if (building.ownerName.equals(playerName))
+                    for (Building building : BuildingServerEvents.getBuildings()) {
+                        if (building.ownerName.equals(playerName)) {
+                            if (building instanceof ProductionBuilding productionBuilding)
+                                productionBuilding.productionQueue.clear();
                             building.ownerName = "";
-
+                        }
+                    }
                     return true;
                 }
                 return false;

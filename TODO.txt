@@ -30,7 +30,7 @@ Bugfixes
 
 [✔] Ravagers no longer ignore movement commands when attacking enemy buildings
 
-[🟡] Fixed a bug causing villagers to become hunters too quickly
+[✔] Fixed a bug causing villagers to become hunters too quickly
 
 [✔] Fixed issues with the F6 option Hiding Leaves around Units and Cursors
 
@@ -60,15 +60,15 @@ Quality of Life
     - The next queued action is started whenever the unit becomes idle
     - Issuing a stop command or any command without holding shift will wipe the queue
 
+[✔] When a player is defeated or surrenders, all of their units and buildings are issued a stop command
 
-
-[✔] When a player is defeated or surrenders, all of their units are issued a stop command
-
+[✔] Moved the night circles option to the bottom right map menu
 
 
 Balancing
 ---------
 [🟡] New capitols no longer spawn animals around them upon completion
+    - They still spawn animals over time, but do not raise the limit of nearby animals
 
 Villagers
 ---------
@@ -85,6 +85,5 @@ Monsters
 [🟡] Slime Pit: -25 wood, -75 ore
 
 
-[❌] Soulfires created by blazes need to be made temporary
 
 

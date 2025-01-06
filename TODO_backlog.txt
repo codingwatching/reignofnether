@@ -86,3 +86,4 @@ Quality of Life Features
 Balancing
 ---------
 
+[❌] Soulfires created by blazes need to be made temporary
