@@ -314,7 +314,7 @@ public class UnitServerEvents {
         String unitOwnerName = unit.getOwnerName();
         String buildingOwnerName = building.ownerName;
 
-        if (building instanceof AbstractBridge) {
+        if (buildingOwnerName.isEmpty()) {
             return Relationship.NEUTRAL;
         }
         if (unitOwnerName.equals(buildingOwnerName)) {

@@ -20,7 +20,7 @@ Wave Survival changes (post separately to alpha channel)
 Features
 --------
 
-[❌] Add to main game build
+[✔] Add wave survival to main game build
 
 [❌] Add menu music theme
 
@@ -29,27 +29,19 @@ Bugfixes
 --------
 
 [✔] Ravagers no longer ignore movement commands when attacking enemy buildings
-
 [✔] Fixed a bug causing villagers to become hunters too quickly
-
 [✔] Fixed issues with the F6 option Hiding Leaves around Units and Cursors
-
 [✔] Fixed issue of not being able to target a resource if a building border overlaps it
-
 [✔] Fixed Warden sonic booms being invisible
-
-[🟡] Ravagers now spawn outside of castles to avoid them being stuck inside sometimes
-
-[✔] neutralAggro should allow right clicks
-
-[❌] Workers on a building that is still auto-building the foundation layer actually slows down building
+[✔] Ravagers now spawn outside of castles to avoid them being stuck inside sometimes
+[✔] /gamerule neutralAggro now works with direct right-clicks
+[✔] Panning the camera by holding alt and dragging the mouse is now scaled by the sensitivity setting
 
 [❌] Slime pathing is really bad
     - Let them pass through and break leaves
 
-[❌] Have too-fast mod be built-in
+[❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
-[❌] Don't kick players for sending too many packets if they drag-move the map
 
 
 Quality of Life
@@ -67,22 +59,22 @@ Quality of Life
 
 Balancing
 ---------
-[🟡] New capitols no longer spawn animals around them upon completion
+[✔] New capitols no longer spawn animals around them upon completion
     - They still spawn animals over time, but do not raise the limit of nearby animals
 
 Villagers
 ---------
-[🟡] Villagers now require 50% more logs chopped to become regular and veteran lumberjacks
+[✔] Villagers now require 50% more logs chopped to become regular and veteran lumberjacks
 
 Piglins
 -------
-[🟡] Ghasts can now use transport portals
+[✔] Ghasts can now use transport portals
 
 Monsters
 --------
-[🟡] Mausoleum night radius reduced by 10
-[🟡] Slimes are now slowed in sunlight just like other monster units
-[🟡] Slime Pit: -25 wood, -75 ore
+[✔] Mausoleum night radius reduced by 10
+[✔] Slimes are now slowed in sunlight just like other monster units
+[✔] Slime Pit: -25 wood, -75 ore
 
 
 

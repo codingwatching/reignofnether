@@ -285,9 +285,12 @@ public class MiscUtil {
         Relationship relationship = UnitServerEvents.getUnitToBuildingRelationship((Unit) unitMob, building);
 
         // If the relationship is FRIENDLY, do not allow the attack
-        if (relationship == Relationship.FRIENDLY) {
+        if (relationship == Relationship.FRIENDLY)
             return false;
-        }
+
+        boolean neutralAggro = unitMob.getLevel().getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get();
+        if (relationship == Relationship.NEUTRAL && neutralAggro)
+            return true;
 
         // Additional attack conditions for hostile or neutral relationships can be added here
         return relationship == Relationship.HOSTILE;
