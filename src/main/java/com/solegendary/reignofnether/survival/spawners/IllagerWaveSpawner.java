@@ -217,7 +217,7 @@ public class IllagerWaveSpawner {
             }
         }
         if (remainingPop > 0) {
-            PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of monster units");
+            PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of villager units");
         }
         lastFaction = Faction.VILLAGERS;
     }

@@ -159,7 +159,7 @@ public class WaveSpawner {
                 spawnBs = level.getBlockState(spawnBp);
                 spawnAttemptsThisBuilding += 1;
                 if (spawnAttemptsThisBuilding > 100) {
-                    ReignOfNether.LOGGER.warn("Gave up trying to find a suitable spawn!");
+                    //ReignOfNether.LOGGER.warn("Gave up trying to find a suitable spawn!");
                     failedBuildings += 1;
                     if (failedBuildings > MAX_FAILED_BUILDINGS)
                         break outerloop;

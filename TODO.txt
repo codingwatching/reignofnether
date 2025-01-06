@@ -15,19 +15,16 @@ Wave Survival changes (post separately to alpha channel)
 [🟡] Enemy portals remove more surrounding blocks when placed
 [🟡] Raised the range and area at which enemies spawn
 [🟡] Enemy portals and units prefer to spawn on flatter ground
+[✔] Standard gamemode has been renamed to Classic
+
+[❌] Enemy illagers sometimes spawn underground
 
 
 Features
 --------
 
 [✔] New Gamemode: Wave Survival
-    - Survive against increasingly more difficult waves of enemies that spawn each night
-    - Enemies of a random faction spawn at the start of each night
-    - Use the gamemode selector at the top right to choose either standard or survival mode when starting
-    - Higher difficulties give less time per day/night cycle, ranging from 6-20mins
-    - Every 3 waves, the enemy unit tier will increase, increasing the types and strength of enemy units
-    - Coop compatible (enemy amounts will scale to the number of players)
-
+    - See #Wave Survival Full Release Discussion
     - Thanks to all @Wave Survival Early Access testers for your support and feedback!
     - See changes since the last alpha build here:
 
