@@ -28,6 +28,8 @@ Features
 Bugfixes
 --------
 
+[✔] Ravagers no longer ignore movement commands when attacking enemy buildings
+
 [🟡] Fixed a bug causing villagers to become hunters too quickly
 
 [✔] Fixed issues with the F6 option Hiding Leaves around Units and Cursors
@@ -36,7 +38,9 @@ Bugfixes
 
 [✔] Fixed Warden sonic booms being invisible
 
-[❌] Fix ravager artillery targeting and movement issues
+[🟡] Ravagers now spawn outside of castles to avoid them being stuck inside sometimes
+
+[✔] neutralAggro should allow right clicks
 
 [❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
@@ -56,7 +60,7 @@ Quality of Life
     - The next queued action is started whenever the unit becomes idle
     - Issuing a stop command or any command without holding shift will wipe the queue
 
-[❌] Added /gamerule for bridges over void
+
 
 [✔] When a player is defeated or surrenders, all of their units are issued a stop command
 
@@ -64,7 +68,6 @@ Quality of Life
 
 Balancing
 ---------
-
 [🟡] New capitols no longer spawn animals around them upon completion
 
 Villagers
@@ -78,11 +81,8 @@ Piglins
 Monsters
 --------
 [🟡] Mausoleum night radius reduced by 10
-[🟡] Slime Conversion can now only make slimes of max size 4
-[❌] Slime are now slowed in sunlight, but only by half as much as other monster units
-[🟡] Slime Pit: -75 ore cost
-
-
+[🟡] Slimes are now slowed in sunlight just like other monster units
+[🟡] Slime Pit: -25 wood, -75 ore
 
 
 [❌] Soulfires created by blazes need to be made temporary

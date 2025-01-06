@@ -60,7 +60,7 @@ public class RangedAttackBuildingGoal<T extends net.minecraft.world.entity.Mob> 
                             buildingTarget.centrePos.getX(),
                             buildingTarget.originPos.getY() + 1,
                             buildingTarget.centrePos.getZ()),
-                            true
+                            false
                     );
                 }
             }
@@ -122,9 +122,11 @@ public class RangedAttackBuildingGoal<T extends net.minecraft.world.entity.Mob> 
 
             if ((distToTarget > attackRange - 1) &&
                 !((Unit) this.mob).getHoldPosition()) {
-                this.moveTo(this.blockTarget);
+                if (!mob.isPassenger())
+                    this.moveTo(this.blockTarget);
             } else {
-                this.stopMoving();
+                if (!mob.isPassenger())
+                    this.stopMoving();
             }
             if (distToTarget <= attackRange) { // start drawing bowstring
                 if (bowAttackGoal != null) {

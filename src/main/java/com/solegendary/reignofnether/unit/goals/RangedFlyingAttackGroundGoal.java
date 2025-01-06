@@ -51,7 +51,7 @@ public class RangedFlyingAttackGroundGoal<T extends net.minecraft.world.entity.M
     public void setGroundTarget(BlockPos groundTarget) {
         this.groundTarget = groundTarget;
         if (groundTarget != null) {
-            MiscUtil.addUnitCheckpoint(((Unit) mob), groundTarget, true);
+            MiscUtil.addUnitCheckpoint(((Unit) mob), groundTarget, false);
         }
     }
 

@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchSlimeConversion;
+import com.solegendary.reignofnether.time.NightUtils;
 import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.controls.SlimeUnitMoveControl;
@@ -352,6 +353,9 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
                 setUnitAttackTarget(closestTarget);
             }
         }
+        // apply slowness level 2 during daytime for a short time repeatedly
+        if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
+            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, 1));
     }
 
     // stop moving if we overshoot our move target

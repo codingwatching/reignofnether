@@ -70,6 +70,7 @@ import org.lwjgl.glfw.GLFW;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static com.solegendary.reignofnether.building.BuildingClientEvents.getPlayerToBuildingRelationship;
 import static com.solegendary.reignofnether.cursor.CursorClientEvents.getPreselectedBlockPos;
 import static com.solegendary.reignofnether.hud.HudClientEvents.hudSelectedEntity;
 import static com.solegendary.reignofnether.unit.Checkpoint.CHECKPOINT_TICKS_FADE;
@@ -100,6 +101,8 @@ public class UnitClientEvents {
     private static final ArrayList<LivingEntity> allUnits = new ArrayList<>();
 
     @Nullable private static UnitActionItem lastClientUAIActioned = null;
+
+    public static boolean neutralAggro = false;
 
     public static ArrayList<LivingEntity> getPreselectedUnits() { return preselectedUnits; }
     public static ArrayList<LivingEntity> getSelectedUnits() {
@@ -597,8 +600,8 @@ public class UnitClientEvents {
                 // right click -> attack unfriendly unit
                 if (preselectedUnits.size() == 1 &&
                     !targetingSelf() &&
-                    (MC.level.getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get() ||
-                     getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.HOSTILE ||
+                    ((neutralAggro && getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.NEUTRAL) ||
+                    getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.HOSTILE ||
                      ResourceSources.isHuntableAnimal(preselectedUnits.get(0)))) {
 
                      if (hudSelectedEntity instanceof WitchUnit witchUnit) {
@@ -611,7 +614,8 @@ public class UnitClientEvents {
                 else if (hudSelectedEntity instanceof AttackerUnit &&
                         (preSelBuilding != null) &&
                         !(preSelBuilding instanceof AbstractBridge) &&
-                        BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.HOSTILE) {
+                        ((neutralAggro && getPlayerToBuildingRelationship(preSelBuilding) == Relationship.NEUTRAL) ||
+                        getPlayerToBuildingRelationship(preSelBuilding) == Relationship.HOSTILE)) {
                     sendUnitCommand(UnitAction.ATTACK_BUILDING);
                 }
                 // right click -> return resources
@@ -619,12 +623,12 @@ public class UnitClientEvents {
                         unit.getReturnResourcesGoal() != null &&
                         Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue() > 0 &&
                         preSelBuilding != null && preSelBuilding.canAcceptResources && preSelBuilding.isBuilt &&
-                        BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) {
+                        getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) {
                     sendUnitCommand(UnitAction.RETURN_RESOURCES);
                 }
                 // right click -> build or repair preselected building
                 else if (hudSelectedEntity instanceof WorkerUnit && preSelBuilding != null &&
-                        (BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) ||
+                        (getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) ||
                         preSelBuilding instanceof AbstractBridge) {
 
                     if (preSelBuilding.name.contains(" Farm") && preSelBuilding.isBuilt)

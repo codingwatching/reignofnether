@@ -74,7 +74,7 @@ public interface AttackerUnit {
 
                 ((Unit) this).setMoveTarget(targetPos);
                 if (((LivingEntity) this).getLevel().isClientSide)
-                    MiscUtil.addUnitCheckpoint((Unit) this, groundCentrePos, true);
+                    MiscUtil.addUnitCheckpoint((Unit) this, groundCentrePos, false);
             }
         }
     }

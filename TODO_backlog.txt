@@ -67,6 +67,8 @@ Villager Professions
 Quality of Life Features
 ------------------------
 
+[❌] Added /gamerule for bridges over void
+
 [❌] Save transport portal links between server restarts
 
 [❌] Flatten terrain ability

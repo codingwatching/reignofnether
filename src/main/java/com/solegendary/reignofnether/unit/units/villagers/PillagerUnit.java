@@ -183,7 +183,6 @@ public class PillagerUnit extends Pillager implements Unit, AttackerUnit, Ranged
 
     public void tick() {
         this.setCanPickUpLoot(true);
-
         super.tick();
         Unit.tick(this);
         AttackerUnit.tick(this);

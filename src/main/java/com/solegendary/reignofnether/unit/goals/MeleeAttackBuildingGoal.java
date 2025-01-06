@@ -128,7 +128,7 @@ public class MeleeAttackBuildingGoal extends MoveToTargetBlockGoal {
                             buildingTarget.centrePos.getX(),
                             buildingTarget.originPos.getY() + 1,
                             buildingTarget.centrePos.getZ()),
-                            true
+                            false
                     );
                 }
             }
