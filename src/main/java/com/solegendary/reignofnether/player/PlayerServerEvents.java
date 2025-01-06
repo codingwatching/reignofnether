@@ -92,11 +92,14 @@ public class PlayerServerEvents {
     // medievalman - get all research (cannot reverse)
     // greedisgood X - gain X of each resource
     // foodforthought - ignore soft population caps
-    public static final List<String> singleWordCheats = List.of("warpten",
+    // thereisnospoon - allow changing survival wave by clicking the wave indicator and using debug commands
+    public static final List<String> singleWordCheats = List.of(
+        "warpten",
         "operationcwal",
         "modifythephasevariance",
         "medievalman",
-        "foodforthought"
+        "foodforthought",
+        "thereisnospoon"
     );
 
     public static void saveRTSPlayers() {

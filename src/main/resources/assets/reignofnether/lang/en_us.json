@@ -887,9 +887,9 @@
     "block.reignofnether.falling_crimson_stem": "Falling Crimson Stem",
     "block.reignofnether.walkable_magma_block": "Walkable Magma",
 
-    "hud.gamemode.reignofnether.standard1": "STANDARD",
-    "hud.gamemode.reignofnether.standard2": "The classic RTS experience. Defeat opponents ",
-    "hud.gamemode.reignofnether.standard3": "by destroying all of their buildings.",
+    "hud.gamemode.reignofnether.classic1": "CLASSIC",
+    "hud.gamemode.reignofnether.classic2": "The classic RTS experience. Defeat opponents ",
+    "hud.gamemode.reignofnether.classic3": "by destroying all of their buildings.",
     "hud.gamemode.reignofnether.survival1": "WAVE SURVIVAL",
     "hud.gamemode.reignofnether.survival2": "Survive increasingly more difficult nights, ",
     "hud.gamemode.reignofnether.survival3": "solo or with allies.",

@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.player.RTSPlayer;
+import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.sounds.SoundAction;
 import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.time.TimeUtils;
@@ -169,6 +170,11 @@ public class SurvivalServerEvents {
     public static void onRegisterCommand(RegisterCommandsEvent evt) {
         evt.getDispatcher().register(Commands.literal("debug-end-wave")
                 .executes((command) -> {
+                    if (command.getSource().getPlayer() != null) {
+                        String name = command.getSource().getPlayer().getName().getString();
+                        if (!ResearchServerEvents.playerHasCheat(name, "thereisnospoon"))
+                            return 0;
+                    }
                     if (!isEnabled())
                         return 0;
                     PlayerServerEvents.sendMessageToAllPlayers("Ending current wave");
@@ -182,6 +188,11 @@ public class SurvivalServerEvents {
                 }));
         evt.getDispatcher().register(Commands.literal("debug-next-night")
                 .executes((command) -> {
+                    if (command.getSource().getPlayer() != null) {
+                        String name = command.getSource().getPlayer().getName().getString();
+                        if (!ResearchServerEvents.playerHasCheat(name, "thereisnospoon"))
+                            return 0;
+                    }
                     if (!isEnabled())
                         return 0;
                     PlayerServerEvents.sendMessageToAllPlayers("Advancing to next night and wave");

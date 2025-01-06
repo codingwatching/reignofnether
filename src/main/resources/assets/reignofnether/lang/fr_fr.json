@@ -848,9 +848,9 @@
     "block.reignofnether.falling_crimson_stem": "Tige carmin tombante",
     "block.reignofnether.walkable_magma_block": "Bloc de magma tiède",
   
-    "hud.gamemode.reignofnether.standard1": "STANDARD",
-    "hud.gamemode.reignofnether.standard2": "L'expérience RTS classique. Vainquez vos ennemis",
-    "hud.gamemode.reignofnether.standard3": "en détruisant tous leurs bâtiments.",
+    "hud.gamemode.reignofnether.classic1": "CLASSIQUE",
+    "hud.gamemode.reignofnether.classic2": "L'expérience RTS classique. Vainquez vos ennemis",
+    "hud.gamemode.reignofnether.classic3": "en détruisant tous leurs bâtiments.",
     "hud.gamemode.reignofnether.survival1": "SURVIE D'ONDES",
     "hud.gamemode.reignofnether.survival2": "Survivez à des nuits de plus en plus difficiles,",
     "hud.gamemode.reignofnether.survival3": "seul ou avec des alliés.",

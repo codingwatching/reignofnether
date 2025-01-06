@@ -22,6 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -37,13 +38,18 @@ import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class SlimeUnit extends Slime implements Unit, AttackerUnit {
@@ -356,6 +362,36 @@ public class SlimeUnit extends Slime implements Unit, AttackerUnit {
         // apply slowness level 2 during daytime for a short time repeatedly
         if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
             this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, 1));
+    }
+
+    // break leaves that are touched
+    public void aiStep() {
+        super.aiStep();
+        if (this.isAlive() && getSize() >= 2) {
+            if (this.horizontalCollision || this.verticalCollision) {
+                boolean flag = false;
+                AABB aabb = this.getBoundingBox().inflate(0.2);
+                Iterator var = BlockPos.betweenClosed(
+                        Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ),
+                        Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))
+                .iterator();
+
+                label:
+                while (true) {
+                    BlockPos blockpos;
+                    Block block;
+                    do {
+                        if (!var.hasNext())
+                            break label;
+                        blockpos = (BlockPos) var.next();
+                        BlockState blockstate = this.level.getBlockState(blockpos);
+                        block = blockstate.getBlock();
+                    } while (!(block instanceof LeavesBlock));
+
+                    flag = this.level.destroyBlock(blockpos, false, this) || flag;
+                }
+            }
+        }
     }
 
     // stop moving if we overshoot our move target

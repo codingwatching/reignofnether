@@ -13,7 +13,7 @@ public class GameModeServerEvents {
         if (SurvivalServerEvents.isEnabled())
             return GameMode.SURVIVAL;
 
-        return GameMode.STANDARD;
+        return GameMode.CLASSIC;
     }
 
     private static boolean isGameModeLocked() {

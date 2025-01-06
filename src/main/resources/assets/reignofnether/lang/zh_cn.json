@@ -848,9 +848,9 @@
   "block.reignofnether.falling_crimson_stem": "下落的绯红菌柄",
   "block.reignofnether.walkable_magma_block": "可行走的岩浆块",
 
-  "hud.gamemode.reignofnether.standard1": "标准模式",
-  "hud.gamemode.reignofnether.standard2": "经典的即时战略游戏体验。",
-  "hud.gamemode.reignofnether.standard3": "通过摧毁敌方建筑以击败对手。",
+  "hud.gamemode.reignofnether.classic1": "标准模式",
+  "hud.gamemode.reignofnether.classic2": "经典的即时战略游戏体验。",
+  "hud.gamemode.reignofnether.classic3": "通过摧毁敌方建筑以击败对手。",
   "hud.gamemode.reignofnether.survival1": "塔防生存",
   "hud.gamemode.reignofnether.survival2": "在日渐强力的敌人冲击下生存下来，",
   "hud.gamemode.reignofnether.survival3": "既可单人挑战也可携友结盟游玩。",

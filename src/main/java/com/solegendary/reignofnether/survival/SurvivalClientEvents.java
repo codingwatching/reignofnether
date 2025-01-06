@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.survival;
 
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
+import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -82,13 +83,13 @@ public class SurvivalClientEvents {
                 () -> false,
                 () -> true,
                 () -> {
-                    if (SurvivalClientEvents.waveNumber < 30) {
+                    if (SurvivalClientEvents.waveNumber < 30 && ResearchClient.hasCheat("thereisnospoon")) {
                         SurvivalClientEvents.waveNumber += 1;
                         SurvivalServerboundPacket.setWaveNumber(SurvivalClientEvents.waveNumber);
                     }
                 },
                 () -> {
-                    if (SurvivalClientEvents.waveNumber > 1) {
+                    if (SurvivalClientEvents.waveNumber > 1 && ResearchClient.hasCheat("thereisnospoon")) {
                         SurvivalClientEvents.waveNumber -= 1;
                         SurvivalServerboundPacket.setWaveNumber(SurvivalClientEvents.waveNumber);
                     }
@@ -310,9 +311,6 @@ public class SurvivalClientEvents {
         else if (wave.faction == Faction.NONE) {
             tooltip.add(FormattedCharSequence.forward("???", Style.EMPTY));
         }
-        tooltip.add(FormattedCharSequence.forward("", Style.EMPTY));
-        tooltip.add(FormattedCharSequence.forward("Left/right-click to change ", Style.EMPTY));
-        tooltip.add(FormattedCharSequence.forward("wave number (alpha test only)", Style.EMPTY));
 
         return tooltip;
     }

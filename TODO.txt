@@ -20,9 +20,18 @@ Wave Survival changes (post separately to alpha channel)
 Features
 --------
 
-[✔] Add wave survival to main game build
+[✔] New Gamemode: Wave Survival
+    - Survive against increasingly more difficult waves of enemies that spawn each night
+    - Enemies of a random faction spawn at the start of each night
+    - Use the gamemode selector at the top right to choose either standard or survival mode when starting
+    - Higher difficulties give less time per day/night cycle, ranging from 6-20mins
+    - Every 3 waves, the enemy unit tier will increase, increasing the types and strength of enemy units
+    - Coop compatible (enemy amounts will scale to the number of players)
 
-[❌] Add menu music theme
+    - Thanks to all @Wave Survival Early Access testers for your support and feedback!
+    - See changes since the last alpha build here:
+
+[✔] Add a new main menu theme, thanks to @Amphithere564!
 
 
 Bugfixes
@@ -30,17 +39,12 @@ Bugfixes
 
 [✔] Ravagers no longer ignore movement commands when attacking enemy buildings
 [✔] Fixed a bug causing villagers to become hunters too quickly
-[✔] Fixed issues with the F6 option Hiding Leaves around Units and Cursors
-[✔] Fixed issue of not being able to target a resource if a building border overlaps it
+[✔] Fixed issues with the F6 option "Hiding Leaves around Units and Cursors"
+[✔] Fixed issue of not being able to target a resource if a building border overlapped it
 [✔] Fixed Warden sonic booms being invisible
-[✔] Ravagers now spawn outside of castles to avoid them being stuck inside sometimes
-[✔] /gamerule neutralAggro now works with direct right-clicks
+[✔] Ravagers now spawn outside of castles to avoid them sometimes being stuck inside
+[✔] /gamerule neutralAggro now works when directly right-clicking to attack
 [✔] Panning the camera by holding alt and dragging the mouse is now scaled by the sensitivity setting
-
-[❌] Slime pathing is really bad
-    - Let them pass through and break leaves
-
-[❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
 
 
@@ -57,6 +61,7 @@ Quality of Life
 [✔] Moved the night circles option to the bottom right map menu
 
 
+
 Balancing
 ---------
 [✔] New capitols no longer spawn animals around them upon completion
@@ -69,13 +74,14 @@ Villagers
 Piglins
 -------
 [✔] Ghasts can now use transport portals
+[✔] Magma Cubes now break any leaves they touch
 
 Monsters
 --------
 [✔] Mausoleum night radius reduced by 10
 [✔] Slimes are now slowed in sunlight just like other monster units
 [✔] Slime Pit: -25 wood, -75 ore
-
+[✔] Slimes now break any leaves they touch
 
 
 
