@@ -39,8 +39,6 @@ public class SoundClientEvents {
         if (MC.player != null) {
             MC.player.playSound(SOUND_MAP.get(soundAction), volume, 1.0f);
         }
-
-
     }
 
     public static void playSoundIfPlayer(SoundAction soundAction, String playerName) {
