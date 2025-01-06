@@ -56,16 +56,6 @@ public class SurvivalClientEvents {
 
         difficulty = diff;
         isEnabled = true;
-
-        String diffMsg = I18n.get("hud.gamemode.reignofnether.survival4",
-                difficulty, getMinutesPerDay()).toLowerCase();
-        diffMsg = diffMsg.substring(0,1).toUpperCase() + diffMsg.substring(1);
-
-        MC.player.sendSystemMessage(Component.literal(""));
-        MC.player.sendSystemMessage(Component.translatable(I18n.get("hud.gamemode.reignofnether.survival1"))
-                .withStyle(Style.EMPTY.withBold(true)));
-        MC.player.sendSystemMessage(Component.translatable(diffMsg));
-        MC.player.sendSystemMessage(Component.literal(""));
     }
 
     public static Button getNextWaveButton() {

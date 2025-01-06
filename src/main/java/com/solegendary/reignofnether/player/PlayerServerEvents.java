@@ -9,6 +9,8 @@ import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.NetherZone;
 import com.solegendary.reignofnether.building.ProductionBuilding;
+import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
+import com.solegendary.reignofnether.gamemode.GameMode;
 import com.solegendary.reignofnether.guiscreen.TopdownGuiContainer;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
@@ -17,7 +19,10 @@ import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.Resources;
 import com.solegendary.reignofnether.resources.ResourcesServerEvents;
+import com.solegendary.reignofnether.survival.SurvivalClientEvents;
 import com.solegendary.reignofnether.survival.SurvivalServerEvents;
+import com.solegendary.reignofnether.survival.SurvivalServerboundPacket;
+import com.solegendary.reignofnether.survival.WaveDifficulty;
 import com.solegendary.reignofnether.time.TimeUtils;
 import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
@@ -29,6 +34,7 @@ import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -85,6 +91,8 @@ public class PlayerServerEvents {
     public static long rtsGameTicks = 0; // ticks up as long as there is at least 1 rtsPlayer
 
     public static ServerLevel serverLevel = null;
+
+    private static boolean announcedGamemode = false;
 
     // warpten - faster building/unit production
     // operationcwal - faster resource gathering
@@ -340,6 +348,34 @@ public class PlayerServerEvents {
                 sendMessageToAllPlayers("server.reignofnether.started", true, playerName);
                 sendMessageToAllPlayers("server.reignofnether.total_players", false, rtsPlayers.size());
             }
+
+            if (!announcedGamemode) {
+                announcedGamemode = true;
+
+                if (ClientGameModeHelper.gameMode == GameMode.SURVIVAL) {
+                    WaveDifficulty diff = SurvivalClientEvents.difficulty;
+                    SurvivalServerboundPacket.startSurvivalMode(diff);
+
+                    String diffMsg = I18n.get("hud.gamemode.reignofnether.survival4",
+                            diff, SurvivalClientEvents.getMinutesPerDay()).toLowerCase();
+                    diffMsg = diffMsg.substring(0,1).toUpperCase() + diffMsg.substring(1);
+
+                    sendMessageToAllPlayersNoNewlines("");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival1", true);
+                    sendMessageToAllPlayersNoNewlines(diffMsg);
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival2");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival3");
+                    sendMessageToAllPlayersNoNewlines("");
+                }
+                else if (ClientGameModeHelper.gameMode == GameMode.CLASSIC) {
+                    sendMessageToAllPlayersNoNewlines("");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic1", true);
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic2");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic3");
+                    sendMessageToAllPlayersNoNewlines("");
+                }
+            }
+
             PlayerClientboundPacket.syncRtsGameTime(rtsGameTicks);
             saveRTSPlayers();
         }
@@ -554,6 +590,20 @@ public class PlayerServerEvents {
         }
     }
 
+    public static void sendMessageToAllPlayersNoNewlines(String msg) {
+        sendMessageToAllPlayersNoNewlines(msg, false);
+    }
+
+    public static void sendMessageToAllPlayersNoNewlines(String msg, boolean bold, Object... formatArgs) {
+        for (ServerPlayer player : players) {
+            if (bold) {
+                player.sendSystemMessage(Component.translatable(msg, formatArgs).withStyle(Style.EMPTY.withBold(true)));
+            } else {
+                player.sendSystemMessage(Component.translatable(msg, formatArgs));
+            }
+        }
+    }
+
     // defeat a player, giving them a defeat screen, removing all their unit/building control and removing them from
     // rtsPlayers
     public static void defeat(int playerId, String reason) {
@@ -683,6 +733,8 @@ public class PlayerServerEvents {
                 setRTSLock(false);
             AllianceSystem.resetAllAlliances();
             SurvivalServerEvents.reset();
+
+            announcedGamemode = false;
         }
     }
 

@@ -16,6 +16,7 @@ Wave Survival changes (post separately to alpha channel)
 [🟡] Raised the range and area at which enemies spawn
 [🟡] Enemy portals and units prefer to spawn on flatter ground
 [✔] Standard gamemode has been renamed to Classic
+[✔] The game now announces that you started in Classic mode to avoid confusion
 
 [❌] Enemy illagers sometimes spawn underground
 
@@ -24,7 +25,7 @@ Features
 --------
 
 [✔] New Gamemode: Wave Survival
-    - See #Wave Survival Full Release Discussion
+    - See #Wave Survival Full Release for details on how to play
     - Thanks to all @Wave Survival Early Access testers for your support and feedback!
     - See changes since the last alpha build here:
 
