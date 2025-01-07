@@ -363,6 +363,7 @@ public class PlayerServerEvents {
                     sendMessageToAllPlayersNoNewlines("");
                     sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival1", true);
                     sendMessageToAllPlayersNoNewlines(diffMsg);
+                    sendMessageToAllPlayersNoNewlines(new String(new char[diffMsg.length()]).replace("\0", "-"));
                     sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival2");
                     sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival3");
                     sendMessageToAllPlayersNoNewlines("");
@@ -370,6 +371,7 @@ public class PlayerServerEvents {
                 else if (ClientGameModeHelper.gameMode == GameMode.CLASSIC) {
                     sendMessageToAllPlayersNoNewlines("");
                     sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic1", true);
+                    sendMessageToAllPlayersNoNewlines("--------");
                     sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic2");
                     sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic3");
                     sendMessageToAllPlayersNoNewlines("");

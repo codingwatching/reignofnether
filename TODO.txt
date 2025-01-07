@@ -19,6 +19,8 @@ Wave Survival changes (post separately to alpha channel)
 [✔] The game now announces that you started in Classic mode to avoid confusion
 
 [❌] Enemy illagers sometimes spawn underground
+[❌] Split enemies between each player more accurately
+
 
 
 Features
