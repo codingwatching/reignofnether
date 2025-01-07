@@ -1,87 +1,26 @@
 
-1.19.2-1.1.0
+1.19.2-1.1.1
 -------------
 
-- Done and tested
 [✔] Done and tested
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
 
-Wave Survival changes (post separately to alpha channel)
----------------------
-[🟡] Enemy portal spawn rate is now scaled to the number of players in the game
-    - The total of number of portals remains unchanged
-[🟡] Enemy portals remove more surrounding blocks when placed
-[🟡] Raised the range and area at which enemies spawn
-[🟡] Enemy portals and units prefer to spawn on flatter ground
-[✔] Standard gamemode has been renamed to Classic
-[✔] The game now announces that you started in Classic mode to avoid confusion
-
-[❌] Enemy illagers sometimes spawn underground
-[❌] Split enemies between each player more accurately
-
-
-
 Features
 --------
-
-[✔] New Gamemode: Wave Survival
-    - See #Wave Survival Full Release for details on how to play
-    - Thanks to all @Wave Survival Early Access testers for your support and feedback!
-    - See changes since the last alpha build here:
-
-[✔] Add a new main menu theme, thanks to @Amphithere564!
 
 
 Bugfixes
 --------
-
-[✔] Ravagers no longer ignore movement commands when attacking enemy buildings
-[✔] Fixed a bug causing villagers to become hunters too quickly
-[✔] Fixed issues with the F6 option "Hiding Leaves around Units and Cursors"
-[✔] Fixed issue of not being able to target a resource if a building border overlapped it
-[✔] Fixed Warden sonic booms being invisible
-[✔] Ravagers now spawn outside of castles to avoid them sometimes being stuck inside
-[✔] /gamerule neutralAggro now works when directly right-clicking to attack
-[✔] Panning the camera by holding alt and dragging the mouse is now scaled by the sensitivity setting
 
 
 
 Quality of Life
 ---------------
 
-[✔] All units can now queue actions by holding shift
-    - This applies to all types of actions and all units
-    - The next queued action is started whenever the unit becomes idle
-    - Issuing a stop command or any command without holding shift will wipe the queue
-
-[✔] When a player is defeated or surrenders, all of their units and buildings are issued a stop command
-
-[✔] Moved the night circles option to the bottom right map menu
-
 
 
 Balancing
 ---------
-[✔] New capitols no longer spawn animals around them upon completion
-    - They still spawn animals over time, but do not raise the limit of nearby animals
-
-Villagers
----------
-[✔] Villagers now require 50% more logs chopped to become regular and veteran lumberjacks
-
-Piglins
--------
-[✔] Ghasts can now use transport portals
-[✔] Magma Cubes now break any leaves they touch
-
-Monsters
---------
-[✔] Mausoleum night radius reduced by 10
-[✔] Slimes are now slowed in sunlight just like other monster units
-[✔] Slime Pit: -25 wood, -75 ore
-[✔] Slimes now break any leaves they touch
-
-
 
