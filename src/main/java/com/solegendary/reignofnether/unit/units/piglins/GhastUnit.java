@@ -7,6 +7,7 @@ import com.solegendary.reignofnether.fogofwar.FogOfWarClientboundPacket;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.controls.GhastUnitMoveControl;
 import com.solegendary.reignofnether.unit.goals.*;
@@ -50,22 +51,14 @@ import java.util.List;
 
 public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttackerUnit {
     // region
-    private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
-    private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
-    public ArrayList<BlockPos> getCheckpoints() { return checkpoints; };
-    public int getCheckpointTicksLeft() { return checkpointTicksLeft; }
-    public void setCheckpointTicksLeft(int ticks) { checkpointTicksLeft = ticks; }
-    private boolean isCheckpointGreen = true;
-    public boolean isCheckpointGreen() { return isCheckpointGreen; };
-    public void setIsCheckpointGreen(boolean green) { isCheckpointGreen = green; };
-    private int entityCheckpointId = -1;
-    public int getEntityCheckpointId() { return entityCheckpointId; };
-    public void setEntityCheckpointId(int id) { entityCheckpointId = id; };
+    private final ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    public ArrayList<Checkpoint> getCheckpoints() { return checkpoints; };
 
     public GarrisonGoal getGarrisonGoal() { return null; }
     public boolean canGarrison() { return getGarrisonGoal() != null; }
 
-    public UsePortalGoal getUsePortalGoal() { return null; }
+    MoveToTargetBlockGoal usePortalGoal;
+    public MoveToTargetBlockGoal getUsePortalGoal() { return usePortalGoal; }
     public boolean canUsePortal() { return getUsePortalGoal() != null; }
 
     public Faction getFaction() {return Faction.PIGLINS;}
@@ -259,6 +252,7 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     }
 
     public void initialiseGoals() {
+        this.usePortalGoal = new FlyingUsePortalGoal(this);
         this.moveGoal = new FlyingMoveToTargetGoal(this, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.attackGoal = new UnitBowAttackGoal<>(this);
@@ -269,6 +263,7 @@ public class GhastUnit extends Ghast implements Unit, AttackerUnit, RangedAttack
     @Override
     protected void registerGoals() {
         initialiseGoals();
+        this.goalSelector.addGoal(2, usePortalGoal);
         this.goalSelector.addGoal(2, attackBuildingGoal);
         this.goalSelector.addGoal(2, attackGroundGoal);
         this.goalSelector.addGoal(2, attackGoal);

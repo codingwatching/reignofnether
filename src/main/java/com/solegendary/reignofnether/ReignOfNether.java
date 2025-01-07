@@ -43,7 +43,7 @@ import java.util.function.Supplier;
 public class ReignOfNether {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "reignofnether";
-    public static final String VERSION_STRING = "1.0.12-wave-survival-alpha-0.7";
+    public static final String VERSION_STRING = "1.1.0";
 
     // Fields from ClientReset
     public static final Field handshakeField;

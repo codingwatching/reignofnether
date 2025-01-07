@@ -4,11 +4,15 @@ import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.attackwarnings.AttackWarningClientboundPacket;
+import com.solegendary.reignofnether.building.buildings.monsters.DarkWatchtower;
+import com.solegendary.reignofnether.building.buildings.piglins.Bastion;
 import com.solegendary.reignofnether.building.buildings.piglins.FlameSanctuary;
 import com.solegendary.reignofnether.building.buildings.piglins.Fortress;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractStockpile;
+import com.solegendary.reignofnether.building.buildings.villagers.Castle;
+import com.solegendary.reignofnether.building.buildings.villagers.Watchtower;
 import com.solegendary.reignofnether.fogofwar.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.hud.Button;
@@ -42,6 +46,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.level.Explosion;
@@ -64,6 +69,7 @@ import static com.solegendary.reignofnether.building.BuildingUtils.getMaxCorner;
 import static com.solegendary.reignofnether.building.BuildingUtils.getMinCorner;
 import static com.solegendary.reignofnether.player.PlayerServerEvents.isRTSPlayer;
 import static com.solegendary.reignofnether.player.PlayerServerEvents.sendMessageToAllPlayers;
+import static com.solegendary.reignofnether.survival.SurvivalServerEvents.ENEMY_OWNER_NAME;
 
 public abstract class Building {
 
@@ -646,7 +652,7 @@ public abstract class Building {
         isBuilt = true;
         if (!this.level.isClientSide()) {
             FrozenChunkClientboundPacket.setBuildingBuiltServerside(this.originPos);
-            if (isCapitol) {
+            if (isCapitol && BuildingUtils.getTotalCompletedBuildingsOwned(false, ownerName) <= 1) {
                 for (int i = 0; i < 3; i++)
                     spawnHuntableAnimalsNearby(ANIMAL_SPAWN_BLOCK_RANGE / 2);
             }
@@ -655,11 +661,38 @@ public abstract class Building {
         }
 
         // prevent showing blocks on minimap unless previously explored
-        if (this.level.isClientSide() && !isExploredClientside) {
+        if (this.level.isClientSide() && !isExploredClientside)
             for (BuildingBlock bb : blocks)
-                if (!this.level.getBlockState(bb.getBlockPos()).isAir()) {
+                if (!this.level.getBlockState(bb.getBlockPos()).isAir())
                     this.level.setBlockAndUpdate(bb.getBlockPos(), Blocks.AIR.defaultBlockState());
+
+        if (!level.isClientSide() && ownerName.equals(ENEMY_OWNER_NAME)) {
+            if (this instanceof GarrisonableBuilding garr) {
+                int numUnits = 7;
+                if (this instanceof DarkWatchtower || this instanceof Watchtower)
+                    numUnits = 3;
+                else if (this instanceof Bastion)
+                    numUnits = 4;
+
+                for (int i = 0; i < numUnits; i++) {
+                    EntityType<? extends Mob> entityType = null;
+                    if (getFaction() == Faction.VILLAGERS)
+                        entityType = EntityRegistrar.PILLAGER_UNIT.get();
+                    else if (getFaction() == Faction.MONSTERS)
+                        entityType = EntityRegistrar.SKELETON_UNIT.get();
+                    else if (getFaction() == Faction.PIGLINS)
+                        entityType = EntityRegistrar.HEADHUNTER_UNIT.get();
+
+                    if (entityType != null) {
+                        UnitServerEvents.spawnMob(
+                                entityType,
+                                (ServerLevel) level,
+                                originPos.offset(garr.getEntryPosition()),
+                                ENEMY_OWNER_NAME
+                        );
+                    }
                 }
+            }
         }
     }
 

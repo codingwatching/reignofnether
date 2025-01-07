@@ -38,8 +38,7 @@ public interface AttackerUnit {
     // chase and attack the target ignoring all else until it is dead or out of sight
     public default void setUnitAttackTarget(@Nullable LivingEntity target) {
         if (target != null) {
-            MiscUtil.addUnitCheckpoint(((Unit) this), target.getId());
-            ((Unit) this).setIsCheckpointGreen(false);
+            MiscUtil.addUnitCheckpoint(((Unit) this), target.getId(), false);
         }
         ((Unit) this).getTargetGoal().setTarget(target);
     }
@@ -75,7 +74,7 @@ public interface AttackerUnit {
 
                 ((Unit) this).setMoveTarget(targetPos);
                 if (((LivingEntity) this).getLevel().isClientSide)
-                    MiscUtil.addUnitCheckpoint((Unit) this, groundCentrePos);
+                    MiscUtil.addUnitCheckpoint((Unit) this, groundCentrePos, false);
             }
         }
     }
@@ -162,7 +161,7 @@ public interface AttackerUnit {
                 }
             }
             // enact aggression when idle
-            if (attackerUnit.isIdle() && !isAttackingBuilding && attackerUnit.getAggressiveWhenIdle())
+            if (unit.isIdle() && !isAttackingBuilding && attackerUnit.getAggressiveWhenIdle())
                 attackerUnit.attackClosestEnemy((ServerLevel) unitMob.level);
 
             // if attacking another unit as melee, retarget the closest unit periodically
@@ -171,14 +170,6 @@ public interface AttackerUnit {
                 !((Unit) attackerUnit).getTargetGoal().forced)
                 attackerUnit.retargetToClosestUnit((ServerLevel) unitMob.level);
         }
-    }
-
-    public default boolean isIdle() {
-        Unit unit = (Unit) this;
-        return this.getAttackMoveTarget() == null &&
-                !unit.hasLivingTarget() &&
-                unit.getMoveGoal().getMoveTarget() == null &&
-                unit.getFollowTarget() == null;
     }
 
     // if the nearest target is closer than the current target, retarget to the nearest

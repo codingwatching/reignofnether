@@ -60,8 +60,7 @@ public class FlyingMoveToTargetGoal extends MoveToTargetBlockGoal {
     @Override
     public void setMoveTarget(@Nullable BlockPos bp) {
         if (bp != null) {
-            MiscUtil.addUnitCheckpoint((Unit) mob, bp);
-            ((Unit) mob).setIsCheckpointGreen(true);
+            MiscUtil.addUnitCheckpoint((Unit) mob, bp, true);
 
             if (this.mob.level.getBlockState(bp).isAir())
                 return;

@@ -6,11 +6,13 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.time.NightCircleMode;
 import com.solegendary.reignofnether.time.TimeClientEvents;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
@@ -87,21 +89,39 @@ public class MiscUtil {
         return true;
     }
 
-    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos) {
-        addUnitCheckpoint(unit, blockPos, true);
-    }
-    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos, boolean clearExisting) {
-        if (clearExisting) {
+    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos, boolean green) {
+        boolean clearExisting = true;
+        if (((Entity) unit).getLevel().isClientSide())
+            clearExisting = !Keybindings.shiftMod.isDown();
+        if (clearExisting)
             unit.getCheckpoints().clear();
-            unit.setEntityCheckpointId(-1);
-        }
-        unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
-        unit.getCheckpoints().add(blockPos);
+        unit.getCheckpoints().add(new Checkpoint(blockPos, green));
     }
-    public static void addUnitCheckpoint(Unit unit, int id) {
-        unit.getCheckpoints().clear();
-        unit.setEntityCheckpointId(id);
-        unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
+    public static void addUnitCheckpoint(Unit unit, int id, boolean green) {
+        Level level = ((Entity) unit).getLevel();
+        if (level.isClientSide() && !Keybindings.shiftMod.isDown())
+            unit.getCheckpoints().clear();
+        unit.getCheckpoints().add(new Checkpoint(level.getEntity(id), green));
+    }
+
+    // excludes trees and buildings
+    public static BlockPos getHighestGroundBlock(Level level, BlockPos blockPos) {
+        int y = level.getHeight();
+        BlockState bs;
+        BlockPos bp;
+        do {
+            bp = new BlockPos(blockPos.getX(), y, blockPos.getZ());
+            bs = level.getBlockState(bp);
+            y -= 1;
+        } while((bs.isAir() ||
+                BuildingUtils.isPosInsideAnyBuilding(level.isClientSide, bp) ||
+                bs.getBlock() == Blocks.LIGHT ||
+                bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (!bs.getMaterial().isSolidBlocking() &&
+                !bs.getMaterial().isLiquid()) ||
+                bs.getMaterial() == Material.LEAVES ||
+                bs.getMaterial() == Material.WOOD) && y > -63);
+        return new BlockPos(blockPos.getX(), y, blockPos.getZ());
     }
 
     public static BlockPos getHighestNonAirBlock(Level level, BlockPos blockPos, boolean ignoreLeaves) {
@@ -265,9 +285,12 @@ public class MiscUtil {
         Relationship relationship = UnitServerEvents.getUnitToBuildingRelationship((Unit) unitMob, building);
 
         // If the relationship is FRIENDLY, do not allow the attack
-        if (relationship == Relationship.FRIENDLY) {
+        if (relationship == Relationship.FRIENDLY)
             return false;
-        }
+
+        boolean neutralAggro = unitMob.getLevel().getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get();
+        if (relationship == Relationship.NEUTRAL && neutralAggro)
+            return true;
 
         // Additional attack conditions for hostile or neutral relationships can be added here
         return relationship == Relationship.HOSTILE;

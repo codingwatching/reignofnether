@@ -60,7 +60,7 @@ public class GameModeClientboundPacket {
                         } else if (disallowSurvival) {
                             ClientGameModeHelper.disallowSurvival = true;
                             ClientGameModeHelper.gameModeLocked = true;
-                            ClientGameModeHelper.gameMode = GameMode.STANDARD;
+                            ClientGameModeHelper.gameMode = GameMode.CLASSIC;
                         } else {
                             ClientGameModeHelper.disallowSurvival = false;
                             ClientGameModeHelper.gameModeLocked = false;

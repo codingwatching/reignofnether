@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.guiscreen.TopdownGui;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceSources;
+import com.solegendary.reignofnether.survival.spawners.WaveSpawner;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.UnitAction;
@@ -191,7 +192,8 @@ public class CursorClientEvents {
             }
             if (!usingPosAbove &&
                 !BuildingUtils.isPosInsideAnyBuilding(true, preselectedBlockPos) &&
-                BuildingUtils.isPosInsideAnyBuilding(true, preselectedBlockPos.above()))
+                BuildingUtils.isPosInsideAnyBuilding(true, preselectedBlockPos.above()) &&
+                ResourceSources.getFromBlockPos(preselectedBlockPos, MC.level) == null)
                 preselectedBlockPos = preselectedBlockPos.above();
             else if (ResourceSources.GATHERABLE_PLANTS.contains(MC.level.getBlockState(preselectedBlockPos.above()).getBlock()))
                 preselectedBlockPos = preselectedBlockPos.above();

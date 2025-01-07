@@ -33,9 +33,25 @@ Features
 
 [❌] Shift queueing actions
 
+[❌] Wave Survival: Groups of buildings on some nights
+    [❌] Add to a new class like WavePortal
+    [❌] Scale according to wave tier
+        Tier 1: cannot spawn
+        Tier 2: production building + ground units + 1 garrison
+        Tier 3: production building + ground units
+        Tier 4: production building + ground units + 2 garrisons
+        Tier 5: castle building
+        Tier 6: castle building + 2 garrisons
+
+    [❌] Instead of replacing a wave, spawn alongside a wave, but reduce the wave size
+    [❌] If left until the next night, raises the population value by the same amount that it reduced it by
+
+
 
 Bugfixes
 --------
+
+[❌] Workers on a building that is still auto-building the foundation layer actually slows down building
 
 [❌] Fixed a bug where teams would randomly switch
 
@@ -45,13 +61,17 @@ Bugfixes
 
 [❌] Dying in survival puts you in a bugged survival mode
 
-Villager Professions
-    [❌] Farmer arms are using the hat rim texture
+[❌] Villagers with professions don't use the correct texture for their arms, esp. farmers
 
+[❌] Have too-fast mod be built-in
+
+[❌] Don't kick players for sending too many packets if they drag-move the map
 
 
 Quality of Life Features
 ------------------------
+
+[❌] Added /gamerule for bridges over void
 
 [❌] Save transport portal links between server restarts
 
@@ -70,3 +90,4 @@ Quality of Life Features
 Balancing
 ---------
 
+[❌] Soulfires created by blazes need to be made temporary

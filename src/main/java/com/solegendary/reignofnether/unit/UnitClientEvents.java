@@ -17,6 +17,9 @@ import com.solegendary.reignofnether.player.PlayerServerboundPacket;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import com.solegendary.reignofnether.resources.*;
+import com.solegendary.reignofnether.survival.Wave;
+import com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner;
+import com.solegendary.reignofnether.survival.spawners.WaveSpawner;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -54,6 +57,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
@@ -66,8 +70,10 @@ import org.lwjgl.glfw.GLFW;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static com.solegendary.reignofnether.building.BuildingClientEvents.getPlayerToBuildingRelationship;
 import static com.solegendary.reignofnether.cursor.CursorClientEvents.getPreselectedBlockPos;
 import static com.solegendary.reignofnether.hud.HudClientEvents.hudSelectedEntity;
+import static com.solegendary.reignofnether.unit.Checkpoint.CHECKPOINT_TICKS_FADE;
 import static net.minecraftforge.client.event.RenderLevelStageEvent.Stage.*;
 
 public class UnitClientEvents {
@@ -95,6 +101,8 @@ public class UnitClientEvents {
     private static final ArrayList<LivingEntity> allUnits = new ArrayList<>();
 
     @Nullable private static UnitActionItem lastClientUAIActioned = null;
+
+    public static boolean neutralAggro = false;
 
     public static ArrayList<LivingEntity> getPreselectedUnits() { return preselectedUnits; }
     public static ArrayList<LivingEntity> getSelectedUnits() {
@@ -133,10 +141,6 @@ public class UnitClientEvents {
 
     private static long lastLeftClickTime = 0; // to track double clicks
     private static final long DOUBLE_CLICK_TIME_MS = 500;
-
-    // unit checkpoint draw lines (eg. where the unit was issued a command to move/build to)
-    public static final int CHECKPOINT_TICKS_MAX = 200;
-    public static final int CHECKPOINT_TICKS_FADE = 15; // ticks left at which the lines start to fade
 
     private static boolean isLeftClickAttack() {
         return CursorClientEvents.getLeftClickAction() == UnitAction.ATTACK;
@@ -216,7 +220,8 @@ public class UnitClientEvents {
                 MC.player.getName().getString(),
                 action, unitId, unitIds,
                 preselectedBlockPos,
-                selectedBuildingPos
+                selectedBuildingPos,
+                Keybindings.shiftMod.isDown()
             ));
         }
     }
@@ -239,7 +244,8 @@ public class UnitClientEvents {
                         MC.player.getName().getString(),
                         action, unitId, unitIds,
                         preselectedBlockPos,
-                        selectedBuildingPos
+                        selectedBuildingPos,
+                        Keybindings.shiftMod.isDown()
                 ));
             }
         }
@@ -282,7 +288,8 @@ public class UnitClientEvents {
                 preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
                 selUnits,
                 bp,
-                HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
+                HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0),
+                Keybindings.shiftMod.isDown()
             ));
         }
     }
@@ -386,6 +393,15 @@ public class UnitClientEvents {
         }
     }
 
+    /*
+    private static double variance = 0;
+    @SubscribeEvent
+    public static void onRenderOverLay(RenderGuiOverlayEvent.Pre evt) {
+        MiscUtil.drawDebugStrings(evt.getPoseStack(), MC.font, new String[] {
+                "var: " + variance,
+        });
+    }
+     */
 
     private static final int VIS_CHECK_TICKS_MAX = 10;
     private static int ticksToNextVisCheck = VIS_CHECK_TICKS_MAX;
@@ -393,6 +409,9 @@ public class UnitClientEvents {
     public static void onClientTick(TickEvent.ClientTickEvent evt) {
         if (evt.phase != TickEvent.Phase.END)
             return;
+
+        //if (MC.level != null)
+        //    variance = WaveSpawner.getYVariance(MC.level, getPreselectedBlockPos(), 8);
 
         ticksToNextVisCheck -= 1;
 
@@ -419,7 +438,8 @@ public class UnitClientEvents {
                 synchronized (unitWindowVecs) {
                     unitWindowVecs.clear();
                     windowPositions.forEach(bp -> {
-                        if (bp.distSqr(MC.player.getOnPos()) < Math.pow(OrthoviewClientEvents.getZoom() + 10, 2))
+                        float dist = OrthoviewClientEvents.getZoom() * 2;
+                        if (bp.distSqr(MC.player.getOnPos()) < (dist * dist))
                             unitWindowVecs.add(MyMath.prepIsPointInsideRect3d(Minecraft.getInstance(),
                                     new Vector3d(bp.getX() - WINDOW_RADIUS, bp.getY(), bp.getZ() - WINDOW_RADIUS), // tl
                                     new Vector3d(bp.getX() - WINDOW_RADIUS, bp.getY(), bp.getZ() + WINDOW_RADIUS), // bl
@@ -580,8 +600,8 @@ public class UnitClientEvents {
                 // right click -> attack unfriendly unit
                 if (preselectedUnits.size() == 1 &&
                     !targetingSelf() &&
-                    (MC.level.getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get() ||
-                     getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.HOSTILE ||
+                    ((neutralAggro && getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.NEUTRAL) ||
+                    getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.HOSTILE ||
                      ResourceSources.isHuntableAnimal(preselectedUnits.get(0)))) {
 
                      if (hudSelectedEntity instanceof WitchUnit witchUnit) {
@@ -594,7 +614,8 @@ public class UnitClientEvents {
                 else if (hudSelectedEntity instanceof AttackerUnit &&
                         (preSelBuilding != null) &&
                         !(preSelBuilding instanceof AbstractBridge) &&
-                        BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.HOSTILE) {
+                        ((neutralAggro && getPlayerToBuildingRelationship(preSelBuilding) == Relationship.NEUTRAL) ||
+                        getPlayerToBuildingRelationship(preSelBuilding) == Relationship.HOSTILE)) {
                     sendUnitCommand(UnitAction.ATTACK_BUILDING);
                 }
                 // right click -> return resources
@@ -602,12 +623,12 @@ public class UnitClientEvents {
                         unit.getReturnResourcesGoal() != null &&
                         Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue() > 0 &&
                         preSelBuilding != null && preSelBuilding.canAcceptResources && preSelBuilding.isBuilt &&
-                        BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) {
+                        getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) {
                     sendUnitCommand(UnitAction.RETURN_RESOURCES);
                 }
                 // right click -> build or repair preselected building
                 else if (hudSelectedEntity instanceof WorkerUnit && preSelBuilding != null &&
-                        (BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) ||
+                        (getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) ||
                         preSelBuilding instanceof AbstractBridge) {
 
                     if (preSelBuilding.name.contains(" Farm") && preSelBuilding.isBuilt)
@@ -698,55 +719,38 @@ public class UnitClientEvents {
             // draw unit checkpoints
             for (LivingEntity entity : getSelectedUnits()) {
                 if (entity instanceof Unit unit) {
-                    int ticksUnderFade = Math.min(unit.getCheckpointTicksLeft(), CHECKPOINT_TICKS_FADE);
-                    float a = ((float) ticksUnderFade / (float) CHECKPOINT_TICKS_FADE) * 0.5f;
 
-                    int id = unit.getEntityCheckpointId();
-                    if (id > -1) {
-                        Entity checkpointEntity = MC.level.getEntity(id);
-                        if (checkpointEntity != null) {
-                            float entityYOffset1 = 1.74f - ((LivingEntity) unit).getEyeHeight() - 1;
-                            Vec3 startPos = ((LivingEntity) unit).getEyePosition().add(0,entityYOffset1,0);
-                            float entityYOffset2 = 1.74f - checkpointEntity.getEyeHeight() - 1;
-                            Vec3 endPos = checkpointEntity.getEyePosition().add(0,entityYOffset2,0);
-                            boolean green = unit.isCheckpointGreen();
-                            MyRenderer.drawLine(evt.getPoseStack(), startPos, endPos, green ? 0 : 1, green ? 1 : 0, 0, a);
-                        }
-                    } else {
-                        for (int i = 0; i < unit.getCheckpoints().size(); i++) {
-                            Vec3 startPos;
-                            if (i == 0) {
-                                float entityYOffset = 1.74f - ((LivingEntity) unit).getEyeHeight() - 1;
-                                startPos = ((LivingEntity) unit).getEyePosition().add(0,entityYOffset,0);
-                            } else {
-                                BlockPos bp = unit.getCheckpoints().get(i-1);
-                                startPos = new Vec3(bp.getX() + 0.5f, bp.getY() + 1, bp.getZ() + 0.5f);
-                            }
-                            BlockPos bp = unit.getCheckpoints().get(i);
-                            Vec3 endPos = new Vec3(bp.getX() + 0.5f, bp.getY() + 1.0f, bp.getZ() + 0.5f);
+                    float entityYOffset1 = 1.74f - ((LivingEntity) unit).getEyeHeight() - 1;
+                    Vec3 lastPos = ((LivingEntity) unit).getEyePosition().add(0, entityYOffset1,0);
 
-                            boolean green = unit.isCheckpointGreen();
-                            MyRenderer.drawLine(evt.getPoseStack(), startPos, endPos, green ? 0 : 1, green ? 1 : 0, 0, a);
-
-                            if (MC.level.getBlockState(bp.offset(0,1,0)).getBlock() instanceof SnowLayerBlock) {
-                                AABB aabb = new AABB(bp);
+                    for (Checkpoint cp : unit.getCheckpoints()) {
+                        int ticksUnderFade = Math.min(cp.ticksLeft, CHECKPOINT_TICKS_FADE);
+                        float a = ((float) ticksUnderFade / (float) CHECKPOINT_TICKS_FADE) * 0.5f;
+                        if (cp.isForEntity()) {
+                            MyRenderer.drawLine(evt.getPoseStack(), lastPos, cp.getPos(), cp.isGreen ? 0 : 1, cp.isGreen ? 1 : 0, 0, a);
+                            lastPos = cp.getPos();
+                        } else {
+                            MyRenderer.drawLine(evt.getPoseStack(), lastPos, cp.getPos(), cp.isGreen ? 0 : 1, cp.isGreen ? 1 : 0, 0, a);
+                            if (MC.level.getBlockState(cp.bp.offset(0,1,0)).getBlock() instanceof SnowLayerBlock) {
+                                AABB aabb = new AABB(cp.bp);
                                 aabb = aabb.setMaxY(aabb.maxY + 0.13f);
-                                MyRenderer.drawSolidBox(evt.getPoseStack(), aabb, Direction.UP, green ? 0 : 1, green ? 1 : 0, 0, a, new ResourceLocation("forge:textures/white.png"));
+                                MyRenderer.drawSolidBox(evt.getPoseStack(), aabb, Direction.UP, cp.isGreen ? 0 : 1, cp.isGreen ? 1 : 0, 0, a,
+                                        new ResourceLocation("forge:textures/white.png"));
                             } else {
-                                MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, green ? 0 : 1, green ? 1 : 0, 0, a);
+                                MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, cp.bp, cp.isGreen ? 0 : 1, cp.isGreen ? 1 : 0, 0, a);
                             }
+                            lastPos = cp.getPos();
                         }
-
-                        // draw path nodes
-                        /*
-                        if (unit instanceof Mob mob && mob.getNavigation().getPath() != null) {
-                            for (Node node : mob.getNavigation().getPath().nodes) {
-                                BlockPos bp = new BlockPos(node.x, node.y, node.z).below();
-                                MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, 0, 1, 0, a);
-                            }
-                        }
-                         */
                     }
+                    // draw path nodes
+                    /*
+                    if (unit instanceof Mob mob && mob.getNavigation().getPath() != null) {
+                        for (Node node : mob.getNavigation().getPath().nodes) {
+                            BlockPos bp = new BlockPos(node.x, node.y, node.z).below();
+                            MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, 0, 1, 0, a);
+                        }
+                    }
+                     */
                 }
             }
         }

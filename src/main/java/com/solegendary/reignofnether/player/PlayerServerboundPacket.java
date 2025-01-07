@@ -9,11 +9,13 @@ import com.solegendary.reignofnether.registrars.PacketHandler;
 import com.solegendary.reignofnether.survival.SurvivalClientEvents;
 import com.solegendary.reignofnether.survival.SurvivalServerboundPacket;
 import com.solegendary.reignofnether.util.Faction;
+import net.minecraft.client.Game;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
@@ -82,8 +84,6 @@ public class PlayerServerboundPacket {
             };
             PacketHandler.INSTANCE.sendToServer(new PlayerServerboundPacket(playerAction, MC.player.getId(), x, y, z));
             GameModeServerboundPacket.setAndLockAllClientGameModes(ClientGameModeHelper.gameMode);
-            if (ClientGameModeHelper.gameMode == GameMode.SURVIVAL)
-                SurvivalServerboundPacket.startSurvivalMode(SurvivalClientEvents.difficulty);
         }
     }
 

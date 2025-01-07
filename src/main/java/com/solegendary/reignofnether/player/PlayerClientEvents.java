@@ -152,7 +152,7 @@ public class PlayerClientEvents {
         }
 
         MC.gui.setTitle(Component.translatable("titles.reignofnether.victorious"));
-        MC.player.playSound(SoundRegistrar.VICTORY.get(), 0.5f, 1.0f);
+        //MC.player.playSound(SoundRegistrar.VICTORY.get(), 0.5f, 1.0f);
     }
 
     public static void enableRTS(String playerName) {

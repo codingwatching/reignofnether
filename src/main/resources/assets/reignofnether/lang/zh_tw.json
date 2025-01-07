@@ -810,9 +810,9 @@
   "block.reignofnether.falling_crimson_stem": "掉落的緋紅蕈柄",
   "block.reignofnether.walkable_magma_block": "可行走的岩漿塊",
   
-  "hud.gamemode.reignofnether.standard1": "標準",
-  "hud.gamemode.reignofnether.standard2": "經典的即時戰略遊戲體驗。透過",
-  "hud.gamemode.reignofnether.standard3": "摧毀所有建築物來擊敗對手。",
+  "hud.gamemode.reignofnether.classic1": "標準",
+  "hud.gamemode.reignofnether.classic2": "經典的即時戰略遊戲體驗。透過",
+  "hud.gamemode.reignofnether.classic3": "摧毀所有建築物來擊敗對手。",
   "hud.gamemode.reignofnether.survival1": "生存",
   "hud.gamemode.reignofnether.survival2": "在日漸強力的敵人攻勢中存活下來，",
   "hud.gamemode.reignofnether.survival3": "可以單人或與盟友遊玩。",

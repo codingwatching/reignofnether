@@ -5,8 +5,10 @@ import com.mojang.brigadier.context.ParsedCommandNode;
 import com.solegendary.reignofnether.gamemode.GameModeClientboundPacket;
 import com.solegendary.reignofnether.player.PlayerClientboundPacket;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
+import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.LivingEntity;
@@ -61,6 +63,12 @@ public class GameruleServerEvents {
                         ai.setBaseValue(Unit.getFollowRange());
                 }
             }
+        } else if (nodes.get(1).getNode().getName().equals("neutralAggro")) {
+            Map<String, ParsedArgument<CommandSourceStack, ?>> args = evt.getParseResults().getContext().getArguments();
+            if (args.containsKey("value")) {
+                boolean value = (boolean) args.get("value").getResult();
+                PlayerClientboundPacket.syncNeutralAggro(value);
+            }
         }
     }
 
@@ -70,6 +78,8 @@ public class GameruleServerEvents {
         if (server != null) {
             int groundYLevel = server.getGameRules().getRule(GameRuleRegistrar.GROUND_Y_LEVEL).get();
             PlayerClientboundPacket.setOrthoviewMinY(groundYLevel + 30);
+            boolean neutralAggro = server.getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get();
+            PlayerClientboundPacket.syncNeutralAggro(neutralAggro);
         }
     }
 }

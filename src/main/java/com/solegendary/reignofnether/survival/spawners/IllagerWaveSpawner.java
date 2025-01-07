@@ -1,6 +1,12 @@
 package com.solegendary.reignofnether.survival.spawners;
 
 import com.solegendary.reignofnether.ability.abilities.*;
+import com.solegendary.reignofnether.building.Building;
+import com.solegendary.reignofnether.building.BuildingServerEvents;
+import com.solegendary.reignofnether.building.GarrisonableBuilding;
+import com.solegendary.reignofnether.building.buildings.piglins.Portal;
+import com.solegendary.reignofnether.building.buildings.villagers.Barracks;
+import com.solegendary.reignofnether.building.buildings.villagers.Watchtower;
 import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
@@ -15,15 +21,19 @@ import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VindicatorUnit;
 import com.solegendary.reignofnether.util.Faction;
+import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 
@@ -119,59 +129,43 @@ public class IllagerWaveSpawner {
         }
     }
 
+    public static void spawnIllagerBase(ServerLevel level, Wave wave) {
+        List<BlockPos> spawnBps = getValidSpawnPoints(1, level, false, 16);
+        if (spawnBps.isEmpty())
+            spawnIllagerWave(level, wave);
+
+        boolean flipCoords = random.nextBoolean();
+
+        for (BlockPos bp : spawnBps) {
+            Building building = WaveSpawner.spawnBuilding(Barracks.buildingName, bp.above());
+            if (building != null) {
+                BlockPos bp2 = new BlockPos(building.centrePos.getX() - 2, building.minCorner.getY(), building.centrePos.getZ());
+                WaveSpawner.spawnBuilding(Watchtower.buildingName, bp2.offset(new BlockPos(flipCoords ? 10 : -0,-1, flipCoords ? 0 : 10)));
+                WaveSpawner.spawnBuilding(Watchtower.buildingName, bp2.offset(new BlockPos(flipCoords ? -10 : 0,-1, flipCoords ? 0 : -10)));
+            }
+        }
+    }
+
     // spawn illagers from one direction
     public static void spawnIllagerWave(ServerLevel level, Wave wave) {
         checkAndApplyUpgrades(wave.highestUnitTier);
 
         final int pop = wave.population * PlayerServerEvents.rtsPlayers.size();
         int remainingPop = wave.population * PlayerServerEvents.rtsPlayers.size();
-        List<BlockPos> spawnBps = getValidSpawnPoints(remainingPop, level, true);
+        List<BlockPos> spawnBps = getValidSpawnPoints(remainingPop, level, true, 6);
         int spawnsThisDir = 0;
         int spawnUntilNextTurn = -2;
 
         if (!spawnBps.isEmpty()) {
             BlockPos bp = spawnBps.get(0).above();
-            Direction dir = Direction.EAST;
+
+            ArrayList<Entity> entities = new ArrayList<>();
 
             while (remainingPop > 0) {
-                switch (dir) {
-                    case NORTH -> {
-                        bp = bp.north();
-                        if (spawnsThisDir >= spawnUntilNextTurn) {
-                            spawnsThisDir = 0;
-                            spawnUntilNextTurn += 2;
-                            dir = Direction.EAST;
-                        }
-                    }
-                    case EAST -> {
-                        bp = bp.east();
-                        if (spawnsThisDir >= spawnUntilNextTurn) {
-                            spawnsThisDir = 0;
-                            spawnUntilNextTurn += 2;
-                            dir = Direction.SOUTH;
-                        }
-                    }
-                    case SOUTH -> {
-                        bp = bp.south();
-                        if (spawnsThisDir >= spawnUntilNextTurn) {
-                            spawnsThisDir = 0;
-                            spawnUntilNextTurn += 2;
-                            dir = Direction.WEST;
-                        }
-                    }
-                    case WEST -> {
-                        bp = bp.west();
-                        if (spawnsThisDir >= spawnUntilNextTurn) {
-                            spawnsThisDir = 0;
-                            spawnUntilNextTurn += 2;
-                            dir = Direction.NORTH;
-                        }
-                    }
-                }
-
                 EntityType<? extends Mob> mobType = IllagerWaveSpawner.getRandomUnitOfTier(wave.highestUnitTier);
 
                 Entity entity = UnitServerEvents.spawnMob(mobType, level, bp.above(), ENEMY_OWNER_NAME);
+                entities.add(entity);
 
                 if (random.nextBoolean() && wave.highestUnitTier >= 6 && entity instanceof RavagerUnit ravagerUnit) {
                     Entity entityPassenger = UnitServerEvents.spawnMob(EntityRegistrar.PILLAGER_UNIT.get(),
@@ -182,7 +176,6 @@ public class IllagerWaveSpawner {
                         remainingPop -= getModifiedPopCost(unit);
                     }
                 }
-
                 if (entity instanceof Unit unit) {
                     checkAndApplyEnchants((LivingEntity) unit, wave.highestUnitTier);
                     placeIceOrMagma(bp, level);
@@ -190,9 +183,20 @@ public class IllagerWaveSpawner {
                     spawnsThisDir += 1;
                 }
             }
+            // spread units out so they don't explode from cramming
+            int sqrLen = (int) Math.ceil(Math.sqrt(entities.size()));
+            ArrayList<BlockPos> bps = new ArrayList<>();
+
+            for (int x = bp.getX() - (sqrLen/2); x <= bp.getX() + (sqrLen/2); x++)
+                for (int z = bp.getZ() - (sqrLen / 2); z <= bp.getZ() + (sqrLen / 2); z++)
+                    bps.add(MiscUtil.getHighestNonAirBlock(level, new BlockPos(x, 0, z), true));
+
+            int j = Math.min(entities.size(), bps.size());
+            for (int i = 0; i < j; i++)
+                entities.get(i).moveTo(bps.get(i).getX(), bps.get(i).getY() + 2, bps.get(i).getZ());
         }
         if (remainingPop > 0) {
-            PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of monster units");
+            PlayerServerEvents.sendMessageToAllPlayers("Failed to spawn " + remainingPop + "/" + pop + " population worth of villager units");
         }
         lastFaction = Faction.VILLAGERS;
     }

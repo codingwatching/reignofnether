@@ -13,6 +13,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.*;
@@ -56,17 +57,8 @@ import static com.solegendary.reignofnether.unit.units.villagers.VillagerUnitPro
 
 public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, AttackerUnit, ArmSwingingUnit, VillagerDataHolder, ConvertableUnit {
     // region
-    private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
-    private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
-    public ArrayList<BlockPos> getCheckpoints() { return checkpoints; };
-    public int getCheckpointTicksLeft() { return checkpointTicksLeft; }
-    public void setCheckpointTicksLeft(int ticks) { checkpointTicksLeft = ticks; }
-    private boolean isCheckpointGreen = true;
-    public boolean isCheckpointGreen() { return isCheckpointGreen; };
-    public void setIsCheckpointGreen(boolean green) { isCheckpointGreen = green; };
-    private int entityCheckpointId = -1;
-    public int getEntityCheckpointId() { return entityCheckpointId; };
-    public void setEntityCheckpointId(int id) { entityCheckpointId = id; };
+    private final ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    public ArrayList<Checkpoint> getCheckpoints() { return checkpoints; };
 
     GarrisonGoal garrisonGoal;
     public GarrisonGoal getGarrisonGoal() { return garrisonGoal; }
@@ -203,7 +195,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     // equal to ~4mins of log chopping, excludes leaves
     final static public float LUMBERJACK_SPEED_MULT = 1.25f;
     final static public float LUMBERJACK_SPEED_MULT_VETERAN = 1.5f;
-    final static public int LUMBERJACK_EXP_REQ = 20;
+    final static public int LUMBERJACK_EXP_REQ = 30;
     public int lumberjackExp = 0;
     public void incrementLumberjackExp() {
         lumberjackExp += hasSpeedCheat() ? 10 : 1;

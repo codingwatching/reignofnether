@@ -27,7 +27,7 @@ public class RavagerProd extends ProductionItem {
         super(building, cost.ticks);
         this.onComplete = (Level level) -> {
             if (!level.isClientSide()) {
-                building.produceUnit((ServerLevel) level, EntityRegistrar.RAVAGER_UNIT.get(), building.ownerName, true);
+                building.produceUnit((ServerLevel) level, EntityRegistrar.RAVAGER_UNIT.get(), building.ownerName, false);
             }
         };
         this.foodCost = cost.food;

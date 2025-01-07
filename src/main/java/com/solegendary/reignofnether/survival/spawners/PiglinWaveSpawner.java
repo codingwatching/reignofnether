@@ -16,6 +16,7 @@ import com.solegendary.reignofnether.survival.Wave;
 import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HeadhunterUnit;
 import com.solegendary.reignofnether.util.Faction;
+import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -139,7 +140,7 @@ public class PiglinWaveSpawner {
 
             do {
                 tooCloseToAnotherPortal = false;
-                List<BlockPos> spawnBps = WaveSpawner.getValidSpawnPoints(1, level, false);
+                List<BlockPos> spawnBps = WaveSpawner.getValidSpawnPoints(1, level, false, 8);
                 if (!spawnBps.isEmpty())
                     spawnBp = spawnBps.get(0);
                 attempts += 1;
@@ -155,17 +156,7 @@ public class PiglinWaveSpawner {
 
             if (spawnBp != null) {
                 portalBps.add(spawnBp);
-                Building building = BuildingServerEvents.placeBuilding(Portal.buildingName,
-                        new BlockPos(spawnBp).above(),
-                        Rotation.NONE,
-                        ENEMY_OWNER_NAME,
-                        new int[] {},
-                        false,
-                        false
-                );
-                if (building != null)
-                    for (BuildingBlock bb : building.getBlocks())
-                        building.getLevel().setBlockAndUpdate(bb.getBlockPos(), Blocks.AIR.defaultBlockState());
+                WaveSpawner.spawnBuilding(Portal.buildingName, new BlockPos(spawnBp).above());
             } else
                 failedPortalPlacements += 1;
         }

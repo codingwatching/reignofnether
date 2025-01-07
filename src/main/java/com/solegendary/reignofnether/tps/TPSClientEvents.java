@@ -37,7 +37,7 @@ public class TPSClientEvents {
             return;
 
         int x = evt.getWindow().getGuiScaledWidth() - 55;
-        int y = 20;
+        int y = 35;
 
         double worldTPS = Math.min(1000.0 / tickTime, 99.99);
 

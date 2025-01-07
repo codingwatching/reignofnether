@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ClientGameModeHelper {
 
-    public static GameMode DEFAULT_GAMEMODE = GameMode.SURVIVAL;
+    public static GameMode DEFAULT_GAMEMODE = GameMode.CLASSIC;
     public static GameMode gameMode = DEFAULT_GAMEMODE;
     public static boolean gameModeLocked = false; // locked with startRTS() in any gamemode, unlocked with /rts-reset
     public static boolean disallowSurvival = false;
@@ -22,12 +22,12 @@ public class ClientGameModeHelper {
         if (gameModeLocked)
             return;
         switch (gameMode) {
-            case STANDARD -> {
+            case CLASSIC -> {
                 if (!disallowSurvival)
                     gameMode = GameMode.SURVIVAL;
             }
-            case SURVIVAL -> gameMode = GameMode.STANDARD;
-            default -> gameMode = GameMode.STANDARD;
+            case SURVIVAL -> gameMode = GameMode.CLASSIC;
+            default -> gameMode = GameMode.CLASSIC;
         }
     }
 
@@ -49,8 +49,8 @@ public class ClientGameModeHelper {
     // left click provides functionality specific to the gamemode, eg. changing wave survival difficulty
     public static Button getButton() {
         Button button = switch (gameMode) {
-            case STANDARD -> new Button(
-                    "Standard",
+            case CLASSIC -> new Button(
+                    "Classic",
                     Button.itemIconSize,
                     new ResourceLocation("minecraft", "textures/block/grass_block_side.png"),
                     (Keybinding) null,
@@ -60,11 +60,11 @@ public class ClientGameModeHelper {
                     null,
                     ClientGameModeHelper::cycleGameMode,
                     List.of(
-                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.standard1") +
+                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.classic1") +
                                     getLockedString(), Style.EMPTY.withBold(true)),
                             FormattedCharSequence.forward("", Style.EMPTY),
-                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.standard2"), Style.EMPTY),
-                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.standard3"), Style.EMPTY),
+                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.classic2"), Style.EMPTY),
+                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.classic3"), Style.EMPTY),
                             FormattedCharSequence.forward("", Style.EMPTY),
                             FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.changemode"), Style.EMPTY)
                     )

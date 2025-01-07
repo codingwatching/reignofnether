@@ -16,6 +16,7 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.nether.NetherBlocks;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.research.ResearchClient;
+import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
@@ -761,10 +762,10 @@ public class BuildingClientEvents {
 
                     for (LivingEntity entity : getSelectedUnits()) {
                         if (entity instanceof Unit unit) {
-                            unit.getCheckpoints().removeIf(bp -> !BuildingUtils.isPosInsideAnyBuilding(true, bp));
+                            unit.getCheckpoints().removeIf(c -> !BuildingUtils.isPosInsideAnyBuilding(true, c.bp));
                             MiscUtil.addUnitCheckpoint(unit,
                                 CursorClientEvents.getPreselectedBlockPos().above(),
-                                false
+                                true
                             );
                             if (unit instanceof WorkerUnit workerUnit) {
                                 workerUnit.getBuildRepairGoal().ignoreNextCheckpoint = true;
@@ -783,7 +784,7 @@ public class BuildingClientEvents {
 
                     for (LivingEntity entity : getSelectedUnits()) {
                         if (entity instanceof Unit unit) {
-                            MiscUtil.addUnitCheckpoint(unit, CursorClientEvents.getPreselectedBlockPos().above());
+                            MiscUtil.addUnitCheckpoint(unit, CursorClientEvents.getPreselectedBlockPos().above(), true);
                             if (unit instanceof WorkerUnit workerUnit) {
                                 workerUnit.getBuildRepairGoal().ignoreNextCheckpoint = true;
                             }

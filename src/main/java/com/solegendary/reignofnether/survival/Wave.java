@@ -1,5 +1,6 @@
 package com.solegendary.reignofnether.survival;
 
+import com.solegendary.reignofnether.survival.spawners.MonsterWaveSpawner;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;

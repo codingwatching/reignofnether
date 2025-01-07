@@ -9,6 +9,8 @@ import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.NetherZone;
 import com.solegendary.reignofnether.building.ProductionBuilding;
+import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
+import com.solegendary.reignofnether.gamemode.GameMode;
 import com.solegendary.reignofnether.guiscreen.TopdownGuiContainer;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
@@ -17,16 +19,22 @@ import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.Resources;
 import com.solegendary.reignofnether.resources.ResourcesServerEvents;
+import com.solegendary.reignofnether.survival.SurvivalClientEvents;
 import com.solegendary.reignofnether.survival.SurvivalServerEvents;
+import com.solegendary.reignofnether.survival.SurvivalServerboundPacket;
+import com.solegendary.reignofnether.survival.WaveDifficulty;
 import com.solegendary.reignofnether.time.TimeUtils;
 import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
+import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -84,17 +92,22 @@ public class PlayerServerEvents {
 
     public static ServerLevel serverLevel = null;
 
+    private static boolean announcedGamemode = false;
+
     // warpten - faster building/unit production
     // operationcwal - faster resource gathering
     // modifythephasevariance - ignore building requirements
     // medievalman - get all research (cannot reverse)
     // greedisgood X - gain X of each resource
     // foodforthought - ignore soft population caps
-    public static final List<String> singleWordCheats = List.of("warpten",
+    // thereisnospoon - allow changing survival wave by clicking the wave indicator and using debug commands
+    public static final List<String> singleWordCheats = List.of(
+        "warpten",
         "operationcwal",
         "modifythephasevariance",
         "medievalman",
-        "foodforthought"
+        "foodforthought",
+        "thereisnospoon"
     );
 
     public static void saveRTSPlayers() {
@@ -335,6 +348,36 @@ public class PlayerServerEvents {
                 sendMessageToAllPlayers("server.reignofnether.started", true, playerName);
                 sendMessageToAllPlayers("server.reignofnether.total_players", false, rtsPlayers.size());
             }
+
+            if (!announcedGamemode) {
+                announcedGamemode = true;
+
+                if (ClientGameModeHelper.gameMode == GameMode.SURVIVAL) {
+                    WaveDifficulty diff = SurvivalClientEvents.difficulty;
+                    SurvivalServerboundPacket.startSurvivalMode(diff);
+
+                    String diffMsg = I18n.get("hud.gamemode.reignofnether.survival4",
+                            diff, SurvivalClientEvents.getMinutesPerDay()).toLowerCase();
+                    diffMsg = diffMsg.substring(0,1).toUpperCase() + diffMsg.substring(1);
+
+                    sendMessageToAllPlayersNoNewlines("");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival1", true);
+                    sendMessageToAllPlayersNoNewlines(diffMsg);
+                    sendMessageToAllPlayersNoNewlines(new String(new char[diffMsg.length()]).replace("\0", "-"));
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival2");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival3");
+                    sendMessageToAllPlayersNoNewlines("");
+                }
+                else if (ClientGameModeHelper.gameMode == GameMode.CLASSIC) {
+                    sendMessageToAllPlayersNoNewlines("");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic1", true);
+                    sendMessageToAllPlayersNoNewlines("--------");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic2");
+                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic3");
+                    sendMessageToAllPlayersNoNewlines("");
+                }
+            }
+
             PlayerClientboundPacket.syncRtsGameTime(rtsGameTicks);
             saveRTSPlayers();
         }
@@ -549,6 +592,20 @@ public class PlayerServerEvents {
         }
     }
 
+    public static void sendMessageToAllPlayersNoNewlines(String msg) {
+        sendMessageToAllPlayersNoNewlines(msg, false);
+    }
+
+    public static void sendMessageToAllPlayersNoNewlines(String msg, boolean bold, Object... formatArgs) {
+        for (ServerPlayer player : players) {
+            if (bold) {
+                player.sendSystemMessage(Component.translatable(msg, formatArgs).withStyle(Style.EMPTY.withBold(true)));
+            } else {
+                player.sendSystemMessage(Component.translatable(msg, formatArgs));
+            }
+        }
+    }
+
     // defeat a player, giving them a defeat screen, removing all their unit/building control and removing them from
     // rtsPlayers
     public static void defeat(int playerId, String reason) {
@@ -571,14 +628,24 @@ public class PlayerServerEvents {
                     PlayerClientboundPacket.defeat(playerName);
 
                     // Remove ownership from all units and buildings of the defeated player
-                    for (LivingEntity entity : UnitServerEvents.getAllUnits())
-                        if (entity instanceof Unit unit && unit.getOwnerName().equals(playerName))
+                    for (LivingEntity entity : UnitServerEvents.getAllUnits()) {
+                        if (entity instanceof Unit unit && unit.getOwnerName().equals(playerName)) {
+                            unit.resetBehaviours();
+                            Unit.resetBehaviours(unit);
+                            if (unit instanceof AttackerUnit aUnit)
+                                AttackerUnit.resetBehaviours(aUnit);
+                            if (unit instanceof WorkerUnit wUnit)
+                                WorkerUnit.resetBehaviours(wUnit);
                             unit.setOwnerName("");
-
-                    for (Building building : BuildingServerEvents.getBuildings())
-                        if (building.ownerName.equals(playerName))
+                        }
+                    }
+                    for (Building building : BuildingServerEvents.getBuildings()) {
+                        if (building.ownerName.equals(playerName)) {
+                            if (building instanceof ProductionBuilding productionBuilding)
+                                productionBuilding.productionQueue.clear();
                             building.ownerName = "";
-
+                        }
+                    }
                     return true;
                 }
                 return false;
@@ -668,6 +735,8 @@ public class PlayerServerEvents {
                 setRTSLock(false);
             AllianceSystem.resetAllAlliances();
             SurvivalServerEvents.reset();
+
+            announcedGamemode = false;
         }
     }
 
