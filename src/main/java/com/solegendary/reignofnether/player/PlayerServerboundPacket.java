@@ -6,8 +6,12 @@ import com.solegendary.reignofnether.gamemode.GameModeClientboundPacket;
 import com.solegendary.reignofnether.gamemode.GameModeServerboundPacket;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.registrars.PacketHandler;
+import com.solegendary.reignofnether.sounds.SoundAction;
+import com.solegendary.reignofnether.sounds.SoundClientboundPacket;
 import com.solegendary.reignofnether.survival.SurvivalClientEvents;
+import com.solegendary.reignofnether.survival.SurvivalServerEvents;
 import com.solegendary.reignofnether.survival.SurvivalServerboundPacket;
+import com.solegendary.reignofnether.survival.WaveDifficulty;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.Game;
 import net.minecraft.client.Minecraft;
@@ -20,6 +24,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -84,6 +90,32 @@ public class PlayerServerboundPacket {
             };
             PacketHandler.INSTANCE.sendToServer(new PlayerServerboundPacket(playerAction, MC.player.getId(), x, y, z));
             GameModeServerboundPacket.setAndLockAllClientGameModes(ClientGameModeHelper.gameMode);
+            if (ClientGameModeHelper.gameMode == GameMode.SURVIVAL) {
+                SurvivalServerboundPacket.startSurvivalMode(SurvivalClientEvents.difficulty);
+
+                CompletableFuture.delayedExecutor(3000, TimeUnit.MILLISECONDS).execute(() -> {
+                    WaveDifficulty diff = SurvivalClientEvents.difficulty;
+                    String diffMsg = I18n.get("hud.gamemode.reignofnether.survival4",
+                            diff, SurvivalClientEvents.getMinutesPerDay()).toLowerCase();
+                    diffMsg = diffMsg.substring(0,1).toUpperCase() + diffMsg.substring(1);
+                    MC.player.sendSystemMessage(Component.literal(""));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.survival1").withStyle(Style.EMPTY.withBold(true)));
+                    MC.player.sendSystemMessage(Component.literal(diffMsg));
+                    MC.player.sendSystemMessage(Component.literal(new String(new char[diffMsg.length()]).replace("\0", "-")));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.survival2"));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.survival3"));
+                    MC.player.sendSystemMessage(Component.literal(""));
+                });
+            } else {
+                CompletableFuture.delayedExecutor(3000, TimeUnit.MILLISECONDS).execute(() -> {
+                    MC.player.sendSystemMessage(Component.literal(""));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.classic1").withStyle(Style.EMPTY.withBold(true)));
+                    MC.player.sendSystemMessage(Component.literal("--------"));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.classic2"));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.classic3"));
+                    MC.player.sendSystemMessage(Component.literal(""));
+                });
+            }
         }
     }
 
