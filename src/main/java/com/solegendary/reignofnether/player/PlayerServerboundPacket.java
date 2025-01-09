@@ -93,7 +93,7 @@ public class PlayerServerboundPacket {
             if (ClientGameModeHelper.gameMode == GameMode.SURVIVAL) {
                 SurvivalServerboundPacket.startSurvivalMode(SurvivalClientEvents.difficulty);
 
-                CompletableFuture.delayedExecutor(1000, TimeUnit.MILLISECONDS).execute(() -> {
+                CompletableFuture.delayedExecutor(3000, TimeUnit.MILLISECONDS).execute(() -> {
                     WaveDifficulty diff = SurvivalClientEvents.difficulty;
                     String diffMsg = I18n.get("hud.gamemode.reignofnether.survival4",
                             diff, SurvivalClientEvents.getMinutesPerDay()).toLowerCase();
@@ -107,7 +107,7 @@ public class PlayerServerboundPacket {
                     MC.player.sendSystemMessage(Component.literal(""));
                 });
             } else {
-                CompletableFuture.delayedExecutor(1000, TimeUnit.MILLISECONDS).execute(() -> {
+                CompletableFuture.delayedExecutor(3000, TimeUnit.MILLISECONDS).execute(() -> {
                     MC.player.sendSystemMessage(Component.literal(""));
                     MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.classic1").withStyle(Style.EMPTY.withBold(true)));
                     MC.player.sendSystemMessage(Component.literal("--------"));
