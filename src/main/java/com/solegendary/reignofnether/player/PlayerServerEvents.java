@@ -92,8 +92,6 @@ public class PlayerServerEvents {
 
     public static ServerLevel serverLevel = null;
 
-    private static boolean announcedGamemode = false;
-
     // warpten - faster building/unit production
     // operationcwal - faster resource gathering
     // modifythephasevariance - ignore building requirements
@@ -231,7 +229,7 @@ public class PlayerServerEvents {
                 serverPlayer.sendSystemMessage(Component.translatable("tutorial.reignofnether.help"));
                 serverPlayer.sendSystemMessage(Component.translatable("tutorial.reignofnether.controls"));
                 if (rtsLocked) {
-                    serverPlayer.sendSystemMessage(Component.translatable(""));
+                    serverPlayer.sendSystemMessage(Component.literal(""));
                     serverPlayer.sendSystemMessage(Component.translatable("tutorial.reignofnether.locked"));
                 }
             } else {
@@ -348,36 +346,6 @@ public class PlayerServerEvents {
                 sendMessageToAllPlayers("server.reignofnether.started", true, playerName);
                 sendMessageToAllPlayers("server.reignofnether.total_players", false, rtsPlayers.size());
             }
-
-            if (!announcedGamemode) {
-                announcedGamemode = true;
-
-                if (ClientGameModeHelper.gameMode == GameMode.SURVIVAL) {
-                    WaveDifficulty diff = SurvivalClientEvents.difficulty;
-                    SurvivalServerboundPacket.startSurvivalMode(diff);
-
-                    String diffMsg = I18n.get("hud.gamemode.reignofnether.survival4",
-                            diff, SurvivalClientEvents.getMinutesPerDay()).toLowerCase();
-                    diffMsg = diffMsg.substring(0,1).toUpperCase() + diffMsg.substring(1);
-
-                    sendMessageToAllPlayersNoNewlines("");
-                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival1", true);
-                    sendMessageToAllPlayersNoNewlines(diffMsg);
-                    sendMessageToAllPlayersNoNewlines(new String(new char[diffMsg.length()]).replace("\0", "-"));
-                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival2");
-                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.survival3");
-                    sendMessageToAllPlayersNoNewlines("");
-                }
-                else if (ClientGameModeHelper.gameMode == GameMode.CLASSIC) {
-                    sendMessageToAllPlayersNoNewlines("");
-                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic1", true);
-                    sendMessageToAllPlayersNoNewlines("--------");
-                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic2");
-                    sendMessageToAllPlayersNoNewlines("hud.gamemode.reignofnether.classic3");
-                    sendMessageToAllPlayersNoNewlines("");
-                }
-            }
-
             PlayerClientboundPacket.syncRtsGameTime(rtsGameTicks);
             saveRTSPlayers();
         }
@@ -735,8 +703,6 @@ public class PlayerServerEvents {
                 setRTSLock(false);
             AllianceSystem.resetAllAlliances();
             SurvivalServerEvents.reset();
-
-            announcedGamemode = false;
         }
     }
 

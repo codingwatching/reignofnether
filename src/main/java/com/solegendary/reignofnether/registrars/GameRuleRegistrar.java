@@ -37,8 +37,8 @@ public class GameRuleRegistrar {
                 GameRules.BooleanValue.create(false)
         );
         // allow players to break blocks other than buildings and resource blocks
-        DO_SURVIVAL_GRIEFING = GameRules.register("doSurvivalGriefing", GameRules.Category.PLAYER,
-                GameRules.BooleanValue.create(false)
+        DO_SURVIVAL_GRIEFING = GameRules.register("doPlayerGriefing", GameRules.Category.PLAYER,
+                GameRules.BooleanValue.create(true)
         );
         // increase pathfinding accuracy in exchange for increased CPU usage
         IMPROVED_PATHFINDING = GameRules.register("improvedPathfinding", GameRules.Category.MOBS,

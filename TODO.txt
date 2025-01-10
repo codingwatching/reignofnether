@@ -1,12 +1,12 @@
 
 1.19.2-1.1.1
--------------
 
 [✔] Done and tested
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
 
+<<<<<<< HEAD
 Features
 --------
 
@@ -14,6 +14,18 @@ Features
 Bugfixes
 --------
 
+=======
+
+
+Features
+--------
+
+Bugfixes
+--------
+
+- Fixed being unable to start wave survival mode on a server
+- /gamerule doSurvivalGriefing has been renamed to doPlayerGriefing and is now true by default
+>>>>>>> a2516ca9dcd375edfecb505b65bdb955eb7b178e
 
 
 Quality of Life
@@ -23,4 +35,17 @@ Quality of Life
 
 Balancing
 ---------
+<<<<<<< HEAD
+=======
+
+Villagers
+---------
+
+Piglins
+-------
+
+Monsters
+--------
+
+>>>>>>> a2516ca9dcd375edfecb505b65bdb955eb7b178e
 
