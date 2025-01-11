@@ -1,4 +1,4 @@
-package com.solegendary.reignofnether.unit.units.modelling;
+package com.solegendary.reignofnether.unit.modelling.models;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.solegendary.reignofnether.ReignOfNether;
@@ -33,7 +33,8 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class VillagerUnitModel<T extends AbstractIllager> extends HierarchicalModel<T> implements ArmedModel, HeadedModel {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ReignOfNether.MOD_ID, "villager_hatted_unit"), "main");
+    // TODO: use this to fix profession arms
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ReignOfNether.MOD_ID, "villager_profession_unit"), "main");
 
     private final ModelPart root;
     private final ModelPart head;

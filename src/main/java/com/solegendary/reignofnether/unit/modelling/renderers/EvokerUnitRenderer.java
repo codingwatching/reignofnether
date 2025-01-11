@@ -3,19 +3,15 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.solegendary.reignofnether.unit.units.modelling;
+package com.solegendary.reignofnether.unit.modelling.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.solegendary.reignofnether.unit.modelling.models.VillagerUnitModel;
 import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
-import net.minecraft.client.model.IllagerModel;
-import net.minecraft.client.model.SkeletonModel;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.monster.SpellcasterIllager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

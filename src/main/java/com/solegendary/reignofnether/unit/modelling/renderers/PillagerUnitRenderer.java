@@ -1,7 +1,7 @@
-package com.solegendary.reignofnether.unit.units.modelling;
+package com.solegendary.reignofnether.unit.modelling.renderers;
 
+import com.solegendary.reignofnether.unit.modelling.models.VillagerUnitModel;
 import com.solegendary.reignofnether.unit.units.villagers.PillagerUnit;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;

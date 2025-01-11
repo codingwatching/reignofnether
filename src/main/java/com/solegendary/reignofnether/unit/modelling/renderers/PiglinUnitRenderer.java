@@ -3,12 +3,13 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.solegendary.reignofnether.unit.units.modelling;
+package com.solegendary.reignofnether.unit.modelling.renderers;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
+import com.solegendary.reignofnether.unit.modelling.models.PiglinUnitModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;

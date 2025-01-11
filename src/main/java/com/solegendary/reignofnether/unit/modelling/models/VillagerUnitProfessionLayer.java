@@ -3,9 +3,10 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.solegendary.reignofnether.unit.units.modelling;
+package com.solegendary.reignofnether.unit.modelling.models;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.solegendary.reignofnether.unit.modelling.models.VillagerUnitModel;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
