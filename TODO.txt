@@ -35,3 +35,8 @@ Monsters
 --------
 
 
+Localisation
+------------
+    "item.reignofnether.royal_guard_unit_spawn_egg": "Spawn Royal Guard Unit",
+    "item.reignofnether.necromancer_unit_spawn_egg": "Spawn Necromancer Unit",
+    "item.reignofnether.piglin_merchant_unit_spawn_egg": "Spawn Piglin Merchant Unit",

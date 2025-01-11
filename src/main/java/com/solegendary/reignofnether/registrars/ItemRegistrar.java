@@ -137,6 +137,19 @@ public class ItemRegistrar {
             ITEMS.register("slime_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.SLIME_UNIT,
                     5405768, 5018938, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
+    public static final RegistryObject<ForgeSpawnEggItem> ROYAL_GUARD_UNIT_SPAWN_EGG =
+            ITEMS.register("royal_guard_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.ROYAL_GUARD_UNIT,
+                    0x959b9b, 0x014675, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+    public static final RegistryObject<ForgeSpawnEggItem> NECROMANCER_UNIT_SPAWN_EGG =
+            ITEMS.register("necromancer_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.NECROMANCER_UNIT,
+                    0x3f243d, 0x0b9cbb, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+    public static final RegistryObject<ForgeSpawnEggItem> PIGLIN_MERCHANT_UNIT_SPAWN_EGG =
+            ITEMS.register("piglin_merchant_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.PIGLIN_MERCHANT_UNIT,
+                    0x3d1f12, 0x91da2a, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+
     public static void init() {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }

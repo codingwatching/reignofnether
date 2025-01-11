@@ -1,6 +1,5 @@
 package com.solegendary.reignofnether.unit.modelling.renderers;
 
-import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.unit.modelling.models.PiglinMerchantModel;
 import com.solegendary.reignofnether.unit.units.piglins.PiglinMerchantUnit;
 import net.minecraft.client.model.geom.ModelLayerLocation;

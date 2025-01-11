@@ -1,6 +1,5 @@
 package com.solegendary.reignofnether.unit.modelling.renderers;
 
-import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.unit.modelling.models.NecromancerModel;
 import com.solegendary.reignofnether.unit.units.monsters.NecromancerUnit;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class NecromancerRenderer extends MobRenderer<NecromancerUnit, NecromancerModel<NecromancerUnit>> {
+
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("reignofnether", "textures/entities/necromancer_unit.png");
 
     public NecromancerRenderer(EntityRendererProvider.Context context) {
