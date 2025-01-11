@@ -1,27 +1,17 @@
 package com.solegendary.reignofnether.unit.goals;
 
-import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.units.monsters.SlimeUnit;
-import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
-import com.solegendary.reignofnether.unit.units.piglins.WitherSkeletonUnit;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
 
-import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.List;
 
 // based on MeleeAttackGoal
 public abstract class AbstractMeleeAttackUnitGoal extends Goal {
