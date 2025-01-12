@@ -106,9 +106,16 @@ public class NecromancerModel<T extends Entity> extends KeyframeHierarchicalMode
 			return;
 		float speed = (float) ms.getValue() * 10;
 
-		if (necromancer.getMoveGoal().getMoveTarget() != null && !entity.isInWaterOrBubble() && limbSwingAmount > 0.01f) {
+		// TODO: either manually edit the blockbench model to use the first frame of the idle animation as the base (have to adjust all other animations to offset)
+		// OR: figure out how Wardens smoothly transition to the start of other states
+		// TODO: send animation sync packet to start attacks and spells
+
+		if (!entity.isInWaterOrBubble() && limbSwingAmount > 0.01f) {
 			animateWalk(NecromancerAnimations.WALK, limbSwing, limbSwingAmount, speed, speed);
 			necromancer.walkAnimState.startIfStopped((int) (ageInTicks));
+		} else if (necromancer.attackAnimState.isStarted()) {
+			animate(necromancer.attackAnimState, NecromancerAnimations.ATTACK, ageInTicks);
+			necromancer.idleAnimState.startIfStopped((int) ageInTicks);
 		} else {
 			animate(necromancer.idleAnimState, NecromancerAnimations.IDLE, ageInTicks);
 			necromancer.idleAnimState.startIfStopped((int) ageInTicks);
