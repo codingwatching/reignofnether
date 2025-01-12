@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.registrars;
 
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.unit.modelling.renderers.GhastUnitRenderer;
+import com.solegendary.reignofnether.unit.modelling.renderers.NecromancerRenderer;
 import com.solegendary.reignofnether.unit.units.monsters.*;
 import com.solegendary.reignofnether.unit.units.piglins.*;
 import com.solegendary.reignofnether.unit.units.villagers.*;
@@ -192,7 +193,8 @@ public class EntityRegistrar {
 
     public static final RegistryObject<EntityType<GhastUnit>> GHAST_UNIT = ENTITIES.register("ghast_unit",
             () -> EntityType.Builder.of(GhastUnit::new, MobCategory.CREATURE)
-                    .sized(EntityType.GHAST.getWidth() * GhastUnitRenderer.SCALE_MULT, EntityType.GHAST.getHeight() * GhastUnitRenderer.SCALE_MULT)
+                    .sized(EntityType.GHAST.getWidth() * GhastUnitRenderer.SCALE_MULT,
+                            EntityType.GHAST.getHeight() * GhastUnitRenderer.SCALE_MULT)
                     .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
                     .build(new ResourceLocation(ReignOfNether.MOD_ID, "ghast_unit").toString()));
 
@@ -216,7 +218,8 @@ public class EntityRegistrar {
 
     public static final RegistryObject<EntityType<NecromancerUnit>> NECROMANCER_UNIT = ENTITIES.register("necromancer_unit",
             () -> EntityType.Builder.of(NecromancerUnit::new, MobCategory.CREATURE)
-                    .sized(EntityType.SKELETON.getWidth(), EntityType.SKELETON.getHeight())
+                    .sized(EntityType.SKELETON.getWidth() * NecromancerRenderer.SCALE_MULT,
+                            EntityType.SKELETON.getHeight() * NecromancerRenderer.SCALE_MULT)
                     .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
                     .build(new ResourceLocation(ReignOfNether.MOD_ID, "necromancer_unit").toString()));
 

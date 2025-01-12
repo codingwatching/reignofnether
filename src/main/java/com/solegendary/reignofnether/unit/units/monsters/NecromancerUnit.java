@@ -16,6 +16,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -131,20 +132,19 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
     private final List<Ability> abilities = new ArrayList<>();
     private final List<ItemStack> items = new ArrayList<>();
 
+    public final AnimationState idleAnimState = new AnimationState();
+    public final AnimationState walkAnimState = new AnimationState();
+    public final AnimationState spellChargeAnimState = new AnimationState();
+    public final AnimationState spellActivateAnimState = new AnimationState();
+    public final AnimationState attackAnimState = new AnimationState();
+
     public NecromancerUnit(EntityType<? extends Skeleton> entityType, Level level) {
         super(entityType, level);
-
-        MountSpider mountSpiderAbility = new MountSpider(this);
-        this.abilities.add(mountSpiderAbility);
-
-        if (level.isClientSide()) {
-            this.abilityButtons.add(mountSpiderAbility.getButton(Keybindings.keyQ));
-        }
     }
 
     @Override
     public void resetBehaviours() {
-        this.mountGoal.stop();
+
     }
 
     @Override
@@ -163,7 +163,6 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         super.tick();
         Unit.tick(this);
         AttackerUnit.tick(this);
-        this.mountGoal.tick();
 
         // need to do this outside the goal so it ticks down while not attacking
         // only needed for attack goals created by reignofnether like RangedBowAttackUnitGoal
@@ -183,7 +182,6 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         this.garrisonGoal = new GarrisonGoal(this);
         this.attackGoal = new UnitBowAttackGoal<>(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
-        this.mountGoal = new MountGoal(this);
     }
 
     @Override
@@ -194,11 +192,9 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, attackGoal);
         this.goalSelector.addGoal(2, returnResourcesGoal);
-        this.goalSelector.addGoal(2, mountGoal);
         this.goalSelector.addGoal(2, garrisonGoal);
         this.targetSelector.addGoal(2, targetGoal);
         this.goalSelector.addGoal(3, moveGoal);
-        this.goalSelector.addGoal(4, new RandomLookAroundUnitGoal(this));
     }
 
     @Override

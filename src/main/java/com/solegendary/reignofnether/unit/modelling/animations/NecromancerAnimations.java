@@ -6,7 +6,7 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
 public class NecromancerAnimations {
-	public static final AnimationDefinition Idle = AnimationDefinition.Builder.withLength(2.0F).looping()
+	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(2.0F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 2.5F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.25F, KeyframeAnimations.degreeVec(-2.5F, 2.1667F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -85,7 +85,7 @@ public class NecromancerAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Walk = AnimationDefinition.Builder.withLength(1.5F).looping()
+	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(1.5F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.5417F, KeyframeAnimations.degreeVec(10.0F, -3.6071F, 0.0F), AnimationChannel.Interpolations.LINEAR),
@@ -240,7 +240,7 @@ public class NecromancerAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Spell_Charge = AnimationDefinition.Builder.withLength(2.0F)
+	public static final AnimationDefinition SPELL_CHARGE = AnimationDefinition.Builder.withLength(2.0F)
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 2.5F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.125F, KeyframeAnimations.degreeVec(-35.0F, 2.5F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -337,7 +337,7 @@ public class NecromancerAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Spell_Activate  = AnimationDefinition.Builder.withLength(2.0F)
+	public static final AnimationDefinition SPELL_ACTIVATE  = AnimationDefinition.Builder.withLength(2.0F)
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(105.0F, 2.5F, 0.0F), AnimationChannel.Interpolations.LINEAR),
 			new Keyframe(0.125F, KeyframeAnimations.degreeVec(-56.4025F, 31.2665F, -21.1338F), AnimationChannel.Interpolations.LINEAR),
@@ -449,7 +449,7 @@ public class NecromancerAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Attack = AnimationDefinition.Builder.withLength(1.5F).looping()
+	public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(1.5F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 2.5F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.25F, KeyframeAnimations.degreeVec(-0.6474F, 2.4148F, -15.0136F), AnimationChannel.Interpolations.CATMULLROM),

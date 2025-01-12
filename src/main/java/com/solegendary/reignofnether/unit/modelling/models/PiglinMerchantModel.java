@@ -7,15 +7,17 @@ package com.solegendary.reignofnether.unit.modelling.models;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.solegendary.reignofnether.ReignOfNether;
-import net.minecraft.client.model.EntityModel;
+import com.solegendary.reignofnether.unit.modelling.animations.PiglinMerchantAnimations;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
-public class PiglinMerchantModel<T extends Entity> extends EntityModel<T> {
+public class PiglinMerchantModel<T extends Entity> extends KeyframeHierarchicalModel<T> {
 
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ReignOfNether.MOD_ID, "piglin_merchant_layer"), "main");
@@ -54,6 +56,11 @@ public class PiglinMerchantModel<T extends Entity> extends EntityModel<T> {
 		this.ArmLeft = this.Main.getChild("ArmLeft");
 		this.LegLeft = this.Main.getChild("LegLeft");
 		this.LegRight = this.Main.getChild("LegRight");
+	}
+
+	@Override
+	public @NotNull ModelPart root() {
+		return this.Main;
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -117,7 +124,11 @@ public class PiglinMerchantModel<T extends Entity> extends EntityModel<T> {
 
 	@Override
 	public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		root().getAllParts().forEach(ModelPart::resetPose);
 
+		if (!entity.isInWaterOrBubble()) {
+			animateWalk(PiglinMerchantAnimations.WALK, limbSwing, limbSwingAmount, 1.0F, 2.5F);
+		}
 	}
 
 	@Override

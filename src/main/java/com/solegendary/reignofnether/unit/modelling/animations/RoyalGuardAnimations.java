@@ -6,7 +6,7 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
 public class RoyalGuardAnimations {
-	public static final AnimationDefinition Idle = AnimationDefinition.Builder.withLength(2.0F).looping()
+	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(2.0F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(-2.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.4583F, KeyframeAnimations.degreeVec(2.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -81,7 +81,7 @@ public class RoyalGuardAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Walk = AnimationDefinition.Builder.withLength(0.8333F).looping()
+	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(0.8333F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
 			new Keyframe(0.25F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 5.0F), AnimationChannel.Interpolations.LINEAR),
@@ -207,7 +207,7 @@ public class RoyalGuardAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Spell_Charge = AnimationDefinition.Builder.withLength(1.0F)
+	public static final AnimationDefinition SPELL_CHARGE = AnimationDefinition.Builder.withLength(1.0F)
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(7.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
 			new Keyframe(0.5F, KeyframeAnimations.degreeVec(-5.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
@@ -289,7 +289,7 @@ public class RoyalGuardAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Spell_Activate  = AnimationDefinition.Builder.withLength(1.75F)
+	public static final AnimationDefinition SPELL_ACTIVATE = AnimationDefinition.Builder.withLength(1.75F)
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(-12.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.25F, KeyframeAnimations.degreeVec(-14.0327F, 26.7952F, -6.4285F), AnimationChannel.Interpolations.CATMULLROM),
@@ -400,7 +400,7 @@ public class RoyalGuardAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Attack = AnimationDefinition.Builder.withLength(1.0F).looping()
+	public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(1.0F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(-2.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.25F, KeyframeAnimations.degreeVec(1.231F, -0.217F, 9.9977F), AnimationChannel.Interpolations.LINEAR),

@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.hud;
 
 import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
+import com.solegendary.reignofnether.unit.units.monsters.NecromancerUnit;
 import com.solegendary.reignofnether.unit.units.monsters.PoisonSpiderUnit;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.*;
@@ -91,6 +92,8 @@ public class PortraitRendererModifiers {
         } else if (entity instanceof Ghast) {
             yOffset = -118;
             scale = -37;
+        } else if (entity instanceof NecromancerUnit) {
+            scale = -9;
         }
 
         return new Pair<>(yOffset, scale);

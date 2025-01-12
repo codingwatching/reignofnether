@@ -13,12 +13,12 @@ Features
 
 Bugfixes
 --------
-
+[❌] Fixed portals being built at full speed on overworld terrain
 
 
 Quality of Life
 ---------------
-
+[❌] Ally everyone by default if wave survival is enabled
 
 
 Balancing

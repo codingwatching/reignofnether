@@ -6,7 +6,7 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
 public class PiglinMerchantAnimations {
-	public static final AnimationDefinition Idle = AnimationDefinition.Builder.withLength(2.0F).looping()
+	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(2.0F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(2.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.5F, KeyframeAnimations.degreeVec(4.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -149,7 +149,7 @@ public class PiglinMerchantAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Walk_Start = AnimationDefinition.Builder.withLength(0.5F)
+	public static final AnimationDefinition WALK_START = AnimationDefinition.Builder.withLength(0.5F)
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(2.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.5F, KeyframeAnimations.degreeVec(2.5215F, 7.4928F, 0.329F), AnimationChannel.Interpolations.CATMULLROM)
@@ -252,7 +252,7 @@ public class PiglinMerchantAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Walk = AnimationDefinition.Builder.withLength(1.5F).looping()
+	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(1.5F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(2.5215F, 7.4928F, 0.329F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.1667F, KeyframeAnimations.degreeVec(3.4819F, 7.0995F, 7.8799F), AnimationChannel.Interpolations.CATMULLROM),
@@ -426,7 +426,7 @@ public class PiglinMerchantAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Spell_Charge = AnimationDefinition.Builder.withLength(1.75F)
+	public static final AnimationDefinition SPELL_CHARGE = AnimationDefinition.Builder.withLength(1.75F)
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(2.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.5F, KeyframeAnimations.degreeVec(26.9852F, -17.2325F, -21.6318F), AnimationChannel.Interpolations.CATMULLROM),
@@ -581,7 +581,7 @@ public class PiglinMerchantAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Spell_Act = AnimationDefinition.Builder.withLength(2.125F)
+	public static final AnimationDefinition SPELL_ACTIVATE = AnimationDefinition.Builder.withLength(2.125F)
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(165.8865F, -79.6953F, -161.8557F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.125F, KeyframeAnimations.degreeVec(66.4653F, -77.4904F, -39.2255F), AnimationChannel.Interpolations.CATMULLROM),
@@ -746,7 +746,7 @@ public class PiglinMerchantAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition Attack = AnimationDefinition.Builder.withLength(2.25F).looping()
+	public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(2.25F).looping()
 		.addAnimation("Head", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(2.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 			new Keyframe(0.25F, KeyframeAnimations.degreeVec(-0.6285F, -32.4383F, 12.7185F), AnimationChannel.Interpolations.CATMULLROM),
