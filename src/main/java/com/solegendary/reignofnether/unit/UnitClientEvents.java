@@ -28,6 +28,7 @@ import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.unit.packets.UnitActionServerboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
+import com.solegendary.reignofnether.unit.units.monsters.NecromancerUnit;
 import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
 import com.solegendary.reignofnether.unit.units.monsters.ZoglinUnit;
 import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
@@ -931,6 +932,8 @@ public class UnitClientEvents {
                     vUnit.setUnitAttackTarget(null);
                     ((MeleeAttackBuildingGoal) vUnit.getAttackBuildingGoal()).stopAttacking();
                 }
+            } else if (entity instanceof NecromancerUnit necromancerUnit) {
+                necromancerUnit.attackAnimState.startIfStopped(necromancerUnit.tickCount);
             }
         }
     }

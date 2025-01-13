@@ -8,19 +8,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.unit.modelling.animations.NecromancerAnimations;
-import com.solegendary.reignofnether.unit.modelling.animations.PiglinMerchantAnimations;
 import com.solegendary.reignofnether.unit.units.monsters.NecromancerUnit;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class NecromancerModel<T extends Entity> extends KeyframeHierarchicalModel<T> {
@@ -28,33 +24,33 @@ public class NecromancerModel<T extends Entity> extends KeyframeHierarchicalMode
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ReignOfNether.MOD_ID, "necromancer_layer"), "main");
 
-	private final ModelPart Main;
-	private final ModelPart Head;
-	private final ModelPart Body;
-	private final ModelPart LegL;
-	private final ModelPart LegR;
-	private final ModelPart ArmR;
+	private final ModelPart main;
+	private final ModelPart head;
+	private final ModelPart body;
+	private final ModelPart legL;
+	private final ModelPart legR;
+	private final ModelPart armR;
 	private final ModelPart armL;
-	private final ModelPart Pads;
-	private final ModelPart Cape;
-	private final ModelPart Staff;
+	private final ModelPart pads;
+	private final ModelPart cape;
+	private final ModelPart staff;
 
 	public NecromancerModel(ModelPart root) {
-		this.Main = root.getChild("Main");
-		this.Head = this.Main.getChild("Head");
-		this.Body = this.Main.getChild("Body");
-		this.LegL = this.Main.getChild("LegL");
-		this.LegR = this.Main.getChild("LegR");
-		this.ArmR = this.Main.getChild("ArmR");
-		this.armL = this.Main.getChild("armL");
-		this.Pads = this.Main.getChild("Pads");
-		this.Cape = this.Main.getChild("Cape");
-		this.Staff = this.Main.getChild("Staff");
+		this.main = root.getChild("main");
+		this.head = this.main.getChild("head");
+		this.body = this.main.getChild("body");
+		this.legL = this.main.getChild("legL");
+		this.legR = this.main.getChild("legR");
+		this.armR = this.main.getChild("armR");
+		this.armL = this.main.getChild("armL");
+		this.pads = this.main.getChild("pads");
+		this.cape = this.main.getChild("cape");
+		this.staff = this.main.getChild("staff");
 	}
 
 	@Override
 	public @NotNull ModelPart root() {
-		return this.Main;
+		return this.main;
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -63,8 +59,9 @@ public class NecromancerModel<T extends Entity> extends KeyframeHierarchicalMode
 
 		PartDefinition Main = partdefinition.addOrReplaceChild("Main", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		PartDefinition Head = Main.addOrReplaceChild("Head", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false)
-				.texOffs(0, 47).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, -24.0F, 1.0F));
+		PartDefinition Head = Main.addOrReplaceChild("Head", CubeListBuilder.create().texOffs(0, 47).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, -24.0F, 1.0F));
+
+		PartDefinition Head_r1 = Head.addOrReplaceChild("Head_r1", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-7.0F, -8.0F, -1.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(3.0F, 0.0F, -3.0F, 0.0F, 0.0436F, 0.0F));
 
 		PartDefinition Body = Main.addOrReplaceChild("Body", CubeListBuilder.create().texOffs(16, 16).addBox(-4.0F, -11.5F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
 				.texOffs(12, 32).addBox(-4.0F, 0.5F, -2.0F, 8.0F, 10.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -12.5F, 1.0F));
@@ -73,9 +70,13 @@ public class NecromancerModel<T extends Entity> extends KeyframeHierarchicalMode
 
 		PartDefinition LegR = Main.addOrReplaceChild("LegR", CubeListBuilder.create().texOffs(0, 30).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, -12.0F, 1.0F));
 
-		PartDefinition ArmR = Main.addOrReplaceChild("ArmR", CubeListBuilder.create().texOffs(0, 16).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(5.0F, -23.0F, 1.0F));
+		PartDefinition ArmR = Main.addOrReplaceChild("ArmR", CubeListBuilder.create(), PartPose.offset(5.0F, -23.0F, 1.0F));
 
-		PartDefinition armL = Main.addOrReplaceChild("armL", CubeListBuilder.create().texOffs(0, 16).addBox(-1.0F, -2.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.0F, -22.0F, 1.0F));
+		PartDefinition ArmR_r1 = ArmR.addOrReplaceChild("ArmR_r1", CubeListBuilder.create().texOffs(0, 16).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1396F));
+
+		PartDefinition armL = Main.addOrReplaceChild("armL", CubeListBuilder.create(), PartPose.offset(-5.0F, -22.0F, 1.0F));
+
+		PartDefinition armL_r1 = armL.addOrReplaceChild("armL_r1", CubeListBuilder.create().texOffs(0, 16).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -2.0F, 0.0F, -1.0455F, 0.0756F, -0.0437F));
 
 		PartDefinition Pads = Main.addOrReplaceChild("Pads", CubeListBuilder.create().texOffs(42, 32).addBox(-9.0F, -3.0F, -3.0F, 5.0F, 6.0F, 6.0F, new CubeDeformation(0.0F))
 				.texOffs(42, 44).addBox(4.0F, -3.0F, -3.0F, 5.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -22.0F, 1.0F));
@@ -110,20 +111,16 @@ public class NecromancerModel<T extends Entity> extends KeyframeHierarchicalMode
 		// OR: figure out how Wardens smoothly transition to the start of other states
 		// TODO: send animation sync packet to start attacks and spells
 
-		if (!entity.isInWaterOrBubble() && limbSwingAmount > 0.01f) {
+		if (!entity.isInWaterOrBubble() && limbSwingAmount > 0.001f) {
+			restart(necromancer, necromancer.walkAnimState, NecromancerAnimations.WALK, ageInTicks);
 			animateWalk(NecromancerAnimations.WALK, limbSwing, limbSwingAmount, speed, speed);
-			necromancer.walkAnimState.startIfStopped((int) (ageInTicks));
-		} else if (necromancer.attackAnimState.isStarted()) {
-			animate(necromancer.attackAnimState, NecromancerAnimations.ATTACK, ageInTicks);
-			necromancer.idleAnimState.startIfStopped((int) ageInTicks);
 		} else {
-			animate(necromancer.idleAnimState, NecromancerAnimations.IDLE, ageInTicks);
-			necromancer.idleAnimState.startIfStopped((int) ageInTicks);
+			restartThenAnimate(necromancer, necromancer.idleAnimState, NecromancerAnimations.IDLE, ageInTicks);
 		}
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		Main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 }

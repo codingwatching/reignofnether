@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.unit.UnitSyncAction;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.*;
 import com.solegendary.reignofnether.unit.modelling.animations.NecromancerAnimations;
+import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -39,7 +40,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, RangedAttackerUnit, HeroUnit {
+public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, RangedAttackerUnit, HeroUnit, KeyframeAnimated {
     // region
     private final ArrayList<Checkpoint> checkpoints = new ArrayList<>();
     public ArrayList<Checkpoint> getCheckpoints() { return checkpoints; };
@@ -140,6 +141,14 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
     public final AnimationState spellActivateAnimState = new AnimationState();
     public final AnimationState attackAnimState = new AnimationState();
 
+    public void stopAllAnimations() {
+        idleAnimState.stop();
+        walkAnimState.stop();
+        spellChargeAnimState.stop();
+        spellActivateAnimState.stop();
+        attackAnimState.stop();
+    }
+
     public NecromancerUnit(EntityType<? extends Skeleton> entityType, Level level) {
         super(entityType, level);
     }
@@ -226,8 +235,8 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         this.playSound(SoundEvents.SKELETON_SHOOT, 3.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.level.addFreshEntity(abstractarrow);
 
-        if (level.isClientSide())
-            attackAnimState.startIfStopped(this.tickCount);
+        if (!level.isClientSide())
+            UnitSyncClientboundPacket.sendSyncAnimationPacket(this, true);
 
         if (!level.isClientSide() && pTarget instanceof Unit unit)
             FogOfWarClientboundPacket.revealRangedUnit(unit.getOwnerName(), this.getId());
