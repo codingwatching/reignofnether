@@ -26,6 +26,7 @@ import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
+import com.solegendary.reignofnether.unit.modelling.animations.NecromancerAnimations;
 import com.solegendary.reignofnether.unit.packets.UnitActionServerboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import com.solegendary.reignofnether.unit.units.monsters.NecromancerUnit;
@@ -40,6 +41,7 @@ import com.solegendary.reignofnether.util.MiscUtil;
 import com.solegendary.reignofnether.util.MyMath;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
@@ -933,7 +935,9 @@ public class UnitClientEvents {
                     ((MeleeAttackBuildingGoal) vUnit.getAttackBuildingGoal()).stopAttacking();
                 }
             } else if (entity instanceof NecromancerUnit necromancerUnit) {
-                necromancerUnit.attackAnimState.startIfStopped(necromancerUnit.tickCount);
+                necromancerUnit.activeAnimDef = NecromancerAnimations.ATTACK;
+                necromancerUnit.activeAnimState = necromancerUnit.attackAnimState;
+                necromancerUnit.startAnimation(NecromancerAnimations.ATTACK);
             }
         }
     }

@@ -14,6 +14,7 @@ import com.solegendary.reignofnether.unit.interfaces.*;
 import com.solegendary.reignofnether.unit.modelling.animations.NecromancerAnimations;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
+import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -112,7 +113,6 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
 
     // endregion
-
     final static public float attackDamage = 4.0f;
     final static public float attacksPerSecond = 0.35f;
     final static public float maxHealth = 100.0f;
@@ -128,7 +128,7 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
     public int getFogRevealDuration() { return fogRevealDuration; }
     public void setFogRevealDuration(int duration) { fogRevealDuration = duration; }
 
-    private UnitBowAttackGoal<? extends LivingEntity> attackGoal;
+    private UnitRangedAttackGoal<? extends LivingEntity> attackGoal;
     private MeleeAttackBuildingGoal attackBuildingGoal;
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
@@ -141,6 +141,13 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
     public final AnimationState spellActivateAnimState = new AnimationState();
     public final AnimationState attackAnimState = new AnimationState();
 
+    // animation attack peak starts at 44% the way through, but we need to set it to 22% for some reason?
+    final static private int ATTACK_WINDUP_TICKS = (int) (NecromancerAnimations.ATTACK.lengthInSeconds() * 20f * 0.22f);
+
+    // non-looping animations
+    public AnimationDefinition activeAnimDef = null;
+    public AnimationState activeAnimState = null;
+
     public void stopAllAnimations() {
         idleAnimState.stop();
         walkAnimState.stop();
@@ -148,6 +155,9 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         spellActivateAnimState.stop();
         attackAnimState.stop();
     }
+    public int animateTicks = 0;
+    public void setAnimateTicksLeft(int ticks) { animateTicks = ticks; }
+    public int getAnimateTicksLeft() { return animateTicks; }
 
     public NecromancerUnit(EntityType<? extends Skeleton> entityType, Level level) {
         super(entityType, level);
@@ -155,7 +165,10 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
 
     @Override
     public void resetBehaviours() {
-
+        stopAllAnimations();
+        activeAnimDef = null;
+        activeAnimState = null;
+        animateTicks = 0;
     }
 
     @Override
@@ -179,6 +192,9 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         // only needed for attack goals created by reignofnether like RangedBowAttackUnitGoal
         if (attackGoal != null)
             attackGoal.tickCooldown();
+
+        if (level.isClientSide() && animateTicks > 0)
+            animateTicks -= 1;
     }
 
     @Override
@@ -191,7 +207,7 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, false);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new UnitBowAttackGoal<>(this);
+        this.attackGoal = new UnitRangedAttackGoal<>(this, ATTACK_WINDUP_TICKS);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
     }
 
@@ -232,11 +248,8 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
             d1 -= (1.0f - pTarget.getEyeHeight());
 
         abstractarrow.shoot(d0, d1 + d3 * 0.20000000298023224, d2, 1.6F, 0);
-        this.playSound(SoundEvents.SKELETON_SHOOT, 3.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+        this.playSound(SoundEvents.SHULKER_SHOOT, 3.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.level.addFreshEntity(abstractarrow);
-
-        if (!level.isClientSide())
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this, true);
 
         if (!level.isClientSide() && pTarget instanceof Unit unit)
             FogOfWarClientboundPacket.revealRangedUnit(unit.getOwnerName(), this.getId());
