@@ -1,7 +1,9 @@
 package com.solegendary.reignofnether.unit.interfaces;
 
+import com.solegendary.reignofnether.unit.UnitAnimationAction;
 import com.solegendary.reignofnether.unit.goals.BuildRepairGoal;
 import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
+import com.solegendary.reignofnether.unit.packets.UnitAnimationClientboundPacket;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.ZombieVillagerUnit;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
@@ -79,13 +81,13 @@ public interface WorkerUnit {
                 else
                     entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
                 if (!entity.level.isClientSide())
-                    UnitSyncClientboundPacket.sendSyncAnimationPacket(entity, ((Unit) entity).getTargetGoal().getTarget(), true);
+                    UnitAnimationClientboundPacket.sendEntityPacket(UnitAnimationAction.NON_KEYFRAME_START, entity, ((Unit) entity).getTargetGoal().getTarget());
             }
         } else {
             if (!mainHandItem.is(Items.AIR)) {
                 entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.AIR));
                 if (!entity.level.isClientSide())
-                    UnitSyncClientboundPacket.sendSyncAnimationPacket(entity,false);
+                    UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_STOP, entity);
             }
         }
     }

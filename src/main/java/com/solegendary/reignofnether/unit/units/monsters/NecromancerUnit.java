@@ -8,6 +8,7 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
 import com.solegendary.reignofnether.unit.Checkpoint;
+import com.solegendary.reignofnether.unit.UnitAnimationAction;
 import com.solegendary.reignofnether.unit.UnitSyncAction;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.*;
@@ -158,6 +159,16 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
     public int animateTicks = 0;
     public void setAnimateTicksLeft(int ticks) { animateTicks = ticks; }
     public int getAnimateTicksLeft() { return animateTicks; }
+
+    public void playSingleAnimation(UnitAnimationAction animAction) {
+        switch (animAction) {
+            case ATTACK_UNIT, ATTACK_BUILDING -> {
+                activeAnimDef = NecromancerAnimations.ATTACK;
+                activeAnimState = attackAnimState;
+                startAnimation(NecromancerAnimations.ATTACK);
+            }
+        }
+    }
 
     public NecromancerUnit(EntityType<? extends Skeleton> entityType, Level level) {
         super(entityType, level);

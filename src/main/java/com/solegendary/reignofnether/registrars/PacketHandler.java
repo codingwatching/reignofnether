@@ -74,6 +74,10 @@ public final class PacketHandler {
                 .encoder(UnitSyncWorkerClientBoundPacket::encode).decoder(UnitSyncWorkerClientBoundPacket::new)
                 .consumer(UnitSyncWorkerClientBoundPacket::handle).add();
 
+        INSTANCE.messageBuilder(UnitAnimationClientboundPacket.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(UnitAnimationClientboundPacket::encode).decoder(UnitAnimationClientboundPacket::new)
+                .consumer(UnitAnimationClientboundPacket::handle).add();
+
         INSTANCE.messageBuilder(UnitIdleWorkerClientBoundPacket.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(UnitIdleWorkerClientBoundPacket::encode).decoder(UnitIdleWorkerClientBoundPacket::new)
                 .consumer(UnitIdleWorkerClientBoundPacket::handle).add();

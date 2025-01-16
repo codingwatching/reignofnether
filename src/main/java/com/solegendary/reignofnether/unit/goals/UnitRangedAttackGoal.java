@@ -1,9 +1,11 @@
 package com.solegendary.reignofnether.unit.goals;
 
 import com.solegendary.reignofnether.building.GarrisonableBuilding;
+import com.solegendary.reignofnether.unit.UnitAnimationAction;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.RangedAttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.packets.UnitAnimationClientboundPacket;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.NecromancerUnit;
 import net.minecraft.world.entity.Entity;
@@ -130,7 +132,7 @@ public class UnitRangedAttackGoal<T extends net.minecraft.world.entity.Mob> exte
 
                 if (attackWindupTicksLeft == attackWindupTicksMax &&
                     mob instanceof NecromancerUnit necromancerUnit && !mob.level.isClientSide())
-                    UnitSyncClientboundPacket.sendSyncAnimationPacket(mob, true);
+                    UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.ATTACK_UNIT, mob);
 
                 attackWindupTicksLeft -= 1;
 

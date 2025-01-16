@@ -1,5 +1,7 @@
 package com.solegendary.reignofnether.unit.goals;
 
+import com.solegendary.reignofnether.unit.UnitAnimationAction;
+import com.solegendary.reignofnether.unit.packets.UnitAnimationClientboundPacket;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -16,13 +18,13 @@ public class CastFangsGoal extends AbstractCastTargetedSpellGoal {
     public void startCasting() {
         super.startCasting();
         if (!this.mob.level.isClientSide())
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this.mob, true);
+            UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_START, this.mob);
     }
 
     @Override
     public void stopCasting() {
         super.stopCasting();
         if (!this.mob.level.isClientSide())
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this.mob, false);
+            UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_STOP, this.mob);
     }
 }

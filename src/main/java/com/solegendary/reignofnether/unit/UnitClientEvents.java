@@ -14,22 +14,13 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.minimap.MinimapClientEvents;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.player.PlayerServerboundPacket;
-import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import com.solegendary.reignofnether.resources.*;
-import com.solegendary.reignofnether.survival.Wave;
-import com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner;
-import com.solegendary.reignofnether.survival.spawners.WaveSpawner;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
-import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
-import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
-import com.solegendary.reignofnether.unit.interfaces.Unit;
-import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
-import com.solegendary.reignofnether.unit.modelling.animations.NecromancerAnimations;
+import com.solegendary.reignofnether.unit.interfaces.*;
 import com.solegendary.reignofnether.unit.packets.UnitActionServerboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
-import com.solegendary.reignofnether.unit.units.monsters.NecromancerUnit;
 import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
 import com.solegendary.reignofnether.unit.units.monsters.ZoglinUnit;
 import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
@@ -41,26 +32,21 @@ import com.solegendary.reignofnether.util.MiscUtil;
 import com.solegendary.reignofnether.util.MyMath;
 import com.solegendary.reignofnether.util.MyRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Position;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SnowLayerBlock;
-import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
@@ -887,13 +873,10 @@ public class UnitClientEvents {
         sendUnitCommandManual(UnitAction.DISCARD, oldUnitIds);
     }
 
-    public static void syncUnitAnimation(int entityId, int targetId, BlockPos buildingBp, boolean startAnimation) {
+    public static void syncUnitAnimation(UnitAnimationAction animAction, boolean startAnimation, int entityId, int targetId,
+                                         BlockPos buildingBp) {
         for (LivingEntity entity : getAllUnits()) {
             if (entity instanceof EvokerUnit eUnit && eUnit.getId() == entityId) {
-                // skip if it's your evoker since it'll already be synced
-                //if (MC.player != null && eUnit.getOwnerName().equals(MC.player.getName().getString()))
-                //    return;
-
                 if (eUnit.getCastFangsGoal() != null) {
                     if (startAnimation)
                         eUnit.getCastFangsGoal().startCasting();
@@ -934,15 +917,21 @@ public class UnitClientEvents {
                     vUnit.setUnitAttackTarget(null);
                     ((MeleeAttackBuildingGoal) vUnit.getAttackBuildingGoal()).stopAttacking();
                 }
-            } else if (entity instanceof NecromancerUnit necromancerUnit) {
-                necromancerUnit.activeAnimDef = NecromancerAnimations.ATTACK;
-                necromancerUnit.activeAnimState = necromancerUnit.attackAnimState;
-                necromancerUnit.startAnimation(NecromancerAnimations.ATTACK);
             }
         }
     }
 
-    public static void playAttackBuildingAnimation(int entityId) {
+    public static void playKeyframeAnimation(UnitAnimationAction animAction, int entityId) {
+        for (LivingEntity entity : getAllUnits()) {
+            if (entity instanceof KeyframeAnimated kfa && entity.getId() == entityId) {
+                kfa.playSingleAnimation(animAction);
+                return;
+            }
+        }
+    }
+
+    // usually used for attacking buildings
+    public static void playAttackAnimation(int entityId) {
         for (LivingEntity entity : getAllUnits()) {
             if (entity.getId() == entityId) {
                 if (entity instanceof IronGolemUnit ||
