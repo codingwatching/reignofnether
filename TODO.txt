@@ -9,13 +9,14 @@
 Features
 --------
 
-- Make necromancer eye height higher
-- What happens if I use the scale logic from animateWalk with attack animations
+[❌] Make necromancer eye height higher
+
 
 Bugfixes
 --------
 [❌] Fixed portals being built at full speed on overworld terrain
 [✔] Fixed frame drop when right-clicking a building with a worker, including using Call to Arms
+
 
 
 Quality of Life
@@ -24,7 +25,7 @@ Quality of Life
 
 [🟡] An upgraded library is now called a Grand Library on the UI
 
-
+[❌] Prevent damage from fire blocks inside a flame sanctuary
 
 
 Balancing

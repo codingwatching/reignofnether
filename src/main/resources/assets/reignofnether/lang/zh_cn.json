@@ -895,10 +895,6 @@
   "hud.gamemode.reignofnether.survival3": "既可单人挑战也可携友结盟游玩。",
   "hud.gamemode.reignofnether.survival4": "%s（每天 %s 分钟）",
   "hud.gamemode.reignofnether.survival5": "鼠标左击以调整难度",
-  "hud.gamemode.reignofnether.koth1": "夺信标为王",
-  "hud.gamemode.reignofnether.koth2": "为争夺中心信标的所属权而战。",
-  "hud.gamemode.reignofnether.koth3": "升级信标以获得强力效果，控制信标一段时间以取胜。",
-  "hud.gamemode.reignofnether.koth4": "鼠标左击以放置信标",
   "hud.gamemode.reignofnether.changemode": "鼠标右击以切换游戏模式",
   "hud.gamemode.reignofnether.locked": "（已锁定）",
 

@@ -25,8 +25,10 @@ public class ClientGameModeHelper {
             case CLASSIC -> {
                 if (!disallowSurvival)
                     gameMode = GameMode.SURVIVAL;
+                //else
+                //    gameMode = GameMode.SANDBOX;
             }
-            case SURVIVAL -> gameMode = GameMode.CLASSIC;
+            //case SURVIVAL -> gameMode = GameMode.SANDBOX;
             default -> gameMode = GameMode.CLASSIC;
         }
     }
@@ -98,8 +100,8 @@ public class ClientGameModeHelper {
                             FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.changemode"), Style.EMPTY)
                     )
             );
-            case KOTH -> new Button(
-                    "King of the Beacon",
+            case SANDBOX -> new Button(
+                    "Sandbox",
                     Button.itemIconSize,
                     new ResourceLocation("minecraft", "textures/item/nether_star.png"),
                     (Keybinding) null,
@@ -109,13 +111,13 @@ public class ClientGameModeHelper {
                     () -> {},
                     ClientGameModeHelper::cycleGameMode,
                     List.of(
-                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.koth1") +
+                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.sandbox1") +
                                     getLockedString(), Style.EMPTY.withBold(true)),
                             FormattedCharSequence.forward("", Style.EMPTY),
-                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.koth2"), Style.EMPTY),
-                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.koth3"), Style.EMPTY),
+                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.sandbox2"), Style.EMPTY),
+                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.sandbox3"), Style.EMPTY),
+                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.sandbox4"), Style.EMPTY),
                             FormattedCharSequence.forward("", Style.EMPTY),
-                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.koth4"), Style.EMPTY),
                             FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.changemode"), Style.EMPTY)
                     )
             );

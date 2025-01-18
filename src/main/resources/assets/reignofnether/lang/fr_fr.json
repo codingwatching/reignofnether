@@ -856,10 +856,6 @@
     "hud.gamemode.reignofnether.survival3": "seul ou avec des alliés.",
     "hud.gamemode.reignofnether.survival4": "%s (%s min par jour)",
     "hud.gamemode.reignofnether.survival5": "Clic gauche pour changer la difficulté",
-    "hud.gamemode.reignofnether.koth1": "ROI DU BALISE",
-    "hud.gamemode.reignofnether.koth2": "Lutte pour le contrôle de la balise central. Améliorez-le pour ",
-    "hud.gamemode.reignofnether.koth3": "obtenir des effets puissants et gagnez en le contrôlant assez longtemps.",
-    "hud.gamemode.reignofnether.koth4": "Clic gauche pour placer la balise.",
     "hud.gamemode.reignofnether.changemode": "Clic droit pour changer le mode de jeu",
     "hud.gamemode.reignofnether.locked": "(verrouillé)",
   
