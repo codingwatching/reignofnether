@@ -9,16 +9,22 @@
 Features
 --------
 
-
+- Make necromancer eye height higher
+- What happens if I use the scale logic from animateWalk with attack animations
 
 Bugfixes
 --------
 [❌] Fixed portals being built at full speed on overworld terrain
+[✔] Fixed frame drop when right-clicking a building with a worker, including using Call to Arms
 
 
 Quality of Life
 ---------------
 [❌] Ally everyone by default if wave survival is enabled
+
+[🟡] An upgraded library is now called a Grand Library on the UI
+
+
 
 
 Balancing
@@ -27,6 +33,9 @@ Balancing
 
 Villagers
 ---------
+[❌] Enchant Quick Shot buffed to Quick Shot II
+    - Cost raised by ~50%
+
 
 Piglins
 -------

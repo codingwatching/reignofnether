@@ -107,12 +107,17 @@ public class NecromancerModel<T extends Entity> extends KeyframeHierarchicalMode
 			return;
 		float speed = (float) ms.getValue() * 10;
 
+		// any once-off animation like attack or cast spell
 		if (necromancer.activeAnimDef != null && necromancer.activeAnimState != null && necromancer.animateTicks > 0) {
-			restartThenAnimate(necromancer, necromancer.activeAnimState, necromancer.activeAnimDef, ageInTicks);
-		} else if (!entity.isInWaterOrBubble() && limbSwingAmount > 0.001f) {
+			restartThenAnimate(necromancer, necromancer.activeAnimState, necromancer.activeAnimDef, ageInTicks, necromancer.animateScale);
+		}
+		// walk animation
+		else if (!entity.isInWaterOrBubble() && limbSwingAmount > 0.001f) {
 			restart(necromancer, necromancer.walkAnimState, NecromancerAnimations.WALK, ageInTicks);
 			animateWalk(NecromancerAnimations.WALK, limbSwing, limbSwingAmount, speed, speed);
-		} else {
+		}
+		// idle animation
+		else {
 			restartThenAnimate(necromancer, necromancer.idleAnimState, NecromancerAnimations.IDLE, ageInTicks);
 		}
 	}

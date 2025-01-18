@@ -45,8 +45,15 @@ public abstract class KeyframeHierarchicalModel<E extends Entity> extends Hierar
     }
 
     protected void restartThenAnimate(KeyframeAnimated kfa, AnimationState animState, AnimationDefinition animDef, float ageInTicks) {
+        restartThenAnimate(kfa, animState, animDef, ageInTicks, 1.0f);
+    }
+
+    protected void restartThenAnimate(KeyframeAnimated kfa, AnimationState animState, AnimationDefinition animDef, float ageInTicks, float scale) {
         restart(kfa, animState, animDef, ageInTicks);
-        animate(animState, animDef, ageInTicks - ageInTicksOffset);
+        animState.updateTime(ageInTicks - ageInTicksOffset, 1.0f);
+        animState.ifStarted((time) -> {
+            KeyframeAnimations.animate(this, animDef, time.getAccumulatedTime(), scale, ANIMATION_VECTOR_CACHE);
+        });
     }
 
     protected void applyStatic(AnimationDefinition animDef) {

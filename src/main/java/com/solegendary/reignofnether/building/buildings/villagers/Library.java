@@ -119,6 +119,11 @@ public class Library extends ProductionBuilding {
         }
     }
 
+    @Override
+    public String getUpgradedName() {
+        return "Grand Library";
+    }
+
     public Faction getFaction() {
         return Faction.VILLAGERS;
     }

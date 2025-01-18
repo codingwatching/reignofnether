@@ -157,6 +157,8 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         attackAnimState.stop();
     }
     public int animateTicks = 0;
+    public float animateScale = 1.0f;
+    public boolean animateScaleReducing = false;
     public void setAnimateTicksLeft(int ticks) { animateTicks = ticks; }
     public int getAnimateTicksLeft() { return animateTicks; }
 
@@ -165,6 +167,7 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
             case ATTACK_UNIT, ATTACK_BUILDING -> {
                 activeAnimDef = NecromancerAnimations.ATTACK;
                 activeAnimState = attackAnimState;
+                animateScale = 1.0f;
                 startAnimation(NecromancerAnimations.ATTACK);
             }
         }
@@ -176,10 +179,11 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
 
     @Override
     public void resetBehaviours() {
-        stopAllAnimations();
-        activeAnimDef = null;
-        activeAnimState = null;
-        animateTicks = 0;
+        //stopAllAnimations();
+        //activeAnimDef = null;
+        //activeAnimState = null;
+        //animateTicks = 0;
+        animateScaleReducing = true;
     }
 
     @Override
@@ -204,8 +208,20 @@ public class NecromancerUnit extends Skeleton implements Unit, AttackerUnit, Ran
         if (attackGoal != null)
             attackGoal.tickCooldown();
 
-        if (level.isClientSide() && animateTicks > 0)
-            animateTicks -= 1;
+        if (level.isClientSide()) {
+            if (animateTicks > 0) {
+                animateTicks -= 1;
+            }
+            if (animateScale > 0 && animateScaleReducing) {
+                animateScale -= 0.1f;
+            }
+            if (animateScale <= 0) {
+                activeAnimDef = null;
+                activeAnimState = null;
+                animateScaleReducing = false;
+                stopAllAnimations();
+            }
+        }
     }
 
     @Override
