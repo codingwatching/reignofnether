@@ -1,5 +1,6 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
+import com.solegendary.reignofnether.building.buildings.monsters.*;
 import com.solegendary.reignofnether.building.buildings.piglins.*;
 import com.solegendary.reignofnether.building.buildings.piglins.BlackstoneBridge;
 import com.solegendary.reignofnether.hud.AbilityButton;
@@ -154,21 +155,26 @@ public class GruntUnit extends Piglin implements Unit, WorkerUnit, AttackerUnit,
         return (this.getGatherResourceGoal().isGathering() || this.getBuildRepairGoal().isBuilding());
     }
 
+    public static List<AbilityButton> getBuildingButtons() {
+        return List.of(
+            CentralPortal.getBuildButton(Keybindings.keyQ),
+            Portal.getBuildButton(Keybindings.keyW),
+            NetherwartFarm.getBuildButton(Keybindings.keyE),
+            Bastion.getBuildButton(Keybindings.keyR),
+            HoglinStables.getBuildButton(Keybindings.keyT),
+            FlameSanctuary.getBuildButton(Keybindings.keyY),
+            WitherShrine.getBuildButton(Keybindings.keyU),
+            BasaltSprings.getBuildButton(Keybindings.keyI),
+            Fortress.getBuildButton(Keybindings.keyO),
+            BlackstoneBridge.getBuildButton(Keybindings.keyC)
+        );
+    }
+
     public GruntUnit(EntityType<? extends Piglin> entityType, Level level) {
         super(entityType, level);
 
         if (level.isClientSide()) {
-            AbilityButton centralPortalButton = CentralPortal.getBuildButton(Keybindings.keyQ);
-            this.abilityButtons.add(centralPortalButton);
-            this.abilityButtons.add(Portal.getBuildButton(Keybindings.keyW));
-            this.abilityButtons.add(NetherwartFarm.getBuildButton(Keybindings.keyE));
-            this.abilityButtons.add(Bastion.getBuildButton(Keybindings.keyR));
-            this.abilityButtons.add(HoglinStables.getBuildButton(Keybindings.keyT));
-            this.abilityButtons.add(FlameSanctuary.getBuildButton(Keybindings.keyY));
-            this.abilityButtons.add(WitherShrine.getBuildButton(Keybindings.keyU));
-            this.abilityButtons.add(BasaltSprings.getBuildButton(Keybindings.keyI));
-            this.abilityButtons.add(Fortress.getBuildButton(Keybindings.keyO));
-            this.abilityButtons.add(BlackstoneBridge.getBuildButton(Keybindings.keyC));
+            this.abilityButtons.addAll(getBuildingButtons());
         }
     }
 

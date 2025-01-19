@@ -9,14 +9,23 @@
 Features
 --------
 
-[❌] Make necromancer eye height higher
+[❌] Sandbox mode
+    [✔] Should not be allowed to be defeated unless using /rts-surrender
+    [🟡] Should lock other players into sandbox too
+    [✔] Allow placement of neutral buildings on bottom left if nothing is selected
+    [❌] Add End portal to build endermen
+    [❌] Add Beacon
+    [❌] Add Healing fountain
+    [❌] save status to level
+    [❌] add add-unit options
+
 
 
 Bugfixes
 --------
 [❌] Fixed portals being built at full speed on overworld terrain
 [✔] Fixed frame drop when right-clicking a building with a worker, including using Call to Arms
-
+[❌] Make necromancer eye height higher
 
 
 Quality of Life
@@ -26,6 +35,8 @@ Quality of Life
 [🟡] An upgraded library is now called a Grand Library on the UI
 
 [❌] Prevent damage from fire blocks inside a flame sanctuary
+
+[❌] Show range of other buildings like library and lightning lab
 
 
 Balancing
@@ -50,3 +61,11 @@ Localisation
     "item.reignofnether.royal_guard_unit_spawn_egg": "Spawn Royal Guard Unit",
     "item.reignofnether.necromancer_unit_spawn_egg": "Spawn Necromancer Unit",
     "item.reignofnether.piglin_merchant_unit_spawn_egg": "Spawn Piglin Merchant Unit",
+
+    "server.reignofnether.started_sandbox": "%s has started their game (SANDBOX)",
+
+    "hud.gamemode.reignofnether.sandbox1": "SANDBOX",
+    "hud.gamemode.reignofnether.sandbox2": "Customise your map by freely placing units and, ",
+    "hud.gamemode.reignofnether.sandbox3": "buildings, including special neutral buildings.",
+    "hud.gamemode.reignofnether.sandbox4": "Enables cheats.",
+    "hud.gamemode.reignofnether.sandbox_confirm": "Confirm sandbox mode",

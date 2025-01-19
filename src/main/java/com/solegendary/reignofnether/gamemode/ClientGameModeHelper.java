@@ -2,8 +2,10 @@ package com.solegendary.reignofnether.gamemode;
 
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.keybinds.Keybinding;
+import com.solegendary.reignofnether.player.PlayerServerboundPacket;
 import com.solegendary.reignofnether.survival.SurvivalClientEvents;
 import com.solegendary.reignofnether.survival.WaveDifficulty;
+import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -25,10 +27,10 @@ public class ClientGameModeHelper {
             case CLASSIC -> {
                 if (!disallowSurvival)
                     gameMode = GameMode.SURVIVAL;
-                //else
-                //    gameMode = GameMode.SANDBOX;
+                else
+                    gameMode = GameMode.SANDBOX;
             }
-            //case SURVIVAL -> gameMode = GameMode.SANDBOX;
+            case SURVIVAL -> gameMode = GameMode.SANDBOX;
             default -> gameMode = GameMode.CLASSIC;
         }
     }
@@ -103,12 +105,12 @@ public class ClientGameModeHelper {
             case SANDBOX -> new Button(
                     "Sandbox",
                     Button.itemIconSize,
-                    new ResourceLocation("minecraft", "textures/item/nether_star.png"),
+                    new ResourceLocation("minecraft", "textures/block/crafting_table_front.png"),
                     (Keybinding) null,
                     () -> false,
                     () -> false,
                     () -> !gameModeLocked,
-                    () -> {},
+                    () -> PlayerServerboundPacket.startRTS(Faction.NONE, 0d,0d,0d),
                     ClientGameModeHelper::cycleGameMode,
                     List.of(
                             FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.sandbox1") +
@@ -118,6 +120,7 @@ public class ClientGameModeHelper {
                             FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.sandbox3"), Style.EMPTY),
                             FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.sandbox4"), Style.EMPTY),
                             FormattedCharSequence.forward("", Style.EMPTY),
+                            FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.sandbox_confirm"), Style.EMPTY),
                             FormattedCharSequence.forward(I18n.get("hud.gamemode.reignofnether.changemode"), Style.EMPTY)
                     )
             );

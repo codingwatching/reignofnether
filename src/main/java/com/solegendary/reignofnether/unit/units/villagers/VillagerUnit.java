@@ -268,6 +268,23 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         return (this.getGatherResourceGoal().isGathering() || this.getBuildRepairGoal().isBuilding());
     }
 
+    public static List<AbilityButton> getBuildingButtons() {
+        return List.of(
+            TownCentre.getBuildButton(Keybindings.keyQ),
+            OakStockpile.getBuildButton(Keybindings.keyW),
+            VillagerHouse.getBuildButton(Keybindings.keyE),
+            WheatFarm.getBuildButton(Keybindings.keyR),
+            Watchtower.getBuildButton(Keybindings.keyT),
+            Barracks.getBuildButton(Keybindings.keyY),
+            Blacksmith.getBuildButton(Keybindings.keyU),
+            ArcaneTower.getBuildButton(Keybindings.keyI),
+            Library.getBuildButton(Keybindings.keyO),
+            Castle.getBuildButton(Keybindings.keyP),
+            IronGolemBuilding.getBuildButton(Keybindings.keyL),
+            OakBridge.getBuildButton(Keybindings.keyC)
+        );
+    }
+
     public VillagerUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
@@ -275,19 +292,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         this.abilities.add(callToArms);
 
         if (level.isClientSide()) {
-            AbilityButton townCentreButton = TownCentre.getBuildButton(Keybindings.keyQ);
-            this.abilityButtons.add(townCentreButton);
-            this.abilityButtons.add(OakStockpile.getBuildButton(Keybindings.keyW));
-            this.abilityButtons.add(VillagerHouse.getBuildButton(Keybindings.keyE));
-            this.abilityButtons.add(WheatFarm.getBuildButton(Keybindings.keyR));
-            this.abilityButtons.add(Watchtower.getBuildButton(Keybindings.keyT));
-            this.abilityButtons.add(Barracks.getBuildButton(Keybindings.keyY));
-            this.abilityButtons.add(Blacksmith.getBuildButton(Keybindings.keyU));
-            this.abilityButtons.add(ArcaneTower.getBuildButton(Keybindings.keyI));
-            this.abilityButtons.add(Library.getBuildButton(Keybindings.keyO));
-            this.abilityButtons.add(Castle.getBuildButton(Keybindings.keyP));
-            this.abilityButtons.add(IronGolemBuilding.getBuildButton(Keybindings.keyL));
-            this.abilityButtons.add(OakBridge.getBuildButton(Keybindings.keyC));
+            this.abilityButtons.addAll(getBuildingButtons());
             this.abilityButtons.add(callToArms.getButton(Keybindings.keyV));
         }
     }

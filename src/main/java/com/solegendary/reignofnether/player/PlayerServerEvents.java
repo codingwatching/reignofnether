@@ -119,6 +119,13 @@ public class PlayerServerEvents {
         serverLevel.getDataStorage().save();
     }
 
+    public static boolean isSandboxPlayer(String playerName) {
+        for (RTSPlayer rtsPlayer : rtsPlayers)
+            if (rtsPlayer.faction == Faction.NONE)
+                return true;
+        return false;
+    }
+
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent evt) {
         ServerLevel level = evt.getServer().getLevel(Level.OVERWORLD);
@@ -333,12 +340,13 @@ public class PlayerServerEvents {
                     level.addFreshEntity(entity);
                 }
             }
-            if (SurvivalServerEvents.isEnabled()) {
-                level.setDayTime(TimeUtils.DAWN + getWaveSurvivalTimeModifier(SurvivalServerEvents.getDifficulty()));
-            } else {
-                level.setDayTime(MONSTER_START_TIME_OF_DAY);
+            if (faction != Faction.NONE) {
+                if (SurvivalServerEvents.isEnabled()) {
+                    level.setDayTime(TimeUtils.DAWN + getWaveSurvivalTimeModifier(SurvivalServerEvents.getDifficulty()));
+                } else {
+                    level.setDayTime(MONSTER_START_TIME_OF_DAY);
+                }
             }
-
             ResourcesServerEvents.resetResources(playerName);
 
             if (!TutorialServerEvents.isEnabled()) {
@@ -457,8 +465,7 @@ public class PlayerServerEvents {
             // apply all cheats - NOTE can cause concurrentModificationException clientside
             if (words.length == 1 && words[0].equalsIgnoreCase("allcheats") && (
                 playerName.equalsIgnoreCase("solegendary") ||
-                playerName.equalsIgnoreCase("altsolegendary") ||
-                playerName.equalsIgnoreCase("texboobcat"))
+                playerName.equalsIgnoreCase("altsolegendary"))
             ) {
                 ResourcesServerEvents.addSubtractResources(new Resources(playerName, 99999, 99999, 99999));
                 UnitServerEvents.maxPopulation = 99999;

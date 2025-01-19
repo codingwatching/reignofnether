@@ -8,6 +8,7 @@ public enum PlayerAction {
     START_RTS_VILLAGERS,
     START_RTS_MONSTERS,
     START_RTS_PIGLINS,
+    START_RTS_SANDBOX,
     DEFEAT,
     VICTORY,
     DISABLE_RTS,

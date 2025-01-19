@@ -457,6 +457,7 @@
     "server.reignofnether.already_started": "You already started your RTS match!",
     "server.reignofnether.outside_border": "Cannot start outside map border",
     "server.reignofnether.started": "%s has started their game!",
+    "server.reignofnether.started_sandbox": "%s has started their game (SANDBOX)",
     "server.reignofnether.total_players": "There are now %d total RTS player(s)",
     "server.reignofnether.bot_added": "%s (bot) has been added to the game!",
     "server.reignofnether.used_cheat": "%s used cheat: %s %s",
@@ -902,8 +903,15 @@
     "hud.gamemode.reignofnether.sandbox2": "Customise your map by freely placing units and, ",
     "hud.gamemode.reignofnether.sandbox3": "buildings, including special neutral buildings.",
     "hud.gamemode.reignofnether.sandbox4": "Enables cheats.",
+    "hud.gamemode.reignofnether.sandbox_confirm": "Left-click to confirm",
     "hud.gamemode.reignofnether.changemode": "Right-click to change game mode",
     "hud.gamemode.reignofnether.locked": "(locked)",
+
+    "sandbox.reignofnether.building_faction1": "Building Faction: %s",
+    "sandbox.reignofnether.building_faction2": "(Click to change)",
+    "sandbox.reignofnether.building_cheats_on": "Building Cheats: ON",
+    "sandbox.reignofnether.building_cheats_off": "Building Cheats: OFF",
+    "sandbox.reignofnether.building_cheats1": "(Click to toggle)",
 
     "config.reignofnether.warn_config_change": "Server host has changed configs",
     "config.reignofnether.hide_config_change": "(Click to hide)"
