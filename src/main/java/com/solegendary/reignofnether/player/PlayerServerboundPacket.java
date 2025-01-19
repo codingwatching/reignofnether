@@ -78,7 +78,7 @@ public class PlayerServerboundPacket {
 
         if (MC.player != null && MC.level != null) {
             BlockState bs = MC.level.getBlockState(new BlockPos(x, y, z));
-            if (bs.getMaterial().isLiquid()) {
+            if (bs.getMaterial().isLiquid() && faction != Faction.NONE) {
                 HudClientEvents.showTemporaryMessage(I18n.get("hud.reignofnether.invalid_start_location"));
                 return;
             }
@@ -86,7 +86,7 @@ public class PlayerServerboundPacket {
                 case VILLAGERS -> PlayerAction.START_RTS_VILLAGERS;
                 case MONSTERS -> PlayerAction.START_RTS_MONSTERS;
                 case PIGLINS -> PlayerAction.START_RTS_PIGLINS;
-                case NONE -> null;
+                case NONE -> PlayerAction.START_RTS_SANDBOX;
             };
             PacketHandler.INSTANCE.sendToServer(new PlayerServerboundPacket(playerAction, MC.player.getId(), x, y, z));
             GameModeServerboundPacket.setAndLockAllClientGameModes(ClientGameModeHelper.gameMode);
@@ -106,13 +106,22 @@ public class PlayerServerboundPacket {
                     MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.survival3"));
                     MC.player.sendSystemMessage(Component.literal(""));
                 });
-            } else {
+            } else if (ClientGameModeHelper.gameMode == GameMode.CLASSIC) {
                 CompletableFuture.delayedExecutor(3000, TimeUnit.MILLISECONDS).execute(() -> {
                     MC.player.sendSystemMessage(Component.literal(""));
                     MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.classic1").withStyle(Style.EMPTY.withBold(true)));
                     MC.player.sendSystemMessage(Component.literal("--------"));
                     MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.classic2"));
                     MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.classic3"));
+                    MC.player.sendSystemMessage(Component.literal(""));
+                });
+            } else if (ClientGameModeHelper.gameMode == GameMode.SANDBOX) {
+                CompletableFuture.delayedExecutor(3000, TimeUnit.MILLISECONDS).execute(() -> {
+                    MC.player.sendSystemMessage(Component.literal(""));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.sandbox1").withStyle(Style.EMPTY.withBold(true)));
+                    MC.player.sendSystemMessage(Component.literal("--------"));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.sandbox2"));
+                    MC.player.sendSystemMessage(Component.translatable("hud.gamemode.reignofnether.sandbox3"));
                     MC.player.sendSystemMessage(Component.literal(""));
                 });
             }
@@ -203,6 +212,8 @@ public class PlayerServerboundPacket {
                     PlayerServerEvents.startRTS(this.playerId, new Vec3(this.x, this.y, this.z), Faction.MONSTERS);
                 case START_RTS_PIGLINS ->
                     PlayerServerEvents.startRTS(this.playerId, new Vec3(this.x, this.y, this.z), Faction.PIGLINS);
+                case START_RTS_SANDBOX ->
+                    PlayerServerEvents.startRTS(this.playerId, new Vec3(this.x, this.y, this.z), Faction.NONE);
                 case DEFEAT -> PlayerServerEvents.defeat(this.playerId, Component.translatable("server.reignofnether.surrendered").getString());
                 case RESET_RTS -> PlayerServerEvents.resetRTS();
                 case LOCK_RTS -> PlayerServerEvents.setRTSLock(true);

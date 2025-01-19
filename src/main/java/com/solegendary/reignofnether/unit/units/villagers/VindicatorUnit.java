@@ -6,11 +6,13 @@ import com.solegendary.reignofnether.ability.abilities.PromoteIllager;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.unit.Checkpoint;
+import com.solegendary.reignofnether.unit.UnitAnimationAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.unit.packets.UnitAnimationClientboundPacket;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
@@ -145,21 +147,21 @@ public class VindicatorUnit extends Vindicator implements Unit, AttackerUnit {
         AttackerUnit.super.setUnitAttackTarget(target);
         if (!this.level.isClientSide()) {
             if (target != null)
-                UnitSyncClientboundPacket.sendSyncAnimationPacket(this, target, true);
+                UnitAnimationClientboundPacket.sendEntityPacket(UnitAnimationAction.NON_KEYFRAME_START, this, target);
             else
-                UnitSyncClientboundPacket.sendSyncAnimationPacket(this, false);
+                UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_STOP, this);
         }
     }
     @Override
     public void setAttackBuildingTarget(BlockPos preselectedBlockPos) {
         AttackerUnit.super.setAttackBuildingTarget(preselectedBlockPos);
         if (!this.level.isClientSide())
-             UnitSyncClientboundPacket.sendSyncAnimationPacket(this, preselectedBlockPos, true);
+             UnitAnimationClientboundPacket.sendBlockPosPacket(UnitAnimationAction.NON_KEYFRAME_START, this, preselectedBlockPos);
     }
     @Override
     public void resetBehaviours() {
         if (!this.level.isClientSide())
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this, false);
+            UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_STOP, this);
     }
 
     public static AttributeSupplier.Builder createAttributes() {

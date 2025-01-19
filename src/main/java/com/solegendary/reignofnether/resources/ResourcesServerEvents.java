@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.resources;
 
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.building.*;
+import com.solegendary.reignofnether.player.PlayerServerEvents;
 import com.solegendary.reignofnether.registrars.BlockRegistrar;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
@@ -35,6 +36,9 @@ public class ResourcesServerEvents {
     public static final int STARTING_FOOD_TUTORIAL = 750;
     public static final int STARTING_WOOD_TUTORIAL = 850;
     public static final int STARTING_ORE_TUTORIAL = 250;
+    public static final int STARTING_FOOD_SANDBOX = 999999;
+    public static final int STARTING_WOOD_SANDBOX = 999999;
+    public static final int STARTING_ORE_SANDBOX = 999999;
     public static final int STARTING_FOOD = 100;
     public static final int STARTING_WOOD = 450;
     public static final int STARTING_ORE = 250;
@@ -129,6 +133,10 @@ public class ResourcesServerEvents {
                     resources.food = STARTING_FOOD_TUTORIAL;
                     resources.wood = STARTING_WOOD_TUTORIAL;
                     resources.ore = STARTING_ORE_TUTORIAL;
+                } else if (PlayerServerEvents.isSandboxPlayer(playerName)) {
+                    resources.food = STARTING_FOOD_SANDBOX;
+                    resources.wood = STARTING_WOOD_SANDBOX;
+                    resources.ore = STARTING_ORE_SANDBOX;
                 } else {
                     resources.food = STARTING_FOOD;
                     resources.wood = STARTING_WOOD;

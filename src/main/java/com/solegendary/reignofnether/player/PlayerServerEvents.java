@@ -1,16 +1,12 @@
 package com.solegendary.reignofnether.player;
 
-import com.mojang.brigadier.context.ParsedArgument;
-import com.mojang.brigadier.context.ParsedCommandNode;
-import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.ReignOfNether;
+import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.alliance.AllyCommand;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.NetherZone;
 import com.solegendary.reignofnether.building.ProductionBuilding;
-import com.solegendary.reignofnether.gamemode.ClientGameModeHelper;
-import com.solegendary.reignofnether.gamemode.GameMode;
 import com.solegendary.reignofnether.guiscreen.TopdownGuiContainer;
 import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
@@ -19,10 +15,7 @@ import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.Resources;
 import com.solegendary.reignofnether.resources.ResourcesServerEvents;
-import com.solegendary.reignofnether.survival.SurvivalClientEvents;
 import com.solegendary.reignofnether.survival.SurvivalServerEvents;
-import com.solegendary.reignofnether.survival.SurvivalServerboundPacket;
-import com.solegendary.reignofnether.survival.WaveDifficulty;
 import com.solegendary.reignofnether.time.TimeUtils;
 import com.solegendary.reignofnether.tutorial.TutorialServerEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
@@ -30,17 +23,12 @@ import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
-import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
-import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -117,6 +105,13 @@ public class PlayerServerEvents {
         data.rtsPlayers.addAll(rtsPlayers);
         data.save();
         serverLevel.getDataStorage().save();
+    }
+
+    public static boolean isSandboxPlayer(String playerName) {
+        for (RTSPlayer rtsPlayer : rtsPlayers)
+            if (rtsPlayer.faction == Faction.NONE)
+                return true;
+        return false;
     }
 
     @SubscribeEvent
@@ -333,12 +328,13 @@ public class PlayerServerEvents {
                     level.addFreshEntity(entity);
                 }
             }
-            if (SurvivalServerEvents.isEnabled()) {
-                level.setDayTime(TimeUtils.DAWN + getWaveSurvivalTimeModifier(SurvivalServerEvents.getDifficulty()));
-            } else {
-                level.setDayTime(MONSTER_START_TIME_OF_DAY);
+            if (faction != Faction.NONE) {
+                if (SurvivalServerEvents.isEnabled()) {
+                    level.setDayTime(TimeUtils.DAWN + getWaveSurvivalTimeModifier(SurvivalServerEvents.getDifficulty()));
+                } else {
+                    level.setDayTime(MONSTER_START_TIME_OF_DAY);
+                }
             }
-
             ResourcesServerEvents.resetResources(playerName);
 
             if (!TutorialServerEvents.isEnabled()) {
@@ -457,8 +453,7 @@ public class PlayerServerEvents {
             // apply all cheats - NOTE can cause concurrentModificationException clientside
             if (words.length == 1 && words[0].equalsIgnoreCase("allcheats") && (
                 playerName.equalsIgnoreCase("solegendary") ||
-                playerName.equalsIgnoreCase("altsolegendary") ||
-                playerName.equalsIgnoreCase("texboobcat"))
+                playerName.equalsIgnoreCase("altsolegendary"))
             ) {
                 ResourcesServerEvents.addSubtractResources(new Resources(playerName, 99999, 99999, 99999));
                 UnitServerEvents.maxPopulation = 99999;

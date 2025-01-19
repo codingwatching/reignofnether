@@ -4,5 +4,5 @@ public enum Faction {
     VILLAGERS,
     MONSTERS,
     PIGLINS,
-    NONE
+    NONE // used for sandbox or placeholder value
 }

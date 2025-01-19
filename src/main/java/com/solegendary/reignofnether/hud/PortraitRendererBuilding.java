@@ -8,6 +8,7 @@ import com.mojang.math.Vector3f;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingClientEvents;
 import com.solegendary.reignofnether.building.buildings.monsters.SculkCatalyst;
+import com.solegendary.reignofnether.building.buildings.villagers.Library;
 import com.solegendary.reignofnether.healthbars.HealthBarClientEvents;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.util.MyRenderer;
@@ -40,6 +41,9 @@ class PortraitRendererBuilding {
         Relationship rs = BuildingClientEvents.getPlayerToBuildingRelationship(building);
 
         String name = building.name;
+
+        if (building.isUpgraded())
+            name = building.getUpgradedName();
 
         if (!building.isBuilt)
             name += " (" + (int) (building.getBlocksPlacedPercent() * 100) + "%)";

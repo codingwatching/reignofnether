@@ -1,7 +1,8 @@
 package com.solegendary.reignofnether.registrars;
 
 import com.solegendary.reignofnether.ReignOfNether;
-import com.solegendary.reignofnether.unit.units.modelling.GhastUnitRenderer;
+import com.solegendary.reignofnether.unit.modelling.renderers.GhastUnitRenderer;
+import com.solegendary.reignofnether.unit.modelling.renderers.NecromancerRenderer;
 import com.solegendary.reignofnether.unit.units.monsters.*;
 import com.solegendary.reignofnether.unit.units.piglins.*;
 import com.solegendary.reignofnether.unit.units.villagers.*;
@@ -192,7 +193,8 @@ public class EntityRegistrar {
 
     public static final RegistryObject<EntityType<GhastUnit>> GHAST_UNIT = ENTITIES.register("ghast_unit",
             () -> EntityType.Builder.of(GhastUnit::new, MobCategory.CREATURE)
-                    .sized(EntityType.GHAST.getWidth() * GhastUnitRenderer.SCALE_MULT, EntityType.GHAST.getHeight() * GhastUnitRenderer.SCALE_MULT)
+                    .sized(EntityType.GHAST.getWidth() * GhastUnitRenderer.SCALE_MULT,
+                            EntityType.GHAST.getHeight() * GhastUnitRenderer.SCALE_MULT)
                     .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
                     .build(new ResourceLocation(ReignOfNether.MOD_ID, "ghast_unit").toString()));
 
@@ -207,6 +209,25 @@ public class EntityRegistrar {
                     .sized(EntityType.SLIME.getWidth(), EntityType.SLIME.getHeight())
                     .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
                     .build(new ResourceLocation(ReignOfNether.MOD_ID, "slime_unit").toString()));
+
+    public static final RegistryObject<EntityType<RoyalGuardUnit>> ROYAL_GUARD_UNIT = ENTITIES.register("royal_guard_unit",
+            () -> EntityType.Builder.of(RoyalGuardUnit::new, MobCategory.CREATURE)
+                    .sized(EntityType.VINDICATOR.getWidth(), EntityType.VINDICATOR.getHeight())
+                    .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
+                    .build(new ResourceLocation(ReignOfNether.MOD_ID, "royal_guard_unit").toString()));
+
+    public static final RegistryObject<EntityType<NecromancerUnit>> NECROMANCER_UNIT = ENTITIES.register("necromancer_unit",
+            () -> EntityType.Builder.of(NecromancerUnit::new, MobCategory.CREATURE)
+                    .sized(EntityType.SKELETON.getWidth() * NecromancerRenderer.SCALE_MULT,
+                            EntityType.SKELETON.getHeight() * NecromancerRenderer.SCALE_MULT)
+                    .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
+                    .build(new ResourceLocation(ReignOfNether.MOD_ID, "necromancer_unit").toString()));
+
+    public static final RegistryObject<EntityType<PiglinMerchantUnit>> PIGLIN_MERCHANT_UNIT = ENTITIES.register("piglin_merchant_unit",
+            () -> EntityType.Builder.of(PiglinMerchantUnit::new, MobCategory.CREATURE)
+                    .sized(EntityType.PIGLIN_BRUTE.getWidth(), EntityType.PIGLIN_BRUTE.getHeight())
+                    .clientTrackingRange(UNIT_CLIENT_TRACKING_RANGE)
+                    .build(new ResourceLocation(ReignOfNether.MOD_ID, "piglin_merchant_unit").toString()));
 
     public static void init() {
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());

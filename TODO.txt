@@ -1,35 +1,52 @@
 
-1.19.2-1.1.0a
--------------
+1.19.2-1.1.1
 
-- Done and tested
 [✔] Done and tested
 [🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
 
 
-
-
 Features
 --------
 
+[❌] Sandbox mode
+    [✔] Should not be allowed to be defeated unless using /rts-surrender
+    [✔] Should lock other players into sandbox too
+    [✔] Allow placement of neutral buildings on bottom left if nothing is selected
+    [❌] Add End portal to build endermen
+    [❌] Add Beacon
+    [❌] Add Healing fountain
+    [❌] save status to level
+    [❌] add add-unit options
+
+
+
 Bugfixes
 --------
-
-- Fixed being unable to start wave survival mode on a server
-- /gamerule doSurvivalGriefing has been renamed to doPlayerGriefing and is now true by default
+[❌] Fixed portals being built at full speed on overworld terrain
+[❌] Make necromancer eye height higher
 
 
 Quality of Life
 ---------------
+[❌] Ally everyone by default if wave survival is enabled
 
+[🟡] An upgraded library is now called a Grand Library on the UI
+
+[❌] Prevent damage from fire blocks inside a flame sanctuary
+
+[❌] Show range of other buildings like library and lightning lab
 
 
 Balancing
 ---------
 
+
 Villagers
 ---------
+[❌] Enchant Quick Shot buffed to Quick Shot II
+    - Cost raised by ~50%
+
 
 Piglins
 -------
@@ -38,3 +55,16 @@ Monsters
 --------
 
 
+Localisation
+------------
+    "item.reignofnether.royal_guard_unit_spawn_egg": "Spawn Royal Guard Unit",
+    "item.reignofnether.necromancer_unit_spawn_egg": "Spawn Necromancer Unit",
+    "item.reignofnether.piglin_merchant_unit_spawn_egg": "Spawn Piglin Merchant Unit",
+
+    "server.reignofnether.started_sandbox": "%s has started their game (SANDBOX)",
+
+    "hud.gamemode.reignofnether.sandbox1": "SANDBOX",
+    "hud.gamemode.reignofnether.sandbox2": "Customise your map by freely placing units and, ",
+    "hud.gamemode.reignofnether.sandbox3": "buildings, including special neutral buildings.",
+    "hud.gamemode.reignofnether.sandbox4": "Enables cheats.",
+    "hud.gamemode.reignofnether.sandbox_confirm": "Confirm sandbox mode",

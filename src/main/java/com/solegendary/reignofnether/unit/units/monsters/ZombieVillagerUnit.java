@@ -1,6 +1,7 @@
 package com.solegendary.reignofnether.unit.units.monsters;
 
 import com.solegendary.reignofnether.building.buildings.monsters.*;
+import com.solegendary.reignofnether.building.buildings.villagers.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.research.ResearchClient;
@@ -9,14 +10,13 @@ import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapa
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
 import com.solegendary.reignofnether.unit.Checkpoint;
-import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.ArmSwingingUnit;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
 import com.solegendary.reignofnether.ability.Ability;
-import com.solegendary.reignofnether.unit.units.modelling.VillagerUnitModel;
+import com.solegendary.reignofnether.unit.modelling.models.VillagerUnitModel;
 import com.solegendary.reignofnether.unit.units.villagers.VillagerUnit;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
@@ -165,24 +165,29 @@ public class ZombieVillagerUnit extends Vindicator implements Unit, WorkerUnit, 
         return (this.getGatherResourceGoal().isGathering() || this.getBuildRepairGoal().isBuilding());
     }
 
+    public static List<AbilityButton> getBuildingButtons() {
+        return List.of(
+            Mausoleum.getBuildButton(Keybindings.keyQ),
+            SpruceStockpile.getBuildButton(Keybindings.keyW),
+            HauntedHouse.getBuildButton(Keybindings.keyE),
+            PumpkinFarm.getBuildButton(Keybindings.keyR),
+            DarkWatchtower.getBuildButton(Keybindings.keyT),
+            Graveyard.getBuildButton(Keybindings.keyY),
+            Dungeon.getBuildButton(Keybindings.keyU),
+            SpiderLair.getBuildButton(Keybindings.keyI),
+            SlimePit.getBuildButton(Keybindings.keyO),
+            Laboratory.getBuildButton(Keybindings.keyP),
+            Stronghold.getBuildButton(Keybindings.keyL),
+            SpruceBridge.getBuildButton(Keybindings.keyC),
+            SculkCatalyst.getBuildButton(Keybindings.keyV)
+        );
+    }
+
     public ZombieVillagerUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
         if (level.isClientSide()) {
-            AbilityButton mausoleumButton = Mausoleum.getBuildButton(Keybindings.keyQ);
-            this.abilityButtons.add(mausoleumButton);
-            this.abilityButtons.add(SpruceStockpile.getBuildButton(Keybindings.keyW));
-            this.abilityButtons.add(HauntedHouse.getBuildButton(Keybindings.keyE));
-            this.abilityButtons.add(PumpkinFarm.getBuildButton(Keybindings.keyR));
-            this.abilityButtons.add(DarkWatchtower.getBuildButton(Keybindings.keyT));
-            this.abilityButtons.add(Graveyard.getBuildButton(Keybindings.keyY));
-            this.abilityButtons.add(Dungeon.getBuildButton(Keybindings.keyU));
-            this.abilityButtons.add(SpiderLair.getBuildButton(Keybindings.keyI));
-            this.abilityButtons.add(SlimePit.getBuildButton(Keybindings.keyO));
-            this.abilityButtons.add(Laboratory.getBuildButton(Keybindings.keyP));
-            this.abilityButtons.add(Stronghold.getBuildButton(Keybindings.keyL));
-            this.abilityButtons.add(SpruceBridge.getBuildButton(Keybindings.keyC));
-            this.abilityButtons.add(SculkCatalyst.getBuildButton(Keybindings.keyV));
+            this.abilityButtons.addAll(getBuildingButtons());
         }
     }
 

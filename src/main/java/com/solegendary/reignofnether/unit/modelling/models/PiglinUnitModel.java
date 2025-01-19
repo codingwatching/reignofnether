@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.solegendary.reignofnether.unit.units.modelling;
+package com.solegendary.reignofnether.unit.modelling.models;
 
 import com.solegendary.reignofnether.unit.interfaces.ArmSwingingUnit;
 import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;

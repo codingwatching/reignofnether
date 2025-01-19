@@ -165,6 +165,10 @@ public abstract class Building {
         this.level = level;
     }
 
+    public String getUpgradedName() {
+        return name;
+    }
+
     public Building(
         Level level,
         BlockPos originPos,

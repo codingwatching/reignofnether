@@ -407,7 +407,8 @@ public class UnitServerEvents {
                 .filter(u -> (u instanceof Unit unit1 && unit1.getOwnerName().equals(unit.getOwnerName())))
                 .toList()
                 .size();
-            if (unitsOwned == 0 && isRTSPlayer(unit.getOwnerName())
+            if (!PlayerServerEvents.isSandboxPlayer(unit.getOwnerName()) &&
+                unitsOwned == 0 && isRTSPlayer(unit.getOwnerName())
                 && BuildingUtils.getTotalCompletedBuildingsOwned(false, unit.getOwnerName()) == 0) {
                 PlayerServerEvents.defeat(unit.getOwnerName(), Component.translatable("server.reignofnether.lost_all").getString());
             }

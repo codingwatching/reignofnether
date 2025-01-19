@@ -818,10 +818,6 @@
   "hud.gamemode.reignofnether.survival3": "可以單人或與盟友遊玩。",
   "hud.gamemode.reignofnether.survival4": "%s（每天 %s 分鐘）",
   "hud.gamemode.reignofnether.survival5": "左鍵點擊變更難度",
-  "hud.gamemode.reignofnether.koth1": "烽火台之王",
-  "hud.gamemode.reignofnether.koth2": "爭奪中心的烽火台控制權。升級並",
-  "hud.gamemode.reignofnether.koth3": "獲得強力效果，控制一段時間取得勝利。",
-  "hud.gamemode.reignofnether.koth4": "左鍵點擊放置烽火台。",
   "hud.gamemode.reignofnether.changemode": "右鍵點擊變更遊戲模式",
   "hud.gamemode.reignofnether.locked": "（已鎖定）"
 }

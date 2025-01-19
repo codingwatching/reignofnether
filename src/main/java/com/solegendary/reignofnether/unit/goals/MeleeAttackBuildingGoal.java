@@ -2,9 +2,11 @@ package com.solegendary.reignofnether.unit.goals;
 
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingUtils;
+import com.solegendary.reignofnether.unit.UnitAnimationAction;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.RangedAttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
+import com.solegendary.reignofnether.unit.packets.UnitAnimationClientboundPacket;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.SpiderUnit;
 import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
@@ -79,7 +81,7 @@ public class MeleeAttackBuildingGoal extends MoveToTargetBlockGoal {
                         mob instanceof RavagerUnit ||
                         mob instanceof WardenUnit) {
                         mob.handleEntityEvent((byte) 4);
-                        UnitSyncClientboundPacket.sendAttackBuildingAnimationPacket(mob);
+                        UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_ATTACK, mob);
                     }
                     else
                         this.mob.swing(InteractionHand.MAIN_HAND);

@@ -118,8 +118,7 @@ public interface Unit {
                 cp.tick();
                 boolean buildingIsDone = false;
                 if (unit instanceof WorkerUnit workerUnit && !cp.isForEntity()) {
-                    Building building = BuildingUtils.findBuilding(false, cp.bp);
-                    if (building != null && building.isBuilt && building.getHealth() >= building.getMaxHealth())
+                    if (cp.building != null && cp.building.isBuilt && cp.building.getHealth() >= cp.building.getMaxHealth())
                         buildingIsDone = true;
                 }
                 if (((Mob) unit).getOnPos().distToCenterSqr(cp.getPos()) < 4f || buildingIsDone)
