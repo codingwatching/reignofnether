@@ -11,7 +11,7 @@ Features
 
 [❌] Sandbox mode
     [✔] Should not be allowed to be defeated unless using /rts-surrender
-    [🟡] Should lock other players into sandbox too
+    [✔] Should lock other players into sandbox too
     [✔] Allow placement of neutral buildings on bottom left if nothing is selected
     [❌] Add End portal to build endermen
     [❌] Add Beacon
@@ -24,7 +24,6 @@ Features
 Bugfixes
 --------
 [❌] Fixed portals being built at full speed on overworld terrain
-[✔] Fixed frame drop when right-clicking a building with a worker, including using Call to Arms
 [❌] Make necromancer eye height higher
 
 
