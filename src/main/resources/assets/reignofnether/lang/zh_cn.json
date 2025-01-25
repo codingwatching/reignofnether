@@ -30,6 +30,9 @@
   "item.reignofnether.zoglin_unit_spawn_egg": "僵尸疣猪兽单位刷怪蛋",
   "item.reignofnether.magma_cube_unit_spawn_egg": "岩浆怪单位刷怪蛋",
   "item.reignofnether.slime_unit_spawn_egg": "史莱姆单位刷怪蛋",
+  "item.reignofnether.royal_guard_unit_spawn_egg": "皇家守卫单位刷怪蛋",
+  "item.reignofnether.necromancer_unit_spawn_egg": "死灵法师单位刷怪蛋",
+  "item.reignofnether.piglin_merchant_unit_spawn_egg": "猪灵商人单位刷怪蛋",
 
   "sounds.reignofnether.under_attack": "遭到袭击",
   "sounds.reignofnether.victory": "游戏获胜",
@@ -38,6 +41,7 @@
   "sounds.reignofnether.ally": "盟友",
   "sounds.reignofnether.neutral": "中立",
   "sounds.reignofnether.enemy": "敌对",
+  "sounds.reignofnether.main_menu": "主菜单",
 
   "abilities.reignofnether.attack_ground": "攻击地面",
   "abilities.reignofnether.call_lightning": "召唤闪电",
@@ -387,7 +391,6 @@
 
   "hud.map.reignofnether.open": "展开大地图",
   "hud.map.reignofnether.close": "收起大地图",
-
   "hud.map.reignofnether.pan_sensitivity.tooltip1": "摄像机视野灵敏度：%d/%d",
   "hud.map.reignofnether.pan_sensitivity.tooltip2": "（鼠标左/右击以调整灵敏度）",
   "hud.map.reignofnether.lock_map.tooltip1.enabled": "锁定地图中心：已启用",
@@ -453,7 +456,8 @@
   "server.reignofnether.locked": "本场对局已锁定，新玩家暂时无法加入对局。",
   "server.reignofnether.already_started": "你已经有正在游玩的对局了！",
   "server.reignofnether.outside_border": "无法在地图边界外开局",
-  "server.reignofnether.started": "%s开始对局了！",
+  "server.reignofnether.started": "%s已经开始对局了！",
+  "server.reignofnether.started_sandbox": "%s已经开始对局了！（沙盒模式）",
   "server.reignofnether.total_players": "现在场上共有 %d 名玩家",
   "server.reignofnether.bot_added": "%s（电脑）加入对局了！",
   "server.reignofnether.used_cheat": "%s使用了作弊码：%s %s",
@@ -887,7 +891,7 @@
   "block.reignofnether.falling_crimson_stem": "下落的绯红菌柄",
   "block.reignofnether.walkable_magma_block": "可行走的岩浆块",
 
-  "hud.gamemode.reignofnether.classic1": "标准模式",
+  "hud.gamemode.reignofnether.classic1": "经典模式",
   "hud.gamemode.reignofnether.classic2": "经典的即时战略游戏体验。",
   "hud.gamemode.reignofnether.classic3": "通过摧毁敌方建筑以击败对手。",
   "hud.gamemode.reignofnether.survival1": "塔防生存",
@@ -895,8 +899,19 @@
   "hud.gamemode.reignofnether.survival3": "既可单人挑战也可携友结盟游玩。",
   "hud.gamemode.reignofnether.survival4": "%s（每天 %s 分钟）",
   "hud.gamemode.reignofnether.survival5": "鼠标左击以调整难度",
+  "hud.gamemode.reignofnether.sandbox1": "沙盒模式",
+  "hud.gamemode.reignofnether.sandbox2": "自定义独属于你的游戏体验与地图，",
+  "hud.gamemode.reignofnether.sandbox3": "自由放置单位与建筑，特殊的中立建筑也随你摆放。",
+  "hud.gamemode.reignofnether.sandbox4": "允许启用作弊模式建造",
+  "hud.gamemode.reignofnether.sandbox_confirm": "鼠标左击以确认",
   "hud.gamemode.reignofnether.changemode": "鼠标右击以切换游戏模式",
   "hud.gamemode.reignofnether.locked": "（已锁定）",
+
+  "sandbox.reignofnether.building_faction1": "建筑所属派系：%s",
+  "sandbox.reignofnether.building_faction2": "（鼠标左击以修改）",
+  "sandbox.reignofnether.building_cheats_on": "作弊模式建造：已启用",
+  "sandbox.reignofnether.building_cheats_off": "作弊模式建造：已禁用",
+  "sandbox.reignofnether.building_cheats1": "（鼠标左击以切换）",
 
   "config.reignofnether.warn_config_change": "服务器设置已更改",
   "config.reignofnether.hide_config_change": "（点击以隐藏）"
