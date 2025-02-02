@@ -4,10 +4,13 @@ import com.mojang.datafixers.util.Pair;
 import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingClientEvents;
 import com.solegendary.reignofnether.building.NightSource;
+import com.solegendary.reignofnether.building.RangeIndicator;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.minimap.MinimapClientEvents;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.player.PlayerClientEvents;
+import com.solegendary.reignofnether.survival.SurvivalClientEvents;
+import com.solegendary.reignofnether.survival.SurvivalServerboundPacket;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.tutorial.TutorialStage;
 import com.solegendary.reignofnether.util.MyRenderer;
@@ -54,19 +57,7 @@ public class TimeClientEvents {
         () -> false,
         () -> !OrthoviewClientEvents.isEnabled(),
         () -> true,
-        () -> {
-            if (nightCircleMode == NightCircleMode.ALL) {
-                nightCircleMode = NightCircleMode.NO_OVERLAPS;
-            } else if (nightCircleMode == NightCircleMode.NO_OVERLAPS) {
-                nightCircleMode = NightCircleMode.OFF;
-            } else if (nightCircleMode == NightCircleMode.OFF) {
-                nightCircleMode = NightCircleMode.ALL;
-            }
-            for (Building building : BuildingClientEvents.getBuildings())
-                if (building instanceof NightSource ns) {
-                    ns.updateNightBorderBps();
-                }
-        },
+        null,
         null,
         null
     );
@@ -111,11 +102,10 @@ public class TimeClientEvents {
 
     @SubscribeEvent
     public static void onMousePress(ScreenEvent.MouseButtonPressed.Post evt) {
-        if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_1) {
+        if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_1)
             CLOCK_BUTTON.checkClicked((int) evt.getMouseX(), (int) evt.getMouseY(), true);
-        }
-        //else if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_2)
-        //    CLOCK_BUTTON.checkClicked((int) evt.getMouseX(), (int) evt.getMouseY(), false);
+        else if (evt.getButton() == GLFW.GLFW_MOUSE_BUTTON_2)
+            CLOCK_BUTTON.checkClicked((int) evt.getMouseX(), (int) evt.getMouseY(), false);
     }
 
     @SubscribeEvent
@@ -135,49 +125,37 @@ public class TimeClientEvents {
             String dayStr = " (%s)".formatted(I18n.get(isDay ? "time.reignofnether.day" : "time.reignofnether.night"));
             String timeStr = get12HourTimeStr(serverTime) + dayStr;
 
-            FormattedCharSequence timeUntilStr = FormattedCharSequence.forward(I18n.get("time.reignofnether.time_until",
-                getTimeUntilStr(serverTime, isDay ? DUSK : DAWN),
-                isDay ? I18n.get("time.reignofnether.night") : I18n.get("time.reignofnether.day")
-            ), Style.EMPTY);
+            FormattedCharSequence timeUntilStr =
+                FormattedCharSequence.forward(
+                    isDay ? I18n.get("time.reignofnether.time_until_night",
+                        getTimeUntilStr(serverTime, DUSK)) :
+                        I18n.get("time.reignofnether.time_until_day",
+                        getTimeUntilStr(serverTime, DAWN)),
+                    Style.EMPTY);
 
-            FormattedCharSequence gameLengthStr = FormattedCharSequence.forward("", Style.EMPTY);
+            ArrayList<FormattedCharSequence> tooltip = new ArrayList<>();
 
-            if (PlayerClientEvents.isRTSPlayer) {
-                gameLengthStr = FormattedCharSequence.forward(
-                    I18n.get("time.reignofnether.game_time", getTimeStrFromTicks(PlayerClientEvents.rtsGameTicks)),
-                    Style.EMPTY
-                );
-            }
-
-            String nightCircleModeName = switch (nightCircleMode) {
-                case ALL -> I18n.get("time.reignofnether.night_circle_mode_all");
-                case NO_OVERLAPS -> I18n.get("time.reignofnether.night_circle_mode_no_overlaps");
-                case OFF -> I18n.get("time.reignofnether.night_circle_mode_off");
-            };
-            List<FormattedCharSequence> tooltip =
-                List.of(FormattedCharSequence.forward(I18n.get("time.reignofnether" + ".time",
-                    timeStr
-                ), Style.EMPTY),
-                timeUntilStr,
-                gameLengthStr,
-                FormattedCharSequence.forward(I18n.get("time.reignofnether.night_circles", nightCircleModeName),
-                    Style.EMPTY
-                )
-            );
             if (targetClientTime != serverTime) {
-                tooltip = List.of(
-                    FormattedCharSequence.forward(I18n.get("time.reignofnether.time_is_distorted"),
-                        Style.EMPTY.withBold(true)
-                    ),
-                    FormattedCharSequence.forward(I18n.get("time.reignofnether.real_time", timeStr), Style.EMPTY),
-                    timeUntilStr,
-                    gameLengthStr,
-                    FormattedCharSequence.forward(I18n.get("time.reignofnether.night_circles", nightCircleModeName),
-                        Style.EMPTY
-                    )
-                );
+                tooltip.add(FormattedCharSequence.forward(I18n.get("time.reignofnether.time_is_distorted"), Style.EMPTY.withBold(true)));
+                tooltip.add(FormattedCharSequence.forward(I18n.get("time.reignofnether.real_time", timeStr), Style.EMPTY));
+            } else
+                tooltip.add(FormattedCharSequence.forward(I18n.get("time.reignofnether" + ".time", timeStr ), Style.EMPTY));
+
+            tooltip.add(timeUntilStr);
+
+            if (SurvivalClientEvents.isEnabled) {
+                long timeOffset = -getWaveSurvivalTimeModifier(SurvivalClientEvents.difficulty);
+                tooltip.add(FormattedCharSequence.forward(I18n.get("time.reignofnether.time_until_next_wave",
+                        getTimeUntilStrWithOffset(serverTime, DUSK, isDay ? 0 : timeOffset)), Style.EMPTY));
             }
 
+            if (PlayerClientEvents.isRTSPlayer && !SurvivalClientEvents.isEnabled) {
+                FormattedCharSequence gameLengthStr = FormattedCharSequence.forward(
+                        I18n.get("time.reignofnether.game_time", getTimeStrFromTicks(PlayerClientEvents.rtsGameTicks)),
+                        Style.EMPTY
+                );
+                tooltip.add(gameLengthStr);
+            }
             MyRenderer.renderTooltip(evt.getPoseStack(), tooltip, evt.getMouseX(), evt.getMouseY());
         }
     }
@@ -193,13 +171,13 @@ public class TimeClientEvents {
             //            }
         }
 
-        // draw night-ranges for monsters
+        // draw range indicators for buildings with abilities and monster night sources
         for (Building building : BuildingClientEvents.getBuildings())
-            if (building instanceof NightSource ns) {
-                for (BlockPos bp : ns.getNightBorderBps()) {
+            if (building instanceof RangeIndicator ri) {
+                for (BlockPos bp : ri.getBorderBps()) {
                     if (BuildingClientEvents.getSelectedBuildings().contains(building)) {
                         MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, 0f, 0.8f, 0f, 0.3f);
-                    } else {
+                    } else if (!ri.showOnlyWhenSelected()) {
                         MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, 0f, 0f, 0f, 0.6f);
                     }
                     /* causes a lot of flickering
@@ -238,10 +216,17 @@ public class TimeClientEvents {
                 if (!building.isExploredClientside || !(building instanceof NightSource ns)) {
                     continue;
                 }
-
                 nightSourceOrigins.add(new Pair<>(building.centrePos, ns.getNightRange() - VISIBLE_BORDER_ADJ));
             }
         }
+    }
+
+    public static String getNightCircleModeName() {
+        return switch (nightCircleMode) {
+            case ALL -> I18n.get("time.reignofnether.night_circle_mode_all");
+            case NO_OVERLAPS -> I18n.get("time.reignofnether.night_circle_mode_no_overlaps");
+            case OFF -> I18n.get("time.reignofnether.night_circle_mode_off");
+        };
     }
 }
 

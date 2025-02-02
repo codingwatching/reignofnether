@@ -1,5 +1,6 @@
 package com.solegendary.reignofnether.unit.interfaces;
 
+import com.solegendary.reignofnether.building.Building;
 import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
 import com.solegendary.reignofnether.hud.AbilityButton;
@@ -11,7 +12,10 @@ import com.solegendary.reignofnether.research.researchItems.ResearchFireResistan
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.time.NightUtils;
+import com.solegendary.reignofnether.unit.Checkpoint;
+import com.solegendary.reignofnether.unit.UnitAction;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
+import com.solegendary.reignofnether.unit.UnitServerEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.ability.Ability;
@@ -27,6 +31,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
@@ -45,19 +50,21 @@ public interface Unit {
     static int PIGLIN_HEALING_TICKS = 8 * ResourceCost.TICKS_PER_SECOND;
     static int MONSTER_HEALING_TICKS = 12 * ResourceCost.TICKS_PER_SECOND;
 
+    // used for increasing pathfinding calculation range, default is 16 for most mobs
+    static int FOLLOW_RANGE_IMPROVED = 64;
+    static int FOLLOW_RANGE = 16;
+
+    public static int getFollowRange() {
+        return UnitServerEvents.IMPROVED_PATHFINDING ? FOLLOW_RANGE_IMPROVED : FOLLOW_RANGE;
+    }
+
     // list of positions to draw lines between to indicate unit intents - will fade over time unless shift is held
-    public ArrayList<BlockPos> getCheckpoints();
-    public int getCheckpointTicksLeft();
-    public void setCheckpointTicksLeft(int ticks);
-    public boolean isCheckpointGreen();
-    public void setIsCheckpointGreen(boolean green);
-    public int getEntityCheckpointId();
-    public void setEntityCheckpointId(int id);
+    public ArrayList<Checkpoint> getCheckpoints();
 
     public GarrisonGoal getGarrisonGoal();
     public boolean canGarrison();
 
-    public UsePortalGoal getUsePortalGoal();
+    public MoveToTargetBlockGoal getUsePortalGoal();
     public boolean canUsePortal();
 
     public Faction getFaction();
@@ -104,32 +111,18 @@ public interface Unit {
 
         // ------------- CHECKPOINT LOGIC ------------- //
         if (unitMob.level.isClientSide()) {
-            if (Keybindings.shiftMod.isDown()) {
-                unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
-            }
-            else if (unit.getCheckpointTicksLeft() > 0) {
-                unit.setCheckpointTicksLeft(unit.getCheckpointTicksLeft() - 1);
-                if (unit.getCheckpointTicksLeft() <= 0) {
-                    unit.getCheckpoints().clear();
-                    unit.setEntityCheckpointId(-1);
-                } else if (unit.getEntityCheckpointId() > -1 && unit.getCheckpointTicksLeft() > UnitClientEvents.CHECKPOINT_TICKS_FADE) {
-                    // remove an entity checkpoint if the given entity no longer exists
-                    if (Minecraft.getInstance().level != null) {
-                        Entity entity = Minecraft.getInstance().level.getEntity(unit.getEntityCheckpointId());
-                        if (entity == null)
-                            unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_FADE);
-                    }
-                }
-                // remove any BlockPos checkpoints if we're already close enough to them
-                if (unit.getCheckpoints().size() > 1) {
-                    unit.getCheckpoints().removeIf(bp -> ((Mob) unit).getOnPos().distToCenterSqr(new Vec3(bp.getX(), bp.getY(), bp.getZ())) < 4f);
-                } // if we only have one checkpoint, fade it out instead of removing it
-                else if (unit.getCheckpoints().size() == 1 && unit.getCheckpointTicksLeft() > UnitClientEvents.CHECKPOINT_TICKS_FADE) {
-                    BlockPos bp = unit.getCheckpoints().get(0);
-                    if (((Mob) unit).position().distanceToSqr(new Vec3(bp.getX(), bp.getY(), bp.getZ())) < 4f)
-                        unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_FADE);
-                }
 
+            unit.getCheckpoints().removeIf(c -> c.isForEntity() && !c.entity.isAlive() || c.ticksLeft <= 0);
+
+            for (Checkpoint cp : unit.getCheckpoints()) {
+                cp.tick();
+                boolean buildingIsDone = false;
+                if (unit instanceof WorkerUnit workerUnit && !cp.isForEntity()) {
+                    if (cp.building != null && cp.building.isBuilt && cp.building.getHealth() >= cp.building.getMaxHealth())
+                        buildingIsDone = true;
+                }
+                if (((Mob) unit).getOnPos().distToCenterSqr(cp.getPos()) < 4f || buildingIsDone)
+                    cp.startFading();
             }
         } else {
             int totalRes = Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue();
@@ -173,7 +166,7 @@ public interface Unit {
             unitMob.invulnerableTime = 0;
 
             // enact target-following, and stop followTarget being reset
-            if (unit.getFollowTarget() != null)
+            if (unit.getFollowTarget() != null && unitMob.tickCount % 20 == 0)
                 unit.setMoveTarget(unit.getFollowTarget().blockPosition());
 
             // remove fire from piglin units if they have research
@@ -197,6 +190,7 @@ public interface Unit {
                 le.heal(1);
             } else if (unit.getFaction() == Faction.PIGLINS &&
                     le.tickCount % PIGLIN_HEALING_TICKS == 0 &&
+                    !(unit instanceof Slime) &&
                     (NetherBlocks.isNetherBlock(le.level, le.getOnPos()) || unit instanceof GhastUnit)) {
                 le.heal(1);
             }
@@ -242,8 +236,12 @@ public interface Unit {
         unit.setHoldPosition(false);
         if (unit.canGarrison())
             unit.getGarrisonGoal().stopGarrisoning();
-        if (unit.canUsePortal())
-            unit.getUsePortalGoal().stopUsingPortal();
+        if (unit.canUsePortal()) {
+            if (unit.getUsePortalGoal() instanceof FlyingUsePortalGoal flyingUsePortalGoal)
+                flyingUsePortalGoal.stopUsingPortal();
+            if (unit.getUsePortalGoal() instanceof UsePortalGoal usePortalGoal)
+                usePortalGoal.stopUsingPortal();
+        }
     }
 
     // can be overridden in the Unit's class to do additional logic on a reset
@@ -272,5 +270,27 @@ public interface Unit {
             return 0.5f;
         }
         return 1.0f;
+    }
+
+    public static Ability getAbility(Unit unit, UnitAction abilityAction) {
+        for (Ability ability : unit.getAbilities())
+            if (ability.action.equals(abilityAction))
+                return ability;
+        return null;
+    }
+
+    public default boolean isIdle() {
+        boolean idleAttacker = true;
+        if (this instanceof AttackerUnit attackerUnit)
+            idleAttacker = attackerUnit.getAttackMoveTarget() == null &&
+                            !((Unit) attackerUnit).hasLivingTarget();
+        boolean idleWorker = true;
+        if (this instanceof WorkerUnit)
+            idleWorker = WorkerUnit.isIdle((WorkerUnit) this);
+
+        return this.getMoveGoal().getMoveTarget() == null &&
+                this.getFollowTarget() == null &&
+                idleAttacker &&
+                idleWorker;
     }
 }

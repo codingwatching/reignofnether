@@ -14,6 +14,7 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.TridentItem;
 
 import java.util.EnumSet;
+import java.util.Random;
 
 // modified version of RangedBowAttackGoal which:
 // - doesn't strafe
@@ -27,22 +28,25 @@ import java.util.EnumSet;
 // can also be used for generic projectile attacks as long as the mob 'technically' is holding a bow, eg. Blazes and ghasts
 
 public class UnitBowAttackGoal<T extends net.minecraft.world.entity.Mob> extends Goal {
+    private final Random random = new Random();
+
     private final T mob;
-    private final int attackWindupTime = 5; // time to wind up a bow attack
-    private int attackCooldownMax;
+    private int attackWindupTime = random.nextInt(0,10); // time to wind up a bow attack
     private int attackCooldown = 0; // time to wait between bow windups
     private int attackTime = -1;
     private int seeTime; // how long we have seen the target for
 
     private static final int GARRISON_BONUS_RANGE_TO_GHASTS = 10;
 
-    public UnitBowAttackGoal(T mob, int attackCooldown) {
+    public UnitBowAttackGoal(T mob) {
         this.mob = mob;
-        this.attackCooldownMax = attackCooldown;
+        setToMaxAttackCooldown();
         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
 
     public void tickCooldown() {
+        if (this.attackCooldown > ((AttackerUnit) this.mob).getAttackCooldown())
+            setToMaxAttackCooldown();
         if (this.attackCooldown > 0)
             this.attackCooldown -= 1;
     }
@@ -52,7 +56,7 @@ public class UnitBowAttackGoal<T extends net.minecraft.world.entity.Mob> extends
     }
 
     public void setToMaxAttackCooldown() {
-        this.attackCooldown = this.attackCooldownMax;
+        this.attackCooldown = ((AttackerUnit) this.mob).getAttackCooldown();
     }
 
     public void resetCooldown() {
@@ -169,6 +173,7 @@ public class UnitBowAttackGoal<T extends net.minecraft.world.entity.Mob> extends
                             rangedAttackerUnit.performUnitRangedAttack(target, velocity);
 
                         this.attackTime = this.attackWindupTime;
+                        this.attackWindupTime = random.nextInt(0,10);
                         this.setToMaxAttackCooldown();
                     }
                 }

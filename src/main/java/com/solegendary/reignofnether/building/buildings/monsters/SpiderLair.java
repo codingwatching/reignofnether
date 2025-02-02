@@ -68,7 +68,7 @@ public class SpiderLair extends ProductionBuilding {
                 hotkey,
                 () -> BuildingClientEvents.getBuildingToPlace() == SpiderLair.class,
                 () -> false,
-                () -> BuildingClientEvents.hasFinishedBuilding(Laboratory.buildingName) ||
+                () -> BuildingClientEvents.hasFinishedBuilding(Graveyard.buildingName) ||
                         ResearchClient.hasCheat("modifythephasevariance"),
                 () -> BuildingClientEvents.setBuildingToPlace(SpiderLair.class),
                 null,

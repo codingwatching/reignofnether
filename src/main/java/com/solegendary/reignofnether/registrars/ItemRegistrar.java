@@ -57,6 +57,10 @@ public class ItemRegistrar {
             ITEMS.register("villager_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.VILLAGER_UNIT,
                     0x523632, 0x946F66, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
+    public static final RegistryObject<ForgeSpawnEggItem> MILITIA_UNIT_SPAWN_EGG =
+            ITEMS.register("militia_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.MILITIA_UNIT,
+                    0x523632, 0x946F66, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
     public static final RegistryObject<ForgeSpawnEggItem> ZOMBIE_VILLAGER_UNIT_SPAWN_EGG =
             ITEMS.register("zombie_villager_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.ZOMBIE_VILLAGER_UNIT,
                     0x523632, 0x647E51, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
@@ -124,6 +128,27 @@ public class ItemRegistrar {
     public static final RegistryObject<ForgeSpawnEggItem> GHAST_UNIT_SPAWN_EGG =
             ITEMS.register("ghast_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.GHAST_UNIT,
                     16382457, 12369084, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+    public static final RegistryObject<ForgeSpawnEggItem> MAGMA_CUBE_UNIT_SPAWN_EGG =
+            ITEMS.register("magma_cube_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.MAGMA_CUBE_UNIT,
+                    3080192, 11776768, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+    public static final RegistryObject<ForgeSpawnEggItem> SLIME_UNIT_SPAWN_EGG =
+            ITEMS.register("slime_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.SLIME_UNIT,
+                    5405768, 5018938, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+    public static final RegistryObject<ForgeSpawnEggItem> ROYAL_GUARD_UNIT_SPAWN_EGG =
+            ITEMS.register("royal_guard_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.ROYAL_GUARD_UNIT,
+                    0x959b9b, 0x014675, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+    public static final RegistryObject<ForgeSpawnEggItem> NECROMANCER_UNIT_SPAWN_EGG =
+            ITEMS.register("necromancer_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.NECROMANCER_UNIT,
+                    0x3f243d, 0x0b9cbb, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+    public static final RegistryObject<ForgeSpawnEggItem> PIGLIN_MERCHANT_UNIT_SPAWN_EGG =
+            ITEMS.register("piglin_merchant_unit_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistrar.PIGLIN_MERCHANT_UNIT,
+                    0x3d1f12, 0x91da2a, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
 
     public static void init() {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());

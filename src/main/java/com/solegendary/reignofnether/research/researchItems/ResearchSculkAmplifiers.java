@@ -12,6 +12,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -25,6 +26,7 @@ public class ResearchSculkAmplifiers extends ProductionItem {
     public final static ResourceCost cost = ResourceCosts.RESEARCH_SCULK_AMPLIFIERS;
 
     public final static int SPLIT_BOOM_RANGE = 20;
+    public final static int SPLIT_BOOM_AMOUNT = 3;
 
     public ResearchSculkAmplifiers(ProductionBuilding building) {
         super(building, ResourceCosts.RESEARCH_SCULK_AMPLIFIERS.ticks);
@@ -58,14 +60,14 @@ public class ResearchSculkAmplifiers extends ProductionItem {
             () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
             null,
             List.of(
-                FormattedCharSequence.forward(ResearchSculkAmplifiers.itemName, Style.EMPTY.withBold(true)),
+                FormattedCharSequence.forward(I18n.get("research.reignofnether.sculk_amplifiers"), Style.EMPTY.withBold(true)),
                 ResourceCosts.getFormattedCost(cost),
                 ResourceCosts.getFormattedTime(cost),
                 FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Wardens can Sonic Boom Sculk Calaysts to split the boom ", Style.EMPTY),
-                FormattedCharSequence.forward("onto 3 random nearby enemies within a range of " + SPLIT_BOOM_RANGE, Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward("Requires a Stronghold.", Style.EMPTY)
+                    FormattedCharSequence.forward(I18n.get("research.reignofnether.sculk_amplifiers.tooltip1"), Style.EMPTY),
+                    FormattedCharSequence.forward(I18n.get("research.reignofnether.sculk_amplifiers.tooltip2", SPLIT_BOOM_AMOUNT, SPLIT_BOOM_RANGE), Style.EMPTY),
+                    FormattedCharSequence.forward("", Style.EMPTY),
+                    FormattedCharSequence.forward(I18n.get("research.reignofnether.sculk_amplifiers.tooltip3"), Style.EMPTY)
             )
         );
     }

@@ -19,6 +19,7 @@ import java.util.function.Predicate;
 public class SelectedTargetGoal<T extends LivingEntity> extends TargetGoal {
     protected LivingEntity target;
     protected TargetingConditions targetConditions;
+    public boolean forced = false; // try to target no matter what, eg. a-clicking or right clicking a specific unit
 
     public SelectedTargetGoal(Mob mob, boolean mustSee, boolean mustReach) {
         this(mob, mustSee, mustReach, null);
@@ -48,6 +49,9 @@ public class SelectedTargetGoal<T extends LivingEntity> extends TargetGoal {
             return;
         this.target = target;
         this.start();
+
+        if (target == null)
+            forced = false;
     }
 
     public LivingEntity getTarget() {

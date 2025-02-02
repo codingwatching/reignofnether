@@ -1,12 +1,14 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.Bloodlust;
 import com.solegendary.reignofnether.ability.abilities.ToggleShield;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchBruteShields;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -38,17 +40,8 @@ import java.util.UUID;
 
 public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
     // region
-    private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
-    private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
-    public ArrayList<BlockPos> getCheckpoints() { return checkpoints; };
-    public int getCheckpointTicksLeft() { return checkpointTicksLeft; }
-    public void setCheckpointTicksLeft(int ticks) { checkpointTicksLeft = ticks; }
-    private boolean isCheckpointGreen = true;
-    public boolean isCheckpointGreen() { return isCheckpointGreen; };
-    public void setIsCheckpointGreen(boolean green) { isCheckpointGreen = green; };
-    private int entityCheckpointId = -1;
-    public int getEntityCheckpointId() { return entityCheckpointId; };
-    public void setEntityCheckpointId(int id) { entityCheckpointId = id; };
+    private final ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    public ArrayList<Checkpoint> getCheckpoints() { return checkpoints; };
 
     GarrisonGoal garrisonGoal;
     public GarrisonGoal getGarrisonGoal() { return garrisonGoal; }
@@ -99,10 +92,14 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
     public float getMovementSpeed() {return isHoldingUpShield ? movementSpeed * SHIELD_MOVE_MULTIPLIER : movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.BRUTE.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
-    public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
-    public float getAttacksPerSecond() {return attacksPerSecond;}
+    public float getAttacksPerSecond() {
+        if (bloodlustTicks > 0)
+            return attacksPerSecond * BLOODLUST_MULTIPLIER;
+        return attacksPerSecond;
+    }
     public float getAggroRange() {return aggroRange;}
     public boolean getAggressiveWhenIdle() {return aggressiveWhenIdle && !isVehicle();}
     public float getAttackRange() {return attackRange;}
@@ -116,6 +113,13 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
 
     // endregion
 
+    public int getAttackCooldown() {
+        if (bloodlustTicks > 0)
+            return (int) (20 / (attacksPerSecond * BLOODLUST_MULTIPLIER));
+        return (int) (20 / attacksPerSecond);
+    }
+
+    final static public float BLOODLUST_MULTIPLIER = 1.5f;
     final static public float SHIELD_MOVE_MULTIPLIER = 0.5f;
 
     final static public float attackDamage = 5.0f;
@@ -128,8 +132,9 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
     final static public float maxHealth = 50.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.28f;
-    final static public int popCost = ResourceCosts.BRUTE.population;
     public int maxResources = 100;
+
+    public int bloodlustTicks = 0;
 
     public boolean isHoldingUpShield = false;
 
@@ -140,11 +145,19 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
     public BruteUnit(EntityType<? extends PiglinBrute> entityType, Level level) {
         super(entityType, level);
 
-        ToggleShield ab1 = new ToggleShield(this);
-        this.abilities.add(ab1);
+        ToggleShield toggleShield = new ToggleShield(this);
+        this.abilities.add(toggleShield);
+        Bloodlust bloodlust = new Bloodlust(this);
+        this.abilities.add(bloodlust);
         if (level.isClientSide()) {
-            this.abilityButtons.add(ab1.getButton(Keybindings.keyQ));
+            this.abilityButtons.add(toggleShield.getButton(Keybindings.keyQ));
+            this.abilityButtons.add(bloodlust.getButton(Keybindings.keyW));
         }
+    }
+
+    @Override
+    protected boolean onSoulSpeedBlock() {
+        return false;
     }
 
     @Override
@@ -155,6 +168,7 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
                 .add(Attributes.ATTACK_DAMAGE, BruteUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, BruteUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, BruteUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, BruteUnit.armorValue);
     }
 
@@ -176,6 +190,9 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
         super.tick();
         Unit.tick(this);
         AttackerUnit.tick(this);
+
+        if (bloodlustTicks > 0)
+            bloodlustTicks -= 1;
     }
 
     public void initialiseGoals() {
@@ -183,7 +200,7 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
 
@@ -209,7 +226,7 @@ public class BruteUnit extends PiglinBrute implements Unit, AttackerUnit {
 
     @Override
     public void setupEquipmentAndUpgradesServer() {
-        ItemStack axeStack = new ItemStack(Items.IRON_SWORD);
+        ItemStack axeStack = new ItemStack(Items.GOLDEN_SWORD);
         AttributeModifier mod = new AttributeModifier(UUID.randomUUID().toString(), 0, AttributeModifier.Operation.ADDITION);
         axeStack.addAttributeModifier(Attributes.ATTACK_DAMAGE, mod, EquipmentSlot.MAINHAND);
         this.setItemSlot(EquipmentSlot.MAINHAND, axeStack);

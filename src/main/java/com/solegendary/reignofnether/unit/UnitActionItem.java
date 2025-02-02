@@ -6,23 +6,31 @@ import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.building.GarrisonableBuilding;
 import com.solegendary.reignofnether.building.buildings.piglins.Portal;
 import com.solegendary.reignofnether.hud.HudClientEvents;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceName;
 import com.solegendary.reignofnether.resources.ResourceSources;
-import com.solegendary.reignofnether.unit.goals.GatherResourcesGoal;
-import com.solegendary.reignofnether.unit.goals.ReturnResourcesGoal;
+import com.solegendary.reignofnether.survival.Wave;
+import com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner;
+import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
+import com.solegendary.reignofnether.unit.units.piglins.MagmaCubeUnit;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static com.solegendary.reignofnether.survival.spawners.IllagerWaveSpawner.spawnIllagerWave;
 
 public class UnitActionItem {
     private final String ownerName;
@@ -31,6 +39,23 @@ public class UnitActionItem {
     private final int[] unitIds; // selected unit(s)
     private final BlockPos preselectedBlockPos;
     private final BlockPos selectedBuildingPos;
+
+    public final UnitAction getAction() { return action; }
+    public final int[] getUnitIds() { return unitIds; }
+    public final BlockPos getPreselectedBlockPos() { return preselectedBlockPos; }
+
+    public boolean equals(UnitActionItem unitActionItem) {
+        if (unitActionItem == null)
+            return false;
+        return (
+            ownerName == null && unitActionItem.ownerName == null || (ownerName != null && ownerName.equals(unitActionItem.ownerName)) &&
+            action == null && unitActionItem.action == null || (action != null && action.equals(unitActionItem.action)) &&
+            preselectedBlockPos == null && unitActionItem.preselectedBlockPos == null || (preselectedBlockPos != null && preselectedBlockPos.equals(unitActionItem.preselectedBlockPos)) &&
+            selectedBuildingPos == null && unitActionItem.selectedBuildingPos == null || (selectedBuildingPos != null && selectedBuildingPos.equals(unitActionItem.selectedBuildingPos)) &&
+            unitId == unitActionItem.unitId &&
+            Arrays.equals(unitIds, unitActionItem.unitIds)
+        );
+    }
 
     private final List<UnitAction> nonAbilityActions = List.of(UnitAction.STOP,
         UnitAction.HOLD,
@@ -57,7 +82,6 @@ public class UnitActionItem {
         BlockPos preselectedBlockPos,
         BlockPos selectedBuildingPos
     ) {
-
         this.ownerName = ownerName;
         this.action = action;
         this.unitId = unitId;
@@ -66,9 +90,9 @@ public class UnitActionItem {
         this.selectedBuildingPos = selectedBuildingPos;
     }
 
-    public void resetBehaviours(Unit unit) {
-        unit.getCheckpoints().clear();
-        unit.setEntityCheckpointId(-1);
+    public static void resetBehaviours(Unit unit) {
+        if (((Entity) unit).getLevel().isClientSide() && !Keybindings.shiftMod.isDown())
+            unit.getCheckpoints().clear();
         unit.resetBehaviours();
         Unit.resetBehaviours(unit);
         if (unit instanceof WorkerUnit workerUnit) {
@@ -77,6 +101,7 @@ public class UnitActionItem {
         if (unit instanceof AttackerUnit attackerUnit) {
             AttackerUnit.resetBehaviours(attackerUnit);
         }
+
     }
 
     // can be done server or clientside - but only serverside will have an effect on the world
@@ -95,6 +120,23 @@ public class UnitActionItem {
 
         actionableUnitsLoop:
         for (Unit unit : actionableUnits) {
+
+            // recalculating pathfinding can be expensive, so check if we actually need to first
+            if (action == UnitAction.MOVE) {
+                MoveToTargetBlockGoal goal = unit.getMoveGoal();
+
+                if (goal != null && !level.isClientSide()) {
+                    BlockPos bp = goal.getMoveTarget();
+                    if (bp != null) {
+                        double distToTarget = bp.distSqr(((Mob) unit).getOnPos());
+                        if (distToTarget > 400) {
+                            double ignoreDist = Math.min(5, Math.sqrt(distToTarget) / 10);
+                            if (bp.distSqr(preselectedBlockPos) < ignoreDist * ignoreDist)
+                                return;
+                        }
+                    }
+                }
+            }
 
             // have to do this before resetBehaviours so we can assign the correct resourceName first
             if (action == UnitAction.TOGGLE_GATHER_TARGET) {
@@ -127,6 +169,10 @@ public class UnitActionItem {
                             break;
                         }
                     }
+                    //if (unit instanceof MagmaCubeUnit && unit.getMoveGoal().getMoveTarget() != null) {
+                    //    shouldResetBehaviours = false;
+                    //}
+
                     if (shouldResetBehaviours && (nonAbilityActions.contains(action) || foundAbility)) {
                         resetBehaviours(unit);
                     }
@@ -174,7 +220,10 @@ public class UnitActionItem {
                         }
                     } else if (buildingAtPos instanceof Portal portal
                         && portal.portalType == Portal.PortalType.TRANSPORT && unit.canUsePortal()) {
-                        unit.getUsePortalGoal().setBuildingTarget(preselectedBlockPos);
+                        if (unit.getUsePortalGoal() instanceof FlyingUsePortalGoal flyingUsePortalGoal)
+                            flyingUsePortalGoal.setBuildingTarget(preselectedBlockPos);
+                        if (unit.getUsePortalGoal() instanceof UsePortalGoal usePortalGoal)
+                            usePortalGoal.setBuildingTarget(preselectedBlockPos);
                     } else {
                         unit.setMoveTarget(preselectedBlockPos);
                     }
@@ -182,8 +231,7 @@ public class UnitActionItem {
                 case ATTACK_MOVE -> {
                     // if the unit can't actually attack just treat this as a move action
                     if (unit instanceof AttackerUnit attackerUnit) {
-                        MiscUtil.addUnitCheckpoint(unit, preselectedBlockPos);
-                        unit.setIsCheckpointGreen(false);
+                        MiscUtil.addUnitCheckpoint(unit, preselectedBlockPos, false);
                         attackerUnit.setAttackMoveTarget(preselectedBlockPos);
                     } else {
                         unit.setMoveTarget(preselectedBlockPos);
@@ -192,12 +240,11 @@ public class UnitActionItem {
                 case ATTACK -> {
                     // if the unit can't actually attack just treat this as a follow action
                     if (unit instanceof AttackerUnit attackerUnit) {
-                        attackerUnit.setUnitAttackTarget((LivingEntity) level.getEntity(unitId));
+                        attackerUnit.setUnitAttackTargetForced((LivingEntity) level.getEntity(unitId));
                     } else {
                         LivingEntity livingEntity = (LivingEntity) level.getEntity(unitId);
                         if (livingEntity != null) {
-                            MiscUtil.addUnitCheckpoint(unit, unitId);
-                            unit.setIsCheckpointGreen(true);
+                            MiscUtil.addUnitCheckpoint(unit, unitId, true);
                         }
                         unit.setFollowTarget(livingEntity);
                     }
@@ -213,8 +260,7 @@ public class UnitActionItem {
                 case FOLLOW -> {
                     LivingEntity livingEntity = (LivingEntity) level.getEntity(unitId);
                     if (livingEntity != null) {
-                        MiscUtil.addUnitCheckpoint(unit, unitId);
-                        unit.setIsCheckpointGreen(true);
+                        MiscUtil.addUnitCheckpoint(unit, unitId, true);
                     }
                     unit.setFollowTarget(livingEntity);
                 }
@@ -227,6 +273,13 @@ public class UnitActionItem {
                         }
                     } else {
                         unit.setMoveTarget(preselectedBlockPos);
+                    }
+                }
+                case ENABLE_AUTOCAST_BUILD_REPAIR, DISABLE_AUTOCAST_BUILD_REPAIR -> {
+                    // if the unit can't actually build/repair just treat this as a move action
+                    if (unit instanceof WorkerUnit workerUnit) {
+                        workerUnit.getBuildRepairGoal().autocastRepair =
+                                action == UnitAction.ENABLE_AUTOCAST_BUILD_REPAIR;
                     }
                 }
                 case FARM -> {
@@ -254,7 +307,7 @@ public class UnitActionItem {
                         // to gather
                         GatherResourcesGoal goal = workerUnit.getGatherResourceGoal();
                         if (goal != null) {
-                            goal.deleteSavedState();
+                            goal.saveData.delete();
                         }
                     }
                     ReturnResourcesGoal returnResourcesGoal = unit.getReturnResourcesGoal();
@@ -268,7 +321,7 @@ public class UnitActionItem {
                         // to gather
                         GatherResourcesGoal goal = workerUnit.getGatherResourceGoal();
                         if (goal != null) {
-                            goal.deleteSavedState();
+                            goal.saveData.delete();
                         }
                     }
                     ReturnResourcesGoal returnResourcesGoal = unit.getReturnResourcesGoal();
@@ -284,11 +337,16 @@ public class UnitActionItem {
                         cUnit.setShouldDiscard(true);
                     }
                 }
-
+                case AUTOCAST -> {
+                    for (Ability ability : unit.getAbilities())
+                        if (ability.canAutocast)
+                            ability.autocast = !ability.autocast;
+                }
                 // any other Ability not explicitly defined here
                 default -> {
                     for (Ability ability : unit.getAbilities()) {
                         if (ability.action == action && (ability.isOffCooldown() || ability.canBypassCooldown())) {
+
                             if (ability.canTargetEntities && this.unitId > 0) {
                                 ability.use(level, unit, (LivingEntity) level.getEntity(unitId));
                                 usedAbility = ability;

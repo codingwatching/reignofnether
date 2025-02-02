@@ -1,7 +1,9 @@
 package com.solegendary.reignofnether;
 
+import com.solegendary.reignofnether.config.ReignOfNetherCommonConfigs;
 import com.solegendary.reignofnether.network.S2CReset;
 import com.solegendary.reignofnether.registrars.*;
+import com.solegendary.reignofnether.resources.ResourceCosts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
@@ -18,6 +20,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint.DisplayTest;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -40,6 +43,7 @@ import java.util.function.Supplier;
 public class ReignOfNether {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "reignofnether";
+    public static final String VERSION_STRING = "1.1.1";
 
     // Fields from ClientReset
     public static final Field handshakeField;
@@ -66,11 +70,12 @@ public class ReignOfNether {
         // Registering ClientReset's init
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(ReignOfNether::init);
-        ModLoadingContext.get()
-            .registerExtensionPoint(
-                DisplayTest.class,
-                () -> new DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true)
-            );
+        ModLoadingContext mlctx = ModLoadingContext.get();
+        mlctx.registerConfig(ModConfig.Type.COMMON, ReignOfNetherCommonConfigs.SPEC, "reignofnether-common-" + VERSION_STRING + ".toml");
+        mlctx.registerExtensionPoint(
+            DisplayTest.class,
+            () -> new DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true)
+        );
     }
 
     @SubscribeEvent
@@ -103,6 +108,7 @@ public class ReignOfNether {
                     + e.getMessage()
             );
         }
+        ResourceCosts.deferredLoadResourceCosts();
     }
 
     public static void handleReset(

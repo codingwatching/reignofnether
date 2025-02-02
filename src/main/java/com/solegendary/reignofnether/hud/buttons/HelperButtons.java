@@ -1,7 +1,10 @@
 package com.solegendary.reignofnether.hud.buttons;
 
 import com.solegendary.reignofnether.ReignOfNether;
+import com.solegendary.reignofnether.building.BuildingClientEvents;
+import com.solegendary.reignofnether.building.BuildingServerEvents;
 import com.solegendary.reignofnether.building.BuildingServerboundPacket;
+import com.solegendary.reignofnether.building.BuildingUtils;
 import com.solegendary.reignofnether.hud.Button;
 import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybinding;
@@ -99,7 +102,11 @@ public class HelperButtons {
             new ResourceLocation(ReignOfNether.MOD_ID, "textures/icons/items/barrier.png"),
             Keybindings.cancelBuild,
             () -> false,
-            () -> hudSelectedBuilding.isCapitol,
+            () -> {
+                if (hudSelectedBuilding == null)
+                    return false;
+                return BuildingUtils.getTotalCompletedBuildingsOwned(true, hudSelectedBuilding.ownerName) == 0;
+            },
             () -> true,
             () -> {
                 BuildingServerboundPacket.cancelBuilding(hudSelectedBuilding.minCorner);

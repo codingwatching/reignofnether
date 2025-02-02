@@ -26,6 +26,7 @@ public class Eject extends Ability {
     public Eject(LivingEntity entity) {
         super(
             UnitAction.EJECT,
+            entity.level,
             0,
             0,
             0,
@@ -58,6 +59,6 @@ public class Eject extends Ability {
 
         for (Ability ability : unitUsing.getAbilities())
             if (ability instanceof SpinWebs spinWebs)
-                spinWebs.setCooldown(spinWebs.getCooldown() / 4);
+                spinWebs.setCooldown(spinWebs.getCooldown() / 4f);
     }
 }

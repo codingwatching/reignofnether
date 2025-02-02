@@ -16,6 +16,7 @@ import com.solegendary.reignofnether.research.researchItems.ResearchPortalForTra
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.survival.SurvivalServerEvents;
 import com.solegendary.reignofnether.unit.units.piglins.*;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.client.resources.language.I18n;
@@ -154,7 +155,7 @@ public class Portal extends ProductionBuilding implements NetherConvertingBuildi
             netherConversionZone = nz;
             if (!level.isClientSide()) {
                 BuildingServerEvents.netherZones.add(netherConversionZone);
-                BuildingServerEvents.saveNetherZones();
+                BuildingServerEvents.saveNetherZones((ServerLevel) level);
             }
         }
     }
@@ -212,7 +213,8 @@ public class Portal extends ProductionBuilding implements NetherConvertingBuildi
                         HoglinProd.getStartButton(this, Keybindings.keyE),
                         BlazeProd.getStartButton(this, Keybindings.keyR),
                         WitherSkeletonProd.getStartButton(this, Keybindings.keyT),
-                        GhastProd.getStartButton(this, Keybindings.keyY)
+                        MagmaCubeProd.getStartButton(this, Keybindings.keyY),
+                        GhastProd.getStartButton(this, Keybindings.keyU)
                     );
                 }
             }

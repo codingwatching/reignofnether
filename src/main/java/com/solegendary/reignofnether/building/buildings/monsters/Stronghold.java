@@ -26,7 +26,7 @@ import java.util.*;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class Stronghold extends ProductionBuilding implements GarrisonableBuilding, NightSource {
+public class Stronghold extends ProductionBuilding implements GarrisonableBuilding, NightSource, RangeIndicator {
 
     public final static String buildingName = "Stronghold";
     public final static String structureName = "stronghold";
@@ -62,7 +62,7 @@ public class Stronghold extends ProductionBuilding implements GarrisonableBuildi
         if (level.isClientSide()) {
             this.productionButtons = List.of(WardenProd.getStartButton(this, Keybindings.keyQ));
         }
-        updateNightBorderBps();
+        updateBorderBps();
     }
 
     public int getNightRange() {
@@ -72,21 +72,26 @@ public class Stronghold extends ProductionBuilding implements GarrisonableBuildi
     @Override
     public void onBuilt() {
         super.onBuilt();
-        updateNightBorderBps();
+        updateBorderBps();
     }
 
     @Override
-    public void updateNightBorderBps() {
+    public void updateBorderBps() {
         if (!level.isClientSide())
             return;
         this.nightBorderBps.clear();
-        this.nightBorderBps.addAll(MiscUtil.getNightCircleBlocks(centrePos,
+        this.nightBorderBps.addAll(MiscUtil.getRangeIndicatorCircleBlocks(centrePos,
                 getNightRange() - TimeClientEvents.VISIBLE_BORDER_ADJ, level));
     }
 
     @Override
-    public Set<BlockPos> getNightBorderBps() {
+    public Set<BlockPos> getBorderBps() {
         return nightBorderBps;
+    }
+
+    @Override
+    public boolean showOnlyWhenSelected() {
+        return false;
     }
 
     public Faction getFaction() {
@@ -97,7 +102,7 @@ public class Stronghold extends ProductionBuilding implements GarrisonableBuildi
     public void tick(Level tickLevel) {
         super.tick(tickLevel);
         if (tickLevel.isClientSide && tickAgeAfterBuilt > 0 && tickAgeAfterBuilt % 100 == 0)
-            updateNightBorderBps();
+            updateBorderBps();
     }
 
     // don't use this for abilities as it may not be balanced
@@ -125,7 +130,7 @@ public class Stronghold extends ProductionBuilding implements GarrisonableBuildi
             () -> BuildingClientEvents.getBuildingToPlace() == Stronghold.class,
             () -> false,
             () -> (
-                BuildingClientEvents.hasFinishedBuilding(Graveyard.buildingName)
+                BuildingClientEvents.hasFinishedBuilding(Laboratory.buildingName)
                     && BuildingClientEvents.hasFinishedBuilding(SpiderLair.buildingName)
                     && BuildingClientEvents.hasFinishedBuilding(Dungeon.buildingName)
             ) || ResearchClient.hasCheat("modifythephasevariance"),

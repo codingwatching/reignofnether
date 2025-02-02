@@ -1,63 +1,64 @@
 package com.solegendary.reignofnether.unit.units.villagers;
 
-import com.solegendary.reignofnether.building.BuildingUtils;
-import com.solegendary.reignofnether.building.buildings.villagers.OakBridge;
-import com.solegendary.reignofnether.building.buildings.villagers.OakStockpile;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Dynamic;
+import com.solegendary.reignofnether.ReignOfNether;
+import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.abilities.CallToArmsUnit;
 import com.solegendary.reignofnether.building.buildings.villagers.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
+import com.solegendary.reignofnether.registrars.EntityRegistrar;
 import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.research.researchItems.ResearchResourceCapacity;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
-import com.solegendary.reignofnether.unit.interfaces.ArmSwingingUnit;
-import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
-import com.solegendary.reignofnether.unit.interfaces.Unit;
-import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
-import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.unit.interfaces.*;
+import com.solegendary.reignofnether.unit.packets.UnitConvertClientboundPacket;
+import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.util.Faction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.entity.npc.*;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, AttackerUnit, ArmSwingingUnit {
+import static com.solegendary.reignofnether.unit.units.villagers.VillagerUnitProfession.*;
+
+public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, AttackerUnit, ArmSwingingUnit, VillagerDataHolder, ConvertableUnit {
     // region
-    private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
-    private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
-    public ArrayList<BlockPos> getCheckpoints() { return checkpoints; };
-    public int getCheckpointTicksLeft() { return checkpointTicksLeft; }
-    public void setCheckpointTicksLeft(int ticks) { checkpointTicksLeft = ticks; }
-    private boolean isCheckpointGreen = true;
-    public boolean isCheckpointGreen() { return isCheckpointGreen; };
-    public void setIsCheckpointGreen(boolean green) { isCheckpointGreen = green; };
-    private int entityCheckpointId = -1;
-    public int getEntityCheckpointId() { return entityCheckpointId; };
-    public void setEntityCheckpointId(int id) { entityCheckpointId = id; };
+    private final ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    public ArrayList<Checkpoint> getCheckpoints() { return checkpoints; };
 
     GarrisonGoal garrisonGoal;
     public GarrisonGoal getGarrisonGoal() { return garrisonGoal; }
@@ -84,6 +85,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public GatherResourcesGoal gatherResourcesGoal;
     private ReturnResourcesGoal returnResourcesGoal;
     private MeleeAttackUnitGoal attackGoal;
+    public CallToArmsGoal callToArmsGoal;
 
     public LivingEntity getFollowTarget() { return followTarget; }
     public boolean getHoldPosition() { return holdPosition; }
@@ -101,17 +103,12 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public static final EntityDataAccessor<String> ownerDataAccessor =
             SynchedEntityData.defineId(VillagerUnit.class, EntityDataSerializers.STRING);
 
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ownerDataAccessor, "");
-    }
-
     // combat stats
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.VILLAGER.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -126,10 +123,21 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
     public void setFollowTarget(@Nullable LivingEntity target) { this.followTarget = target; }
 
+    // ConvertableUnit
+    public boolean converted = false;
+    private boolean shouldDiscard = false;
+    public boolean shouldDiscard() { return shouldDiscard; }
+    public void setShouldDiscard(boolean discard) { this.shouldDiscard = discard; }
+
     // endregion
 
     public BlockState getReplantBlockState() {
-        return Blocks.WHEAT.defaultBlockState();
+        if (getUnitProfession() == FARMER && !isVeteran)
+            return Blocks.CARROTS.defaultBlockState();
+        else if (getUnitProfession() == FARMER && isVeteran)
+            return Blocks.POTATOES.defaultBlockState();
+        else
+            return Blocks.WHEAT.defaultBlockState();
     }
 
     final static public float attackDamage = 1.0f;
@@ -142,8 +150,98 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     final static public float maxHealth = 25.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.25f;
-    final static public int popCost = ResourceCosts.VILLAGER.population;
     public int maxResources = 100;
+
+    public VillagerUnitProfession getUnitProfession() {
+        VillagerProfession profession = getProfession();
+        if (VillagerProfession.FARMER.equals(profession)) {
+            return FARMER;
+        } else if (VillagerProfession.FLETCHER.equals(profession)) {
+            return VillagerUnitProfession.LUMBERJACK;
+        } else if (VillagerProfession.TOOLSMITH.equals(profession)) {
+            return VillagerUnitProfession.MINER;
+        } else if (VillagerProfession.MASON.equals(profession)) {
+            return VillagerUnitProfession.MASON;
+        } else if (VillagerProfession.WEAPONSMITH.equals(profession)) {
+            return VillagerUnitProfession.HUNTER;
+        }
+        return VillagerUnitProfession.NONE;
+    }
+
+    public boolean isVeteran = false;
+    public boolean isVeteran() { return isVeteran; }
+    public void makeVeteran() {
+        isVeteran = true;
+        UnitSyncClientboundPacket.makeVillagerVeteran(this);
+    }
+
+    public boolean hasSpeedCheat() {
+        return !this.level.isClientSide() && ResearchServerEvents.playerHasCheat(getOwnerName(), "operationcwal");
+    }
+
+    // equal to 4 full farm clears
+    // bonus == plants carrots instead of wheat (+25% food), potatoes for veteran (+50% food)
+    final static public int FARMER_EXP_REQ = 80;
+    public int farmerExp = 0; // farm food blocks gathered
+    public void incrementFarmerExp() {
+        farmerExp += hasSpeedCheat() ? 10 : 1;
+        if (farmerExp >= (FARMER_EXP_REQ / 2) && !hasUnitProfession()) {
+            setProfession(VillagerProfession.FARMER);
+        }
+        else if (farmerExp >= FARMER_EXP_REQ && !isVeteran && getUnitProfession() == FARMER)
+            makeVeteran();
+    }
+
+    // equal to ~4mins of log chopping, excludes leaves
+    final static public float LUMBERJACK_SPEED_MULT = 1.25f;
+    final static public float LUMBERJACK_SPEED_MULT_VETERAN = 1.5f;
+    final static public int LUMBERJACK_EXP_REQ = 30;
+    public int lumberjackExp = 0;
+    public void incrementLumberjackExp() {
+        lumberjackExp += hasSpeedCheat() ? 10 : 1;
+        if (lumberjackExp >= (LUMBERJACK_EXP_REQ / 2) && !hasUnitProfession())
+            setProfession(VillagerProfession.FLETCHER);
+        else if (lumberjackExp >= LUMBERJACK_EXP_REQ && !isVeteran && getUnitProfession() == LUMBERJACK)
+            makeVeteran();
+    }
+
+    // ~5mins of gathering
+    final static public float MINER_SPEED_MULT = 1.25f;
+    final static public float MINER_SPEED_MULT_VETERAN = 1.5f;
+    final static public int MINER_EXP_REQ = 6;
+    public int minerExp = 0; // ore blocks gathered
+    public void incrementMinerExp() {
+        minerExp += hasSpeedCheat() ? 10 : 1;
+        if (minerExp >= (MINER_EXP_REQ / 2) && !hasUnitProfession())
+            setProfession(VillagerProfession.TOOLSMITH);
+        else if (minerExp >= MINER_EXP_REQ && !isVeteran && getUnitProfession() == MINER)
+            makeVeteran();
+    }
+
+    // blocks built or repaired, excluding first capitol
+    // ~5mins of building
+    // counted as +1 worker when building/repairing (+2 for veteran)
+    final static public int MASON_EXP_REQ = 600;
+    public int masonExp = 0;
+    public void incrementMasonExp() {
+        masonExp += hasSpeedCheat() ? 10 : 1;
+        if (masonExp >= (MASON_EXP_REQ / 2) && !hasUnitProfession())
+            setProfession(VillagerProfession.MASON);
+        else if (masonExp >= MASON_EXP_REQ && !isVeteran && getUnitProfession() == MASON)
+            makeVeteran();
+    }
+
+    // chickens only worth 1, other animals worth 2
+    // does 2 damage to huntable animals (3 for veteran)
+    final static public int HUNTER_EXP_REQ = 8;
+    public int hunterExp = 0;
+    public void incrementHunterExp() {
+        hunterExp += hasSpeedCheat() ? 10 : 1;
+        if (hunterExp >= (HUNTER_EXP_REQ / 2) && !hasUnitProfession())
+            setProfession(VillagerProfession.WEAPONSMITH);
+        else if (hunterExp >= HUNTER_EXP_REQ && !isVeteran && getUnitProfession() == HUNTER)
+            makeVeteran();
+    }
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
     private final List<Ability> abilities = new ArrayList<>();
@@ -170,25 +268,38 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         return (this.getGatherResourceGoal().isGathering() || this.getBuildRepairGoal().isBuilding());
     }
 
+    public static List<AbilityButton> getBuildingButtons() {
+        return List.of(
+            TownCentre.getBuildButton(Keybindings.keyQ),
+            OakStockpile.getBuildButton(Keybindings.keyW),
+            VillagerHouse.getBuildButton(Keybindings.keyE),
+            WheatFarm.getBuildButton(Keybindings.keyR),
+            Watchtower.getBuildButton(Keybindings.keyT),
+            Barracks.getBuildButton(Keybindings.keyY),
+            Blacksmith.getBuildButton(Keybindings.keyU),
+            ArcaneTower.getBuildButton(Keybindings.keyI),
+            Library.getBuildButton(Keybindings.keyO),
+            Castle.getBuildButton(Keybindings.keyP),
+            IronGolemBuilding.getBuildButton(Keybindings.keyL),
+            OakBridge.getBuildButton(Keybindings.keyC)
+        );
+    }
+
     public VillagerUnit(EntityType<? extends Vindicator> entityType, Level level) {
         super(entityType, level);
 
+        CallToArmsUnit callToArms = new CallToArmsUnit(level);
+        this.abilities.add(callToArms);
+
         if (level.isClientSide()) {
-            AbilityButton townCentreButton = TownCentre.getBuildButton(Keybindings.keyQ);
-            townCentreButton.isEnabled = () -> !BuildingUtils.doesPlayerOwnCapitol(level.isClientSide(), getOwnerName());
-            this.abilityButtons.add(townCentreButton);
-            this.abilityButtons.add(OakStockpile.getBuildButton(Keybindings.keyW));
-            this.abilityButtons.add(VillagerHouse.getBuildButton(Keybindings.keyE));
-            this.abilityButtons.add(WheatFarm.getBuildButton(Keybindings.keyR));
-            this.abilityButtons.add(Watchtower.getBuildButton(Keybindings.keyT));
-            this.abilityButtons.add(Barracks.getBuildButton(Keybindings.keyY));
-            this.abilityButtons.add(Blacksmith.getBuildButton(Keybindings.keyU));
-            this.abilityButtons.add(ArcaneTower.getBuildButton(Keybindings.keyI));
-            this.abilityButtons.add(Library.getBuildButton(Keybindings.keyO));
-            this.abilityButtons.add(Castle.getBuildButton(Keybindings.keyP));
-            this.abilityButtons.add(IronGolemBuilding.getBuildButton(Keybindings.keyL));
-            this.abilityButtons.add(OakBridge.getBuildButton(Keybindings.keyC));
+            this.abilityButtons.addAll(getBuildingButtons());
+            this.abilityButtons.add(callToArms.getButton(Keybindings.keyV));
         }
+    }
+
+    @Override
+    public boolean isPushable() {
+        return false;
     }
 
     @Override
@@ -199,6 +310,7 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
                 .add(Attributes.ATTACK_DAMAGE, VillagerUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, VillagerUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, VillagerUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, VillagerUnit.armorValue);
     }
 
@@ -214,11 +326,40 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
     protected void pickUpItem(ItemEntity pItemEntity) { }
 
     public void tick() {
-        this.setCanPickUpLoot(true);
-        super.tick();
-        Unit.tick(this);
-        AttackerUnit.tick(this);
-        WorkerUnit.tick(this);
+        if (shouldDiscard)
+            this.discard();
+        else {
+            this.setCanPickUpLoot(true);
+            super.tick();
+            Unit.tick(this);
+            AttackerUnit.tick(this);
+            WorkerUnit.tick(this);
+            this.callToArmsGoal.tick();
+        }
+    }
+
+    public void convertToMilitia() {
+        if (!converted) {
+            LivingEntity newEntity = this.convertToUnit(EntityRegistrar.MILITIA_UNIT.get());
+            if (newEntity instanceof MilitiaUnit mUnit) {
+                mUnit.resourcesSaveData = this.gatherResourcesGoal.permSaveData;
+                mUnit.profession = this.getProfession();
+                mUnit.isVeteran = this.isVeteran;
+                mUnit.farmerExp = this.farmerExp;
+                mUnit.lumberjackExp = this.lumberjackExp;
+                mUnit.minerExp = this.minerExp;
+                mUnit.masonExp = this.masonExp;
+                mUnit.hunterExp = this.hunterExp;
+
+                UnitConvertClientboundPacket.syncConvertedUnits(getOwnerName(), List.of(getId()), List.of(newEntity.getId()));
+                converted = true;
+            }
+        }
+    }
+
+    @Override
+    public void resetBehaviours() {
+        this.callToArmsGoal.stop();
     }
 
     public void initialiseGoals() {
@@ -226,10 +367,11 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), true);
+        this.attackGoal = new MeleeAttackUnitGoal(this, true);
         this.buildRepairGoal = new BuildRepairGoal(this);
         this.gatherResourcesGoal = new GatherResourcesGoal(this);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
+        this.callToArmsGoal = new CallToArmsGoal(this);
     }
 
     @Override
@@ -261,5 +403,74 @@ public class VillagerUnit extends Vindicator implements Unit, WorkerUnit, Attack
 
         if (this.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof BannerItem)
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.AIR));
+    }
+
+    @Override
+    @Nullable
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        return pSpawnData;
+    }
+
+    private static final EntityDataAccessor<VillagerData> VILLAGER_DATA;
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(ownerDataAccessor, "");
+        this.entityData.define(VILLAGER_DATA, new VillagerData(VillagerType.PLAINS, VillagerProfession.NONE, 1));
+    }
+
+    @Override
+    public VillagerData getVillagerData() {
+        return this.entityData.get(VILLAGER_DATA);
+    }
+
+    @Override
+    public void setVillagerData(@NotNull VillagerData data) {
+        VillagerData villagerdata = this.getVillagerData();
+        this.entityData.set(VILLAGER_DATA, data);
+    }
+
+    public void setProfession(VillagerProfession profession) {
+        this.setVillagerData(this.getVillagerData().setProfession(profession));
+    }
+    public VillagerProfession getProfession() {
+        return this.getVillagerData().getProfession();
+    }
+    public boolean hasUnitProfession() {
+        return this.getUnitProfession() != VillagerUnitProfession.NONE;
+    }
+
+    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        super.addAdditionalSaveData(pCompound);
+        DataResult<Tag> var10000 = VillagerData.CODEC.encodeStart(NbtOps.INSTANCE, this.getVillagerData());
+        var10000.resultOrPartial((err) -> ReignOfNether.LOGGER.error("Failed to save villager data"))
+            .ifPresent((tag) -> pCompound.put("VillagerData", tag));
+        pCompound.putInt("farmerExp", this.farmerExp);
+        pCompound.putInt("lumberjackExp", this.lumberjackExp);
+        pCompound.putInt("minerExp", this.minerExp);
+        pCompound.putInt("masonExp", this.masonExp);
+        pCompound.putInt("hunterExp", this.hunterExp);
+        pCompound.putBoolean("isVeteran", this.isVeteran);
+    }
+
+    public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
+        super.readAdditionalSaveData(pCompound);
+        if (pCompound.contains("VillagerData", 10)) {
+            DataResult<VillagerData> dataresult = VillagerData.CODEC.parse(new Dynamic(NbtOps.INSTANCE, pCompound.get("VillagerData")));
+            dataresult.resultOrPartial((err) -> ReignOfNether.LOGGER.error("Failed to load villager data"))
+                    .ifPresent(this::setVillagerData);
+        }
+        this.farmerExp = pCompound.getInt("farmerExp");
+        this.lumberjackExp = pCompound.getInt("lumberjackExp");
+        this.minerExp = pCompound.getInt("minerExp");
+        this.masonExp = pCompound.getInt("masonExp");
+        this.hunterExp = pCompound.getInt("hunterExp");
+        if (!level.isClientSide() && pCompound.getBoolean("isVeteran"))
+            makeVeteran();
+    }
+
+    static {
+        VILLAGER_DATA = SynchedEntityData.defineId(VillagerUnit.class, EntityDataSerializers.VILLAGER_DATA);
     }
 }

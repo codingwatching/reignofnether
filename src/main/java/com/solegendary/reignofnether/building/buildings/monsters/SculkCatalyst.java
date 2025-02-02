@@ -30,7 +30,7 @@ import java.util.*;
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 import static com.solegendary.reignofnether.building.BuildingUtils.isPosInsideAnyBuilding;
 
-public class SculkCatalyst extends Building implements NightSource {
+public class SculkCatalyst extends Building implements NightSource, RangeIndicator {
 
     public final static String buildingName = "Sculk Catalyst";
     public final static String structureName = "sculk_catalyst";
@@ -78,7 +78,7 @@ public class SculkCatalyst extends Building implements NightSource {
 
         this.startingBlockTypes.add(Blocks.POLISHED_BLACKSTONE);
 
-        Ability sacrifice = new Sacrifice();
+        Ability sacrifice = new Sacrifice(level);
         this.abilities.add(sacrifice);
 
         if (level.isClientSide()) {
@@ -103,26 +103,31 @@ public class SculkCatalyst extends Building implements NightSource {
     @Override
     public void onBuilt() {
         super.onBuilt();
-        updateNightBorderBps();
+        updateBorderBps();
         updateSculkBps();
     }
 
     @Override
-    public void updateNightBorderBps() {
+    public void updateBorderBps() {
         if (!level.isClientSide()) {
             return;
         }
         updateSculkBps();
         this.nightBorderBps.clear();
-        this.nightBorderBps.addAll(MiscUtil.getNightCircleBlocks(centrePos,
+        this.nightBorderBps.addAll(MiscUtil.getRangeIndicatorCircleBlocks(centrePos,
             getNightRange() - TimeClientEvents.VISIBLE_BORDER_ADJ,
             level
         ));
     }
 
     @Override
-    public Set<BlockPos> getNightBorderBps() {
+    public Set<BlockPos> getBorderBps() {
         return nightBorderBps;
+    }
+
+    @Override
+    public boolean showOnlyWhenSelected() {
+        return false;
     }
 
     @Override
@@ -131,7 +136,7 @@ public class SculkCatalyst extends Building implements NightSource {
 
         if (tickAgeAfterBuilt > 0 && tickAgeAfterBuilt % 100 == 0) {
             if (tickLevel.isClientSide()) {
-                updateNightBorderBps();
+                updateBorderBps();
             } else {
                 updateSculkBps();
             }

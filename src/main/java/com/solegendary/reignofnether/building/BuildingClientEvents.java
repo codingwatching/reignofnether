@@ -16,6 +16,7 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.nether.NetherBlocks;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.research.ResearchClient;
+import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
@@ -140,22 +141,26 @@ public class BuildingClientEvents {
 
     // switch to the building with the least production, so we can spread out production items
     public static void switchHudToIdlestBuilding() {
+        if (hudSelectedBuilding == null || MC.player == null)
+            return;
         Building idlestBuilding = null;
-        int prodTicksLeftMax = Integer.MAX_VALUE;
-        if (selectedBuildings.size() > 0) {
-            for (Building building : selectedBuildings) {
-                if (building instanceof ProductionBuilding prodB) {
-                    int prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0, Integer::sum);
-                    if (prodTicksLeft < prodTicksLeftMax) {
-                        prodTicksLeftMax = prodTicksLeft;
-                        idlestBuilding = building;
-                    }
+
+        List<Building> sameNameBuildings = selectedBuildings.stream().filter(
+                b -> b.name.equals(hudSelectedBuilding.name) && b.isBuilt && b.ownerName.equals(MC.player.getName().getString())
+        ).toList();
+
+        float prodTicksLeftMax = Float.MAX_VALUE;
+        for (Building building : sameNameBuildings) {
+            if (building instanceof ProductionBuilding prodB) {
+                Float prodTicksLeft = prodB.productionQueue.stream().map(p -> p.ticksLeft).reduce(0F, Float::sum);
+                if (prodTicksLeft < prodTicksLeftMax) {
+                    prodTicksLeftMax = prodTicksLeft;
+                    idlestBuilding = building;
                 }
             }
         }
-        if (idlestBuilding != null) {
+        if (idlestBuilding != null)
             hudSelectedBuilding = idlestBuilding;
-        }
     }
 
     public static void setBuildingToPlace(Class<? extends Building> building) {
@@ -282,6 +287,17 @@ public class BuildingClientEvents {
 
         float r = valid ? 0 : 1.0f;
         float g = valid ? 1.0f : 0;
+
+        // highlight yellow if we are placing a portal on overworld terrain
+        if (valid) {
+            String buildingName = buildingToPlace.getName().toLowerCase();
+            if (buildingName.contains("portal") &&
+                !buildingName.contains("central_portal") &&
+                !isOnNetherBlocks(blocksToDraw, originPos)) {
+                r = 0.5f;
+                g = 0.5f;
+            }
+        }
         ResourceLocation rl = new ResourceLocation("forge:textures/white.png");
         AABB aabb = new AABB(minX, minY, minZ, maxX, minY, maxZ);
         MyRenderer.drawLineBox(matrix, aabb, r, g, 0, 0.5f);
@@ -376,8 +392,8 @@ public class BuildingClientEvents {
 
         BlockPos origin = getOriginPos();
         Vec3i originOffset = new Vec3i(origin.getX(), origin.getY(), origin.getZ());
-        BlockPos minPos = BuildingUtils.getMinCorner(blocksToDraw).offset(originOffset).offset(-1, -1, -1);
-        BlockPos maxPos = BuildingUtils.getMaxCorner(blocksToDraw).offset(originOffset).offset(1, 1, 1);
+        BlockPos minPos = BuildingUtils.getMinCorner(blocksToDraw).offset(originOffset);//.offset(-1, -1, -1);
+        BlockPos maxPos = BuildingUtils.getMaxCorner(blocksToDraw).offset(originOffset);//.offset(1, 1, 1);
 
         for (Building building : buildings) {
             for (BuildingBlock block : building.blocks) {
@@ -746,10 +762,10 @@ public class BuildingClientEvents {
 
                     for (LivingEntity entity : getSelectedUnits()) {
                         if (entity instanceof Unit unit) {
-                            unit.getCheckpoints().removeIf(bp -> !BuildingUtils.isPosInsideAnyBuilding(true, bp));
+                            unit.getCheckpoints().removeIf(c -> !BuildingUtils.isPosInsideAnyBuilding(true, c.bp));
                             MiscUtil.addUnitCheckpoint(unit,
                                 CursorClientEvents.getPreselectedBlockPos().above(),
-                                false
+                                true
                             );
                             if (unit instanceof WorkerUnit workerUnit) {
                                 workerUnit.getBuildRepairGoal().ignoreNextCheckpoint = true;
@@ -768,7 +784,7 @@ public class BuildingClientEvents {
 
                     for (LivingEntity entity : getSelectedUnits()) {
                         if (entity instanceof Unit unit) {
-                            MiscUtil.addUnitCheckpoint(unit, CursorClientEvents.getPreselectedBlockPos().above());
+                            MiscUtil.addUnitCheckpoint(unit, CursorClientEvents.getPreselectedBlockPos().above(), true);
                             if (unit instanceof WorkerUnit workerUnit) {
                                 workerUnit.getBuildRepairGoal().ignoreNextCheckpoint = true;
                             }
@@ -1006,7 +1022,8 @@ public class BuildingClientEvents {
         }
         // sync the goal so we can display the correct animations
         Entity entity = hudSelectedEntity;
-        if (entity instanceof WorkerUnit workerUnit) {
+        if (entity instanceof WorkerUnit workerUnit && entity instanceof Unit unit &&
+            unit.getOwnerName().equals(ownerName)) {
             ((Unit) entity).resetBehaviours();
             workerUnit.getBuildRepairGoal().setBuildingTarget(newBuilding);
         }

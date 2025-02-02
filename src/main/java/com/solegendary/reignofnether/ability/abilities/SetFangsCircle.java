@@ -21,12 +21,13 @@ import java.util.List;
 
 public class SetFangsCircle extends Ability {
 
-    public static final int CD_MAX_SECONDS = 8;
+    public static final int CD_MAX_SECONDS = 7;
 
     private final EvokerUnit evokerUnit;
 
     public SetFangsCircle(EvokerUnit evokerUnit) {
         super(UnitAction.SET_FANGS_CIRCLE,
+            evokerUnit.level,
             CD_MAX_SECONDS * ResourceCost.TICKS_PER_SECOND,
             EvokerUnit.FANGS_RANGE_CIRCLE,
             0,
@@ -66,12 +67,12 @@ public class SetFangsCircle extends Ability {
         );
     }
 
-    public void setCooldownSingle(int cooldown) {
+    public void setCooldownSingle(float cooldown) {
         super.setCooldown(cooldown);
     }
 
     @Override
-    public void setCooldown(int cooldown) {
+    public void setCooldown(float cooldown) {
         if (evokerUnit.hasVigorEnchant())
             cooldown *= EnchantVigor.cooldownMultiplier;
 

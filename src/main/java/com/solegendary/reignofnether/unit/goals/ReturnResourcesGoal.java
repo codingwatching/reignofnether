@@ -51,9 +51,9 @@ public class ReturnResourcesGoal extends MoveToTargetBlockGoal {
                         unit.resetBehaviours();
                         WorkerUnit.resetBehaviours((WorkerUnit) unit);
                         GatherResourcesGoal goal = worker.getGatherResourceGoal();
-                        if (goal != null && goal.hasSavedData()) {
+                        if (goal != null && goal.saveData.hasData()) {
                             goal.loadState();
-                            goal.deleteSavedState();
+                            goal.saveData.delete();
                         }
                     }
                 }
@@ -101,8 +101,7 @@ public class ReturnResourcesGoal extends MoveToTargetBlockGoal {
 
     public void setBuildingTarget(@Nullable Building target) {
         if (target != null) {
-            MiscUtil.addUnitCheckpoint((Unit) mob, target.centrePos);
-            ((Unit) mob).setIsCheckpointGreen(true);
+            MiscUtil.addUnitCheckpoint((Unit) mob, target.centrePos, true);
         }
         this.buildingTarget = target;
         calcMoveTarget();

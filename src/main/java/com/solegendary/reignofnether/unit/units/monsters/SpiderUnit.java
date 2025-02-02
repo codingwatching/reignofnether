@@ -1,30 +1,35 @@
 package com.solegendary.reignofnether.unit.units.monsters;
 
 import com.solegendary.reignofnether.ability.Ability;
+import com.solegendary.reignofnether.ability.AbilityClientboundPacket;
 import com.solegendary.reignofnether.ability.abilities.Eject;
 import com.solegendary.reignofnether.ability.abilities.SpinWebs;
+import com.solegendary.reignofnether.blocks.BlockServerEvents;
 import com.solegendary.reignofnether.hud.AbilityButton;
+import com.solegendary.reignofnether.hud.HudClientEvents;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceCosts;
 import com.solegendary.reignofnether.time.NightUtils;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
 import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
 import com.solegendary.reignofnether.unit.interfaces.Unit;
 import com.solegendary.reignofnether.util.Faction;
+import com.solegendary.reignofnether.util.MiscUtil;
+import com.solegendary.reignofnether.util.MyMath;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -34,7 +39,10 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.WebBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -42,17 +50,8 @@ import java.util.List;
 
 public class SpiderUnit extends Spider implements Unit, AttackerUnit, ConvertableUnit {
     // region
-    private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
-    private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
-    public ArrayList<BlockPos> getCheckpoints() { return checkpoints; };
-    public int getCheckpointTicksLeft() { return checkpointTicksLeft; }
-    public void setCheckpointTicksLeft(int ticks) { checkpointTicksLeft = ticks; }
-    private boolean isCheckpointGreen = true;
-    public boolean isCheckpointGreen() { return isCheckpointGreen; };
-    public void setIsCheckpointGreen(boolean green) { isCheckpointGreen = green; };
-    private int entityCheckpointId = -1;
-    public int getEntityCheckpointId() { return entityCheckpointId; };
-    public void setEntityCheckpointId(int id) { entityCheckpointId = id; };
+    private final ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    public ArrayList<Checkpoint> getCheckpoints() { return checkpoints; };
 
     public GarrisonGoal getGarrisonGoal() { return null; }
     public boolean canGarrison() { return getGarrisonGoal() != null; }
@@ -110,7 +109,8 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
     public float getUnitAttackDamage() {return attackDamage;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.SPIDER.population;}
     public boolean canAttackBuildings() {return getAttackBuildingGoal() != null;}
 
     public void setAttackMoveTarget(@Nullable BlockPos bp) { this.attackMoveTarget = bp; }
@@ -123,7 +123,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
 
     // endregion
 
-    final static public float attackDamage = 3.0f;
+    final static public float attackDamage = 4.0f;
     final static public float attacksPerSecond = 0.6f;
     final static public float maxHealth = 30.0f;
     final static public float armorValue = 0.0f;
@@ -132,15 +132,23 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
     final static public boolean aggressiveWhenIdle = true;
-    final static public int popCost = ResourceCosts.SPIDER.population;
 
     public int maxResources = 100;
 
     private MeleeAttackUnitGoal attackGoal;
     private MeleeAttackBuildingGoal attackBuildingGoal;
+    private WebGoal webGoal;
+    public WebGoal getWebGoal() { return webGoal; }
+    @Nullable
+    public SpinWebs getWebAbility() {
+        for (Ability ability : this.getAbilities())
+            if (ability instanceof SpinWebs spinWebs)
+                return spinWebs;
+        return null;
+    }
 
     private final List<AbilityButton> abilityButtons = new ArrayList<>();
-    private final List<Ability> abilities = new ArrayList<>();
+    protected final List<Ability> abilities = new ArrayList<>();
     private final List<ItemStack> items = new ArrayList<>();
 
     public SpiderUnit(EntityType<? extends Spider> entityType, Level level) {
@@ -164,6 +172,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
                 .add(Attributes.MOVEMENT_SPEED, SpiderUnit.movementSpeed)
                 .add(Attributes.ATTACK_DAMAGE, SpiderUnit.attackDamage)
                 .add(Attributes.ARMOR, SpiderUnit.armorValue)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.MAX_HEALTH, SpiderUnit.maxHealth);
     }
 
@@ -171,6 +180,8 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
     @Override
     public void resetBehaviours() {
         this.getMoveGoal().setMoveTarget(this.getOnPos());
+        if (getWebGoal() != null)
+            getWebGoal().stop();
         this.getCheckpoints().clear();
     }
 
@@ -184,30 +195,26 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
             AttackerUnit.tick(this);
 
             // apply slowness level 2 during daytime for a short time repeatedly
-            if (tickCount % 4 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
-                this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 1));
+            if (tickCount % 10 == 0 && !this.level.isClientSide() && this.level.isDay() && !NightUtils.isInRangeOfNightSource(this.getEyePosition(), false))
+                this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, 1));
 
-            for (Ability ability : abilities)
-                if (ability instanceof SpinWebs spinWebs)
-                    spinWebs.tick(level);
+            if (getWebGoal() != null)
+                getWebGoal().tick();
         }
     }
 
     @Override
     public void kill() {
         super.kill();
-
-        for (Ability ability : this.getAbilities())
-            if (ability instanceof SpinWebs spinWebs)
-                spinWebs.delayedRemoveWebs(level);
     }
 
     public void initialiseGoals() {
         this.usePortalGoal = new UsePortalGoal(this);
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
+        this.webGoal = new WebGoal(this, 0, SpinWebs.RANGE, this::onEntityCastWeb, this::onGroundCastWeb);
     }
 
     @Override
@@ -220,6 +227,7 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
         this.goalSelector.addGoal(2, attackGoal);
         this.goalSelector.addGoal(2, attackBuildingGoal);
         this.targetSelector.addGoal(2, targetGoal);
+        this.goalSelector.addGoal(2, webGoal);
         this.goalSelector.addGoal(3, moveGoal);
         this.goalSelector.addGoal(4, new RandomLookAroundUnitGoal(this));
     }
@@ -229,5 +237,56 @@ public class SpiderUnit extends Spider implements Unit, AttackerUnit, Convertabl
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
         return pSpawnData;
+    }
+
+    @Override
+    public boolean doHurtTarget(@NotNull Entity pEntity) {
+        if (super.doHurtTarget(pEntity)) {
+            if (getWebAbility() != null)
+                getWebAbility().use(this.level, this, pEntity.getOnPos());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void onEntityCastWeb(LivingEntity targetEntity) {
+        onGroundCastWeb(targetEntity.getOnPos());
+    }
+
+    public void onGroundCastWeb(BlockPos targetBp) {
+        SpinWebs spinWebs = getWebAbility();
+        if (spinWebs == null)
+            return;
+
+        if (!level.isClientSide() && !isVehicle()) {
+            BlockPos limitedBp = MyMath.getXZRangeLimitedBlockPos(getOnPos(), targetBp, spinWebs.range);
+
+            BlockPos originBp = MiscUtil.getHighestNonAirBlock(level, limitedBp, true);
+            List<Vec2> vec2s = List.of(
+                    new Vec2(0,0),
+                    new Vec2(1,1),
+                    new Vec2(-1,-1),
+                    new Vec2(1,-1),
+                    new Vec2(-1,1)
+            );
+            for (Vec2 vec2 : vec2s) {
+                BlockPos bp = MiscUtil.getHighestNonAirBlock(level, limitedBp.offset(vec2.x, 0, vec2.y), true);
+                if (distanceToSqr(Vec3.atCenterOf(bp)) < (spinWebs.range * 2) * (spinWebs.range * 2))
+                    BlockServerEvents.addTempBlock((ServerLevel) level, bp.above().above(), Blocks.COBWEB.defaultBlockState(),
+                            Blocks.AIR.defaultBlockState(), SpinWebs.DURATION_SECONDS * 20);
+            }
+            resetBehaviours();
+        } else if (level.isClientSide()) {
+            if (isVehicle()) {
+                HudClientEvents.showTemporaryMessage(I18n.get("abilities.reignofnether.spin_webs.error1"));
+                return;
+            }
+        }
+        if (!isVehicle()) {
+            spinWebs.setToMaxCooldown();
+            if (!level.isClientSide())
+                AbilityClientboundPacket.sendSetCooldownPacket(getId(), spinWebs.action, spinWebs.cooldownMax);
+        }
     }
 }

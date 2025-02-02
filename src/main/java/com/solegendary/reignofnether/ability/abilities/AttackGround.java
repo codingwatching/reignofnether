@@ -15,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -28,9 +29,11 @@ public class AttackGround extends Ability {
     public AttackGround(RangedAttackerUnit rangedAttackerUnit) {
         super(
                 UnitAction.ATTACK_GROUND,
+                ((Entity) rangedAttackerUnit).level,
                 CD_MAX,
                 ((AttackerUnit) rangedAttackerUnit).getAttackRange(),
                 0,
+                false,
                 false
         );
         this.rangedAttackerUnit = rangedAttackerUnit;

@@ -2,6 +2,7 @@ package com.solegendary.reignofnether.unit;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
+import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.alliance.AllianceSystem;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.building.buildings.shared.AbstractBridge;
@@ -13,15 +14,11 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.minimap.MinimapClientEvents;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.player.PlayerServerboundPacket;
-import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import com.solegendary.reignofnether.resources.*;
 import com.solegendary.reignofnether.tutorial.TutorialClientEvents;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackBuildingGoal;
-import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
-import com.solegendary.reignofnether.unit.interfaces.ConvertableUnit;
-import com.solegendary.reignofnether.unit.interfaces.Unit;
-import com.solegendary.reignofnether.unit.interfaces.WorkerUnit;
+import com.solegendary.reignofnether.unit.interfaces.*;
 import com.solegendary.reignofnether.unit.packets.UnitActionServerboundPacket;
 import com.solegendary.reignofnether.unit.units.monsters.CreeperUnit;
 import com.solegendary.reignofnether.unit.units.monsters.WardenUnit;
@@ -29,10 +26,7 @@ import com.solegendary.reignofnether.unit.units.monsters.ZoglinUnit;
 import com.solegendary.reignofnether.unit.units.piglins.BruteUnit;
 import com.solegendary.reignofnether.unit.units.piglins.GhastUnit;
 import com.solegendary.reignofnether.unit.units.piglins.HoglinUnit;
-import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
-import com.solegendary.reignofnether.unit.units.villagers.IronGolemUnit;
-import com.solegendary.reignofnether.unit.units.villagers.RavagerUnit;
-import com.solegendary.reignofnether.unit.units.villagers.VindicatorUnit;
+import com.solegendary.reignofnether.unit.units.villagers.*;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import com.solegendary.reignofnether.util.MyMath;
@@ -62,10 +56,13 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
+import static com.solegendary.reignofnether.building.BuildingClientEvents.getPlayerToBuildingRelationship;
 import static com.solegendary.reignofnether.cursor.CursorClientEvents.getPreselectedBlockPos;
 import static com.solegendary.reignofnether.hud.HudClientEvents.hudSelectedEntity;
+import static com.solegendary.reignofnether.unit.Checkpoint.CHECKPOINT_TICKS_FADE;
 import static net.minecraftforge.client.event.RenderLevelStageEvent.Stage.*;
 
 public class UnitClientEvents {
@@ -91,6 +88,10 @@ public class UnitClientEvents {
     private static final ArrayList<LivingEntity> selectedUnits = new ArrayList<>();
     // tracking of all existing units
     private static final ArrayList<LivingEntity> allUnits = new ArrayList<>();
+
+    @Nullable private static UnitActionItem lastClientUAIActioned = null;
+
+    public static boolean neutralAggro = false;
 
     public static ArrayList<LivingEntity> getPreselectedUnits() { return preselectedUnits; }
     public static ArrayList<LivingEntity> getSelectedUnits() {
@@ -129,10 +130,6 @@ public class UnitClientEvents {
 
     private static long lastLeftClickTime = 0; // to track double clicks
     private static final long DOUBLE_CLICK_TIME_MS = 500;
-
-    // unit checkpoint draw lines (eg. where the unit was issued a command to move/build to)
-    public static final int CHECKPOINT_TICKS_MAX = 200;
-    public static final int CHECKPOINT_TICKS_FADE = 15; // ticks left at which the lines start to fade
 
     private static boolean isLeftClickAttack() {
         return CursorClientEvents.getLeftClickAction() == UnitAction.ATTACK;
@@ -176,23 +173,9 @@ public class UnitClientEvents {
     }
 
     public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
-                                             BlockPos preselectedBlockPos, BlockPos selectedBuildingPos) {
-        if (MC.player != null) {
-            UnitActionItem actionItem = new UnitActionItem(
-                MC.player.getName().getString(),
-                action, unitId, unitIds,
-                preselectedBlockPos,
-                selectedBuildingPos
-            );
-            actionItem.action(MC.level);
-
-            PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
-                MC.player.getName().getString(),
-                action, unitId, unitIds,
-                preselectedBlockPos,
-                selectedBuildingPos
-            ));
-        }
+                                             BlockPos preselectedBlockPos, boolean clientside, boolean serverside) {
+        sendUnitCommandManual(action, unitId, unitIds, preselectedBlockPos,
+                new BlockPos(0,0,0), clientside, serverside);
     }
 
     public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds) {
@@ -207,6 +190,56 @@ public class UnitClientEvents {
                 new BlockPos(0,0,0));
     }
 
+    public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
+                                             BlockPos preselectedBlockPos, BlockPos selectedBuildingPos) {
+        if (MC.player != null) {
+            UnitActionItem actionItem = new UnitActionItem(
+                MC.player.getName().getString(),
+                action, unitId, unitIds,
+                preselectedBlockPos,
+                selectedBuildingPos
+            );
+            // prevent spam clicking the same action repeatedly
+            if (!actionItem.equals(lastClientUAIActioned)) {
+                actionItem.action(MC.level);
+                lastClientUAIActioned = actionItem;
+            }
+
+            PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
+                MC.player.getName().getString(),
+                action, unitId, unitIds,
+                preselectedBlockPos,
+                selectedBuildingPos,
+                Keybindings.shiftMod.isDown()
+            ));
+        }
+    }
+
+    public static void sendUnitCommandManual(UnitAction action, int unitId, int[] unitIds,
+                                             BlockPos preselectedBlockPos, BlockPos selectedBuildingPos,
+                                             boolean clientside, boolean serverside) {
+        if (MC.player != null) {
+            if (clientside) {
+                UnitActionItem actionItem = new UnitActionItem(
+                        MC.player.getName().getString(),
+                        action, unitId, unitIds,
+                        preselectedBlockPos,
+                        selectedBuildingPos
+                );
+                actionItem.action(MC.level);
+            }
+            if (serverside) {
+                PacketHandler.INSTANCE.sendToServer(new UnitActionServerboundPacket(
+                        MC.player.getName().getString(),
+                        action, unitId, unitIds,
+                        preselectedBlockPos,
+                        selectedBuildingPos,
+                        Keybindings.shiftMod.isDown()
+                ));
+            }
+        }
+    }
+
     public static void sendUnitCommand(UnitAction action) {
         BlockPos bp = getPreselectedBlockPos();
         if (action == UnitAction.STARTRTS_VILLAGERS) {
@@ -218,11 +251,21 @@ public class UnitClientEvents {
         }
 
         if (MC.player != null) {
+            int[] selUnits = selectedUnits.stream()
+                    .filter(u -> {
+                        if (u instanceof Unit unit)
+                            for (Ability ability : unit.getAbilities())
+                                if (ability.isChanneling() && ability.oneClickOneUse && ability.action == action)
+                                    return false;
+                        return true;
+                    })
+                    .mapToInt(Entity::getId).toArray();
+
             UnitActionItem actionItem = new UnitActionItem(
                 MC.player.getName().getString(),
                 action,
                 preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
-                selectedUnits.stream().mapToInt(Entity::getId).toArray(),
+                selUnits,
                 bp,
                 HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
             );
@@ -232,9 +275,10 @@ public class UnitClientEvents {
                 MC.player.getName().getString(),
                 action,
                 preselectedUnits.size() > 0 ? preselectedUnits.get(0).getId() : -1,
-                selectedUnits.stream().mapToInt(Entity::getId).toArray(),
+                selUnits,
                 bp,
-                HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0)
+                HudClientEvents.hudSelectedBuilding != null ? HudClientEvents.hudSelectedBuilding.originPos : new BlockPos(0,0,0),
+                Keybindings.shiftMod.isDown()
             ));
         }
     }
@@ -242,7 +286,11 @@ public class UnitClientEvents {
     private static void resolveMoveAction() {
         // follow friendly unit
         if (preselectedUnits.size() == 1 && !targetingSelf()) {
-            sendUnitCommand(UnitAction.FOLLOW);
+            if (hudSelectedEntity instanceof WitchUnit witchUnit) {
+                sendUnitCommand(UnitAction.THROW_LINGERING_REGEN_POTION);
+            } else {
+                sendUnitCommand(UnitAction.FOLLOW);
+            }
         }
         // move to ground pos (disabled during camera manip)
         else if (!Keybindings.altMod.isDown() && selectedUnits.size() > 0 && MC.level != null) {
@@ -252,12 +300,26 @@ public class UnitClientEvents {
             if (selectedUnits.size() == 1 || isGathering)
                 sendUnitCommand(UnitAction.MOVE);
             else { // if we do not have a gathering villager as the fist
+
                 List<Pair<Integer, BlockPos>> formationPairs = UnitFormations.getMoveFormation(
                     MC.level, selectedUnits, getPreselectedBlockPos()
                 );
+
                 for (Pair<Integer, BlockPos> pair : formationPairs) {
-                    sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{pair.getFirst()}, pair.getSecond());
+                    int entityId = pair.getFirst();
+                    BlockPos targetPos = pair.getSecond();
+                    Entity entity = MC.level.getEntity(entityId);
+                    if (entity instanceof Unit unit &&
+                        unit.getMoveGoal() != null) {
+
+                        //sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos, true, false);
+
+                        sendUnitCommandManual(UnitAction.MOVE, -1, new int[]{entityId}, targetPos);
+                    }
                 }
+                for (LivingEntity le : selectedUnits)
+                    if (le instanceof Unit unit && unit.getMoveGoal() != null)
+                        unit.getMoveGoal().lastSelectedMoveTarget = getPreselectedBlockPos();
             }
         }
     }
@@ -320,6 +382,15 @@ public class UnitClientEvents {
         }
     }
 
+    /*
+    private static double variance = 0;
+    @SubscribeEvent
+    public static void onRenderOverLay(RenderGuiOverlayEvent.Pre evt) {
+        MiscUtil.drawDebugStrings(evt.getPoseStack(), MC.font, new String[] {
+                "var: " + variance,
+        });
+    }
+     */
 
     private static final int VIS_CHECK_TICKS_MAX = 10;
     private static int ticksToNextVisCheck = VIS_CHECK_TICKS_MAX;
@@ -327,6 +398,9 @@ public class UnitClientEvents {
     public static void onClientTick(TickEvent.ClientTickEvent evt) {
         if (evt.phase != TickEvent.Phase.END)
             return;
+
+        //if (MC.level != null)
+        //    variance = WaveSpawner.getYVariance(MC.level, getPreselectedBlockPos(), 8);
 
         ticksToNextVisCheck -= 1;
 
@@ -353,7 +427,8 @@ public class UnitClientEvents {
                 synchronized (unitWindowVecs) {
                     unitWindowVecs.clear();
                     windowPositions.forEach(bp -> {
-                        if (bp.distSqr(MC.player.getOnPos()) < Math.pow(OrthoviewClientEvents.getZoom() + 10, 2))
+                        float dist = OrthoviewClientEvents.getZoom() * 2;
+                        if (bp.distSqr(MC.player.getOnPos()) < (dist * dist))
                             unitWindowVecs.add(MyMath.prepIsPointInsideRect3d(Minecraft.getInstance(),
                                     new Vector3d(bp.getX() - WINDOW_RADIUS, bp.getY(), bp.getZ() - WINDOW_RADIUS), // tl
                                     new Vector3d(bp.getX() - WINDOW_RADIUS, bp.getY(), bp.getZ() + WINDOW_RADIUS), // bl
@@ -395,6 +470,7 @@ public class UnitClientEvents {
     /**
      * Add and update entities from clientside action
      */
+
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent evt) {
         Entity entity = evt.getEntity();
@@ -472,8 +548,10 @@ public class UnitClientEvents {
             else if (CursorClientEvents.getLeftClickAction() == UnitAction.MOVE)
                 resolveMoveAction();
             // resolve any other abilities not explicitly covered here
-            else if (CursorClientEvents.getLeftClickAction() != null)
+            else if (CursorClientEvents.getLeftClickAction() != null && MC.player != null) {
                 sendUnitCommand(CursorClientEvents.getLeftClickAction());
+            }
+
 
             // left click -> select a single unit
             // if shift is held, deselect a unit or add it to the selected group
@@ -511,17 +589,22 @@ public class UnitClientEvents {
                 // right click -> attack unfriendly unit
                 if (preselectedUnits.size() == 1 &&
                     !targetingSelf() &&
-                    (MC.level.getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get() ||
-                     getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.HOSTILE ||
+                    ((neutralAggro && getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.NEUTRAL) ||
+                    getPlayerToEntityRelationship(preselectedUnits.get(0)) == Relationship.HOSTILE ||
                      ResourceSources.isHuntableAnimal(preselectedUnits.get(0)))) {
 
-                    sendUnitCommand(UnitAction.ATTACK);
+                     if (hudSelectedEntity instanceof WitchUnit witchUnit) {
+                         sendUnitCommand(UnitAction.THROW_LINGERING_HARMING_POTION);
+                     } else {
+                         sendUnitCommand(UnitAction.ATTACK);
+                     }
                 }
                 // right click -> attack unfriendly building
                 else if (hudSelectedEntity instanceof AttackerUnit &&
                         (preSelBuilding != null) &&
                         !(preSelBuilding instanceof AbstractBridge) &&
-                        BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.HOSTILE) {
+                        ((neutralAggro && getPlayerToBuildingRelationship(preSelBuilding) == Relationship.NEUTRAL) ||
+                        getPlayerToBuildingRelationship(preSelBuilding) == Relationship.HOSTILE)) {
                     sendUnitCommand(UnitAction.ATTACK_BUILDING);
                 }
                 // right click -> return resources
@@ -529,12 +612,12 @@ public class UnitClientEvents {
                         unit.getReturnResourcesGoal() != null &&
                         Resources.getTotalResourcesFromItems(unit.getItems()).getTotalValue() > 0 &&
                         preSelBuilding != null && preSelBuilding.canAcceptResources && preSelBuilding.isBuilt &&
-                        BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) {
+                        getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) {
                     sendUnitCommand(UnitAction.RETURN_RESOURCES);
                 }
                 // right click -> build or repair preselected building
                 else if (hudSelectedEntity instanceof WorkerUnit && preSelBuilding != null &&
-                        (BuildingClientEvents.getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) ||
+                        (getPlayerToBuildingRelationship(preSelBuilding) == Relationship.OWNED) ||
                         preSelBuilding instanceof AbstractBridge) {
 
                     if (preSelBuilding.name.contains(" Farm") && preSelBuilding.isBuilt)
@@ -625,45 +708,38 @@ public class UnitClientEvents {
             // draw unit checkpoints
             for (LivingEntity entity : getSelectedUnits()) {
                 if (entity instanceof Unit unit) {
-                    int ticksUnderFade = Math.min(unit.getCheckpointTicksLeft(), CHECKPOINT_TICKS_FADE);
-                    float a = ((float) ticksUnderFade / (float) CHECKPOINT_TICKS_FADE) * 0.5f;
 
-                    int id = unit.getEntityCheckpointId();
-                    if (id > -1) {
-                        Entity checkpointEntity = MC.level.getEntity(id);
-                        if (checkpointEntity != null) {
-                            float entityYOffset1 = 1.74f - ((LivingEntity) unit).getEyeHeight() - 1;
-                            Vec3 startPos = ((LivingEntity) unit).getEyePosition().add(0,entityYOffset1,0);
-                            float entityYOffset2 = 1.74f - checkpointEntity.getEyeHeight() - 1;
-                            Vec3 endPos = checkpointEntity.getEyePosition().add(0,entityYOffset2,0);
-                            boolean green = unit.isCheckpointGreen();
-                            MyRenderer.drawLine(evt.getPoseStack(), startPos, endPos, green ? 0 : 1, green ? 1 : 0, 0, a);
-                        }
-                    } else {
-                        for (int i = 0; i < unit.getCheckpoints().size(); i++) {
-                            Vec3 startPos;
-                            if (i == 0) {
-                                float entityYOffset = 1.74f - ((LivingEntity) unit).getEyeHeight() - 1;
-                                startPos = ((LivingEntity) unit).getEyePosition().add(0,entityYOffset,0);
-                            } else {
-                                BlockPos bp = unit.getCheckpoints().get(i-1);
-                                startPos = new Vec3(bp.getX() + 0.5f, bp.getY() + 1, bp.getZ() + 0.5f);
-                            }
-                            BlockPos bp = unit.getCheckpoints().get(i);
-                            Vec3 endPos = new Vec3(bp.getX() + 0.5f, bp.getY() + 1.0f, bp.getZ() + 0.5f);
+                    float entityYOffset1 = 1.74f - ((LivingEntity) unit).getEyeHeight() - 1;
+                    Vec3 lastPos = ((LivingEntity) unit).getEyePosition().add(0, entityYOffset1,0);
 
-                            boolean green = unit.isCheckpointGreen();
-                            MyRenderer.drawLine(evt.getPoseStack(), startPos, endPos, green ? 0 : 1, green ? 1 : 0, 0, a);
-
-                            if (MC.level.getBlockState(bp.offset(0,1,0)).getBlock() instanceof SnowLayerBlock) {
-                                AABB aabb = new AABB(bp);
+                    for (Checkpoint cp : unit.getCheckpoints()) {
+                        int ticksUnderFade = Math.min(cp.ticksLeft, CHECKPOINT_TICKS_FADE);
+                        float a = ((float) ticksUnderFade / (float) CHECKPOINT_TICKS_FADE) * 0.5f;
+                        if (cp.isForEntity()) {
+                            MyRenderer.drawLine(evt.getPoseStack(), lastPos, cp.getPos(), cp.isGreen ? 0 : 1, cp.isGreen ? 1 : 0, 0, a);
+                            lastPos = cp.getPos();
+                        } else {
+                            MyRenderer.drawLine(evt.getPoseStack(), lastPos, cp.getPos(), cp.isGreen ? 0 : 1, cp.isGreen ? 1 : 0, 0, a);
+                            if (MC.level.getBlockState(cp.bp.offset(0,1,0)).getBlock() instanceof SnowLayerBlock) {
+                                AABB aabb = new AABB(cp.bp);
                                 aabb = aabb.setMaxY(aabb.maxY + 0.13f);
-                                MyRenderer.drawSolidBox(evt.getPoseStack(), aabb, Direction.UP, green ? 0 : 1, green ? 1 : 0, 0, a, new ResourceLocation("forge:textures/white.png"));
+                                MyRenderer.drawSolidBox(evt.getPoseStack(), aabb, Direction.UP, cp.isGreen ? 0 : 1, cp.isGreen ? 1 : 0, 0, a,
+                                        new ResourceLocation("forge:textures/white.png"));
                             } else {
-                                MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, green ? 0 : 1, green ? 1 : 0, 0, a);
+                                MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, cp.bp, cp.isGreen ? 0 : 1, cp.isGreen ? 1 : 0, 0, a);
                             }
+                            lastPos = cp.getPos();
                         }
                     }
+                    // draw path nodes
+                    /*
+                    if (unit instanceof Mob mob && mob.getNavigation().getPath() != null) {
+                        for (Node node : mob.getNavigation().getPath().nodes) {
+                            BlockPos bp = new BlockPos(node.x, node.y, node.z).below();
+                            MyRenderer.drawBlockFace(evt.getPoseStack(), Direction.UP, bp, 0, 1, 0, a);
+                        }
+                    }
+                     */
                 }
             }
         }
@@ -797,13 +873,10 @@ public class UnitClientEvents {
         sendUnitCommandManual(UnitAction.DISCARD, oldUnitIds);
     }
 
-    public static void syncUnitAnimation(int entityId, int targetId, BlockPos buildingBp, boolean startAnimation) {
+    public static void syncUnitAnimation(UnitAnimationAction animAction, boolean startAnimation, int entityId, int targetId,
+                                         BlockPos buildingBp) {
         for (LivingEntity entity : getAllUnits()) {
             if (entity instanceof EvokerUnit eUnit && eUnit.getId() == entityId) {
-                // skip if it's your evoker since it'll already be synced
-                //if (MC.player != null && eUnit.getOwnerName().equals(MC.player.getName().getString()))
-                //    return;
-
                 if (eUnit.getCastFangsGoal() != null) {
                     if (startAnimation)
                         eUnit.getCastFangsGoal().startCasting();
@@ -823,7 +896,11 @@ public class UnitClientEvents {
                 bUnit.isHoldingUpShield = startAnimation;
             } else if (entity instanceof WorkerUnit wUnit && entity instanceof AttackerUnit aUnit && entity.getId() == entityId) {
                 if (startAnimation && MC.level != null) {
-                    entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+                    if (entity instanceof VillagerUnit vUnit && vUnit.getUnitProfession() == VillagerUnitProfession.HUNTER && vUnit.isVeteran())
+                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
+                    else
+                        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+
                     aUnit.setUnitAttackTarget((LivingEntity) MC.level.getEntity(targetId)); // set itself as a target just for animation purposes, doesn't tick clientside anyway
                 } else {
                     entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.AIR));
@@ -844,7 +921,17 @@ public class UnitClientEvents {
         }
     }
 
-    public static void playAttackBuildingAnimation(int entityId) {
+    public static void playKeyframeAnimation(UnitAnimationAction animAction, int entityId) {
+        for (LivingEntity entity : getAllUnits()) {
+            if (entity instanceof KeyframeAnimated kfa && entity.getId() == entityId) {
+                kfa.playSingleAnimation(animAction);
+                return;
+            }
+        }
+    }
+
+    // usually used for attacking buildings
+    public static void playAttackAnimation(int entityId) {
         for (LivingEntity entity : getAllUnits()) {
             if (entity.getId() == entityId) {
                 if (entity instanceof IronGolemUnit ||
@@ -885,6 +972,12 @@ public class UnitClientEvents {
 
     public static void setMaxPopulation(int value) {
         maxPopulation = value;
+    }
+
+    public static void makeVillagerVeteran(int unitId) {
+        for (LivingEntity entity : getAllUnits())
+            if (entity instanceof VillagerUnit vUnit && unitId == entity.getId())
+                vUnit.isVeteran = true;
     }
 
     /*

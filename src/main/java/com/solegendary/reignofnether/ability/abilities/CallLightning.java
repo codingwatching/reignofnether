@@ -26,13 +26,14 @@ import java.util.List;
 public class CallLightning extends Ability {
 
     private static final int CD_MAX = 60 * ResourceCost.TICKS_PER_SECOND;
-    private static final int RANGE = 25;
+    public static final int RANGE = 25;
 
     private final Laboratory lab;
 
     public CallLightning(Laboratory lab) {
         super(
             UnitAction.CALL_LIGHTNING,
+            lab.getLevel(),
             CD_MAX,
             RANGE,
             0,
@@ -71,7 +72,7 @@ public class CallLightning extends Ability {
             BlockPos rodPos = lab.getLightningRodPos();
 
             if (lab.isAbilityOffCooldown(UnitAction.CALL_LIGHTNING) && rodPos != null) {
-                BlockPos limitedBp = MyMath.getXZRangeLimitedBlockPos(rodPos, targetBp, range);
+                BlockPos limitedBp = MyMath.getXZRangeLimitedBlockPos(buildingUsing.centrePos, targetBp, range);
                 // getXZRangeLimitedBlockPos' Y value is always the same as rodPos, but we want the first sky-exposed block
                 limitedBp = MiscUtil.getHighestNonAirBlock(level, limitedBp);
 

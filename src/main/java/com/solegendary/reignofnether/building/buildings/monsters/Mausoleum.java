@@ -7,9 +7,7 @@ import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.time.TimeClientEvents;
 import com.solegendary.reignofnether.unit.units.monsters.ZombieVillagerProd;
-import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.resources.ResourceCosts;
-import com.solegendary.reignofnether.unit.units.monsters.ZombieVillagerProd;
 import com.solegendary.reignofnether.util.Faction;
 import com.solegendary.reignofnether.util.MiscUtil;
 import net.minecraft.client.resources.language.I18n;
@@ -29,12 +27,12 @@ import java.util.Set;
 
 import static com.solegendary.reignofnether.building.BuildingUtils.getAbsoluteBlockData;
 
-public class Mausoleum extends ProductionBuilding implements NightSource {
+public class Mausoleum extends ProductionBuilding implements NightSource, RangeIndicator {
 
     public final static String buildingName = "Mausoleum";
     public final static String structureName = "mausoleum";
     public final static ResourceCost cost = ResourceCosts.MAUSOLEUM;
-    public final static int nightRange = 80;
+    public final static int nightRange = 70;
 
     private final Set<BlockPos> nightBorderBps = new HashSet<>();
 
@@ -68,32 +66,37 @@ public class Mausoleum extends ProductionBuilding implements NightSource {
         if (level.isClientSide()) {
             this.productionButtons = List.of(ZombieVillagerProd.getStartButton(this, Keybindings.keyQ));
         }
-        updateNightBorderBps();
+        updateBorderBps();
     }
 
     public int getNightRange() {
-        return nightRange;
+        return (isBuilt || isBuiltServerside) ? nightRange : 0;
     }
 
     @Override
-    public void updateNightBorderBps() {
+    public void updateBorderBps() {
         if (!level.isClientSide())
             return;
         this.nightBorderBps.clear();
-        this.nightBorderBps.addAll(MiscUtil.getNightCircleBlocks(centrePos,
+        this.nightBorderBps.addAll(MiscUtil.getRangeIndicatorCircleBlocks(centrePos,
                 getNightRange() - TimeClientEvents.VISIBLE_BORDER_ADJ, level));
     }
 
     @Override
-    public Set<BlockPos> getNightBorderBps() {
+    public Set<BlockPos> getBorderBps() {
         return nightBorderBps;
+    }
+
+    @Override
+    public boolean showOnlyWhenSelected() {
+        return false;
     }
 
     @Override
     public void tick(Level tickLevel) {
         super.tick(tickLevel);
         if (tickLevel.isClientSide && tickAgeAfterBuilt > 0 && tickAgeAfterBuilt % 100 == 0)
-            updateNightBorderBps();
+            updateBorderBps();
     }
 
     public Faction getFaction() {
@@ -129,11 +132,7 @@ public class Mausoleum extends ProductionBuilding implements NightSource {
                     "buildings.monsters.reignofnether.mausoleum.tooltip2",
                     nightRange
                 ), Style.EMPTY),
-                FormattedCharSequence.forward("", Style.EMPTY),
-                FormattedCharSequence.forward(
-                    I18n.get("buildings.monsters.reignofnether.mausoleum.tooltip3"),
-                    Style.EMPTY
-                )
+                FormattedCharSequence.forward("", Style.EMPTY)
             ),
             null
         );

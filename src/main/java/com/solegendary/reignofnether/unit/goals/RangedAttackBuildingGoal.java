@@ -39,8 +39,15 @@ public class RangedAttackBuildingGoal<T extends net.minecraft.world.entity.Mob> 
         if (this.buildingTarget != null && !buildingTarget.getBlocks().isEmpty()) {
             Random rand = new Random();
             List<BuildingBlock> nonAirBlocks = buildingTarget.getBlocks().stream().filter(b -> b.isPlaced(this.mob.level)).toList();
-            BuildingBlock block = nonAirBlocks.get(rand.nextInt(nonAirBlocks.size()));
-            this.blockTarget = block.getBlockPos();
+
+            int bound = nonAirBlocks.size();
+            if (bound > 0) {
+                int randIndex = rand.nextInt(bound);
+                BuildingBlock block = nonAirBlocks.get(randIndex);
+                this.blockTarget = block.getBlockPos();
+            } else {
+                this.blockTarget = null;
+            }
         }
     }
 
@@ -52,9 +59,9 @@ public class RangedAttackBuildingGoal<T extends net.minecraft.world.entity.Mob> 
                     MiscUtil.addUnitCheckpoint(((Unit) mob), new BlockPos(
                             buildingTarget.centrePos.getX(),
                             buildingTarget.originPos.getY() + 1,
-                            buildingTarget.centrePos.getZ())
+                            buildingTarget.centrePos.getZ()),
+                            false
                     );
-                    ((Unit) mob).setIsCheckpointGreen(false);
                 }
             }
             else {
@@ -115,9 +122,11 @@ public class RangedAttackBuildingGoal<T extends net.minecraft.world.entity.Mob> 
 
             if ((distToTarget > attackRange - 1) &&
                 !((Unit) this.mob).getHoldPosition()) {
-                this.moveTo(this.blockTarget);
+                if (!mob.isPassenger())
+                    this.moveTo(this.blockTarget);
             } else {
-                this.stopMoving();
+                if (!mob.isPassenger())
+                    this.stopMoving();
             }
             if (distToTarget <= attackRange) { // start drawing bowstring
                 if (bowAttackGoal != null) {

@@ -1,11 +1,11 @@
 package com.solegendary.reignofnether.unit.units.piglins;
 
 import com.solegendary.reignofnether.ability.Ability;
-import com.solegendary.reignofnether.ability.abilities.SpinWebs;
 import com.solegendary.reignofnether.ability.abilities.WitherCloud;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.goals.*;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -41,17 +41,8 @@ import java.util.UUID;
 
 public class WitherSkeletonUnit extends WitherSkeleton implements Unit, AttackerUnit {
     // region
-    private final ArrayList<BlockPos> checkpoints = new ArrayList<>();
-    private int checkpointTicksLeft = UnitClientEvents.CHECKPOINT_TICKS_MAX;
-    public ArrayList<BlockPos> getCheckpoints() { return checkpoints; };
-    public int getCheckpointTicksLeft() { return checkpointTicksLeft; }
-    public void setCheckpointTicksLeft(int ticks) { checkpointTicksLeft = ticks; }
-    private boolean isCheckpointGreen = true;
-    public boolean isCheckpointGreen() { return isCheckpointGreen; };
-    public void setIsCheckpointGreen(boolean green) { isCheckpointGreen = green; };
-    private int entityCheckpointId = -1;
-    public int getEntityCheckpointId() { return entityCheckpointId; };
-    public void setEntityCheckpointId(int id) { entityCheckpointId = id; };
+    private final ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    public ArrayList<Checkpoint> getCheckpoints() { return checkpoints; };
 
     GarrisonGoal garrisonGoal;
     public GarrisonGoal getGarrisonGoal() { return garrisonGoal; }
@@ -102,7 +93,8 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     public float getMovementSpeed() {return movementSpeed;}
     public float getUnitMaxHealth() {return maxHealth;}
     public float getUnitArmorValue() {return armorValue;}
-    public int getPopCost() {return popCost;}
+    @Nullable
+    public int getPopCost() {return ResourceCosts.WITHER_SKELETON.population;}
     public boolean getWillRetaliate() {return willRetaliate;}
     public int getAttackCooldown() {return (int) (20 / attacksPerSecond);}
     public float getAttacksPerSecond() {return attacksPerSecond;}
@@ -119,8 +111,8 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
 
     // endregion
 
-    final static public float attackDamage = 7.0f;
-    final static public float attacksPerSecond = 0.4f;
+    final static public float attackDamage = 3.0f;
+    final static public float attacksPerSecond = 0.3f;
     final static public float attackRange = 2; // only used by ranged units or melee building attackers
     final static public float aggroRange = 10;
     final static public boolean willRetaliate = true; // will attack when hurt by an enemy
@@ -129,7 +121,6 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
     final static public float maxHealth = 90.0f;
     final static public float armorValue = 0.0f;
     final static public float movementSpeed = 0.28f;
-    final static public int popCost = ResourceCosts.WITHER_SKELETON.population;
     public int maxResources = 100;
 
     public int deathCloudTicks = 0;
@@ -163,6 +154,7 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
                 .add(Attributes.ATTACK_DAMAGE, WitherSkeletonUnit.attackDamage)
                 .add(Attributes.MOVEMENT_SPEED, WitherSkeletonUnit.movementSpeed)
                 .add(Attributes.MAX_HEALTH, WitherSkeletonUnit.maxHealth)
+                .add(Attributes.FOLLOW_RANGE, Unit.getFollowRange())
                 .add(Attributes.ARMOR, WitherSkeletonUnit.armorValue);
     }
 
@@ -195,7 +187,7 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
             aec.setDurationOnUse(0);
             aec.setDuration(2 * 20); // cloud duration
             aec.setRadiusPerTick(-aec.getRadius() / (float)aec.getDuration());
-            aec.addEffect(new MobEffectInstance(MobEffects.WITHER, 2 * 20));
+            aec.addEffect(new MobEffectInstance(MobEffects.WITHER, 2 * 20, 1));
             level.addFreshEntity(aec);
         }
         if (deathCloudTicks > 0)
@@ -207,7 +199,7 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
         this.moveGoal = new MoveToTargetBlockGoal(this, false, 0);
         this.targetGoal = new SelectedTargetGoal<>(this, true, true);
         this.garrisonGoal = new GarrisonGoal(this);
-        this.attackGoal = new MeleeAttackUnitGoal(this, getAttackCooldown(), false);
+        this.attackGoal = new MeleeAttackUnitGoal(this, false);
         this.returnResourcesGoal = new ReturnResourcesGoal(this);
         this.attackBuildingGoal = new MeleeAttackBuildingGoal(this);
     }
@@ -240,16 +232,30 @@ public class WitherSkeletonUnit extends WitherSkeleton implements Unit, Attacker
         this.setItemSlot(EquipmentSlot.MAINHAND, swordStack);
     }
 
-    public static final int WITHER_SECONDS = 7;
-    public static final int WITHER_SECONDS_TO_ATTACKERS = 2;
+    public static final int WITHER_SECONDS = 6;
+    public static final int WITHER_MAX_AMPLIFIER = 4; // amplifier starts at 0
+
+    public static void applyStackingWither(LivingEntity le) {
+        int amplifier = 0;
+        MobEffectInstance witherEffect = null;
+        for (MobEffectInstance effect : (le).getActiveEffects())
+            if (effect.getEffect() == MobEffects.WITHER)
+                witherEffect = effect;
+
+        if (witherEffect != null) {
+            amplifier = Math.min(WITHER_MAX_AMPLIFIER, witherEffect.getAmplifier() + 1);
+            le.removeEffect(MobEffects.WITHER);
+        }
+        le.addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_SECONDS * 20, amplifier), null);
+    }
 
     @Override
     public boolean doHurtTarget(@NotNull Entity pEntity) {
         if (!super.doHurtTarget(pEntity)) {
             return false;
         } else {
-            if (pEntity instanceof LivingEntity)
-                ((LivingEntity)pEntity).addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_SECONDS * 20), this);
+            if (pEntity instanceof LivingEntity le)
+                applyStackingWither(le);
             return true;
         }
     }

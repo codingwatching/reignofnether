@@ -22,7 +22,7 @@ public class UsePortalGoal extends MoveToTargetBlockGoal {
     }
 
     public void tick() {
-        if (buildingTarget instanceof Portal portal) {
+        if (buildingTarget instanceof Portal portal && moveTarget != null) {
             calcMoveTarget();
             if (buildingTarget.getBlocksPlaced() <= 0) {
                 stopUsingPortal();
@@ -35,9 +35,9 @@ public class UsePortalGoal extends MoveToTargetBlockGoal {
                 // teleport to destination
                 if (portal.destination != null && buildingTarget.isBuilt) {
                     BlockPos bp = portal.destination;
-                    SoundClientboundPacket.playSoundOnClient(SoundAction.USE_PORTAL, bp);
+                    SoundClientboundPacket.playSoundAtPos(SoundAction.USE_PORTAL, bp);
                     mob.teleportTo(bp.getX() + 0.5f, bp.getY() + 0.5f, bp.getZ() + 0.5f);
-                    SoundClientboundPacket.playSoundOnClient(SoundAction.USE_PORTAL, portal.destination);
+                    SoundClientboundPacket.playSoundAtPos(SoundAction.USE_PORTAL, portal.destination);
                 }
                 this.stopUsingPortal();
             }
@@ -64,8 +64,7 @@ public class UsePortalGoal extends MoveToTargetBlockGoal {
                             buildingTarget.centrePos.getX(),
                             buildingTarget.originPos.getY() + 1,
                             buildingTarget.centrePos.getZ()
-                        ));
-                        ((Unit) mob).setIsCheckpointGreen(true);
+                        ), true);
                     } else {
                         HudClientEvents.showTemporaryMessage(I18n.get("hud.reignofnether.no_destination"));
                     }

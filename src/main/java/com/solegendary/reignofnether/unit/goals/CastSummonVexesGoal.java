@@ -3,6 +3,8 @@ package com.solegendary.reignofnether.unit.goals;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.AbilityClientboundPacket;
 import com.solegendary.reignofnether.resources.ResourceCost;
+import com.solegendary.reignofnether.unit.UnitAnimationAction;
+import com.solegendary.reignofnether.unit.packets.UnitAnimationClientboundPacket;
 import com.solegendary.reignofnether.unit.packets.UnitSyncClientboundPacket;
 import com.solegendary.reignofnether.unit.units.villagers.EvokerUnit;
 import net.minecraft.world.entity.LivingEntity;
@@ -52,7 +54,7 @@ public class CastSummonVexesGoal extends Goal {
     public void startCasting() {
         this.isCasting = true;
         if (!this.mob.level.isClientSide())
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this.mob, true);
+            UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_START, this.mob);
     }
 
     @Override
@@ -60,6 +62,6 @@ public class CastSummonVexesGoal extends Goal {
         this.ticksCasting = 0;
         this.isCasting = false;
         if (!this.mob.level.isClientSide())
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this.mob, false);
+            UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_STOP, this.mob);
     }
 }

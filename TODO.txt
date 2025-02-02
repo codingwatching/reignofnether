@@ -1,90 +1,70 @@
 
-1.19.2-1.0.8
--------------
+1.19.2-1.1.1
 
-Tthings to regression test once PRs are merged
-- /gamerule neutralAggro still works
-- cycling unit groups with tab and shift tab
-- clock times are still accurate for when undead start/stop burning
-
-
-- Done and tested
 [✔] Done and tested
-[🟡] Partially done, only has a workaround and/or needs testing
+[🟡] Partially done and/or needs testing
 [❌] Not done, including unmerged PRs
+
 
 Features
 --------
-[✔] Alliance System (Thanks to @Boobcat)
-    - /ally <player name> to send an alliance request to another player
-    - /allyconfirm <requester name> to accept an alliance request
-    - /disband <player name> to end an alliance
-    - Allies are shown as blue in unit/building highlights and the minimap
-    - Allies win and lose together
-    - Allying a player will not automatically ally you with their allies
-    - Effects that don't friendly fire like creepers should also not affect allies
-    - You can still force attack allies using A + left-click
 
-[✔] Translation Compatibility (Thanks to @Promethia)
-    - Added language support for:
-        - Danish (da_dk)
-        - Polish (pl_pl)
-        - Russian (ru_ru)
-        - Ukrainian (uk_ua)
-        - Brazilian Portuguese (pt_br)
-        - Chinese (Simplified) (zh_cn)
-        - Chinese (Traditional) (zh_tw)
+[❌] Sandbox mode
+    [✔] Should not be allowed to be defeated unless using /rts-surrender
+    [✔] Should lock other players into sandbox too
+    [✔] Allow placement of neutral buildings on bottom left if nothing is selected
+    [❌] Add End portal to build endermen
+    [❌] Add Beacon
+    [❌] Add Healing fountain
+    [❌] save status to level
+    [❌] add add-unit options
 
-    - Some languages may not yet have support for Alliances since it was just added
-    - If a string in your language is not available, it will default to English
-    - Due to an unforseen bug, you must restart your client when switching languages for it to take effect
-    - If you would like to contribute translations, please see the #localisation channel and the pinned post
+
 
 Bugfixes
 --------
-[✔] Fixed workers not actually working if they were too far out of view
-[✔] Fixed crash related to Hiding Leaves
-[✔] Fixed crash related to Ranged units attacking buildings
-[✔] Fixed crash related to pressing Tab on neutral units
-[✔] Fixed enchantment icons
-[✔] The clock button no longer shows up in unexpected places like the title screen
-[✔] Fixed issue of being kicked from a server when switching instances (eg. between a game and lobby)
-[✔] Spider webs no longer stay forever if the spider dies before they decay
-[✔] Leaving F12 will now more reliably set you to spectator mode if you were in spectator previously
+[❌] Fixed portals being built at full speed on overworld terrain
+[❌] Make necromancer eye height higher
 
-Quality of Life Features
-------------------------
-[✔] The world gen datapack is now hardcoded into the mod by default. As a reminder, this means:
-    - Ores are generated on the surface
-    - Flattened biome heights
-    - 4x normal randomTickSpeed
-    - No caves, mountains, jungles or other difficult biomes
-    - No insomnia
-    - No weather
-[✔] Improved performance for all units and buildings
-[✔] The thereisnospoon cheatcode to modify max population is now /gamerule maxPopulation <value>
-    - this also means it is saved to the game world
-[✔] Added saved UUID data for all units
-[✔] Added gamerules to /rts-help
+
+Quality of Life
+---------------
+[❌] Ally everyone by default if wave survival is enabled
+
+[🟡] An upgraded library is now called a Grand Library on the UI
+
+[❌] Prevent damage from fire blocks inside a flame sanctuary
+
+[❌] Show range of other buildings like library and lightning lab
 
 
 Balancing
 ---------
-[✔] All build times with 2+ workers are slower (you need +1 worker to achieve previous speeds)
-    - Capitol build speeds have been sped up to compensate
 
-Piglins
-[✔] Wither Skeleton Death Cloud: Duration +2s, Cooldown +5s
-    - Is now a one-click-one-use ability
-[✔] Melee units attacking a Wither Skeleton now get withered for 2 seconds (4 damage total)
 
 Villagers
-[✔] Golem Smithing Upgrade: +50 ore, +30s
-[✔] Vindicators and Pillagers: -5 food
-[✔] Blacksmith: -150 wood, +150 ore
-[✔] Libraries now only require a Barracks to be built instead of an Arcane Tower
-[✔] Library: -50 wood, +10% build time
-[✔] Grand Library Upgrade: +100 wood, -250 ore, +20s
-[✔] Swapped Maiming and Sharpness Enchantment costs and requirements (Sharpness is now level II)
-[✔] Enchant Maiming: -5 wood, -15 ore
-[✔] Enchant Multishot: -10 wood, -5 ore
+---------
+[❌] Enchant Quick Shot buffed to Quick Shot II
+    - Cost raised by ~50%
+
+
+Piglins
+-------
+
+Monsters
+--------
+
+
+Localisation
+------------
+    "item.reignofnether.royal_guard_unit_spawn_egg": "Spawn Royal Guard Unit",
+    "item.reignofnether.necromancer_unit_spawn_egg": "Spawn Necromancer Unit",
+    "item.reignofnether.piglin_merchant_unit_spawn_egg": "Spawn Piglin Merchant Unit",
+
+    "server.reignofnether.started_sandbox": "%s has started their game (SANDBOX)",
+
+    "hud.gamemode.reignofnether.sandbox1": "SANDBOX",
+    "hud.gamemode.reignofnether.sandbox2": "Customise your map by freely placing units and, ",
+    "hud.gamemode.reignofnether.sandbox3": "buildings, including special neutral buildings.",
+    "hud.gamemode.reignofnether.sandbox4": "Enables cheats.",
+    "hud.gamemode.reignofnether.sandbox_confirm": "Confirm sandbox mode",

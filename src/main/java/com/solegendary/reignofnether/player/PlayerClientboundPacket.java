@@ -1,5 +1,6 @@
 package com.solegendary.reignofnether.player;
 
+import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.registrars.PacketHandler;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import net.minecraft.network.FriendlyByteBuf;
@@ -72,6 +73,16 @@ public class PlayerClientboundPacket {
                 new PlayerClientboundPacket(PlayerAction.SYNC_MAX_POPULATION, "", maxPopulation));
     }
 
+    public static void setOrthoviewMinY(long orthoviewMinY) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                new PlayerClientboundPacket(PlayerAction.SET_MIN_ORTHOVIEW_Y, "", orthoviewMinY));
+    }
+
+    public static void syncNeutralAggro(boolean neutralAggro) {
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                new PlayerClientboundPacket(PlayerAction.SYNC_NEUTRAL_AGGRO, "", neutralAggro ? 1L : 0L));
+    }
+
     public PlayerClientboundPacket(PlayerAction playerAction, String playerName, Long value) {
         this.playerAction = playerAction;
         this.playerName = playerName;
@@ -109,6 +120,8 @@ public class PlayerClientboundPacket {
                             case ENABLE_START_RTS -> PlayerClientEvents.setCanStartRTS(true);
                             case DISABLE_START_RTS -> PlayerClientEvents.setCanStartRTS(false);
                             case SYNC_MAX_POPULATION -> UnitClientEvents.setMaxPopulation(Math.toIntExact(value));
+                            case SET_MIN_ORTHOVIEW_Y -> OrthoviewClientEvents.setMinOrthoviewY(value);
+                            case SYNC_NEUTRAL_AGGRO -> UnitClientEvents.neutralAggro = value == 1L;
                         }
                         success.set(true);
                     });

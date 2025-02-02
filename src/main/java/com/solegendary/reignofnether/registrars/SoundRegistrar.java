@@ -2,7 +2,9 @@ package com.solegendary.reignofnether.registrars;
 
 import com.solegendary.reignofnether.ReignOfNether;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -40,7 +42,9 @@ public class SoundRegistrar {
             SOUND_EVENTS.register("chat", () ->
                     new SoundEvent(new ResourceLocation(ReignOfNether.MOD_ID, "chat")));
 
-
+    public static final RegistryObject<SoundEvent> MAIN_MENU =
+            SOUND_EVENTS.register("main_menu", () ->
+                    new SoundEvent(new ResourceLocation(ReignOfNether.MOD_ID, "main_menu")));
 
     public static void init() {
         SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());

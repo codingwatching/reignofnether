@@ -18,6 +18,10 @@ public class TPSClientEvents {
         TPSClientEvents.tickTime = tickTime;
     }
 
+    public static double getCappedTPS() {
+        return Math.min(1000.0 / tickTime, 20);
+    }
+
     @SubscribeEvent
     // can't use ScreenEvent.KeyboardKeyPressedEvent as that only happens when a screen is up
     public static void onInput(InputEvent.Key evt) {
@@ -33,18 +37,17 @@ public class TPSClientEvents {
             return;
 
         int x = evt.getWindow().getGuiScaledWidth() - 55;
-        int y = 20;
+        int y = 35;
 
         double worldTPS = Math.min(1000.0 / tickTime, 99.99);
 
-        // ARGB, shaded from red to green at 5-25 TPS
-        double tpsForColor = worldTPS + 5;
-        int r = (int) Math.round(tpsForColor / 20);
-        int g = 0xFF - (int) Math.round(tpsForColor / 20);
-        int b = 0;
-
-        int col = (0xFF << 24) | (b << 16) | (g << 8) | (r);
-
+        // ARGB, shaded red, yellow or white
+        int col = 0x00FF00;
+        if (worldTPS < 10) {
+            col = 0xFF0000;
+        } else if (worldTPS < 20) {
+            col = 0xFFFF00;
+        }
         String tickStr = "Tick: " + String.format("%.2f", tickTime);
         GuiComponent.drawString(evt.getPoseStack(), MC.font, tickStr, x,y, col);
 

@@ -4,10 +4,7 @@ import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.ability.Ability;
 import com.solegendary.reignofnether.ability.EnchantAbility;
 import com.solegendary.reignofnether.ability.abilities.*;
-import com.solegendary.reignofnether.building.BuildingBlock;
-import com.solegendary.reignofnether.building.BuildingBlockData;
-import com.solegendary.reignofnether.building.BuildingClientEvents;
-import com.solegendary.reignofnether.building.ProductionBuilding;
+import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.hud.AbilityButton;
 import com.solegendary.reignofnether.keybinds.Keybinding;
 import com.solegendary.reignofnether.keybinds.Keybindings;
@@ -120,6 +117,11 @@ public class Library extends ProductionBuilding {
                 autoCastEnchant.use(tickLevel, this, mobs.get(0));
             }
         }
+    }
+
+    @Override
+    public String getUpgradedName() {
+        return "Grand Library";
     }
 
     public Faction getFaction() {

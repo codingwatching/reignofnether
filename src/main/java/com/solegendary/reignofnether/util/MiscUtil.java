@@ -6,14 +6,17 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3d;
 import com.solegendary.reignofnether.building.*;
 import com.solegendary.reignofnether.cursor.CursorClientEvents;
+import com.solegendary.reignofnether.keybinds.Keybindings;
 import com.solegendary.reignofnether.orthoview.OrthoviewClientEvents;
 import com.solegendary.reignofnether.registrars.GameRuleRegistrar;
 import com.solegendary.reignofnether.resources.ResourceSources;
 import com.solegendary.reignofnether.time.NightCircleMode;
 import com.solegendary.reignofnether.time.TimeClientEvents;
+import com.solegendary.reignofnether.unit.Checkpoint;
 import com.solegendary.reignofnether.unit.Relationship;
 import com.solegendary.reignofnether.unit.UnitClientEvents;
 import com.solegendary.reignofnether.unit.UnitServerEvents;
+import com.solegendary.reignofnether.unit.goals.AbstractMeleeAttackUnitGoal;
 import com.solegendary.reignofnether.unit.goals.FlyingMoveToTargetGoal;
 import com.solegendary.reignofnether.unit.goals.MeleeAttackUnitGoal;
 import com.solegendary.reignofnether.unit.interfaces.AttackerUnit;
@@ -31,11 +34,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -84,21 +89,39 @@ public class MiscUtil {
         return true;
     }
 
-    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos) {
-        addUnitCheckpoint(unit, blockPos, true);
-    }
-    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos, boolean clearExisting) {
-        if (clearExisting) {
+    public static void addUnitCheckpoint(Unit unit, BlockPos blockPos, boolean green) {
+        boolean clearExisting = true;
+        if (((Entity) unit).getLevel().isClientSide())
+            clearExisting = !Keybindings.shiftMod.isDown();
+        if (clearExisting)
             unit.getCheckpoints().clear();
-            unit.setEntityCheckpointId(-1);
-        }
-        unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
-        unit.getCheckpoints().add(blockPos);
+        unit.getCheckpoints().add(new Checkpoint(blockPos, green));
     }
-    public static void addUnitCheckpoint(Unit unit, int id) {
-        unit.getCheckpoints().clear();
-        unit.setEntityCheckpointId(id);
-        unit.setCheckpointTicksLeft(UnitClientEvents.CHECKPOINT_TICKS_MAX);
+    public static void addUnitCheckpoint(Unit unit, int id, boolean green) {
+        Level level = ((Entity) unit).getLevel();
+        if (level.isClientSide() && !Keybindings.shiftMod.isDown())
+            unit.getCheckpoints().clear();
+        unit.getCheckpoints().add(new Checkpoint(level.getEntity(id), green));
+    }
+
+    // excludes trees and buildings
+    public static BlockPos getHighestGroundBlock(Level level, BlockPos blockPos) {
+        int y = level.getHeight();
+        BlockState bs;
+        BlockPos bp;
+        do {
+            bp = new BlockPos(blockPos.getX(), y, blockPos.getZ());
+            bs = level.getBlockState(bp);
+            y -= 1;
+        } while((bs.isAir() ||
+                BuildingUtils.isPosInsideAnyBuilding(level.isClientSide, bp) ||
+                bs.getBlock() == Blocks.LIGHT ||
+                bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (!bs.getMaterial().isSolidBlocking() &&
+                !bs.getMaterial().isLiquid()) ||
+                bs.getMaterial() == Material.LEAVES ||
+                bs.getMaterial() == Material.WOOD) && y > -63);
+        return new BlockPos(blockPos.getX(), y, blockPos.getZ());
     }
 
     public static BlockPos getHighestNonAirBlock(Level level, BlockPos blockPos, boolean ignoreLeaves) {
@@ -107,7 +130,11 @@ public class MiscUtil {
         do {
             bs = level.getBlockState(new BlockPos(blockPos.getX(), y, blockPos.getZ()));
             y -= 1;
-        } while((bs.isAir() || (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
+        } while((bs.isAir() ||
+                bs.getBlock() == Blocks.LIGHT ||
+                bs.getBlock() == Blocks.STRUCTURE_VOID ||
+                (!bs.getMaterial().isSolidBlocking() && !bs.getMaterial().isLiquid()) ||
+                (ignoreLeaves && bs.getMaterial() == Material.LEAVES)) && y > -63);
         return new BlockPos(blockPos.getX(), y, blockPos.getZ());
     }
     public static BlockPos getHighestNonAirBlock(Level level, BlockPos blockPos) {
@@ -182,51 +209,53 @@ public class MiscUtil {
         return retBps;
     }
 
-    public static Mob findClosestAttackableUnit(Mob unitMob, float range, ServerLevel level) {
+    public static LivingEntity findClosestAttackableEntity(Mob unitMob, float range, ServerLevel level) {
         Vector3d unitPosition = new Vector3d(unitMob.position().x, unitMob.position().y, unitMob.position().z);
-        List<Mob> nearbyMobs = MiscUtil.getEntitiesWithinRange(unitPosition, range, Mob.class, level);
+        List<LivingEntity> nearbyEntities = MiscUtil.getEntitiesWithinRange(unitPosition, range, LivingEntity.class, level);
 
         double closestDist = range;
-        Mob closestMob = null;
+        LivingEntity closestTarget = null;
         boolean neutralAggro = unitMob.getLevel().getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get();
 
-        for (Mob tMob : nearbyMobs) {
-            if (isAttackable(unitMob, tMob, neutralAggro) && hasLineOfSightForAttacks(unitMob, tMob)) {
-                double dist = unitMob.position().distanceTo(tMob.position());
+        for (LivingEntity tle : nearbyEntities) {
+            if (isIdleOrMoveAttackable(unitMob, tle, neutralAggro) && hasLineOfSightForAttacks(unitMob, tle)) {
+                double dist = unitMob.position().distanceTo(tle.position());
                 if (dist < closestDist) {
                     closestDist = dist;
-                    closestMob = tMob;
+                    closestTarget = tle;
                 }
             }
         }
-        return closestMob;
+        return closestTarget;
     }
 
+    // does not cover explicit attack commands
+    private static boolean isIdleOrMoveAttackable(Mob unitMob, LivingEntity targetEntity, boolean neutralAggro) {
+        Relationship rs = UnitServerEvents.getUnitToEntityRelationship((Unit) unitMob, targetEntity);
 
-    private static boolean isAttackable(Mob unitMob, Mob tMob, boolean neutralAggro) {
-        Relationship rs = UnitServerEvents.getUnitToEntityRelationship((Unit) unitMob, tMob);
+        if (targetEntity instanceof Player player && (player.isCreative() || player.isSpectator()))
+            return false;
 
         // If the relationship is FRIENDLY, do not allow the attack
-        if (rs == Relationship.FRIENDLY) {
+        if (rs == Relationship.FRIENDLY)
             return false;
-        }
 
         // Prevents certain attacks based on specific unit and goal conditions
-        if (tMob instanceof Unit unit &&
+        if (targetEntity instanceof Unit unit &&
                 unit.getMoveGoal() instanceof FlyingMoveToTargetGoal &&
                 unitMob instanceof AttackerUnit attackerUnit &&
-                attackerUnit.getAttackGoal() instanceof MeleeAttackUnitGoal) {
+                attackerUnit.getAttackGoal() instanceof AbstractMeleeAttackUnitGoal) {
             return false;
         }
 
         // Checks if neutral units can be attacked based on neutralAggro flag and other conditions
         boolean canAttackNeutral =
                 rs == Relationship.NEUTRAL && neutralAggro &&
-                        !(tMob instanceof Vex) &&
-                        !ResourceSources.isHuntableAnimal(tMob);
+                        !(targetEntity instanceof Vex) &&
+                        !ResourceSources.isHuntableAnimal(targetEntity);
 
         return (rs == Relationship.HOSTILE || canAttackNeutral) &&
-                tMob.getId() != unitMob.getId();
+                targetEntity.getId() != unitMob.getId();
     }
 
 
@@ -256,17 +285,20 @@ public class MiscUtil {
         Relationship relationship = UnitServerEvents.getUnitToBuildingRelationship((Unit) unitMob, building);
 
         // If the relationship is FRIENDLY, do not allow the attack
-        if (relationship == Relationship.FRIENDLY) {
+        if (relationship == Relationship.FRIENDLY)
             return false;
-        }
+
+        boolean neutralAggro = unitMob.getLevel().getGameRules().getRule(GameRuleRegistrar.NEUTRAL_AGGRO).get();
+        if (relationship == Relationship.NEUTRAL && neutralAggro)
+            return true;
 
         // Additional attack conditions for hostile or neutral relationships can be added here
         return relationship == Relationship.HOSTILE;
     }
 
 
-    private static boolean hasLineOfSightForAttacks(Mob mob, Mob targetMob) {
-        return mob.hasLineOfSight(targetMob) || mob instanceof GhastUnit ||
+    private static boolean hasLineOfSightForAttacks(Mob mob, LivingEntity targetEntity) {
+        return mob.hasLineOfSight(targetEntity) || mob instanceof GhastUnit ||
                 (mob instanceof Unit unit && GarrisonableBuilding.getGarrison((Unit) mob) != null);
     }
 
@@ -378,7 +410,7 @@ public class MiscUtil {
     }
 
     // get the tops of all blocks which are of at a certain horizontal distance away from the centrePos
-    public static Set<BlockPos> getNightCircleBlocks(BlockPos centrePos, int radius, Level level) {
+    public static Set<BlockPos> getRangeIndicatorCircleBlocks(BlockPos centrePos, int radius, Level level) {
         if (radius <= 0)
             return Set.of();
 

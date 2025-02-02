@@ -22,5 +22,9 @@
     "enemy": {
         "subtitle": "sounds.reignofnether.enemy",
         "sounds": [ "reignofnether:enemy" ]
+    },
+    "main_menu": {
+        "subtitle": "sounds.reignofnether.main_menu",
+        "sounds": [ "reignofnether:main_menu" ]
     }
 }

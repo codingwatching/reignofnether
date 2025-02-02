@@ -1,5 +1,7 @@
 package com.solegendary.reignofnether.ability.abilities;
 
+import com.solegendary.reignofnether.unit.UnitAnimationAction;
+import com.solegendary.reignofnether.unit.packets.UnitAnimationClientboundPacket;
 import net.minecraft.client.resources.language.I18n;
 import com.solegendary.reignofnether.ReignOfNether;
 import com.solegendary.reignofnether.ability.Ability;
@@ -32,6 +34,7 @@ public class ToggleShield extends Ability {
     public ToggleShield(BruteUnit bruteUnit) {
         super(
                 UnitAction.TOGGLE_SHIELD,
+                bruteUnit.level,
                 CD_MAX_SECONDS * ResourceCost.TICKS_PER_SECOND,
                 0,
                 0,
@@ -56,7 +59,8 @@ public class ToggleShield extends Ability {
                         FormattedCharSequence.forward(I18n.get("abilities.reignofnether.shield_stance"), Style.EMPTY),
                         FormattedCharSequence.forward("", Style.EMPTY),
                         FormattedCharSequence.forward(I18n.get("abilities.reignofnether.shield_stance.tooltip1"), Style.EMPTY),
-                        FormattedCharSequence.forward(I18n.get("abilities.reignofnether.shield_stance.tooltip2"), Style.EMPTY)
+                        FormattedCharSequence.forward(I18n.get("abilities.reignofnether.shield_stance.tooltip2"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("abilities.reignofnether.shield_stance.tooltip3"), Style.EMPTY)
                 ),
                 this
         );
@@ -66,7 +70,11 @@ public class ToggleShield extends Ability {
     public void use(Level level, Unit unitUsing, BlockPos targetBp) {
         bruteUnit.isHoldingUpShield = !bruteUnit.isHoldingUpShield;
         if (!level.isClientSide()) {
-            UnitSyncClientboundPacket.sendSyncAnimationPacket(this.bruteUnit, bruteUnit.isHoldingUpShield);
+            if (bruteUnit.isHoldingUpShield)
+                UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_START, this.bruteUnit);
+            else
+                UnitAnimationClientboundPacket.sendBasicPacket(UnitAnimationAction.NON_KEYFRAME_STOP, this.bruteUnit);
+
             BlockPos bp = unitUsing.getMoveGoal().getMoveTarget();
             unitUsing.getMoveGoal().stopMoving();
             unitUsing.getMoveGoal().setMoveTarget(bp);

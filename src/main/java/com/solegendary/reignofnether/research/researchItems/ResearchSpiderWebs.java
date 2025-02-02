@@ -10,6 +10,7 @@ import com.solegendary.reignofnether.research.ResearchClient;
 import com.solegendary.reignofnether.research.ResearchServerEvents;
 import com.solegendary.reignofnether.resources.ResourceCost;
 import com.solegendary.reignofnether.resources.ResourceCosts;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -54,14 +55,14 @@ public class ResearchSpiderWebs extends ProductionItem {
                 () -> BuildingServerboundPacket.startProduction(prodBuilding.originPos, itemName),
                 null,
                 List.of(
-                        FormattedCharSequence.forward(ResearchSpiderWebs.itemName, Style.EMPTY.withBold(true)),
+                        FormattedCharSequence.forward(I18n.get("research.reignofnether.sticky_webbing"), Style.EMPTY.withBold(true)),
                         ResourceCosts.getFormattedCost(cost),
                         ResourceCosts.getFormattedTime(cost),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Unlocks the ability for spiders to cast ", Style.EMPTY),
-                        FormattedCharSequence.forward("webs onto the field to trap enemies.", Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("research.reignofnether.sticky_webbing.tooltip1"), Style.EMPTY),
+                        FormattedCharSequence.forward(I18n.get("research.reignofnether.sticky_webbing.tooltip2"), Style.EMPTY),
                         FormattedCharSequence.forward("", Style.EMPTY),
-                        FormattedCharSequence.forward("Cannot be used by mounted spiders.", Style.EMPTY)
+                        FormattedCharSequence.forward(I18n.get("research.reignofnether.sticky_webbing.tooltip3"), Style.EMPTY)
                 )
         );
     }
